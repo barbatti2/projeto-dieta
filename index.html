@@ -82,7 +82,7 @@ td,th{border-bottom:1px solid var(--border);padding:8px;text-align:left}
     <h2>Adicionar alimento</h2>
     <div class="row">
       <div><label>Data</label><input type="date" id="dateInput"></div>
-      <div><label>Refeição</label><select id="meal"><option>Café da manhã</option><option>Almoço</option><option>Café da tarde / Pré-treino</option><option>Janta</option><option>Outro</option></select></div>
+      <div><label>Refeição</label><select id="meal"><option>Café da manhã</option><option>Almoço</option><option>Café da tarde</option><option>Janta</option><option>Outro</option></select></div>
     </div>
     <div class="row">
       <div class="search-wrap">
@@ -226,7 +226,7 @@ function clearDay(){if(!confirm("Limpar alimentos deste dia?"))return;const date
 function totals(arr){return arr.reduce((a,i)=>{a.kcal+=i.kcal;a.prot+=i.prot;return a},{kcal:0,prot:0})}
 
 function renderMeals(date,items){
- const meals=["Café da manhã","Almoço","Café da tarde / Pré-treino","Janta","Outro"];let html="";
+ const meals=["Café da manhã","Almoço","Café da tarde","Janta","Outro"];let html="";
  meals.forEach(m=>{const g=items.filter(i=>i.meal===m); if(!g.length)return; const t=totals(g);
  html+=`<h3>${m}<span class="pill">${t.kcal} kcal • ${t.prot.toFixed(1)}g prot</span></h3>`;
  g.forEach(i=>html+=`<div class="item"><div><b>${i.name}</b><br><small>${i.grams}g • ${i.kcal} kcal • ${i.prot}g proteína</small></div><button onclick="delItem('${date}',${i.id})">Excluir</button></div>`);
