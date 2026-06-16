@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PROJETO DIETA</title>
+<link rel="icon" href="logo-login.png">
+<link rel="apple-touch-icon" href="logo-login.png">
+<style>
+:root{
+  --bg:#f4f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--blue:#2563eb;--green:#16a34a;--red:#ef4444;--dark:#111827;--border:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.hero{
+  padding:34px 16px 42px;text-align:center;color:#fff;
+  background:
+  linear-gradient(135deg,rgba(17,24,39,.96),rgba(37,99,235,.84),rgba(22,163,74,.76)),
+  radial-gradient(circle at center,rgba(255,255,255,.22),transparent 32%);
+  border-bottom-left-radius:28px;border-bottom-right-radius:28px;
+}
+.logo-mark{width:118px;height:118px;margin:0 auto 12px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,.35);box-shadow:0 15px 35px rgba(0,0,0,.25)}
+.logo-mark svg{width:90px;height:90px}
+.logo{font-size:46px;font-weight:950;letter-spacing:-2px;line-height:.92;text-shadow:0 8px 20px rgba(0,0,0,.25)}
+.sub{font-size:14px;margin-top:9px;opacity:.92}
+.app{max-width:980px;margin:-26px auto 35px;padding:0 12px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:15px;box-shadow:0 8px 22px rgba(15,23,42,.08);margin-bottom:12px}
+.metric small,.hint{color:var(--muted);font-size:13px}
+.metric b{font-size:25px;display:block;margin:4px 0}
+h2,h3{margin:0 0 12px}
+label{display:block;color:var(--muted);font-size:13px;margin-bottom:5px}
+input,select,button{width:100%;padding:12px;border-radius:13px;border:1px solid var(--border);font-size:15px;background:#fff}
+button{border:0;background:var(--blue);color:#fff;font-weight:800;cursor:pointer}
+button:active{transform:scale(.985)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:10px 0}
+.quick{background:#111827;font-size:12px;padding:10px 6px}
+.search-wrap{position:relative}
+.suggestions{position:absolute;left:0;right:0;top:calc(100% + 5px);background:#fff;border:1px solid var(--border);border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,.12);z-index:20;display:none;max-height:260px;overflow:auto}
+.suggestion{padding:11px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;justify-content:space-between;gap:8px}
+.suggestion:hover{background:#f3f4f6}
+.suggestion small{color:var(--muted)}
+.selected{display:none;background:#eef2ff;color:#1e1b4b;padding:10px;border-radius:13px;margin:8px 0;font-size:14px}
+.toggle{background:#111827;margin-bottom:10px}
+.panel{display:none}
+.item{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border:1px solid var(--border);padding:10px;border-radius:14px;margin-bottom:8px}
+.item small{color:var(--muted)}
+.item button{width:auto;background:var(--red);padding:8px 10px;font-size:12px}
+.pill{display:inline-block;background:#eef2ff;color:#3730a3;border-radius:999px;padding:5px 8px;font-size:12px;margin-left:4px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}
+.tabs button{background:#e5e7eb;color:#111827;font-size:13px}
+.tabs button.active{background:var(--blue);color:#fff}
+.summaryGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}.summaryBox{background:#f3f4f6;border-radius:14px;padding:10px}.summaryBox small{color:var(--muted)}.summaryBox b{display:block;font-size:20px;margin-top:3px}@media(max-width:760px){.summaryGrid{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{border-bottom:1px solid var(--border);padding:8px;text-align:left}
+.progress{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:7px}
+.bar{height:100%;background:linear-gradient(90deg,var(--blue),var(--green));width:0%}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr}.actions{grid-template-columns:repeat(2,1fr)}.logo{font-size:40px}}
+
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:linear-gradient(135deg,#111827,#2563eb,#16a34a);
+}
+.login-card{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 18px 45px rgba(0,0,0,.25);
+}
+.login-title{
+  text-align:center;
+  font-size:34px;
+  font-weight:950;
+  line-height:.95;
+  letter-spacing:-1px;
+  margin-bottom:8px;
+}
+.login-sub{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:18px;
+  font-size:14px;
+}
+.login-card input{margin-bottom:10px}
+.login-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.logout-card{margin-top:-14px}
+.logout-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.logout-row button{width:auto;background:#ef4444;padding:10px 14px}
+.sync-status{font-size:12px;color:var(--muted);margin-top:6px}
+
+
+.menu-btn{
+  position:fixed;top:14px;left:14px;z-index:1001;width:48px;height:48px;border-radius:14px;
+  background:#111827;color:#fff;box-shadow:0 8px 20px rgba(0,0,0,.25);display:none;
+}
+.sidebar{
+  position:fixed;top:0;left:0;width:265px;height:100vh;background:#111827;color:#fff;z-index:1000;
+  padding:18px 14px;box-shadow:10px 0 30px rgba(0,0,0,.25);transform:translateX(-110%);transition:.25s ease;
+}
+.sidebar.open{transform:translateX(0)}
+.sidebar-title{font-size:24px;font-weight:950;line-height:.95;margin:12px 8px 22px}
+.side-section{color:#9ca3af;font-size:12px;text-transform:uppercase;margin:18px 10px 8px;letter-spacing:.7px}
+.side-link{display:flex;align-items:center;gap:10px;width:100%;padding:13px 12px;border-radius:14px;background:transparent;color:#e5e7eb;text-align:left;margin-bottom:6px}
+.side-link.active{background:linear-gradient(90deg,#2563eb,#16a34a);color:#fff}
+.side-link.logout{background:#ef4444;margin-top:14px}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:999;display:none}
+.sidebar-overlay.show{display:block}
+.page-section{display:none}
+.page-section.active{display:block}
+@media(max-width:900px){.menu-btn{display:block}.app{padding-top:8px}}
+@media(min-width:901px){.sidebar{transform:translateX(0)}.app{margin-left:285px;max-width:900px}.hero{margin-left:265px}}
+
+
+/* Menu lateral refinado */
+.menu-btn{
+  backdrop-filter:blur(14px);
+  background:rgba(17,24,39,.78)!important;
+  border:1px solid rgba(255,255,255,.16)!important;
+  color:#fff!important;
+}
+body.menu-open .menu-btn{display:none!important}
+.sidebar{
+  width:285px!important;
+  background:linear-gradient(180deg,rgba(15,23,42,.96),rgba(17,24,39,.92))!important;
+  backdrop-filter:blur(20px);
+  border-right:1px solid rgba(255,255,255,.10);
+  padding:20px 16px!important;
+}
+.sidebar-title{
+  padding:10px 12px 18px;
+  margin:0 0 14px!important;
+  font-size:28px!important;
+  background:linear-gradient(90deg,#fff,#dbeafe);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+.side-section{
+  color:#93a4bd!important;
+  font-weight:800;
+  margin:20px 12px 9px!important;
+}
+.side-link{
+  min-height:50px;
+  border:1px solid transparent;
+  background:rgba(255,255,255,.03)!important;
+  color:#e5e7eb!important;
+  font-size:16px;
+  font-weight:800;
+  transition:.18s ease;
+}
+.side-link:hover{
+  background:rgba(255,255,255,.08)!important;
+}
+.side-link.active{
+  background:linear-gradient(135deg,rgba(37,99,235,.95),rgba(22,163,74,.90))!important;
+  box-shadow:0 10px 24px rgba(37,99,235,.28);
+  border:1px solid rgba(255,255,255,.18);
+  transform:translateX(3px);
+}
+.side-link.active::after{
+  content:"";
+  margin-left:auto;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 12px #fff;
+}
+.side-link.logout{
+  background:linear-gradient(135deg,#ef4444,#dc2626)!important;
+  box-shadow:0 10px 22px rgba(239,68,68,.25);
+}
+.sidebar-overlay.show{
+  backdrop-filter:blur(3px);
+  background:rgba(15,23,42,.58)!important;
+}
+@media(max-width:900px){
+  .sidebar{
+    max-width:82vw;
+    border-top-right-radius:26px;
+    border-bottom-right-radius:26px;
+  }
+}
+
+
+/* Menu lateral claro e refinado */
+.sidebar{
+  background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(240,247,255,.94))!important;
+  color:#111827!important;
+  border-right:1px solid rgba(37,99,235,.16)!important;
+  box-shadow:14px 0 42px rgba(15,23,42,.18)!important;
+}
+.sidebar-title{
+  color:#111827!important;
+  background:none!important;
+  -webkit-background-clip:initial!important;
+  padding:12px 14px 18px!important;
+  border-radius:22px;
+  background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(22,163,74,.12))!important;
+}
+.side-section{
+  color:#64748b!important;
+}
+.side-link{
+  background:rgba(255,255,255,.82)!important;
+  color:#1f2937!important;
+  border:1px solid rgba(148,163,184,.22)!important;
+  box-shadow:0 6px 16px rgba(15,23,42,.05);
+}
+.side-link:hover{
+  background:#eef6ff!important;
+}
+.side-link.active{
+  background:linear-gradient(135deg,#2563eb,#16a34a)!important;
+  color:#fff!important;
+  box-shadow:0 12px 26px rgba(37,99,235,.20)!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+  transform:none!important;
+}
+.side-link.active::after{
+  display:none!important;
+  content:none!important;
+}
+.side-link.logout{
+  background:linear-gradient(135deg,#ef4444,#f97316)!important;
+  color:#fff!important;
+  box-shadow:0 12px 26px rgba(239,68,68,.18)!important;
+}
+.menu-btn{
+  background:rgba(255,255,255,.88)!important;
+  color:#111827!important;
+  border:1px solid rgba(148,163,184,.35)!important;
+}
+.sidebar-overlay.show{
+  background:rgba(15,23,42,.40)!important;
+}
+.login-card{
+  border:1px solid rgba(255,255,255,.35);
+}
+
+
+/* LOGOS OFICIAIS - coloque no GitHub:
+   logo-login.png
+   logo-home.png
+*/
+.login-logo-img{
+  width:220px;
+  max-width:82%;
+  aspect-ratio:1/1;
+  object-fit:cover;
+  display:block;
+  margin:0 auto 18px;
+  border-radius:32px;
+  box-shadow:0 16px 42px rgba(0,26,102,.25);
+}
+
+.home-logo-img{
+  width:100%;
+  max-width:760px;
+  height:auto;
+  display:block;
+  margin:0 auto 14px;
+  border-radius:28px;
+  box-shadow:0 18px 44px rgba(0,26,102,.22);
+}
+
+.hero{
+  padding:28px 16px 34px!important;
+  background:
+    linear-gradient(135deg,rgba(0,18,77,.96),rgba(0,85,255,.88),rgba(21,199,255,.72)),
+    radial-gradient(circle at center,rgba(255,255,255,.20),transparent 34%) !important;
+}
+
+.hero .logo,
+.hero .logo-mark{
+  display:none!important;
+}
+
+.login-title{
+  display:none!important;
+}
+
+.login-screen{
+  background:
+    radial-gradient(circle at 50% 0%, rgba(21,199,255,.35), transparent 34%),
+    linear-gradient(135deg,#00124d,#002b9a,#0066ff) !important;
+}
+
+.login-card{
+  background:rgba(255,255,255,.97)!important;
+  border:1px solid rgba(21,199,255,.35)!important;
+  box-shadow:0 24px 60px rgba(0,26,102,.35)!important;
+}
+
+@media(max-width:760px){
+  .login-logo-img{
+    width:190px;
+    border-radius:28px;
+  }
+  .home-logo-img{
+    max-width:96%;
+    border-radius:22px;
+  }
+  .hero{
+    padding-top:26px!important;
+  }
+}
+
+</style>
+</head>
+<body>
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="logo-login.png" class="login-logo-img" alt="Projeto Dieta">
+    <div class="login-title">PROJETO<br>DIETA</div>
+    <div class="login-sub">Acesso restrito ao usuário master</div>
+    <label>Senha</label>
+    <input type="password" id="loginPassword" placeholder="Digite a senha">
+    <label style="display:flex;align-items:center;gap:8px;margin:4px 0 12px;color:#374151;font-size:14px">
+      <input type="checkbox" id="rememberPassword" style="width:18px;height:18px;margin:0">
+      Lembrar senha neste aparelho
+    </label>
+    <button onclick="loginUser()">Entrar</button>
+    <p id="loginMessage" class="hint"></p>
+  </div>
+</section>
+
+<div id="appShell" style="display:none">
+<button class="menu-btn" onclick="toggleSidebar()">☰</button>
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside id="sidebar" class="sidebar">
+  <div class="sidebar-title">PROJETO<br>DIETA</div>
+  <div class="side-section">Geral</div>
+  <button class="side-link active" onclick="showPage('dashboardPage',this)">⌂ Início</button>
+  <button class="side-link" onclick="showPage('peoplePage',this)">◉ Pessoas</button>
+  <button class="side-link" onclick="showPage('addFoodPage',this)">＋ Adicionar alimento</button>
+  <div class="side-section">Acompanhamento</div>
+  <button class="side-link" onclick="showPage('mealsPage',this)">▤ Refeições do dia</button>
+  <button class="side-link" onclick="showPage('historyPage',this)">↗ Histórico</button>
+  <button class="side-link" onclick="showPage('weightPage',this)">◎ Peso e medidas</button>
+  <div class="side-section">Conta</div>
+  <button class="side-link" onclick="showPage('configPage',this)">⚙ Configurações</button>
+  <button class="side-link logout" onclick="logoutUser()">⎋ Sair</button>
+</aside>
+<header class="hero">
+  <img src="logo-home.png" class="home-logo-img" alt="Projeto Dieta">
+  <div class="sub">Controle de calorias, proteína, peso e evolução</div>
+</header>
+
+<main class="app">
+  <div id="dashboardPage" class="page-section active">
+  <section class="card logout-card">
+    <div class="logout-row">
+      <div>
+        <b>Conectado como usuário master</b><br>
+        <small id="userEmail" class="hint"></small>
+        <div id="syncStatus" class="sync-status">Sincronizando...</div>
+      </div>
+      <button onclick="logoutUser()">Sair</button>
+    </div>
+  </section>
+  <section class="card">
+    <div class="row">
+      <div>
+        <label>Pessoa ativa</label>
+        <select id="summaryPerson" onchange="render()">
+          <option>Gabriel</option>
+          <option>Raissa</option>
+        </select>
+      </div>
+      <div></div>
+    </div>
+    <p class="hint">A página fica filtrada pela pessoa selecionada aqui. Os alimentos adicionados vão automaticamente para ela.</p>
+  </section>
+
+  <section class="grid">
+    <div class="card metric"><small>Calorias hoje - <span id="topPersonName1">Gabriel</span></small><b><span id="todayKcal">0</span></b><small>meta <span id="goalKcalView">1850</span> kcal</small><div class="progress"><div id="kcalBar" class="bar"></div></div></div>
+    <div class="card metric"><small>Proteína hoje - <span id="topPersonName2">Gabriel</span></small><b><span id="todayProt">0</span>g</b><small>meta <span id="goalProtView">155</span>g</small><div class="progress"><div id="protBar" class="bar"></div></div></div>
+    <div class="card metric"><small>Restante</small><b><span id="leftKcal">1850</span></b><small>kcal para fechar o dia</small></div>
+  </section>
+
+  </div>
+
+  <div id="peoplePage" class="page-section">
+  <section class="card">
+    <h2>◉ Pessoas</h2>
+    <button class="toggle" onclick="togglePanel('peoplePanel',this)">👥 Mostrar Pessoas</button>
+    <div id="peoplePanel" class="panel">
+      <div class="summaryGrid">
+        <div class="summaryBox">
+          <small>Gabriel - calorias hoje</small>
+          <b><span id="gabrielKcal">0</span> kcal</b>
+          <small>Proteína: <span id="gabrielProt">0</span>g</small>
+        </div>
+        <div class="summaryBox">
+          <small>Raissa - calorias hoje</small>
+          <b><span id="raissaKcal">0</span> kcal</b>
+          <small>Proteína: <span id="raissaProt">0</span>g</small>
+        </div>
+      </div>
+      <p class="hint">Essa aba mostra separado o que cada pessoa consumiu no dia selecionado.</p>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="addFoodPage" class="page-section">
+  <section class="card">
+    <h2>Adicionar alimento</h2>
+    <div class="row">
+      <div><label>Data</label><input type="date" id="dateInput"></div>
+      <div><label>Refeição</label><select id="meal"><option>Café da manhã</option><option>Almoço</option><option>Café da tarde / Pré-treino</option><option>Janta</option><option>Outro</option></select></div>
+    </div>
+    <p class="hint">Adicionando alimento para: <b><span id="activePersonName">Gabriel</span></b></p>
+    <div class="row">
+      <div class="search-wrap">
+        <label>Digite o alimento</label>
+        <input id="foodSearch" autocomplete="off" placeholder="Ex: frango, arroz, chocolate...">
+        <div id="suggestions" class="suggestions"></div>
+        <div id="selectedBox" class="selected"></div>
+      </div>
+      <div><label>Quantidade em gramas</label><input type="number" id="grams" placeholder="Ex: 150"></div>
+    </div>
+    <button onclick="addFood()">Adicionar na dieta</button>
+    <p class="hint">Escolha o alimento na lista, coloque as gramas e o sistema calcula automaticamente.</p>
+  </section>
+
+  </div>
+
+  <div id="mealsPage" class="page-section">
+  <section class="card">
+    <h2>📋 Refeições do Dia</h2>
+    <button class="toggle" onclick="togglePanel('mealsPanel',this)">📋 Mostrar Refeições do Dia</button>
+    <div id="mealsPanel" class="panel"><div id="dayMeals"></div></div>
+  </section>
+
+  </div>
+
+  <div id="historyPage" class="page-section">
+  <section class="card">
+    <h2>↗ Histórico</h2>
+    <button class="toggle" onclick="togglePanel('historyPanel',this)">📈 Mostrar Histórico</button>
+    <div id="historyPanel" class="panel">
+      <div class="row">
+        <div><label>Ver histórico de</label><select id="historyPerson" onchange="render()"><option>Gabriel</option><option>Raissa</option></select></div>
+        <div></div>
+      </div>
+      <div class="tabs">
+        <button id="tabDay" class="active" onclick="setHistory('day')">Dia</button>
+        <button id="tabWeek" onclick="setHistory('week')">Semana</button>
+        <button id="tabMonth" onclick="setHistory('month')">Mês</button>
+        <button id="tabYear" onclick="setHistory('year')">Ano</button>
+      </div>
+      <div id="historyBox"></div>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="weightPage" class="page-section">
+  <section class="card">
+    <h2>◎ Peso e medidas</h2>
+    <button class="toggle" onclick="togglePanel('weightPanel',this)">⚖️ Mostrar Controle de Peso</button>
+    <div id="weightPanel" class="panel">
+      <h3>Dados iniciais e objetivo</h3>
+      <p class="hint">Controle de peso de: <b><span id="weightActivePersonName">Gabriel</span></b></p>
+      <select id="weightPerson" style="display:none"><option>Gabriel</option><option>Raissa</option></select>
+      <div class="row">
+        <div><label>Peso inicial (kg)</label><input type="number" step="0.1" id="startWeightInput" placeholder="Ex: 74.0"></div>
+        <div><label>Cintura inicial (cm)</label><input type="number" step="0.1" id="startWaistInput" placeholder="Ex: 95"></div>
+      </div>
+      <div class="row">
+        <div><label>Peso que quero chegar (kg)</label><input type="number" step="0.1" id="goalWeightInput" placeholder="Ex: 70.0"></div>
+        <div><label>&nbsp;</label><button onclick="saveWeightSettings()">Salvar objetivo</button></div>
+      </div>
+
+      <br>
+      <h3>Atualização semanal</h3>
+      <div class="row">
+        <div><label>Peso atual (kg)</label><input type="number" step="0.1" id="weightInput" placeholder="Ex: 73.5"></div>
+        <div><label>Cintura atual (cm)</label><input type="number" step="0.1" id="waistInput" placeholder="Ex: 93"></div>
+      </div>
+      <button onclick="saveWeight()">Salvar progresso semanal</button>
+      <br><br>
+      <div id="weightBox"></div>
+    </div>
+  </section>
+
+  </div>
+
+  <div id="configPage" class="page-section">
+  <section class="card">
+    <h2>⚙ Configurações</h2>
+    <button class="toggle" onclick="togglePanel('configPanel',this)">⚙️ Mostrar Configurações</button>
+    <div id="configPanel" class="panel">
+      <div class="row">
+        <div><label>Meta kcal diária</label><input type="number" id="goalKcal" value="1850"></div>
+        <div><label>Meta proteína diária</label><input type="number" id="goalProt" value="155"></div>
+      </div>
+      <button onclick="saveGoals()">Salvar metas</button>
+      <br><br>
+      <button style="background:#ef4444" onclick="clearDay()">Limpar alimentos do dia</button>
+    </div>
+  </section>
+  </div>
+</main>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAo4LkXnoHpuGyx8NjvdTDVylBo2Ed_kUg",
+  authDomain: "projeto-dieta-720bf.firebaseapp.com",
+  projectId: "projeto-dieta-720bf",
+  storageBucket: "projeto-dieta-720bf.firebasestorage.app",
+  messagingSenderId: "913376634036",
+  appId: "1:913376634036:web:6eb2b11d3c3986593e63e1",
+  measurementId: "G-MSHX70TPPY"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+const db = firebase.firestore();
+
+let currentUser = null;
+let cloudData = {};
+let cloudReady = false;
+let savingTimer = null;
+
+function setLoginMessage(msg){ $("loginMessage").textContent = msg || ""; }
+function setSyncStatus(msg){ if($("syncStatus")) $("syncStatus").textContent = msg || ""; }
+
+function loginUser(){
+ const email="gabriel_barbatti@hotmail.com";
+ const pass=$("loginPassword").value;
+ if(!pass){setLoginMessage("Digite a senha.");return}
+ auth.signInWithEmailAndPassword(email,pass).then(()=>{
+   if($("rememberPassword") && $("rememberPassword").checked){
+     localStorage.setItem("projetoDietaSenhaLembrada", pass);
+   }else{
+     localStorage.removeItem("projetoDietaSenhaLembrada");
+   }
+ }).catch(e=>setLoginMessage("Senha incorreta ou erro ao entrar."));
+}
+
+function logoutUser(){ auth.signOut(); }
+
+function appDoc(){
+ return db.collection("agoraVai").doc("dadosCompartilhados");
+}
+
+async function loadCloudData(){
+ setSyncStatus("Carregando dados da nuvem...");
+ const snap = await appDoc().get();
+ const localBackup = {
+  [foodKey]: JSON.parse(localStorage.getItem(foodKey)||"{}"),
+  [goalKey]: JSON.parse(localStorage.getItem(goalKey)||'{"kcal":1850,"prot":155}'),
+  [weightKey]: JSON.parse(localStorage.getItem(weightKey)||"{}"),
+  [weightSettingsKey]: JSON.parse(localStorage.getItem(weightSettingsKey)||"{}")
+ };
+
+ if(snap.exists){
+  cloudData = snap.data() || {};
+ }else{
+  cloudData = localBackup;
+  await appDoc().set(cloudData);
+ }
+
+ cloudData[foodKey] = cloudData[foodKey] || {};
+ cloudData[goalKey] = cloudData[goalKey] || {kcal:1850,prot:155};
+ cloudData[weightKey] = cloudData[weightKey] || {};
+ cloudData[weightSettingsKey] = cloudData[weightSettingsKey] || {};
+ cloudReady = true;
+ setSyncStatus("Dados sincronizados na nuvem.");
+ render();
+}
+
+function syncCloud(){
+ if(!currentUser || !cloudReady) return;
+ clearTimeout(savingTimer);
+ savingTimer = setTimeout(async ()=>{
+  try{
+   setSyncStatus("Salvando na nuvem...");
+   await appDoc().set(cloudData, {merge:true});
+   setSyncStatus("Salvo na nuvem.");
+  }catch(e){
+   setSyncStatus("Erro ao salvar: "+e.message);
+  }
+ }, 350);
+}
+
+auth.onAuthStateChanged(async (user)=>{
+ currentUser = user;
+ if(user){
+  $("loginScreen").style.display="none";
+  $("appShell").style.display="block";
+  $("userEmail").textContent=user.email;
+  setLoginMessage("");
+  try{
+    await loadCloudData();
+  }catch(e){
+    setSyncStatus("Erro ao carregar: "+e.message);
+  }
+ }else{
+  cloudReady=false;
+  cloudData={};
+  $("loginScreen").style.display="flex";
+  $("appShell").style.display="none";
+ }
+});
+
+
+const foods=[
+["Peito de frango grelhado",165,31,0],["Frango desfiado",165,31,0],["Frango cozido",163,30,0],["Patinho moído",219,26,0],["Acém cozido",252,26,0],
+["Ovo inteiro",143,13,1],["Clara de ovo",52,11,1],["Atum em água",116,26,0],["Sardinha",208,25,0],["Tilápia",129,26,0],["Salmão",208,20,0],
+["Alcatra",219,32,0],["Coxão mole",219,32,0],["Lombo suíno",242,27,0],["Peito de peru",104,17,4],["Mussarela",300,22,3],
+["Queijo minas",264,18,3],["Ricota",174,11,3],["Whey protein",400,80,8],["Tofu",76,8,2],["Lentilha cozida",116,9,20],
+["Grão de bico cozido",164,9,27],["Feijão cozido",77,4.8,14],["Feijão preto cozido",77,4.5,14],["Arroz branco cozido",130,2.7,28],
+["Arroz integral cozido",124,2.6,26],["Macarrão cozido",158,5.8,31],["Batata inglesa cozida",87,1.9,20],["Batata doce cozida",86,1.6,20],
+["Mandioca cozida",125,1,30],["Aveia",389,16.9,66],["Pão integral",250,9,45],["Pão francês",300,9,58],["Tapioca",240,0,60],
+["Cuscuz cozido",112,3.8,23],["Granola",471,10,64],["Banana",89,1.1,23],["Maçã",52,0.3,14],["Pera",57,0.4,15],
+["Laranja",47,0.9,12],["Mamão",43,0.5,11],["Melancia",30,0.6,8],["Morango",32,0.7,8],["Uva",69,0.7,18],
+["Abacaxi",50,0.5,13],["Manga",60,0.8,15],["Abacate",160,2,9],["Cenoura cozida",35,0.8,8],["Beterraba cozida",44,1.7,10],
+["Brócolis cozido",35,2.4,7],["Tomate",18,0.9,4],["Alface",15,1.4,3],["Azeite de oliva",884,0,0],["Pasta de amendoim",588,25,20],
+["Amendoim",567,26,16],["Castanha de caju",553,18,30],["Chocolate ao leite",535,7,59],["Chocolate 70%",598,8,45],["Brigadeiro",400,5,62],
+["Beijinho",390,4,60],["Bolo simples",350,6,55],["Bolo de chocolate",410,5,60],["Pudim",220,6,35],["Sorvete",207,3.5,24],
+["Açaí com xarope",110,1,25],["Paçoca",520,15,54],["Doce de leite",315,7,55],["Goiabada",270,0.5,68],["Bis",500,6,65],
+["Nutella",539,6,57],["Cookie",480,6,65],["Bolacha recheada",480,5,72],["Pipoca pronta",375,11,74],["Hambúrguer bovino",254,17,0],
+["Pizza mussarela",266,11,33],["Lasanha bolonhesa",160,8,17],["Pastel de carne",330,10,30],["Coxinha",280,9,27],["Esfiha de carne",250,11,31],
+["Pão de queijo",360,8,40],["Mel",304,0,82],["Geleia",250,0,65],["Ketchup",112,1,26],["Maionese",680,1,1],["Requeijão",260,8,4]
+];
+
+const $=id=>document.getElementById(id);
+const foodKey="agoraVaiFoodsV2",goalKey="agoraVaiGoalsV2",weightKey="agoraVaiWeightV2",weightSettingsKey="agoraVaiWeightSettingsV2";
+let selectedFood=null,historyMode="day";
+
+function todayISO(){let d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function load(k,d){
+ if(cloudReady && cloudData[k] !== undefined) return cloudData[k];
+ return JSON.parse(localStorage.getItem(k)||d);
+}
+function save(k,v){
+ cloudData[k]=v;
+ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){}
+ syncCloud();
+}
+function goals(){return load(goalKey,'{"kcal":1850,"prot":155}')}
+
+function toggleSidebar(){
+ $("sidebar").classList.toggle("open");
+ $("sidebarOverlay").classList.toggle("show");
+ document.body.classList.toggle("menu-open", $("sidebar").classList.contains("open"));
+}
+function closeSidebar(){
+ $("sidebar").classList.remove("open");
+ $("sidebarOverlay").classList.remove("show");
+ document.body.classList.remove("menu-open");
+}
+function openPanel(id){
+ const p=$(id);
+ if(p) p.style.display="block";
+}
+function showPage(pageId,btn){
+ document.querySelectorAll(".page-section").forEach(p=>p.classList.remove("active"));
+ const page=$(pageId);
+ if(page) page.classList.add("active");
+ document.querySelectorAll(".side-link").forEach(b=>b.classList.remove("active"));
+ if(btn && !btn.classList.contains("logout")) btn.classList.add("active");
+ closeSidebar();
+ if(pageId==="peoplePage") openPanel("peoplePanel");
+ if(pageId==="mealsPage") openPanel("mealsPanel");
+ if(pageId==="historyPage") openPanel("historyPanel");
+ if(pageId==="weightPage") openPanel("weightPanel");
+ if(pageId==="configPage") openPanel("configPanel");
+}
+
+
+function togglePanel(id,btn){
+ const p=$(id);
+ const show=p.style.display!=="block";
+ p.style.display=show?"block":"none";
+ btn.textContent=btn.textContent.replace(show?"Mostrar":"Ocultar",show?"Ocultar":"Mostrar");
+}
+
+function showSuggestions(){
+ const q=norm($("foodSearch").value.trim()),box=$("suggestions");
+ selectedFood=null;updateSelected();
+ if(!q){box.style.display="none";return}
+ const res=foods.filter(f=>norm(f[0]).includes(q)).slice(0,12);
+ box.innerHTML=res.length?res.map(f=>`<div class="suggestion" onclick="selectFood('${encodeURIComponent(f[0])}')"><div><b>${f[0]}</b><br><small>${f[1]} kcal/100g • ${f[2]}g proteína</small></div><small>Selecionar</small></div>`).join(""):`<div class="suggestion"><small>Nenhum alimento encontrado</small></div>`;
+ box.style.display="block";
+}
+function selectFood(n){
+ const name=decodeURIComponent(n);
+ selectedFood=foods.find(f=>f[0]===name);
+ $("foodSearch").value=name;$("suggestions").style.display="none";updateSelected();
+}
+function updateSelected(){
+ const box=$("selectedBox"),g=Number($("grams").value||0);
+ if(!selectedFood){box.style.display="none";box.innerHTML="";return}
+ const kcal=Math.round(selectedFood[1]*g/100),prot=(selectedFood[2]*g/100).toFixed(1);
+ box.style.display="block";
+ box.innerHTML=`<b>${selectedFood[0]}</b><br>${selectedFood[1]} kcal por 100g${g?` • ${g}g = <b>${kcal} kcal</b> e <b>${prot}g proteína</b>`:""}`;
+}
+function quickAdd(name){selectFood(encodeURIComponent(name));$("grams").focus()}
+
+function addFood(){
+ const grams=Number($("grams").value),date=$("dateInput").value||todayISO(),person=$("summaryPerson").value;
+ if(!selectedFood||!grams){alert("Escolha um alimento da lista e coloque as gramas.");return}
+ const item={id:Date.now(),person,meal:$("meal").value,name:selectedFood[0],grams,kcal:Math.round(selectedFood[1]*grams/100),prot:+(selectedFood[2]*grams/100).toFixed(1)};
+ const data=load(foodKey,"{}"); if(!data[date])data[date]=[]; data[date].push(item); save(foodKey,data);
+ $("foodSearch").value="";$("grams").value="";selectedFood=null;updateSelected();render();
+}
+function delItem(date,id){const d=load(foodKey,"{}");d[date]=(d[date]||[]).filter(i=>i.id!==id);save(foodKey,d);render()}
+function clearDay(){if(!confirm("Limpar alimentos deste dia?"))return;const date=$("dateInput").value||todayISO();const d=load(foodKey,"{}");delete d[date];save(foodKey,d);render()}
+function totals(arr){return arr.reduce((a,i)=>{a.kcal+=i.kcal;a.prot+=i.prot;return a},{kcal:0,prot:0})}
+
+function renderMeals(date,items){
+ const meals=["Café da manhã","Almoço","Café da tarde / Pré-treino","Janta","Outro"];let html="";
+ meals.forEach(m=>{const g=items.filter(i=>i.meal===m); if(!g.length)return; const t=totals(g);
+ html+=`<h3>${m}<span class="pill">${t.kcal} kcal • ${t.prot.toFixed(1)}g prot</span></h3>`;
+ g.forEach(i=>html+=`<div class="item"><div><b>${i.name}</b><br><small>${i.person?i.person+" • ":""}${i.grams}g • ${i.kcal} kcal • ${i.prot}g proteína</small></div><button onclick="delItem('${date}',${i.id})">Excluir</button></div>`);
+ });
+ $("dayMeals").innerHTML=html||"<p class='hint'>Nenhum alimento adicionado hoje.</p>";
+}
+function setHistory(m){historyMode=m;["Day","Week","Month","Year"].forEach(x=>$("tab"+x).classList.remove("active"));$("tab"+m[0].toUpperCase()+m.slice(1)).classList.add("active");render()}
+function dateRange(mode,base){let d=new Date(base+"T00:00:00"),s=new Date(d),e=new Date(d);if(mode==="week"){let day=d.getDay(),diff=day===0?-6:1-day;s.setDate(d.getDate()+diff);e=new Date(s);e.setDate(s.getDate()+6)}else if(mode==="month"){s=new Date(d.getFullYear(),d.getMonth(),1);e=new Date(d.getFullYear(),d.getMonth()+1,0)}else if(mode==="year"){s=new Date(d.getFullYear(),0,1);e=new Date(d.getFullYear(),11,31)}return[s,e]}
+function iso(d){let x=new Date(d);x.setMinutes(x.getMinutes()-x.getTimezoneOffset());return x.toISOString().slice(0,10)}
+function renderHistory(date){
+ const data=load(foodKey,"{}");
+ const hp=$("historyPerson")?$("historyPerson").value:"Gabriel";
+ if(historyMode==="day"){const t=totals((data[date]||[]).filter(i=>i.person===hp));$("historyBox").innerHTML=`<p><b>${hp} - ${date}</b></p><p>${t.kcal} kcal • ${t.prot.toFixed(1)}g proteína</p>`;return}
+ const [s,e]=dateRange(historyMode,date);let rows="",sumK=0,sumP=0,days=0,filled=0;
+ for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){const day=iso(d),t=totals((data[day]||[]).filter(i=>i.person===hp));days++;sumK+=t.kcal;sumP+=t.prot;if(t.kcal){filled++;rows+=`<tr><td>${day}</td><td>${t.kcal}</td><td>${t.prot.toFixed(1)}g</td></tr>`}}
+ $("historyBox").innerHTML=`<p><b>${hp}</b></p><p><b>Média:</b> ${Math.round(sumK/days)} kcal/dia • ${(sumP/days).toFixed(1)}g proteína/dia</p><p class="hint">Dias preenchidos: ${filled} de ${days}</p><table><tr><th>Data</th><th>Kcal</th><th>Proteína</th></tr>${rows||"<tr><td colspan='3'>Sem registros.</td></tr>"}</table>`;
+}
+function saveGoals(){save(goalKey,{kcal:Number($("goalKcal").value),prot:Number($("goalProt").value)});render()}
+function saveWeightSettings(){
+ const person=$("weightPerson")?$("weightPerson").value:"Gabriel";
+ const all=load(weightSettingsKey,"{}");
+ all[person]={
+  startWeight:Number($("startWeightInput").value||0),
+  startWaist:Number($("startWaistInput").value||0),
+  goalWeight:Number($("goalWeightInput").value||0)
+ };
+ if(!all[person].startWeight||!all[person].goalWeight){alert("Preencha pelo menos peso inicial e peso que quer chegar.");return}
+ save(weightSettingsKey,all);
+ renderWeight();
+}
+
+function saveWeight(){
+ const date=$("dateInput").value||todayISO();
+ const person=$("weightPerson")?$("weightPerson").value:"Gabriel";
+ const w=Number($("weightInput").value);
+ const waist=Number($("waistInput").value);
+ if(!w){alert("Digite o peso atual.");return}
+ const d=load(weightKey,"{}");
+ if(!d[person])d[person]={};
+ d[person][date]={weight:w,waist:waist||null};
+ save(weightKey,d);
+ $("weightInput").value="";
+ $("waistInput").value="";
+ renderWeight();
+}
+
+function renderWeight(){
+ const person=$("weightPerson")?$("weightPerson").value:"Gabriel";
+ const allSettings=load(weightSettingsKey,"{}");
+ const settings=allSettings[person]||{startWeight:0,startWaist:0,goalWeight:0};
+ $("startWeightInput").value=settings.startWeight||"";
+ $("startWaistInput").value=settings.startWaist||"";
+ $("goalWeightInput").value=settings.goalWeight||"";
+
+ const allWeights=load(weightKey,"{}");
+ const d=allWeights[person]||{};
+ const keys=Object.keys(d).sort();
+
+ let currentWeight=keys.length?Number(d[keys[keys.length-1]].weight):Number(settings.startWeight||0);
+ let currentWaist=keys.length&&d[keys[keys.length-1]].waist?Number(d[keys[keys.length-1]].waist):Number(settings.startWaist||0);
+ let startWeight=Number(settings.startWeight||currentWeight||0);
+ let startWaist=Number(settings.startWaist||currentWaist||0);
+ let goalWeight=Number(settings.goalWeight||0);
+
+ if(!startWeight&&!keys.length){
+  $("weightBox").innerHTML=`<p class='hint'>Preencha os dados iniciais de ${person}: peso inicial, cintura inicial e o peso que quer chegar. Depois atualize semanalmente.</p>`;
+  return;
+ }
+
+ const lost=startWeight&&currentWeight?(startWeight-currentWeight).toFixed(1):"0.0";
+ const waistLost=startWaist&&currentWaist?(startWaist-currentWaist).toFixed(1):"0.0";
+ const left=goalWeight&&currentWeight?(currentWeight-goalWeight).toFixed(1):"0.0";
+ const percent=(startWeight&&goalWeight&&currentWeight&&startWeight!==goalWeight)?Math.min(100,Math.max(0,((startWeight-currentWeight)/(startWeight-goalWeight))*100)):0;
+
+ let rows=keys.map(k=>{
+  const item=d[k];
+  return `<tr><td>${k}</td><td>${item.weight} kg</td><td>${item.waist?item.waist+" cm":"-"}</td></tr>`;
+ }).join("");
+
+ $("weightBox").innerHTML=`
+  <p><b>${person}</b></p>
+  <div class="summaryGrid">
+    <div class="summaryBox"><small>Peso inicial</small><b>${startWeight||"-"} kg</b></div>
+    <div class="summaryBox"><small>Peso atual</small><b>${currentWeight||"-"} kg</b></div>
+    <div class="summaryBox"><small>Meta de peso</small><b>${goalWeight||"-"} kg</b></div>
+    <div class="summaryBox"><small>Quanto falta</small><b>${left} kg</b></div>
+    <div class="summaryBox"><small>Peso perdido</small><b>${lost} kg</b></div>
+    <div class="summaryBox"><small>Cintura reduzida</small><b>${waistLost} cm</b></div>
+  </div>
+  <small>Progresso até a meta: ${percent.toFixed(0)}%</small>
+  <div class="progress"><div class="bar" style="width:${percent}%"></div></div>
+  <br>
+  <table><tr><th>Data</th><th>Peso</th><th>Cintura</th></tr>${rows||"<tr><td colspan='3'>Nenhum progresso semanal registrado.</td></tr>"}</table>
+ `;
+}
+function renderPeople(date,items){
+ const gabriel=totals(items.filter(i=>i.person==="Gabriel"));
+ const raissa=totals(items.filter(i=>i.person==="Raissa"));
+ if($("gabrielKcal")){
+  $("gabrielKcal").textContent=gabriel.kcal;
+  $("gabrielProt").textContent=gabriel.prot.toFixed(1);
+  $("raissaKcal").textContent=raissa.kcal;
+  $("raissaProt").textContent=raissa.prot.toFixed(1);
+ }
+}
+
+function render(){
+ const date=$("dateInput").value||todayISO(),data=load(foodKey,"{}"),items=data[date]||[],summaryPerson=$("summaryPerson")?$("summaryPerson").value:"Gabriel",summaryItems=items.filter(i=>i.person===summaryPerson),t=totals(summaryItems),g=goals();
+ $("goalKcal").value=g.kcal;$("goalProt").value=g.prot;$("goalKcalView").textContent=g.kcal;$("goalProtView").textContent=g.prot;
+ if($("topPersonName1")){$("topPersonName1").textContent=summaryPerson;$("topPersonName2").textContent=summaryPerson;}
+ if($("activePersonName")){$("activePersonName").textContent=summaryPerson;}
+ if($("weightActivePersonName")){$("weightActivePersonName").textContent=summaryPerson;}
+ if($("weightPerson")){$("weightPerson").value=summaryPerson;}
+ if($("historyPerson")){$("historyPerson").value=summaryPerson;}
+ $("todayKcal").textContent=t.kcal;$("todayProt").textContent=t.prot.toFixed(1);$("leftKcal").textContent=g.kcal-t.kcal;
+ $("kcalBar").style.width=Math.min(100,t.kcal/g.kcal*100)+"%";$("protBar").style.width=Math.min(100,t.prot/g.prot*100)+"%";
+ renderMeals(date,summaryItems);renderPeople(date,items);renderHistory(date);renderWeight();
+}
+const senhaLembrada = localStorage.getItem("projetoDietaSenhaLembrada");
+if(senhaLembrada){
+ $("loginPassword").value = senhaLembrada;
+ $("rememberPassword").checked = true;
+}
+$("loginPassword").addEventListener("keydown",e=>{if(e.key==="Enter")loginUser();});
+$("dateInput").value=todayISO();
+$("dateInput").addEventListener("change",render);
+$("foodSearch").addEventListener("input",showSuggestions);
+$("grams").addEventListener("input",updateSelected);
+document.addEventListener("click",e=>{if(!e.target.closest(".search-wrap"))$("suggestions").style.display="none"});
+if(auth.currentUser){ render(); }
+</script>
+</body>
+</html>
