@@ -13,35 +13,20 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
         .sidebar-transition { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        /* Animação de Carregamento da Roda */
+        @keyframes strokeAnim {
+            from { stroke-dashoffset: 251.2; }
+            to { stroke-dashoffset: var(--target-offset); }
+        }
+        .animate-wheel {
+            animation: strokeAnim 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
     </style>
 </head>
 <body class="bg-stone-50 text-stone-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
-    <div id="login-screen" class="fixed inset-0 bg-stone-900 z-[100] flex items-center justify-center p-4 transition-all duration-500">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full border border-stone-200 text-center space-y-6">
-            <div>
-                <h1 class="text-3xl font-extrabold text-stone-900 tracking-tight flex items-center justify-center gap-2">
-                    <i data-lucide="dumbbell" class="text-stone-800"></i> PROJETO DIETA
-                </h1>
-                <p class="text-xs text-stone-500 font-medium tracking-widest uppercase mt-2">Foco • Treino • Resultados</p>
-            </div>
-            <div class="space-y-4 text-left">
-                <div>
-                    <label class="block text-xs font-bold text-stone-600 uppercase mb-2">Sua Senha de Acesso</label>
-                    <input type="password" id="login-password" value="123456" class="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 transition-all bg-stone-50">
-                </div>
-                <div class="flex items-center justify-between text-sm">
-                    <label class="flex items-center gap-2 cursor-pointer text-stone-600">
-                        <input type="checkbox" id="remember-me" checked class="rounded accent-stone-900"> Lembrar-me
-                    </label>
-                </div>
-            </div>
-            <button onclick="handleLogin()" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all transform active:scale-98">
-                Entrar no Aplicativo
-            </button>
-        </div>
-    </div>
-
+    <!-- SIDEBAR MINIMALISTA EXPANSÍVEL -->
     <aside id="sidebar" class="hidden md:flex flex-col w-20 hover:w-64 sidebar-transition bg-white border-r border-stone-200 p-4 justify-between group z-50 h-full">
         <div class="space-y-8">
             <div class="flex items-center gap-3 px-2 overflow-hidden h-12">
@@ -57,528 +42,480 @@
             <nav class="space-y-2">
                 <button onclick="switchTab('dashboard')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
                     <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Início / Dashboard</span>
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Dashboard</span>
                 </button>
                 <button onclick="switchTab('diario')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
                     <i data-lucide="utensils-crossed" class="w-5 h-5 flex-shrink-0"></i>
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Diário Alimentar</span>
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Refeições do Dia</span>
                 </button>
-                <button onclick="switchTab('historico')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
-                    <i data-lucide="calendar" class="w-5 h-5 flex-shrink-0"></i>
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Histórico & Calendário</span>
+                <button onclick="switchTab('pessoas')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
+                    <i data-lucide="users" class="w-5 h-5 flex-shrink-0"></i>
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Resumo Pessoas</span>
                 </button>
                 <button onclick="switchTab('peso')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
                     <i data-lucide="scale" class="w-5 h-5 flex-shrink-0"></i>
-                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Controle de Peso</span>
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Pesos e Medidas</span>
+                </button>
+                <button onclick="switchTab('config')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
+                    <i data-lucide="settings" class="w-5 h-5 flex-shrink-0"></i>
+                    <span class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 font-semibold text-sm whitespace-nowrap">Configurações</span>
                 </button>
             </nav>
         </div>
 
         <div class="flex items-center gap-3 pt-4 border-t border-stone-100 overflow-hidden">
-            <div class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center font-bold text-stone-700 flex-shrink-0" id="avatar-lateral">G</div>
+            <div class="w-10 h-10 rounded-full bg-stone-900 text-white flex items-center justify-center font-bold flex-shrink-0" id="avatar-lateral">G</div>
             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
                 <p class="text-xs font-bold text-stone-800" id="nome-lateral">Gabriel</p>
-                <button onclick="handleLogout()" class="text-[11px] text-red-500 font-semibold hover:underline block">Desconectar</button>
             </div>
         </div>
     </aside>
 
+    <!-- MAIN AREA -->
     <div class="flex-1 flex flex-col h-full overflow-hidden pb-16 md:pb-0">
         
+        <!-- HEADER -->
         <header class="bg-white border-b border-stone-200 py-4 px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
             <div>
-                <h2 id="current-tab-title" class="text-xl md:text-2xl font-black text-stone-900 tracking-tight">Dashboard Geral</h2>
-                <p class="text-xs text-stone-500 font-medium">Balanço do seu dia atual.</p>
+                <h2 id="current-tab-title" class="text-xl md:text-2xl font-black text-stone-900 tracking-tight">Dashboard</h2>
+                <p class="text-xs text-stone-500 font-medium">Controle de métricas ativas.</p>
             </div>
             
+            <!-- SELETOR DE PERFIL MESTRE -->
             <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200 w-full sm:w-auto">
-                <button onclick="changeProfile('Gabriel')" id="btn-prof-Gabriel" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm">
-                    Gabriel
-                </button>
-                <button onclick="changeProfile('Raissa')" id="btn-prof-Raissa" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900">
-                    Raíssa
-                </button>
+                <button onclick="changeProfile('Gabriel')" id="btn-prof-Gabriel" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm">Gabriel</button>
+                <button onclick="changeProfile('Raissa')" id="btn-prof-Raissa" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900">Raíssa</button>
             </div>
         </header>
 
+        <!-- CONTAINER DOS CONTEÚDOS -->
         <main class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
 
+            <!-- TAB 1: DASHBOARD (RODA INTERATIVA) -->
             <section id="tab-dashboard" class="space-y-6">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col items-center justify-center relative text-center">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-4">Roda de Calorias</h3>
-                        <div class="relative w-40 h-40 flex items-center justify-center">
+                <div class="flex flex-col items-center justify-center max-w-md mx-auto">
+                    <!-- CONTAINER DA RODA -->
+                    <div class="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm flex flex-col items-center justify-center w-full relative text-center">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-6">Consumo Diário</h3>
+                        
+                        <div class="relative w-48 h-48 flex items-center justify-center">
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                <defs>
+                                    <linearGradient id="wheelGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stop-color="#22c55e" />
+                                        <stop offset="100%" stop-color="#16a34a" />
+                                    </linearGradient>
+                                </defs>
                                 <circle cx="50" cy="50" r="40" stroke="#f3f4f6" stroke-width="8" fill="transparent"/>
-                                <circle id="calories-progress-circle" cx="50" cy="50" r="40" stroke="#1c1917" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
+                                <circle id="calories-progress-circle" cx="50" cy="50" r="40" stroke="url(#wheelGradient)" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="transition-all duration-500"/>
                             </svg>
                             <div class="absolute text-center">
-                                <span id="dash-consumed" class="text-2xl font-black text-stone-900 block">0</span>
-                                <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Consumidas</span>
+                                <span id="dash-consumed" class="text-3xl font-black text-stone-900 block">0</span>
+                                <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">kcal ingeridas</span>
                             </div>
                         </div>
-                        <div class="mt-4 text-xs font-medium text-stone-500">
-                            Meta diária definida: <span class="font-bold text-stone-900">2.000 kcal</span>
+
+                        <div class="mt-4 text-xs font-semibold text-stone-500">
+                            Meta: <span id="dash-meta-display" class="text-stone-900">--</span> kcal
                         </div>
                     </div>
 
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm grid grid-cols-2 gap-4 items-center">
-                        <div class="space-y-1">
-                            <span class="text-xs uppercase font-bold text-stone-400">Peso Atual</span>
-                            <div class="text-3xl font-black text-stone-900" id="dash-peso-atual">-- <span class="text-sm font-normal text-stone-400">kg</span></div>
+                    <!-- RETÂNGULO ARREDONDADO INFERIOR -->
+                    <div class="w-full bg-stone-900 text-white p-5 rounded-2xl shadow-md mt-4 grid grid-cols-2 gap-4 text-center">
+                        <div class="border-r border-stone-800">
+                            <span class="text-[10px] text-stone-400 uppercase font-bold tracking-wider block mb-1">Proteína Adquirida</span>
+                            <span id="dash-protein-summary" class="text-lg font-bold text-white">0g / --</span>
                         </div>
-                        <div class="space-y-1 border-l border-stone-100 pl-4">
-                            <span class="text-xs uppercase font-bold text-stone-400">Meta Alvo</span>
-                            <div class="text-3xl font-black text-stone-900" id="dash-peso-meta">-- <span class="text-sm font-normal text-stone-400">kg</span></div>
-                        </div>
-                        <div class="col-span-2 pt-4 border-t border-stone-100 grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-stone-50 p-2 rounded-xl">
-                                <span class="text-[10px] text-stone-400 uppercase font-bold block">Carboidratos</span>
-                                <span class="text-xs font-bold text-stone-800" id="dash-carb">0g</span>
-                            </div>
-                            <div class="bg-stone-50 p-2 rounded-xl">
-                                <span class="text-[10px] text-stone-400 uppercase font-bold block">Proteínas</span>
-                                <span class="text-xs font-bold text-stone-800" id="dash-prot">0g</span>
-                            </div>
-                            <div class="bg-stone-50 p-2 rounded-xl">
-                                <span class="text-[10px] text-stone-400 uppercase font-bold block">Gorduras</span>
-                                <span class="text-xs font-bold text-stone-800" id="dash-gord">0g</span>
-                            </div>
+                        <div>
+                            <span class="text-[10px] text-stone-400 uppercase font-bold tracking-wider block mb-1">Calorias Restantes</span>
+                            <span id="dash-calories-left" class="text-lg font-bold text-white">-- kcal</span>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <!-- TAB 2: REFEIÇÕES DO DIA -->
             <section id="tab-diario" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Montar Refeição</h3>
-                        
+                    <!-- ADICIONADOR DE REFEIÇÃO -->
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 h-fit">
+                        <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento</h3>
                         <div>
-                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Buscar Alimento</label>
-                            <div class="relative">
-                                <input type="text" id="food-input" onkeyup="searchFood()" placeholder="Buscar do banco..." class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
-                                <div id="food-dropdown" class="absolute left-0 right-0 bg-white border border-stone-200 mt-1 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden text-sm"></div>
-                            </div>
+                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Alimento</label>
+                            <input type="text" id="food-input" placeholder="Ex: Frango Grelhado, Ovo..." class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Quantidade (gramas)</label>
-                            <input type="number" id="food-weight" value="100" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
-                        </div>
-
-                        <button onclick="addFoodToCurrentList()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-900 text-xs font-bold py-2 rounded-xl transition-all">
-                            + Adicionar à Lista
-                        </button>
-
-                        <div class="border-t pt-3 space-y-2">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">Itens Selecionados</span>
-                            <div id="temp-food-list" class="space-y-1 text-xs text-stone-600 max-h-24 overflow-y-auto custom-scrollbar">
-                                <p class="text-stone-400 italic">Nenhum item adicionado ainda.</p>
-                            </div>
-                        </div>
-
-                        <div class="border-t pt-3 space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Escolha o Momento</label>
-                                <select id="meal-type-select" class="w-full p-2 text-xs border rounded-xl bg-white focus:outline-none">
-                                    <option value="Café da Manhã">Café da Manhã</option>
-                                    <option value="Almoço">Almoço</option>
-                                    <option value="Pré-Treino">Pré-Treino</option>
-                                    <option value="Jantar">Jantar</option>
-                                    <option value="Ceia">Ceia</option>
-                                </select>
+                                <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Porção (g)</label>
+                                <input type="number" id="food-weight" value="100" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none">
                             </div>
-                            <button onclick="saveCompleteMeal()" class="w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold py-2.5 rounded-xl shadow transition-all">
-                                Salvar Refeição Completa
-                            </button>
+                            <div>
+                                <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Calorias (100g)</label>
+                                <input type="number" id="food-cal-base" value="150" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none">
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="lg:col-span-2 space-y-4">
-                        <h3 class="font-bold text-stone-900 text-sm">Refeições de Hoje</h3>
-                        <div id="meals-timeline" class="space-y-3"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-historico" class="space-y-6 hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-stone-900 text-base">Calendário Interativo</h3>
-                                <span id="selected-day-label" class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-1 rounded-md">Dia Selecionado: 1</span>
-                            </div>
-                            <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold text-stone-400 uppercase border-b pb-2 mb-2">
-                                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                            </div>
-                            <div class="grid grid-cols-7 gap-2 text-center" id="calendar-days-box"></div>
+                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Proteínas (100g)</label>
+                            <input type="number" id="food-prot-base" value="20" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none">
                         </div>
+                        <button onclick="addFoodItem()" class="w-full bg-stone-100 hover:bg-stone-200 text-stone-900 text-xs font-bold py-2 rounded-xl">Incluir na Lista</button>
+                        
+                        <div id="temp-list-box" class="border-t pt-2 space-y-1 text-xs text-stone-600"></div>
 
-                        <div class="border-t border-stone-100 pt-4 mt-6">
-                            <p class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Marcar dia selecionado como:</p>
-                            <div class="grid grid-cols-3 gap-2">
-                                <button onclick="markSelectedDay('azul')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Dieta</button>
-                                <button onclick="markSelectedDay('verde')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Treino</button>
-                                <button onclick="markSelectedDay('laranja')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Dieta + Treino</button>
-                            </div>
+                        <div class="border-t pt-3">
+                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Salvar na Refeição</label>
+                            <select id="meal-moment" class="w-full p-2 text-xs border rounded-xl bg-white mb-2 focus:outline-none">
+                                <option value="Café da Manhã">Café da Manhã</option>
+                                <option value="Almoço">Almoço</option>
+                                <option value="Pré-Treino">Pré-Treino</option>
+                                <option value="Jantar">Jantar</option>
+                                <option value="Ceia">Ceia</option>
+                            </select>
+                            <button onclick="commitCompleteMeal()" class="w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold py-2.5 rounded-xl">Salvar Refeição</button>
                         </div>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
-                        <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2">
-                            <i data-lucide="scroll-text" class="w-4 h-4"></i> Itens do Histórico
-                        </h3>
-                        <div id="history-items-list" class="space-y-4 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
-                            </div>
+                    <!-- CAIXAS QUADRADAS ARREDONDADAS DAS REFEIÇÕES -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <h3 class="font-bold text-stone-900 text-sm">Painel de Alimentos Ingeridos</h3>
+                        <div id="meals-squares-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Injetado dinamicamente em formato quadrado arredondado -->
+                        </div>
                     </div>
-
                 </div>
             </section>
 
+            <!-- TAB 3: RESUMO PESSOAS -->
+            <section id="tab-pessoas" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- CARD GABRIEL -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-stone-200 shadow-sm space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-stone-900 text-white flex items-center justify-center font-bold">G</div>
+                            <div>
+                                <h4 class="font-black text-stone-900 text-lg">Gabriel</h4>
+                                <p class="text-[10px] font-bold text-stone-400 uppercase">Resumo de Hoje</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center pt-2">
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Consumido</span>
+                                <span id="res-cal-Gabriel" class="text-sm font-extrabold text-stone-800">0 kcal</span>
+                            </div>
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Faltam</span>
+                                <span id="res-left-Gabriel" class="text-sm font-extrabold text-stone-800">0 kcal</span>
+                            </div>
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Refeições</span>
+                                <span id="res-count-Gabriel" class="text-sm font-extrabold text-stone-800">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD RAISSA -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-stone-200 shadow-sm space-y-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-stone-400 text-white flex items-center justify-center font-bold">R</div>
+                            <div>
+                                <h4 class="font-black text-stone-900 text-lg">Raíssa</h4>
+                                <p class="text-[10px] font-bold text-stone-400 uppercase">Resumo de Hoje</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2 text-center pt-2">
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Consumido</span>
+                                <span id="res-cal-Raissa" class="text-sm font-extrabold text-stone-800">0 kcal</span>
+                            </div>
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Faltam</span>
+                                <span id="res-left-Raissa" class="text-sm font-extrabold text-stone-800">0 kcal</span>
+                            </div>
+                            <div class="bg-stone-50 p-3 rounded-xl">
+                                <span class="text-[9px] text-stone-400 uppercase font-bold block">Refeições</span>
+                                <span id="res-count-Raissa" class="text-sm font-extrabold text-stone-800">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: PESOS E MEDIDAS (GRÁFICO INTERATIVO CLEAN) -->
             <section id="tab-peso" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 h-fit">
-                        <h3 class="font-bold text-stone-900 text-sm">Registrar Métrica</h3>
-                        <div>
-                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Peso Corporal (kg)</label>
-                            <input type="number" step="0.1" id="weight-track-input" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm grid grid-cols-3 gap-4 lg:col-span-3">
+                        <div class="text-center bg-stone-50 p-4 rounded-xl">
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block">Peso Inicial</span>
+                            <span id="biometrics-peso-ini" class="text-xl font-black text-stone-900">--</span>
                         </div>
-                        <button onclick="addWeightRecord()" class="w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
-                            Salvar Peso
-                        </button>
+                        <div class="text-center bg-stone-50 p-4 rounded-xl">
+                            <span class="text-[10px] uppercase font-bold text-stone-400 block">Cintura Inicial</span>
+                            <span id="biometrics-cintura" class="text-xl font-black text-stone-900">--</span>
+                        </div>
+                        <div class="text-center bg-stone-900 text-white p-4 rounded-xl">
+                            <span class="text-[10px] uppercase font-bold text-stone-300 block">Meta Alvo</span>
+                            <span id="biometrics-meta" class="text-xl font-black">--</span>
+                        </div>
                     </div>
+
+                    <!-- GRÁFICO INTERATIVO DE MEDIDAS -->
+                    <div class="lg:col-span-3 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                        <h4 class="font-bold text-stone-900 text-sm">Histórico Simplificado de Peso</h4>
+                        <div class="h-32 flex items-end justify-between gap-4 pt-4 border-b border-stone-100">
+                            <div class="w-full bg-stone-200 h-[100%] rounded-t-lg relative group flex items-end justify-center"><span class="text-[10px] font-bold mb-1">Mês 1</span></div>
+                            <div class="w-full bg-stone-300 h-[85%] rounded-t-lg relative group flex items-end justify-center"><span class="text-[10px] font-bold mb-1">Mês 2</span></div>
+                            <div class="w-full bg-stone-900 h-[70%] rounded-t-lg relative group flex items-end justify-center"><span class="text-white text-[10px] font-bold mb-1">Atual</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: CONFIGURAÇÕES (MOGULO DIÁRIO DE METAS) -->
+            <section id="tab-config" class="space-y-6 hidden">
+                <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm max-w-md mx-auto space-y-4">
+                    <h3 class="font-bold text-stone-900 text-base">Definição de Diretrizes Diárias</h3>
+                    <p class="text-xs text-stone-400">Estipule os valores abaixo. Eles guiarão os cálculos da roda de calorias e macros de cada pessoa.</p>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Meta de Calorias Diárias (kcal)</label>
+                        <input type="number" id="config-target-calories" class="w-full px-3 py-2 border rounded-xl focus:ring-1 focus:ring-stone-900 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-stone-600 uppercase mb-1">Meta de Proteínas Diárias (g)</label>
+                        <input type="number" id="config-target-protein" class="w-full px-3 py-2 border rounded-xl focus:ring-1 focus:ring-stone-900 outline-none">
+                    </div>
+                    
+                    <button onclick="saveConfigurations()" class="w-full bg-stone-900 hover:bg-stone-800 text-white font-bold py-3 rounded-xl text-xs transition-all">
+                        Atualizar Diretrizes do Perfil
+                    </button>
                 </div>
             </section>
 
         </main>
 
+        <!-- BOTTOM NAV PARA MÓVEL -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 flex justify-around items-center p-2 z-50">
             <button onclick="switchTab('dashboard')" class="flex flex-col items-center p-1 text-stone-900"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[9px] font-bold">Início</span></button>
-            <button onclick="switchTab('diario')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="utensils-crossed" class="w-5 h-5"></i><span class="text-[9px] font-bold">Diário</span></button>
-            <button onclick="switchTab('historico')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="calendar" class="w-5 h-5"></i><span class="text-[9px] font-bold">Histórico</span></button>
-            <button onclick="switchTab('peso')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="scale" class="w-5 h-5"></i><span class="text-[9px] font-bold">Peso</span></button>
+            <button onclick="switchTab('diario')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="utensils-crossed" class="w-5 h-5"></i><span class="text-[9px] font-bold">Refeições</span></button>
+            <button onclick="switchTab('pessoas')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="users" class="w-5 h-5"></i><span class="text-[9px] font-bold">Pessoas</span></button>
+            <button onclick="switchTab('peso')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="scale" class="w-5 h-5"></i><span class="text-[9px] font-bold">Medidas</span></button>
         </nav>
     </div>
 
     <script>
-        const bancoAlimentos = [
-            { nome: "Ovo Cozido", cal: 155, prot: 13, carb: 1, gord: 11 },
-            { nome: "Frango Grelhado", cal: 165, prot: 31, carb: 0, gord: 3.6 },
-            { nome: "Arroz Branco Cozido", cal: 130, prot: 2.5, carb: 28, gord: 0.2 },
-            { nome: "Feijão Carioca", cal: 76, prot: 4.8, carb: 14, gord: 0.5 },
-            { nome: "Cenoura Crua", cal: 41, prot: 0.9, carb: 10, gord: 0.2 },
-            { nome: "Pão Integral", cal: 247, prot: 9.4, carb: 49, gord: 2.7 },
-            { nome: "Leite Desnatado", cal: 35, prot: 3.4, carb: 4.7, gord: 0.1 },
-            { nome: "Banana Prata", cal: 89, prot: 1.1, carb: 23, gord: 0.3 },
-            { nome: "Maçã", cal: 52, prot: 0.3, carb: 14, gord: 0.2 },
-            { nome: "Batata Doce Cozida", cal: 86, prot: 1.6, carb: 20, gord: 0.1 }
-        ];
-
-        // Estado global dividido por perfil
         let currentProfile = 'Gabriel';
-        let selectedDay = 1;
-
-        let appData = JSON.parse(localStorage.getItem('projetoDietaData')) || {
+        
+        let appData = JSON.parse(localStorage.getItem('projetoDietaPremium')) || {
             Gabriel: {
-                meals: [{ tipo: "Café da Manhã", totalCal: 320, totalCarb: 40, totalProt: 15, totalGord: 6, itensArray: [{nome: "Pão Integral", peso: 50, cal: 120}, {nome: "Ovo Cozido", peso: 100, cal: 200}] }],
-                calendarColors: {},
-                pesoAtual: 82.0,
-                pesoMeta: 75.0
+                targetCalories: 2000,
+                targetProtein: 160,
+                pesoInicial: 84.5,
+                cinturaInicial: 88,
+                pesoMeta: 76.0,
+                meals: []
             },
             Raissa: {
-                meals: [{ tipo: "Almoço", totalCal: 420, totalCarb: 30, totalProt: 35, totalGord: 8, itensArray: [{nome: "Frango Grelhado", peso: 150, cal: 247}, {nome: "Arroz Branco Cozido", peso: 100, cal: 130}] }],
-                calendarColors: {},
-                pesoAtual: 64.0,
-                pesoMeta: 58.0
+                targetCalories: 1600,
+                targetProtein: 120,
+                pesoInicial: 62.0,
+                cinturaInicial: 69,
+                pesoMeta: 55.0,
+                meals: []
             }
         };
 
-        let tempMealItems = [];
+        let tempFoodList = [];
 
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            refreshApp();
-            if(localStorage.getItem('isLoggedIn') === 'true') {
-                document.getElementById('login-screen').classList.add('hidden');
-            }
+            refreshAll();
         });
 
-        function handleLogin() {
-            if (document.getElementById('login-password').value !== "") {
-                if(document.getElementById('remember-me').checked) localStorage.setItem('isLoggedIn', 'true');
-                document.getElementById('login-screen').classList.add('hidden');
-            }
-        }
-
-        function handleLogout() {
-            localStorage.removeItem('isLoggedIn');
-            document.getElementById('login-screen').classList.remove('hidden');
-        }
-
-        // Troca de perfil (Gabriel / Raíssa)
-        function changeProfile(profileName) {
-            currentProfile = profileName;
-            
+        function changeProfile(pName) {
+            currentProfile = pName;
             ['Gabriel', 'Raissa'].forEach(p => {
                 const btn = document.getElementById(`btn-prof-${p}`);
-                if(p === profileName) {
-                    btn.className = "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm";
-                } else {
-                    btn.className = "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900";
-                }
+                btn.className = p === pName ? 
+                    "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm" : 
+                    "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900";
             });
-
-            document.getElementById('avatar-lateral').innerText = profileName[0];
-            document.getElementById('nome-lateral').innerText = profileName === 'Raissa' ? 'Raíssa' : 'Gabriel';
-            
-            refreshApp();
+            document.getElementById('avatar-lateral').innerText = pName[0];
+            document.getElementById('nome-lateral').innerText = pName === 'Raissa' ? 'Raíssa' : 'Gabriel';
+            refreshAll();
         }
 
-        function refreshApp() {
-            renderTimeline();
-            renderHistoryList();
-            renderCleanCalendar();
-            updateCaloriesWheel();
+        function refreshAll() {
+            updateDashboardWheel();
+            renderMealsSquares();
+            updatePessoasTab();
+            updateBiometrics();
+            
+            // Sincroniza campos do menu de configuração
+            document.getElementById('config-target-calories').value = appData[currentProfile].targetCalories;
+            document.getElementById('config-target-protein').value = appData[currentProfile].targetProtein;
         }
 
         function switchTab(tabId) {
-            ['dashboard', 'diario', 'historico', 'peso'].forEach(t => {
+            ['dashboard', 'diario', 'pessoas', 'peso', 'config'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
             });
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             
             const titles = {
-                dashboard: 'Dashboard Geral',
-                diario: 'Diário Alimentar',
-                historico: 'Histórico & Calendário',
-                peso: 'Controle de Peso'
+                dashboard: 'Dashboard',
+                diario: 'Refeições do Dia',
+                pessoas: 'Resumo das Pessoas',
+                peso: 'Pesos e Medidas',
+                config: 'Configurações'
             };
             document.getElementById('current-tab-title').innerText = titles[tabId];
-        }
-
-        function searchFood() {
-            const query = document.getElementById('food-input').value.toLowerCase();
-            const dropdown = document.getElementById('food-dropdown');
-            dropdown.innerHTML = '';
-            if(!query) { dropdown.classList.add('hidden'); return; }
-
-            const filtered = bancoAlimentos.filter(f => f.nome.toLowerCase().includes(query));
-            if(filtered.length > 0) {
-                dropdown.classList.remove('hidden');
-                filtered.forEach(item => {
-                    const row = document.createElement('div');
-                    row.className = "p-2.5 hover:bg-stone-100 cursor-pointer border-b last:border-0";
-                    row.innerText = `${item.nome}`;
-                    row.onclick = () => {
-                        document.getElementById('food-input').value = item.nome;
-                        dropdown.classList.add('hidden');
-                    };
-                    dropdown.appendChild(row);
-                });
-            } else {
-                dropdown.classList.add('hidden');
+            
+            if(tabId === 'dashboard') {
+                updateDashboardWheel(); // Dispara animação ao entrar na aba
             }
         }
 
-        function addFoodToCurrentList() {
-            const name = document.getElementById('food-input').value;
+        function saveConfigurations() {
+            const cal = parseInt(document.getElementById('config-target-calories').value);
+            const prot = parseInt(document.getElementById('config-target-protein').value);
+            
+            if(cal > 0 && prot > 0) {
+                appData[currentProfile].targetCalories = cal;
+                appData[currentProfile].targetProtein = prot;
+                saveData();
+                refreshAll();
+                alert("Metas atualizadas com sucesso!");
+            }
+        }
+
+        function addFoodItem() {
+            const name = document.getElementById('food-input').value || "Alimento Comum";
             const weight = parseFloat(document.getElementById('food-weight').value);
-            const foodObj = bancoAlimentos.find(f => f.nome === name);
+            const baseCal = parseFloat(document.getElementById('food-cal-base').value);
+            const baseProt = parseFloat(document.getElementById('food-prot-base').value);
 
-            if(foodObj && weight > 0) {
-                const calculatedCal = Math.round((foodObj.cal * weight) / 100);
-                const calculatedCarb = Math.round((foodObj.carb * weight) / 100);
-                const calculatedProt = Math.round((foodObj.prot * weight) / 100);
-                const calculatedGord = Math.round((foodObj.gord * weight) / 100);
+            if(weight > 0) {
+                const finalCal = Math.round((baseCal * weight) / 100);
+                const finalProt = Math.round((baseProt * weight) / 100);
 
-                tempMealItems.push({ 
-                    nome: name, 
-                    peso: weight, 
-                    cal: calculatedCal,
-                    carb: calculatedCarb,
-                    prot: calculatedProt,
-                    gord: calculatedGord
-                });
+                tempFoodList.push({ nome: name, peso: weight, cal: finalCal, prot: finalProt });
                 
-                const listContainer = document.getElementById('temp-food-list');
-                if(tempMealItems.length === 1) listContainer.innerHTML = '';
-                
-                const itemEl = document.createElement('div');
-                itemEl.className = "flex justify-between items-center bg-stone-50 p-1.5 rounded";
-                itemEl.innerHTML = `<span>${name} (${weight}g)</span><span class="font-bold text-stone-900">${calculatedCal} kcal</span>`;
-                listContainer.appendChild(itemEl);
-
+                const box = document.getElementById('temp-list-box');
+                box.innerHTML += `<div>• ${name} (${weight}g) - ${finalCal}kcal</div>`;
                 document.getElementById('food-input').value = '';
             }
         }
 
-        function saveCompleteMeal() {
-            if(tempMealItems.length === 0) return;
+        function commitCompleteMeal() {
+            if(tempFoodList.length === 0) return;
 
-            const type = document.getElementById('meal-type-select').value;
-            const totalCal = tempMealItems.reduce((acc, curr) => acc + curr.cal, 0);
-            const totalCarb = tempMealItems.reduce((acc, curr) => acc + curr.carb, 0);
-            const totalProt = tempMealItems.reduce((acc, curr) => acc + curr.prot, 0);
-            const totalGord = tempMealItems.reduce((acc, curr) => acc + curr.gord, 0);
+            const moment = document.getElementById('meal-moment').value;
+            const mealCal = tempFoodList.reduce((a, b) => a + b.cal, 0);
+            const mealProt = tempFoodList.reduce((a, b) => a + b.prot, 0);
+            
+            // Une os nomes dos alimentos estruturados em linhas para exibição limpa
+            const description = tempFoodList.map(f => `${f.nome} (${f.peso}g)`).join('<br>');
 
-            appData[currentProfile].meals.push({ 
-                tipo: type, 
-                totalCal: totalCal,
-                totalCarb: totalCarb,
-                totalProt: totalProt,
-                totalGord: totalGord,
-                itensArray: [...tempMealItems] 
+            appData[currentProfile].meals.push({
+                momento: moment,
+                calorias: mealCal,
+                proteinas: mealProt,
+                itensHtml: description
             });
-            
-            saveToLocalStorage();
 
-            tempMealItems = [];
-            document.getElementById('temp-food-list').innerHTML = '<p class="text-stone-400 italic">Nenhum item adicionado ainda.</p>';
-            
-            refreshApp();
+            saveData();
+            tempFoodList = [];
+            document.getElementById('temp-list-box').innerHTML = '';
+            refreshAll();
         }
 
-        // Renderização limpa do Diário (Apenas Resumos)
-        function renderTimeline() {
-            const timeline = document.getElementById('meals-timeline');
-            timeline.innerHTML = '';
+        function renderMealsSquares() {
+            const container = document.getElementById('meals-squares-container');
+            container.innerHTML = '';
             const meals = appData[currentProfile].meals;
 
             if(meals.length === 0) {
-                timeline.innerHTML = '<p class="text-xs text-stone-400 italic">Nenhuma refeição salva hoje.</p>';
+                container.innerHTML = '<p class="text-xs text-stone-400 italic">Nenhuma refeição registrada para o usuário atual.</p>';
                 return;
             }
 
-            meals.forEach((meal, index) => {
-                const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex justify-between items-center";
-                card.innerHTML = `
+            meals.forEach((m, idx) => {
+                const sq = document.createElement('div');
+                sq.className = "bg-white p-5 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between relative h-40";
+                sq.innerHTML = `
                     <div>
-                        <span class="text-xs font-black text-stone-900 uppercase block">${meal.tipo}</span>
-                        <p class="text-[11px] text-stone-400 font-medium">Macros computados no painel geral</p>
+                        <span class="text-xs font-black text-stone-900 bg-stone-100 px-2 py-1 rounded uppercase tracking-wide">${m.momento}</span>
+                        <p class="text-[11px] text-stone-500 mt-3 leading-relaxed">${m.itensHtml}</p>
                     </div>
-                    <div class="text-right flex items-center gap-3">
-                        <span class="text-sm font-black text-stone-900">${meal.totalCal} kcal</span>
-                        <button onclick="deleteMeal(${index})" class="text-stone-300 hover:text-stone-900 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    <div class="flex justify-between items-center border-t pt-2 mt-2">
+                        <span class="text-xs font-bold text-stone-900">${m.calorias} kcal | ${m.proteinas}g P</span>
+                        <button onclick="deleteMeal(${idx})" class="text-stone-300 hover:text-red-500 transition-colors"><i data-lucide="trash" class="w-3.5 h-3.5"></i></button>
                     </div>
                 `;
-                timeline.appendChild(card);
+                container.appendChild(sq);
             });
             lucide.createIcons();
         }
 
-        // Nova Renderização do Histórico (Um item embaixo do outro)
-        function renderHistoryList() {
-            const historyContainer = document.getElementById('history-items-list');
-            historyContainer.innerHTML = '';
-            const meals = appData[currentProfile].meals;
+        function deleteMeal(idx) {
+            appData[currentProfile].meals.splice(idx, 1);
+            saveData();
+            refreshAll();
+        }
 
-            if(meals.length === 0) {
-                historyContainer.innerHTML = '<p class="text-xs text-stone-400 italic">Nenhum alimento no histórico hoje.</p>';
-                return;
+        function updateDashboardWheel() {
+            const profile = appData[currentProfile];
+            const consumed = profile.meals.reduce((a, b) => a + b.calorias, 0);
+            const protein = profile.meals.reduce((a, b) => a + b.proteinas, 0);
+            const target = profile.targetCalories;
+
+            document.getElementById('dash-consumed').innerText = consumed;
+            document.getElementById('dash-meta-display').innerText = target;
+            document.getElementById('dash-protein-summary').innerText = `${protein}g / ${profile.targetProtein}g`;
+
+            const left = target - consumed;
+            document.getElementById('dash-calories-left').innerText = left > 0 ? `${left} kcal` : "Meta Batida!";
+
+            // Cálculo do preenchimento e lógica adaptativa de cores
+            const circle = document.getElementById('calories-progress-circle');
+            const percent = consumed / target;
+            const offset = Math.max(251.2 - (percent * 251.2), 0);
+            
+            // Configura variável de destino CSS para disparar a animação nativa
+            circle.style.setProperty('--target-offset', offset);
+            circle.className = "transition-all duration-500 animate-wheel";
+
+            // Mudança dinâmica de cor com base nos limites estipulados
+            if(consumed > target * 1.25) {
+                circle.setAttribute('stroke', '#ef4444'); // Vermelho intenso (passou muito)
+            } else if (consumed > target) {
+                circle.setAttribute('stroke', '#f97316'); // Laranja (excedeu limite)
+            } else {
+                circle.setAttribute('stroke', 'url(#wheelGradient)'); // Verde Degradê Premium
             }
+        }
 
-            meals.forEach(meal => {
-                const block = document.createElement('div');
-                block.className = "border-b border-stone-100 pb-3 last:border-0";
-                
-                let itemsHTML = '';
-                meal.itensArray.forEach(item => {
-                    itemsHTML += `
-                        <div class="flex justify-between items-center text-xs text-stone-600 bg-stone-50 px-3 py-1.5 rounded-lg mb-1">
-                            <span>• ${item.nome} (${item.peso}g)</span>
-                            <span class="font-semibold text-stone-900">${item.cal} kcal</span>
-                        </div>
-                    `;
-                });
+        function updatePessoasTab() {
+            ['Gabriel', 'Raissa'].forEach(p => {
+                const consumed = appData[p].meals.reduce((a, b) => a + b.calorias, 0);
+                const left = Math.max(appData[p].targetCalories - consumed, 0);
+                const count = appData[p].meals.length;
 
-                block.innerHTML = `
-                    <div class="flex justify-between items-center mb-1.5">
-                        <span class="text-xs font-bold text-stone-900 uppercase">${meal.tipo}</span>
-                        <span class="text-xs font-extrabold text-stone-500">${meal.totalCal} kcal</span>
-                    </div>
-                    <div class="space-y-1">${itemsHTML}</div>
-                `;
-                historyContainer.appendChild(block);
+                document.getElementById(`res-cal-${p}`).innerText = `${consumed} kcal`;
+                document.getElementById(`res-left-${p}`).innerText = `${left} kcal`;
+                document.getElementById(`res-count-${p}`).innerText = count;
             });
         }
 
-        function deleteMeal(index) {
-            appData[currentProfile].meals.splice(index, 1);
-            saveToLocalStorage();
-            refreshApp();
+        function updateBiometrics() {
+            const p = appData[currentProfile];
+            document.getElementById('biometrics-peso-ini').innerText = `${p.pesoInicial} kg`;
+            document.getElementById('biometrics-cintura').innerText = `${p.cinturaInicial} cm`;
+            document.getElementById('biometrics-meta').innerText = `${p.pesoMeta} kg`;
         }
 
-        function updateCaloriesWheel() {
-            const meals = appData[currentProfile].meals;
-            const total = meals.reduce((acc, curr) => acc + curr.totalCal, 0);
-            const carb = meals.reduce((acc, curr) => acc + curr.totalCarb, 0);
-            const prot = meals.reduce((acc, curr) => acc + curr.totalProt, 0);
-            const gord = meals.reduce((acc, curr) => acc + curr.totalGord, 0);
-
-            document.getElementById('dash-consumed').innerText = total;
-            document.getElementById('dash-peso-atual').innerHTML = `${appData[currentProfile].pesoAtual} <span class="text-sm font-normal text-slate-400">kg</span>`;
-            document.getElementById('dash-peso-meta').innerHTML = `${appData[currentProfile].pesoMeta} <span class="text-sm font-normal text-slate-400">kg</span>`;
-            
-            document.getElementById('dash-carb').innerText = `${carb}g / 220g`;
-            document.getElementById('dash-prot').innerText = `${prot}g / 160g`;
-            document.getElementById('dash-gord').innerText = `${gord}g / 65g`;
-
-            const percentage = Math.min((total / 2000) * 251.2, 251.2);
-            document.getElementById('calories-progress-circle').style.strokeDashoffset = 251.2 - percentage;
-        }
-
-        // Renderização do Calendário Funcional Clean
-        function renderCleanCalendar() {
-            const container = document.getElementById('calendar-days-box');
-            container.innerHTML = '';
-            const pColors = appData[currentProfile].calendarColors;
-
-            for(let i = 1; i <= 28; i++) {
-                const dayBox = document.createElement('div');
-                let colorClass = "bg-stone-100 text-stone-700 hover:bg-stone-200";
-                
-                if(pColors[i] === 'azul') colorClass = "bg-blue-500 text-white";
-                if(pColors[i] === 'verde') colorClass = "bg-emerald-500 text-white";
-                if(pColors[i] === 'laranja') colorClass = "bg-orange-500 text-white";
-
-                // Destaca borda do dia atualmente selecionado para ação
-                const borderClass = (i === selectedDay) ? 'ring-2 ring-stone-900 ring-offset-2' : '';
-
-                dayBox.className = `h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer shadow-sm font-bold transition-all ${colorClass} ${borderClass}`;
-                dayBox.innerText = i;
-                dayBox.onclick = () => {
-                    selectedDay = i;
-                    document.getElementById('selected-day-label').innerText = `Dia Selecionado: ${i}`;
-                    renderCleanCalendar();
-                };
-                container.appendChild(dayBox);
-            }
-        }
-
-        // Atribuição de cores dinâmicas via botões
-        function markSelectedDay(color) {
-            appData[currentProfile].calendarColors[selectedDay] = color;
-            saveToLocalStorage();
-            renderCleanCalendar();
-        }
-
-        function addWeightRecord() {
-            const w = parseFloat(document.getElementById('weight-track-input').value);
-            if(w > 0) {
-                appData[currentProfile].pesoAtual = w;
-                saveToLocalStorage();
-                updateCaloriesWheel();
-                document.getElementById('weight-track-input').value = '';
-                alert(`Peso atual de ${currentProfile} atualizado para ${w}kg!`);
-            }
-        }
-
-        function saveToLocalStorage() {
-            localStorage.setItem('projetoDietaData', JSON.stringify(appData));
+        function saveData() {
+            localStorage.setItem('projetoDietaPremium', JSON.stringify(appData));
         }
     </script>
 </body>
