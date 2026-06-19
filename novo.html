@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projeto Dieta - Foco • Treino • Resultados</title>
-    <!-- Tailwind CSS para Estilização Premium -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons para Ícones Minimalistas -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -20,7 +17,6 @@
 </head>
 <body class="bg-stone-50 text-stone-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
-    <!-- TELA DE LOGIN (SOBREPOSTA INICIALMENTE) -->
     <div id="login-screen" class="fixed inset-0 bg-stone-900 z-[100] flex items-center justify-center p-4 transition-all duration-500">
         <div class="bg-white p-8 rounded-3xl shadow-2xl max-w-md w-full border border-stone-200 text-center space-y-6">
             <div>
@@ -32,7 +28,7 @@
             <div class="space-y-4 text-left">
                 <div>
                     <label class="block text-xs font-bold text-stone-600 uppercase mb-2">Sua Senha de Acesso</label>
-                    <input type="password" id="login-password" value="123456" placeholder="Digite sua senha..." class="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 transition-all bg-stone-50">
+                    <input type="password" id="login-password" value="123456" class="w-full px-4 py-3 rounded-xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-stone-900 transition-all bg-stone-50">
                 </div>
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center gap-2 cursor-pointer text-stone-600">
@@ -46,10 +42,8 @@
         </div>
     </div>
 
-    <!-- SIDEBAR MINIMALISTA EXPANSÍVEL -->
     <aside id="sidebar" class="hidden md:flex flex-col w-20 hover:w-64 sidebar-transition bg-white border-r border-stone-200 p-4 justify-between group z-50 h-full">
         <div class="space-y-8">
-            <!-- LOGO AREA -->
             <div class="flex items-center gap-3 px-2 overflow-hidden h-12">
                 <div class="p-2 bg-stone-900 text-white rounded-xl flex-shrink-0">
                     <i data-lucide="activity" class="w-6 h-6"></i>
@@ -60,7 +54,6 @@
                 </div>
             </div>
 
-            <!-- NAVIGATION ITEMS -->
             <nav class="space-y-2">
                 <button onclick="switchTab('dashboard')" class="w-full flex items-center gap-4 p-3 rounded-xl hover:bg-stone-100 text-stone-600 hover:text-stone-900 transition-all">
                     <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
@@ -81,121 +74,91 @@
             </nav>
         </div>
 
-        <!-- LOGOUT/USER FOOTER -->
         <div class="flex items-center gap-3 pt-4 border-t border-stone-100 overflow-hidden">
-            <div class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center font-bold text-stone-700 flex-shrink-0">U</div>
+            <div class="w-10 h-10 rounded-full bg-stone-200 flex items-center justify-center font-bold text-stone-700 flex-shrink-0" id="avatar-lateral">G</div>
             <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-                <p class="text-xs font-bold text-stone-800">Usuário Logado</p>
+                <p class="text-xs font-bold text-stone-800" id="nome-lateral">Gabriel</p>
                 <button onclick="handleLogout()" class="text-[11px] text-red-500 font-semibold hover:underline block">Desconectar</button>
             </div>
         </div>
     </aside>
 
-    <!-- MAIN AREA -->
     <div class="flex-1 flex flex-col h-full overflow-hidden pb-16 md:pb-0">
         
-        <!-- HEADER -->
-        <header class="bg-white border-b border-stone-200 py-4 px-6 flex justify-between items-center flex-shrink-0">
+        <header class="bg-white border-b border-stone-200 py-4 px-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
             <div>
                 <h2 id="current-tab-title" class="text-xl md:text-2xl font-black text-stone-900 tracking-tight">Dashboard Geral</h2>
                 <p class="text-xs text-stone-500 font-medium">Balanço do seu dia atual.</p>
             </div>
-            <div class="flex items-center gap-2 text-xs font-bold text-stone-600 bg-stone-100 px-3 py-1.5 rounded-full">
-                <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> 7 Dias Seguidos
+            
+            <div class="flex items-center bg-stone-100 p-1 rounded-xl border border-stone-200 w-full sm:w-auto">
+                <button onclick="changeProfile('Gabriel')" id="btn-prof-Gabriel" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm">
+                    Gabriel
+                </button>
+                <button onclick="changeProfile('Raissa')" id="btn-prof-Raissa" class="flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900">
+                    Raíssa
+                </button>
             </div>
         </header>
 
-        <!-- CONTAINER DOS CONTEÚDOS -->
         <main class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
 
-            <!-- TAB 1: DASHBOARD -->
             <section id="tab-dashboard" class="space-y-6">
-                <!-- ROW PRINCIPAL: RODA CALÓRICA + METAS -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- RODA DE CALORIAS COM PROGRESSO -->
                     <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col items-center justify-center relative text-center">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-stone-400 mb-4">Roda de Calorias</h3>
-                        
                         <div class="relative w-40 h-40 flex items-center justify-center">
-                            <!-- SVG Roda de Progresso Circular -->
                             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="40" stroke="#f3f4f6" stroke-width="8" fill="transparent"/>
-                                <circle id="calories-progress-circle" cx="50" cy="50" r="40" stroke="#1c1917" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="100"/>
+                                <circle id="calories-progress-circle" cx="50" cy="50" r="40" stroke="#1c1917" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2"/>
                             </svg>
                             <div class="absolute text-center">
-                                <span id="dash-consumed" class="text-2xl font-black text-stone-900 block">1.340</span>
+                                <span id="dash-consumed" class="text-2xl font-black text-stone-900 block">0</span>
                                 <span class="text-[10px] uppercase font-bold text-stone-400 tracking-wide block">Consumidas</span>
                             </div>
                         </div>
-
                         <div class="mt-4 text-xs font-medium text-stone-500">
                             Meta diária definida: <span class="font-bold text-stone-900">2.000 kcal</span>
                         </div>
                     </div>
 
-                    <!-- METAS GERAIS CARD -->
                     <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm grid grid-cols-2 gap-4 items-center">
                         <div class="space-y-1">
                             <span class="text-xs uppercase font-bold text-stone-400">Peso Atual</span>
-                            <div class="text-3xl font-black text-stone-900">78,5 <span class="text-sm font-normal text-stone-400">kg</span></div>
+                            <div class="text-3xl font-black text-stone-900" id="dash-peso-atual">-- <span class="text-sm font-normal text-stone-400">kg</span></div>
                         </div>
                         <div class="space-y-1 border-l border-stone-100 pl-4">
                             <span class="text-xs uppercase font-bold text-stone-400">Meta Alvo</span>
-                            <div class="text-3xl font-black text-stone-900">72,0 <span class="text-sm font-normal text-stone-400">kg</span></div>
+                            <div class="text-3xl font-black text-stone-900" id="dash-peso-meta">-- <span class="text-sm font-normal text-stone-400">kg</span></div>
                         </div>
                         <div class="col-span-2 pt-4 border-t border-stone-100 grid grid-cols-3 gap-2 text-center">
                             <div class="bg-stone-50 p-2 rounded-xl">
                                 <span class="text-[10px] text-stone-400 uppercase font-bold block">Carboidratos</span>
-                                <span class="text-xs font-bold text-stone-800">145g / 220g</span>
+                                <span class="text-xs font-bold text-stone-800" id="dash-carb">0g</span>
                             </div>
                             <div class="bg-stone-50 p-2 rounded-xl">
                                 <span class="text-[10px] text-stone-400 uppercase font-bold block">Proteínas</span>
-                                <span class="text-xs font-bold text-stone-800">110g / 160g</span>
+                                <span class="text-xs font-bold text-stone-800" id="dash-prot">0g</span>
                             </div>
                             <div class="bg-stone-50 p-2 rounded-xl">
                                 <span class="text-[10px] text-stone-400 uppercase font-bold block">Gorduras</span>
-                                <span class="text-xs font-bold text-stone-800">42g / 65g</span>
+                                <span class="text-xs font-bold text-stone-800" id="dash-gord">0g</span>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- KPIs ADICIONAIS -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase block">Restantes</span>
-                        <p class="text-xl font-extrabold text-stone-900">660 kcal</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase block">Peso Eliminado</span>
-                        <p class="text-xl font-extrabold text-emerald-600">-3,5 kg</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase block">Dias Dieta Seguidos</span>
-                        <p class="text-xl font-extrabold text-stone-900">12 dias</p>
-                    </div>
-                    <div class="bg-white p-4 rounded-xl border border-stone-200 shadow-sm">
-                        <span class="text-[10px] font-bold text-stone-400 uppercase block">Evolução Mensal</span>
-                        <p class="text-xl font-extrabold text-stone-900">Estável</p>
-                    </div>
-                </div>
             </section>
 
-            <!-- TAB 2: DIÁRIO ALIMENTAR -->
             <section id="tab-diario" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <!-- ADICIONADOR / CONSTRUTOR DE REFEIÇÃO -->
                     <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
                         <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Montar Refeição</h3>
                         
                         <div>
                             <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Buscar Alimento</label>
                             <div class="relative">
-                                <input type="text" id="food-input" onkeyup="searchFood()" placeholder="Ex: Frango, Arroz, Ovo..." class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
-                                <div id="food-dropdown" class="absolute left-0 right-0 bg-white border border-stone-200 mt-1 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden text-sm">
-                                    <!-- Alimentos injetados por JS -->
-                                </div>
+                                <input type="text" id="food-input" onkeyup="searchFood()" placeholder="Buscar do banco..." class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
+                                <div id="food-dropdown" class="absolute left-0 right-0 bg-white border border-stone-200 mt-1 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden text-sm"></div>
                             </div>
                         </div>
 
@@ -208,7 +171,6 @@
                             + Adicionar à Lista
                         </button>
 
-                        <!-- LISTA TEMPORÁRIA -->
                         <div class="border-t pt-3 space-y-2">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-stone-400 block">Itens Selecionados</span>
                             <div id="temp-food-list" class="space-y-1 text-xs text-stone-600 max-h-24 overflow-y-auto custom-scrollbar">
@@ -216,7 +178,6 @@
                             </div>
                         </div>
 
-                        <!-- SALVAR DA LISTA PARA UMA REFEIÇÃO OFICIAL -->
                         <div class="border-t pt-3 space-y-3">
                             <div>
                                 <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Escolha o Momento</label>
@@ -234,87 +195,66 @@
                         </div>
                     </div>
 
-                    <!-- VISUALIZAÇÃO DAS REFEIÇÕES DO DIA -->
                     <div class="lg:col-span-2 space-y-4">
-                        <h3 class="font-bold text-stone-900 text-sm">Refeições Registradas Hoje</h3>
-                        <div id="meals-timeline" class="space-y-3">
-                            <!-- Gerado dinamicamente -->
+                        <h3 class="font-bold text-stone-900 text-sm">Refeições de Hoje</h3>
+                        <div id="meals-timeline" class="space-y-3"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-historico" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="font-bold text-stone-900 text-base">Calendário Interativo</h3>
+                                <span id="selected-day-label" class="text-xs font-bold bg-stone-100 text-stone-700 px-2.5 py-1 rounded-md">Dia Selecionado: 1</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-bold text-stone-400 uppercase border-b pb-2 mb-2">
+                                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                            </div>
+                            <div class="grid grid-cols-7 gap-2 text-center" id="calendar-days-box"></div>
+                        </div>
+
+                        <div class="border-t border-stone-100 pt-4 mt-6">
+                            <p class="text-xs font-bold text-stone-500 uppercase tracking-wider mb-2">Marcar dia selecionado como:</p>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="markSelectedDay('azul')" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Dieta</button>
+                                <button onclick="markSelectedDay('verde')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Treino</button>
+                                <button onclick="markSelectedDay('laranja')" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded-xl text-xs transition-all shadow-sm">Dieta + Treino</button>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
+                        <h3 class="font-bold text-stone-900 text-sm flex items-center gap-2">
+                            <i data-lucide="scroll-text" class="w-4 h-4"></i> Itens do Histórico
+                        </h3>
+                        <div id="history-items-list" class="space-y-4 max-h-[380px] overflow-y-auto custom-scrollbar pr-1">
+                            </div>
+                    </div>
+
                 </div>
             </section>
 
-            <!-- TAB 3: HISTÓRICO & CALENDÁRIO FATSECRET -->
-            <section id="tab-historico" class="space-y-6 hidden">
-                <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm">
-                    <h3 class="font-bold text-stone-900 text-base mb-1">Calendário de Metas</h3>
-                    <p class="text-xs text-stone-400 mb-4">Clique em um dia para conferir o comportamento alimentar e registro técnico.</p>
-                    
-                    <!-- CALENDÁRIO VISUAL -->
-                    <div class="grid grid-cols-7 gap-2 text-center text-xs font-bold border-b pb-4 mb-4">
-                        <div class="text-stone-400">Dom</div><div class="text-stone-400">Seg</div><div class="text-stone-400">Ter</div><div class="text-stone-400">Qua</div><div class="text-stone-400">Qui</div><div class="text-stone-400">Sex</div><div class="text-stone-400">Sáb</div>
-                    </div>
-                    <div class="grid grid-cols-7 gap-2 text-center" id="calendar-days-box">
-                        <!-- Gerado por JS baseado na legenda FatSecret -->
-                    </div>
-
-                    <!-- LEGENDA DO CALENDÁRIO -->
-                    <div class="flex flex-wrap gap-4 mt-6 pt-4 border-t border-stone-100 text-[11px] font-semibold text-stone-500">
-                        <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-emerald-500"></div> Dieta & Treino OK</div>
-                        <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-blue-500"></div> Apenas Treino</div>
-                        <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-orange-500"></div> Apenas Dieta</div>
-                        <div class="flex items-center gap-1.5"><div class="w-3 h-3 rounded-full bg-rose-500"></div> Fora da Meta</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 4: CONTROLE DE PESO -->
             <section id="tab-peso" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4 h-fit">
-                        <h3 class="font-bold text-stone-900 text-sm">Registrar Nova Métrica</h3>
+                        <h3 class="font-bold text-stone-900 text-sm">Registrar Métrica</h3>
                         <div>
                             <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Peso Corporal (kg)</label>
-                            <input type="number" step="0.1" id="weight-track-input" placeholder="Ex: 78.5" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-stone-500 uppercase mb-1">Cintura Abdominal (cm)</label>
-                            <input type="number" id="waist-track-input" placeholder="Ex: 84" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
+                            <input type="number" step="0.1" id="weight-track-input" class="w-full px-3 py-2 text-sm border rounded-xl focus:outline-none focus:ring-1 focus:ring-stone-900">
                         </div>
                         <button onclick="addWeightRecord()" class="w-full bg-stone-900 hover:bg-stone-800 text-white text-xs font-bold py-2.5 rounded-xl transition-all">
-                            Salvar Dados Biométricos
+                            Salvar Peso
                         </button>
-                    </div>
-
-                    <!-- GRÁFICO E HISTÓRICO DE PROGRESSÃO SIMULADO -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="font-bold text-stone-900 text-sm">Evolução Cronológica</h3>
-                            <div class="flex gap-1 bg-stone-100 p-1 rounded-lg text-[10px] font-bold text-stone-600">
-                                <span class="bg-white px-2 py-1 rounded shadow-sm cursor-pointer">Semanal</span>
-                                <span class="px-2 py-1 cursor-pointer">Mensal</span>
-                                <span class="px-2 py-1 cursor-pointer">Anual</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Mini Mock de Gráfico em Barras usando puro CSS/HTML flex -->
-                        <div class="h-40 flex items-end justify-between gap-4 pt-6 border-b border-stone-100 px-2">
-                            <div class="w-full bg-stone-200 h-[90%] rounded-t-md relative group"><span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold hidden group-hover:block">81kg</span></div>
-                            <div class="w-full bg-stone-200 h-[82%] rounded-t-md relative group"><span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold hidden group-hover:block">80kg</span></div>
-                            <div class="w-full bg-stone-200 h-[75%] rounded-t-md relative group"><span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold hidden group-hover:block">79.2kg</span></div>
-                            <div class="w-full bg-stone-900 h-[68%] rounded-t-md relative group"><span class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold hidden group-hover:block">78.5kg</span></div>
-                        </div>
-                        <div class="flex justify-between text-[10px] text-stone-400 font-bold uppercase tracking-wider px-2">
-                            <span>Sem 1</span><span>Sem 2</span><span>Sem 3</span><span>Sem Atual</span>
-                        </div>
                     </div>
                 </div>
             </section>
 
         </main>
 
-        <!-- BOTTOM NAV PARA DISPOSITIVOS MÓVEIS -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 flex justify-around items-center p-2 z-50">
             <button onclick="switchTab('dashboard')" class="flex flex-col items-center p-1 text-stone-900"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[9px] font-bold">Início</span></button>
             <button onclick="switchTab('diario')" class="flex flex-col items-center p-1 text-stone-400"><i data-lucide="utensils-crossed" class="w-5 h-5"></i><span class="text-[9px] font-bold">Diário</span></button>
@@ -323,9 +263,7 @@
         </nav>
     </div>
 
-    <!-- MÓDULO LOGIC - ENGINE INTERATIVA DO PROTÓTIPO COM PERSISTÊNCIA EM LOCALSTORAGE (SIMULANDO CLOUD FIRESTORE) -->
     <script>
-        // Banco de Alimentos Brasileiro Integrado de Alta Velocidade
         const bancoAlimentos = [
             { nome: "Ovo Cozido", cal: 155, prot: 13, carb: 1, gord: 11 },
             { nome: "Frango Grelhado", cal: 165, prot: 31, carb: 0, gord: 3.6 },
@@ -336,37 +274,41 @@
             { nome: "Leite Desnatado", cal: 35, prot: 3.4, carb: 4.7, gord: 0.1 },
             { nome: "Banana Prata", cal: 89, prot: 1.1, carb: 23, gord: 0.3 },
             { nome: "Maçã", cal: 52, prot: 0.3, carb: 14, gord: 0.2 },
-            { nome: "Batata Doce Cozida", cal: 86, prot: 1.6, carb: 20, gord: 0.1 },
-            { nome: "Carne Bovina Patinho", cal: 219, prot: 35, carb: 0, gord: 7.3 },
-            { nome: "Peixe Filé de Tilápia", cal: 128, prot: 26, carb: 0, gord: 2.7 },
-            { nome: "Queijo Minas Frescal", cal: 264, prot: 17, carb: 3.2, gord: 20 },
-            { nome: "Iogurte Natural Integral", cal: 61, prot: 3.5, carb: 4.7, gord: 3.3 }
+            { nome: "Batata Doce Cozida", cal: 86, prot: 1.6, carb: 20, gord: 0.1 }
         ];
+
+        // Estado global dividido por perfil
+        let currentProfile = 'Gabriel';
+        let selectedDay = 1;
+
+        let appData = JSON.parse(localStorage.getItem('projetoDietaData')) || {
+            Gabriel: {
+                meals: [{ tipo: "Café da Manhã", totalCal: 320, totalCarb: 40, totalProt: 15, totalGord: 6, itensArray: [{nome: "Pão Integral", peso: 50, cal: 120}, {nome: "Ovo Cozido", peso: 100, cal: 200}] }],
+                calendarColors: {},
+                pesoAtual: 82.0,
+                pesoMeta: 75.0
+            },
+            Raissa: {
+                meals: [{ tipo: "Almoço", totalCal: 420, totalCarb: 30, totalProt: 35, totalGord: 8, itensArray: [{nome: "Frango Grelhado", peso: 150, cal: 247}, {nome: "Arroz Branco Cozido", peso: 100, cal: 130}] }],
+                calendarColors: {},
+                pesoAtual: 64.0,
+                pesoMeta: 58.0
+            }
+        };
 
         let tempMealItems = [];
-        let savedMeals = JSON.parse(localStorage.getItem('savedMeals')) || [
-            { tipo: "Café da Manhã", itens: "Pão Integral (50g), Ovo Cozido (100g)", totalCal: 402 }
-        ];
 
-        // Ciclo de Inicialização do App
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
-            renderTimeline();
-            renderFatSecretCalendar();
-            updateCaloriesWheel();
-            
-            // Simulação de persistência de Login "Lembrar-me"
+            refreshApp();
             if(localStorage.getItem('isLoggedIn') === 'true') {
                 document.getElementById('login-screen').classList.add('hidden');
             }
         });
 
         function handleLogin() {
-            const pass = document.getElementById('login-password').value;
-            if (pass !== "") {
-                if(document.getElementById('remember-me').checked) {
-                    localStorage.setItem('isLoggedIn', 'true');
-                }
+            if (document.getElementById('login-password').value !== "") {
+                if(document.getElementById('remember-me').checked) localStorage.setItem('isLoggedIn', 'true');
                 document.getElementById('login-screen').classList.add('hidden');
             }
         }
@@ -374,6 +316,32 @@
         function handleLogout() {
             localStorage.removeItem('isLoggedIn');
             document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        // Troca de perfil (Gabriel / Raíssa)
+        function changeProfile(profileName) {
+            currentProfile = profileName;
+            
+            ['Gabriel', 'Raissa'].forEach(p => {
+                const btn = document.getElementById(`btn-prof-${p}`);
+                if(p === profileName) {
+                    btn.className = "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all bg-white text-stone-900 shadow-sm";
+                } else {
+                    btn.className = "flex-1 sm:flex-none px-4 py-2 text-xs font-bold rounded-lg transition-all text-stone-500 hover:text-stone-900";
+                }
+            });
+
+            document.getElementById('avatar-lateral').innerText = profileName[0];
+            document.getElementById('nome-lateral').innerText = profileName === 'Raissa' ? 'Raíssa' : 'Gabriel';
+            
+            refreshApp();
+        }
+
+        function refreshApp() {
+            renderTimeline();
+            renderHistoryList();
+            renderCleanCalendar();
+            updateCaloriesWheel();
         }
 
         function switchTab(tabId) {
@@ -395,7 +363,6 @@
             const query = document.getElementById('food-input').value.toLowerCase();
             const dropdown = document.getElementById('food-dropdown');
             dropdown.innerHTML = '';
-            
             if(!query) { dropdown.classList.add('hidden'); return; }
 
             const filtered = bancoAlimentos.filter(f => f.nome.toLowerCase().includes(query));
@@ -404,7 +371,7 @@
                 filtered.forEach(item => {
                     const row = document.createElement('div');
                     row.className = "p-2.5 hover:bg-stone-100 cursor-pointer border-b last:border-0";
-                    row.innerText = `${item.nome} (${item.cal} kcal/100g)`;
+                    row.innerText = `${item.nome}`;
                     row.onclick = () => {
                         document.getElementById('food-input').value = item.nome;
                         dropdown.classList.add('hidden');
@@ -423,7 +390,18 @@
 
             if(foodObj && weight > 0) {
                 const calculatedCal = Math.round((foodObj.cal * weight) / 100);
-                tempMealItems.push({ nome: name, peso: weight, cal: calculatedCal });
+                const calculatedCarb = Math.round((foodObj.carb * weight) / 100);
+                const calculatedProt = Math.round((foodObj.prot * weight) / 100);
+                const calculatedGord = Math.round((foodObj.gord * weight) / 100);
+
+                tempMealItems.push({ 
+                    nome: name, 
+                    peso: weight, 
+                    cal: calculatedCal,
+                    carb: calculatedCarb,
+                    prot: calculatedProt,
+                    gord: calculatedGord
+                });
                 
                 const listContainer = document.getElementById('temp-food-list');
                 if(tempMealItems.length === 1) listContainer.innerHTML = '';
@@ -441,36 +419,46 @@
             if(tempMealItems.length === 0) return;
 
             const type = document.getElementById('meal-type-select').value;
-            const itemString = tempMealItems.map(i => `${i.nome} (${i.peso}g)`).join(', ');
             const totalCal = tempMealItems.reduce((acc, curr) => acc + curr.cal, 0);
+            const totalCarb = tempMealItems.reduce((acc, curr) => acc + curr.carb, 0);
+            const totalProt = tempMealItems.reduce((acc, curr) => acc + curr.prot, 0);
+            const totalGord = tempMealItems.reduce((acc, curr) => acc + curr.gord, 0);
 
-            savedMeals.push({ tipo: type, itens: itemString, totalCal: totalCal });
-            localStorage.setItem('savedMeals', JSON.stringify(savedMeals));
+            appData[currentProfile].meals.push({ 
+                tipo: type, 
+                totalCal: totalCal,
+                totalCarb: totalCarb,
+                totalProt: totalProt,
+                totalGord: totalGord,
+                itensArray: [...tempMealItems] 
+            });
+            
+            saveToLocalStorage();
 
             tempMealItems = [];
             document.getElementById('temp-food-list').innerHTML = '<p class="text-stone-400 italic">Nenhum item adicionado ainda.</p>';
             
-            renderTimeline();
-            updateCaloriesWheel();
-            renderFatSecretCalendar();
+            refreshApp();
         }
 
+        // Renderização limpa do Diário (Apenas Resumos)
         function renderTimeline() {
             const timeline = document.getElementById('meals-timeline');
             timeline.innerHTML = '';
+            const meals = appData[currentProfile].meals;
 
-            if(savedMeals.length === 0) {
+            if(meals.length === 0) {
                 timeline.innerHTML = '<p class="text-xs text-stone-400 italic">Nenhuma refeição salva hoje.</p>';
                 return;
             }
 
-            savedMeals.forEach((meal, index) => {
+            meals.forEach((meal, index) => {
                 const card = document.createElement('div');
                 card.className = "bg-white p-4 rounded-xl border border-stone-200 shadow-sm flex justify-between items-center";
                 card.innerHTML = `
                     <div>
                         <span class="text-xs font-black text-stone-900 uppercase block">${meal.tipo}</span>
-                        <p class="text-xs text-stone-500 mt-0.5">${meal.itens}</p>
+                        <p class="text-[11px] text-stone-400 font-medium">Macros computados no painel geral</p>
                     </div>
                     <div class="text-right flex items-center gap-3">
                         <span class="text-sm font-black text-stone-900">${meal.totalCal} kcal</span>
@@ -482,50 +470,115 @@
             lucide.createIcons();
         }
 
+        // Nova Renderização do Histórico (Um item embaixo do outro)
+        function renderHistoryList() {
+            const historyContainer = document.getElementById('history-items-list');
+            historyContainer.innerHTML = '';
+            const meals = appData[currentProfile].meals;
+
+            if(meals.length === 0) {
+                historyContainer.innerHTML = '<p class="text-xs text-stone-400 italic">Nenhum alimento no histórico hoje.</p>';
+                return;
+            }
+
+            meals.forEach(meal => {
+                const block = document.createElement('div');
+                block.className = "border-b border-stone-100 pb-3 last:border-0";
+                
+                let itemsHTML = '';
+                meal.itensArray.forEach(item => {
+                    itemsHTML += `
+                        <div class="flex justify-between items-center text-xs text-stone-600 bg-stone-50 px-3 py-1.5 rounded-lg mb-1">
+                            <span>• ${item.nome} (${item.peso}g)</span>
+                            <span class="font-semibold text-stone-900">${item.cal} kcal</span>
+                        </div>
+                    `;
+                });
+
+                block.innerHTML = `
+                    <div class="flex justify-between items-center mb-1.5">
+                        <span class="text-xs font-bold text-stone-900 uppercase">${meal.tipo}</span>
+                        <span class="text-xs font-extrabold text-stone-500">${meal.totalCal} kcal</span>
+                    </div>
+                    <div class="space-y-1">${itemsHTML}</div>
+                `;
+                historyContainer.appendChild(block);
+            });
+        }
+
         function deleteMeal(index) {
-            savedMeals.splice(index, 1);
-            localStorage.setItem('savedMeals', JSON.stringify(savedMeals));
-            renderTimeline();
-            updateCaloriesWheel();
-            renderFatSecretCalendar();
+            appData[currentProfile].meals.splice(index, 1);
+            saveToLocalStorage();
+            refreshApp();
         }
 
         function updateCaloriesWheel() {
-            const total = savedMeals.reduce((acc, curr) => acc + curr.totalCal, 0);
-            document.getElementById('dash-consumed').innerText = total;
+            const meals = appData[currentProfile].meals;
+            const total = meals.reduce((acc, curr) => acc + curr.totalCal, 0);
+            const carb = meals.reduce((acc, curr) => acc + curr.totalCarb, 0);
+            const prot = meals.reduce((acc, curr) => acc + curr.totalProt, 0);
+            const gord = meals.reduce((acc, curr) => acc + curr.totalGord, 0);
 
-            const meta = 2000;
-            const percentage = Math.min((total / meta) * 251.2, 251.2);
+            document.getElementById('dash-consumed').innerText = total;
+            document.getElementById('dash-peso-atual').innerHTML = `${appData[currentProfile].pesoAtual} <span class="text-sm font-normal text-slate-400">kg</span>`;
+            document.getElementById('dash-peso-meta').innerHTML = `${appData[currentProfile].pesoMeta} <span class="text-sm font-normal text-slate-400">kg</span>`;
+            
+            document.getElementById('dash-carb').innerText = `${carb}g / 220g`;
+            document.getElementById('dash-prot').innerText = `${prot}g / 160g`;
+            document.getElementById('dash-gord').innerText = `${gord}g / 65g`;
+
+            const percentage = Math.min((total / 2000) * 251.2, 251.2);
             document.getElementById('calories-progress-circle').style.strokeDashoffset = 251.2 - percentage;
         }
 
-        function renderFatSecretCalendar() {
+        // Renderização do Calendário Funcional Clean
+        function renderCleanCalendar() {
             const container = document.getElementById('calendar-days-box');
             container.innerHTML = '';
+            const pColors = appData[currentProfile].calendarColors;
 
-            // Renderiza 28 dias demonstrativos variando status conforme regras solicitadas
-            // Verde: Ambos | Azul: Só Treino | Laranja: Só Dieta | Vermelho: Falhou
-            const colors = ['bg-emerald-500', 'bg-blue-500', 'bg-orange-500', 'bg-rose-500', 'bg-emerald-500'];
-            
             for(let i = 1; i <= 28; i++) {
                 const dayBox = document.createElement('div');
-                let colorClass = colors[i % colors.length];
+                let colorClass = "bg-stone-100 text-stone-700 hover:bg-stone-200";
                 
-                if(i === 24) colorClass = "bg-stone-200 text-stone-700"; // Dia futuro neutro
-                
-                dayBox.className = `h-9 w-9 mx-auto rounded-full flex items-center justify-center text-white text-xs cursor-pointer shadow-sm font-bold ${colorClass} hover:scale-105 transition-transform`;
+                if(pColors[i] === 'azul') colorClass = "bg-blue-500 text-white";
+                if(pColors[i] === 'verde') colorClass = "bg-emerald-500 text-white";
+                if(pColors[i] === 'laranja') colorClass = "bg-orange-500 text-white";
+
+                // Destaca borda do dia atualmente selecionado para ação
+                const borderClass = (i === selectedDay) ? 'ring-2 ring-stone-900 ring-offset-2' : '';
+
+                dayBox.className = `h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer shadow-sm font-bold transition-all ${colorClass} ${borderClass}`;
                 dayBox.innerText = i;
-                dayBox.onclick = () => alert(`Detalhes do Dia ${i}: Dieta processada no banco em nuvem Firestore.`);
+                dayBox.onclick = () => {
+                    selectedDay = i;
+                    document.getElementById('selected-day-label').innerText = `Dia Selecionado: ${i}`;
+                    renderCleanCalendar();
+                };
                 container.appendChild(dayBox);
             }
         }
 
+        // Atribuição de cores dinâmicas via botões
+        function markSelectedDay(color) {
+            appData[currentProfile].calendarColors[selectedDay] = color;
+            saveToLocalStorage();
+            renderCleanCalendar();
+        }
+
         function addWeightRecord() {
-            const w = document.getElementById('weight-track-input').value;
-            if(w) {
-                alert(`Métrica de ${w}kg gravada com sucesso nas tabelas de evolução.`);
+            const w = parseFloat(document.getElementById('weight-track-input').value);
+            if(w > 0) {
+                appData[currentProfile].pesoAtual = w;
+                saveToLocalStorage();
+                updateCaloriesWheel();
                 document.getElementById('weight-track-input').value = '';
+                alert(`Peso atual de ${currentProfile} atualizado para ${w}kg!`);
             }
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('projetoDietaData', JSON.stringify(appData));
         }
     </script>
 </body>
