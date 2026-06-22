@@ -788,7 +788,7 @@
                 if(dateIdx === 0) details.setAttribute('open', ''); // Deixa apenas o dia mais recente aberto por padrão
 
                 // Tag <summary> funciona como o cabeçalho clicável do Accordion
-                // 🛠️ FIX: Mudamos a div de baixo para 'flex flex-col' para empilhar reto sem ir para o lado
+                // 🛠️ BLINDAGEM: Adicionamos block e clear-both para isolar o container de qualquer efeito Flex vindo de cima
                 details.innerHTML = `
                     <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
                         <div class="flex items-center gap-2">
@@ -797,14 +797,13 @@
                         </div>
                         <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
                     </summary>
-                    <div class="p-4 bg-white flex flex-col gap-3 w-full box-border overflow-hidden">
+                    <div class="p-4 bg-white block space-y-4 w-full box-border clear-both overflow-hidden">
                         </div>
                 `;
 
                 const cardsContainer = details.querySelector('div');
 
                 dayMeals.forEach((m) => {
-                    // Descobrir o índice global real para exclusão segura
                     const globalIdx = profile.meals.findIndex(realM => realM === m);
                     
                     let colorTheme = "text-amber-600 bg-amber-50";
@@ -812,12 +811,12 @@
                     if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
                     if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
 
-                    // 🛠️ FIX: Adicionado 'w-full box-border' no card de cada refeição para ele respeitar a largura do celular
+                    // 🛠️ BLINDAGEM: Mudamos o card para 'block' em vez de 'flex' para garantir empilhamento vertical puro
                     cardsContainer.innerHTML += `
-                        <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors w-full box-border">
-                            <div class="text-center">
+                        <div class="border border-slate-100 p-4 rounded-xl block text-center relative hover:bg-slate-50/50 transition-colors w-full box-border clear-both">
+                            <div class="text-center w-full">
                                 <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide mx-auto inline-block">${m.momento}</span>
-                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center font-medium">${m.itensStr}</p>
+                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center font-medium block w-full whitespace-normal break-words">${m.itensStr}</p>
                             </div>
                             <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
                                 <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
