@@ -1,477 +1,768 @@
-<!-- Importa os Scripts do Firebase (SDK v9 via CDN de Módulos) -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dashboard de Dieta Avançado</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    // Suas chaves oficiais prontas
-    const firebaseConfig = {
-        apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
-        authDomain: "projetodietanovo.firebaseapp.com",
-        projectId: "projetodietanovo",
-        storageBucket: "projetodietanovo.firebasestorage.app",
-        messagingSenderId: "1082882912098",
-        appId: "1:1082882912098:web:19895c25e9787d1e80863b",
-        measurementId: "G-6QP0ZWW58P"
-    };
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
-    // Variáveis globais do app
-    let app, firestoreDb;
-    let db = {};
-    let globalProfile = 'Gabriel';
-    let selectedCalendarDay = 22; 
-    let historyFilter = 'dia';
-    let diaryScopeMode = 'dia';
-    let draftFoodItems = [];
-    let selectedMealMoment = 'Café da Manhã';
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans antialiased selection:bg-blue-500/30 selection:text-blue-200 min-h-screen flex flex-col overflow-hidden">
 
-    // Dados de Alimentos Estáticos
-    const MASTER_FOODS_DATABASE = [
-        { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
-        { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
-        { n: "Frango Cozido Desfiado", c: 150, p: 29 }, 
-        { n: "Patinho Moído Cozido", c: 220, p: 36 },
-        { n: "Maminha Grelhada", c: 190, p: 28 }, 
-        { n: "Filé Mignon Assado", c: 200, p: 30 }, 
-        { n: "Alcatra Grelhada", c: 210, p: 29 }, 
-        { n: "Contra Filé Grelhado", c: 250, p: 28 },
-        { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, 
-        { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, 
-        { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, 
-        { n: "Pão Francês Unidade", c: 270, p: 8 }
-    ];
+    <div class="md:hidden bg-slate-900/90 backdrop-blur-md border-b border-slate-800/60 px-4 py-2.5 flex justify-between items-center z-40 sticky top-0">
+        <div class="flex items-center gap-2">
+            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-xs font-black tracking-wider text-slate-400 uppercase">Dieta Compartilhada</span>
+        </div>
+        <div class="flex bg-slate-950 p-0.5 rounded-xl border border-slate-800/80 shadow-inner">
+            <button id="top-prof-mobile-Gabriel" onclick="setGlobalProfile('Gabriel')" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
+            <button id="top-prof-mobile-Raissa" onclick="setGlobalProfile('Raissa')" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400">Raíssa</button>
+        </div>
+    </div>
 
-    // INICIALIZAÇÃO SEGURA: Só roda quando o HTML estiver totalmente renderizado
-    window.addEventListener('DOMContentLoaded', async () => {
-        try {
-            // Inicializa a interface visual básica primeiro para evitar tela branca
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <aside class="hidden md:flex flex-col w-64 bg-slate-950 border-r border-slate-800/50 p-5 justify-between">
+            <div class="space-y-6">
+                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800/80 text-center">
+                    <span class="text-[10px] font-black text-slate-500 block uppercase tracking-widest mb-1.5">Perfil Ativo</span>
+                    <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800/60">
+                        <button id="top-prof-desktop-Gabriel" onclick="setGlobalProfile('Gabriel')" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
+                        <button id="top-prof-desktop-Raissa" onclick="setGlobalProfile('Raissa')" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500">Raíssa</button>
+                    </div>
+                </div>
+                <nav class="space-y-1">
+                    <button id="nav-inicio" onclick="switchTab('inicio')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 bg-slate-800 text-white"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Início</button>
+                    <button id="nav-adicionar" onclick="switchTab('adicionar')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="plus-circle" class="w-4 h-4"></i>Adicionar Refeição</button>
+                    <button id="nav-refeicoes" onclick="switchTab('refeicoes')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="utensils" class="w-4 h-4"></i>Diário de Refeições</button>
+                    <button id="nav-calendario" onclick="switchTab('calendario')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="calendar" class="w-4 h-4"></i>Calendário Consistência</button>
+                    <button id="nav-historico" onclick="switchTab('historico')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="history" class="w-4 h-4"></i>Histórico Geral</button>
+                    <button id="nav-peso" onclick="switchTab('peso')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="scale" class="w-4 h-4"></i>Peso & Biometria</button>
+                    <button id="nav-config" onclick="switchTab('config')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="settings" class="w-4 h-4"></i>Configurar Metas</button>
+                </nav>
+            </div>
+        </aside>
+
+        <main id="main-content-scroll" class="flex-1 overflow-y-auto px-4 pb-24 pt-4 md:p-8 space-y-6 bg-slate-900 no-scrollbar">
+            
+            <section id="tab-inicio" class="space-y-6">
+                <div class="flex flex-col gap-1">
+                    <span id="date-display-inicio" class="text-xs font-bold text-blue-400 tracking-wide uppercase">Carregando data...</span>
+                    <h1 class="text-xl md:text-2xl font-black text-white tracking-tight">Painel Diário</h1>
+                </div>
+
+                <div class="bg-slate-950 p-6 rounded-3xl border border-slate-800/80 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
+                    <div class="relative w-44 h-44 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="6" class="text-slate-800/60" fill="transparent" />
+                            <circle id="wheel-stroke" cx="50" cy="50" r="40" stroke="url(#blueGradient)" stroke-width="7" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" fill="transparent" class="transition-all duration-1000 ease-out" />
+                            <defs>
+                                <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#3b82f6" />
+                                    <stop offset="100%" stop-color="#1d4ed8" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="absolute flex flex-col items-center text-center">
+                            <span id="wheel-consumed-val" class="text-3xl font-black text-white tracking-tight">0</span>
+                            <div class="w-8 h-px bg-slate-800 my-1"></div>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meta <span id="wheel-target-val">2000</span></span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 border-t border-slate-800/80 w-full mt-6 pt-4 text-center">
+                        <div>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Proteína Consumida</span>
+                            <span id="bottom-protein-val" class="text-sm font-extrabold text-blue-400">0g / 0g</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Calorias Restantes</span>
+                            <span id="bottom-left-val" class="text-sm font-extrabold text-amber-500">0 kcal</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 flex flex-col justify-between gap-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-white uppercase tracking-wider">Gabriel</span>
+                            <span id="p-count-Gabriel" class="text-[10px] font-bold bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-md border border-blue-500/20">0 Refeições</span>
+                        </div>
+                        <div class="flex gap-4 text-xs font-medium text-slate-400">
+                            <div>Consumido: <span id="p-cons-Gabriel" class="font-bold text-slate-200">0 kcal</span></div>
+                            <div>Falta: <span id="p-left-Gabriel" class="font-bold text-amber-500">0 kcal</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 flex flex-col justify-between gap-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-black text-white uppercase tracking-wider">Raíssa</span>
+                            <span id="p-count-Raissa" class="text-[10px] font-bold bg-pink-500/10 text-pink-400 px-2 py-0.5 rounded-md border border-pink-500/20">0 Refeições</span>
+                        </div>
+                        <div class="flex gap-4 text-xs font-medium text-slate-400">
+                            <div>Consumido: <span id="p-cons-Raissa" class="font-bold text-slate-200">0 kcal</span></div>
+                            <div>Falta: <span id="p-left-Raissa" class="font-bold text-amber-500">0 kcal</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-adicionar" class="hidden space-y-5">
+                <h2 class="text-lg font-black text-white tracking-tight">Lançar Nova Refeição</h2>
+                
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-2.5">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">1. Quem consumiu a refeição?</span>
+                    <div class="flex gap-3">
+                        <input type="radio" id="radio-user-Gabriel" name="target-user-radio" value="Gabriel" checked class="hidden" onchange="updateFormUserHighlight()">
+                        <label id="label-user-Gabriel" for="radio-user-Gabriel" class="flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-blue-600 border-blue-500 text-white shadow">Gabriel</label>
+                        
+                        <input type="radio" id="radio-user-Raissa" name="target-user-radio" value="Raissa" class="hidden" onchange="updateFormUserHighlight()">
+                        <label id="label-user-Raissa" for="radio-user-Raissa" class="flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-slate-900 border-slate-800 text-slate-400">Raíssa</label>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">2. Qual o momento da refeição?</span>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div id="meal-card-cafe-m" onclick="selectMealMomentCard('Café da Manhã')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-blue-600 bg-blue-950/40 text-white">
+                            <div id="icon-box-cafe-m" class="p-1.5 rounded-lg bg-blue-600 text-white"><i data-lucide="coffee" class="w-4 h-4"></i></div>
+                            <span class="text-xs font-bold">Café da Manhã</span>
+                        </div>
+                        <div id="meal-card-almoco" onclick="selectMealMomentCard('Almoço')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
+                            <div id="icon-box-almoco" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="sun" class="w-4 h-4"></i></div>
+                            <span class="text-xs font-bold">Almoço</span>
+                        </div>
+                        <div id="meal-card-cafe-t" onclick="selectMealMomentCard('Café da Tarde')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
+                            <div id="icon-box-cafe-t" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="cookie" class="w-4 h-4"></i></div>
+                            <span class="text-xs font-bold">Café da Tarde</span>
+                        </div>
+                        <div id="meal-card-janta" onclick="selectMealMomentCard('Janta')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
+                            <div id="icon-box-janta" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="moon" class="w-4 h-4"></i></div>
+                            <span class="text-xs font-bold">Janta</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3 relative">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">3. Buscar e Pesar Alimento (g)</span>
+                    <div class="relative">
+                        <input id="food-search-input" type="text" placeholder="Digite para pesquisar o alimento..." oninput="handleFoodSearch(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
+                        <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl max-h-48 overflow-y-auto hidden z-50 no-scrollbar"></div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between px-1">
+                            <button onclick="adjustWeightInput(-50)" class="p-2 text-slate-400 hover:text-slate-200 font-bold text-sm">-50</button>
+                            <input id="food-weight-input" type="number" value="100" class="w-16 bg-transparent text-center text-xs font-black text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                            <button onclick="adjustWeightInput(50)" class="p-2 text-slate-400 hover:text-slate-200 font-bold text-sm">+50</button>
+                        </div>
+                        <div class="flex gap-1.5">
+                            <button onclick="setWeightInputValue(150)" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-colors">150g</button>
+                            <button onclick="setWeightInputValue(200)" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-colors">200g</button>
+                        </div>
+                    </div>
+
+                    <button onclick="addSingleFoodToDraft()" class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-blue-400 font-bold text-xs py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 mt-2"><i data-lucide="plus" class="w-4 h-4"></i>Incluir no Prato</button>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3">
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Componentes do Prato Atual</span>
+                    <div id="draft-food-items-container" class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/40 text-xs text-slate-400 space-y-1">
+                        <p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>
+                    </div>
+                    <button onclick="finalizeCompleteMealDraft()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-black text-xs py-3 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Salvar Refeição na Nuvem</button>
+                </div>
+            </section>
+
+            <section id="tab-refeicoes" class="hidden space-y-5">
+                <div class="flex flex-col gap-2">
+                    <h2 class="text-lg font-black text-white tracking-tight">Diário de Consumo</h2>
+                    <div class="flex bg-slate-950 p-0.5 rounded-xl border border-slate-800/80 shadow-inner">
+                        <button id="diary-scope-dia" onclick="changeDiaryScope('dia')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-slate-800 text-white shadow">Hoje</button>
+                        <button id="diary-scope-semana" onclick="changeDiaryScope('semana')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">7 Dias</button>
+                        <button id="diary-scope-mes" onclick="changeDiaryScope('mes')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">30 Dias</button>
+                        <button id="diary-scope-ano" onclick="changeDiaryScope('ano')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">Tudo</button>
+                    </div>
+                </div>
+                <div id="diary-accordion-root" class="space-y-3"></div>
+            </section>
+
+            <section id="tab-calendario" class="hidden space-y-5">
+                <div class="flex flex-col gap-0.5">
+                    <h2 class="text-lg font-black text-white tracking-tight">Calendário de Metas</h2>
+                    <p class="text-[11px] text-slate-400 font-medium">Monitore a consistência diária do mês ativo</p>
+                </div>
+                
+                <div class="bg-slate-950 p-4 rounded-3xl border border-slate-800/80 shadow-xl space-y-4">
+                    <div id="interactive-grid-box" class="grid grid-cols-7 gap-y-3 gap-x-2 text-center font-bold"></div>
+                    <div class="border-t border-slate-800/80 pt-4 text-center">
+                        <span id="cal-selected-day-lbl" class="text-xs font-black text-slate-300 block mb-3">Dia Selecionado: 22</span>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setDayStatusColor('verde')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">100% Ok</button>
+                            <button onclick="setDayStatusColor('azul')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Treino</button>
+                            <button onclick="setDayStatusColor('roxo')" class="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Quase</button>
+                            <button onclick="setDayStatusColor('vermelho')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Jacou</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-historico" class="hidden space-y-4">
+                <h2 class="text-lg font-black text-white tracking-tight">Linha do Tempo Completa</h2>
+                <div id="history-timeline-output" class="space-y-2.5"></div>
+            </section>
+
+            <section id="tab-peso" class="hidden space-y-5">
+                <h2 class="text-lg font-black text-white tracking-tight">Métricas Corporais</h2>
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-4">
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Peso Inicial (kg)</label>
+                            <input id="bio-input-p-ini" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Peso Atual (kg)</label>
+                            <input id="bio-input-p-atual" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta de Peso (kg)</label>
+                            <input id="bio-input-p-meta" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Cintura (cm)</label>
+                            <input id="bio-input-cintura" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                    </div>
+                    <button onclick="saveBiometricsMetrics()" class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-blue-400 font-bold text-xs py-2.5 rounded-xl transition-all">Atualizar Métricas</button>
+                </div>
+            </section>
+
+            <section id="tab-config" class="hidden space-y-5">
+                <h2 class="text-lg font-black text-white tracking-tight">Metas de Macronutrientes</h2>
+                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-4">
+                    <div class="grid grid-cols-2 gap-3.5">
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta Calórica (kcal)</label>
+                            <input id="cfg-calories" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta de Proteína (g)</label>
+                            <input id="cfg-protein" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        </div>
+                    </div>
+                    <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs py-2.5 rounded-xl transition-all shadow-md">Sincronizar Metas na Nuvem</button>
+                </div>
+            </section>
+
+        </main>
+
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 px-2 py-1.5 flex justify-around items-center z-40 shadow-2xl">
+            <button id="m-nav-inicio" onclick="switchTab('inicio')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110"><i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>Início</button>
+            <button id="m-nav-adicionar" onclick="switchTab('adicionar')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="plus-circle" class="w-4.5 h-4.5"></i>Lançar</button>
+            <button id="m-nav-refeicoes" onclick="switchTab('refeicoes')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="utensils" class="w-4.5 h-4.5"></i>Diário</button>
+            <button id="m-nav-calendario" onclick="switchTab('calendario')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="calendar" class="w-4.5 h-4.5"></i>Metas</button>
+            <button id="m-nav-peso" onclick="switchTab('peso')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="scale" class="w-4.5 h-4.5"></i>Peso</button>
+            <button id="m-nav-config" onclick="switchTab('config')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="settings" class="w-4.5 h-4.5"></i>Ajustes</button>
+        </nav>
+
+    </div>
+
+    <script>
+        // Suas chaves oficiais do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
+            authDomain: "projetodietanovo.firebaseapp.com",
+            projectId: "projetodietanovo",
+            storageBucket: "projetodietanovo.firebasestorage.app",
+            messagingSenderId: "1082882912098",
+            appId: "1:1082882912098:web:19895c25e9787d1e80863b",
+            measurementId: "G-6QP0ZWW58P"
+        };
+
+        // Inicializa o Firebase no modo Compat (Sem riscos de travamento no celular)
+        firebase.initializeApp(firebaseConfig);
+        const firestoreDb = firebase.firestore();
+
+        // Banco de dados local reativo
+        let db = {};
+        let globalProfile = 'Gabriel';
+        let selectedCalendarDay = 22; 
+        let historyFilter = 'dia';
+        let diaryScopeMode = 'dia';
+        let draftFoodItems = [];
+        let selectedMealMoment = 'Café da Manhã';
+
+        // Tabela estática de alimentos nutricionais
+        const MASTER_FOODS_DATABASE = [
+            { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
+            { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
+            { n: "Frango Cozido Desfiado", c: 150, p: 29 }, 
+            { n: "Patinho Moído Cozido", c: 220, p: 36 },
+            { n: "Maminha Grelhada", c: 190, p: 28 }, 
+            { n: "Filé Mignon Assado", c: 200, p: 30 }, 
+            { n: "Alcatra Grelhada", c: 210, p: 29 }, 
+            { n: "Contra Filé Grelhado", c: 250, p: 28 },
+            { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, 
+            { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, 
+            { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, 
+            { n: "Pão Francês Unidade", c: 270, p: 8 }
+        ];
+
+        // STARTUP SEGURO: Inicializa a tela ANTES e o Firebase DEPOIS
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.lucide) lucide.createIcons();
             setTodayDateDisplay();
             updateFormUserHighlight();
             selectMealMomentCard('Café da Manhã');
             switchTab('inicio');
-
-            // Inicializa o Firebase em segundo plano
-            app = initializeApp(firebaseConfig);
-            firestoreDb = getFirestore(app);
-
-            // Carrega os dados da nuvem
-            await loadDataFromFirestore();
-        } catch (e) {
-            console.error("Erro na inicialização do sistema:", e);
-        }
-    });
-
-    // Carrega os dados direto do Firestore
-    async function loadDataFromFirestore() {
-        try {
-            if (!firestoreDb) return;
-            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                db = docSnap.data();
-            } else {
-                db = {
-                    Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
-                    Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
-                };
-                await setDoc(docRef, db);
-            }
-            refreshAppInterface();
-        } catch (error) {
-            console.error("Erro ao carregar dados do Firestore:", error);
-        }
-    }
-
-    // Salva os dados no Firestore
-    async function saveToFirestore() {
-        try {
-            if (!firestoreDb) return;
-            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
-            await setDoc(docRef, db);
-        } catch (error) {
-            console.error("Erro ao salvar dados no Firestore:", error);
-        }
-    }
-
-    function setTodayDateDisplay() {
-        const today = new Date();
-        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        const display = document.getElementById('date-display-inicio');
-        if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
-    }
-
-    // Exportação segura das funções para botões do HTML
-    window.setGlobalProfile = function(name) {
-        globalProfile = name;
-        ['Gabriel', 'Raissa'].forEach(p => {
-            const btnM = document.getElementById(`top-prof-mobile-${p}`);
-            const btnD = document.getElementById(`top-prof-desktop-${p}`);
-            if(p === name) {
-                if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
-                if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
-            } else {
-                if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400";
-                if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500";
-            }
+            
+            // Puxa as informações na nuvem em segundo plano sem travar
+            loadDataFromFirestore();
         });
-        refreshAppInterface();
-    }
 
-    window.switchTab = function(tabId) {
-        const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
-        tabs.forEach(t => {
-            const tabEl = document.getElementById(`tab-${t}`);
-            const navEl = document.getElementById(`nav-${t}`);
-            if(tabEl) tabEl.classList.add('hidden');
-            if(navEl) navEl.classList.remove('bg-slate-200', 'text-slate-900');
-            const mobileBtn = document.getElementById(`m-nav-${t}`);
-            if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
-        });
-        
-        const activeTab = document.getElementById(`tab-${tabId}`);
-        const activeNav = document.getElementById(`nav-${tabId}`);
-        if(activeTab) activeTab.classList.remove('hidden');
-        if(activeNav) activeNav.classList.add('bg-slate-200', 'text-slate-900');
-        
-        const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
-        if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
-        
-        const scrollEl = document.getElementById('main-content-scroll');
-        if(scrollEl) scrollEl.scrollTop = 0;
-        refreshAppInterface();
-    }
+        async function loadDataFromFirestore() {
+            try {
+                const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
+                const docSnap = await docRef.get();
 
-    window.selectMealMomentCard = function(moment) {
-        selectedMealMoment = moment;
-        const maps = {'Café da Manhã': 'cafe-m', 'Almoço': 'almoco', 'Café da Tarde': 'cafe-t', 'Janta': 'janta'};
-        Object.keys(maps).forEach(k => {
-            const idSuffix = maps[k];
-            const card = document.getElementById(`meal-card-${idSuffix}`);
-            const iconBox = document.getElementById(`icon-box-${idSuffix}`);
-            if(card && iconBox) {
-                if(k === moment) {
-                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
-                    iconBox.className = "p-2 bg-blue-600 rounded-xl text-white";
+                if (docSnap.exists) {
+                    db = docSnap.data();
                 } else {
-                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
-                    iconBox.className = "p-2 bg-slate-100 rounded-xl text-slate-600";
+                    db = {
+                        Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
+                        Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
+                    };
+                    await docRef.set(db);
                 }
-            }
-        });
-    }
-
-    window.handleFoodSearch = function(val) {
-        const dropdown = document.getElementById('search-results-dropdown');
-        if(!dropdown) return;
-        if(!val || val.trim() === '') { dropdown.classList.add('hidden'); return; }
-        const query = val.toLowerCase();
-        const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
-        
-        dropdown.innerHTML = '';
-        if(filtered.length === 0) {
-            dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 italic text-center">Nenhum alimento encontrado</div>';
-        } else {
-            filtered.slice(0, 15).forEach(food => {
-                const row = document.createElement('div');
-                row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 flex justify-between items-center";
-                row.innerHTML = `<span>${food.n}</span><span class="text-blue-600 font-bold">${food.c} kcal / 100g</span>`;
-                row.onclick = () => {
-                    const input = document.getElementById('food-search-input');
-                    if(input) input.value = food.n;
-                    dropdown.classList.add('hidden');
-                };
-                dropdown.appendChild(row);
-            });
-        }
-        dropdown.classList.remove('hidden');
-    }
-
-    window.adjustWeightInput = function(val) {
-        const input = document.getElementById('food-weight-input');
-        if(input) input.value = Math.max((parseInt(input.value) || 0) + val, 0);
-    }
-
-    window.setWeightInputValue = function(val) { 
-        const input = document.getElementById('food-weight-input');
-        if(input) input.value = val; 
-    }
-    
-    window.updateFormUserHighlight = function() {
-        const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
-        if(!checkedRadio) return;
-        const selectedUser = checkedRadio.value;
-        ['Gabriel', 'Raissa'].forEach(u => {
-            const label = document.getElementById(`label-user-${u}`);
-            if(label) {
-                label.className = (u === selectedUser) ? 
-                    "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center" : 
-                    "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
-            }
-        });
-    }
-
-    window.addSingleFoodToDraft = function() {
-        const searchInput = document.getElementById('food-search-input');
-        const weightInput = document.getElementById('food-weight-input');
-        if(!searchInput || !weightInput) return;
-        
-        const foodName = searchInput.value;
-        const weight = parseFloat(weightInput.value);
-        const foodObj = MASTER_FOODS_DATABASE.find(f => f.n === foodName);
-
-        if(!foodObj) { alert("Selecione um alimento válido da lista!"); return; }
-
-        if(weight > 0) {
-            const cCal = Math.round((foodObj.c * weight) / 100);
-            const cProt = Math.round((foodObj.p * weight) / 100);
-            draftFoodItems.push({ n: foodName, w: weight, c: cCal, p: cProt });
-            
-            const container = document.getElementById('draft-food-items-container');
-            if(container) {
-                if(draftFoodItems.length === 1) container.innerHTML = '';
-                container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${cCal} kcal</span></div>`;
-            }
-            searchInput.value = '';
-        }
-    }
-
-    window.finalizeCompleteMealDraft = async function() {
-        if(draftFoodItems.length === 0) { alert("Adicione pelo menos 1 alimento primeiro!"); return; }
-        const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
-        const targetUser = checkedRadio ? checkedRadio.value : 'Gabriel';
-        
-        const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
-        const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
-        const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
-        const todayStr = new Date().toISOString().split('T')[0];
-
-        if(!db[targetUser]) db[targetUser] = {};
-        if(!db[targetUser].meals) db[targetUser].meals = [];
-        db[targetUser].meals.push({ data: todayStr, momento: selectedMealMoment, calorias: totalCal, proteinas: totalProt, itensStr: itemsStr });
-
-        await saveToFirestore();
-        draftFoodItems = [];
-        const container = document.getElementById('draft-food-items-container');
-        if(container) container.innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
-        refreshAppInterface();
-        alert("Refeição salva na nuvem com sucesso!");
-    }
-
-    window.changeDiaryScope = function(scope) {
-        diaryScopeMode = scope;
-        ['dia', 'semana', 'mes', 'ano'].forEach(s => {
-            const btn = document.getElementById(`diary-scope-${s}`);
-            if(btn) {
-                btn.className = (s === scope) ? 
-                    "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
-                    "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
-            }
-        });
-        renderDiaryAccordionSection();
-    }
-
-    function renderDiaryAccordionSection() {
-        const root = document.getElementById('diary-accordion-root');
-        if(!root || !db || !db[globalProfile]) return;
-        root.innerHTML = '';
-        
-        const profile = db[globalProfile];
-        const today = new Date();
-        let filteredMeals = (profile.meals || []).filter(m => {
-            if(!m.data) return false;
-            const mDate = new Date(m.data + 'T00:00:00');
-            const diffDays = Math.ceil(Math.abs(today - mDate) / (1000 * 60 * 60 * 24));
-            if(diaryScopeMode === 'dia') return today.toISOString().split('T')[0] === m.data;
-            if(diaryScopeMode === 'semana') return diffDays <= 7;
-            if(diaryScopeMode === 'mes') return diffDays <= 30;
-            if(diaryScopeMode === 'ano') return diffDays <= 365;
-            return true;
-        });
-
-        if(filteredMeals.length === 0) {
-            root.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-8">Nenhuma refeição localizada.</p>';
-            return;
-        }
-
-        const groups = {};
-        filteredMeals.forEach(m => { if(!groups[m.data]) groups[m.data] = []; groups[m.data].push(m); });
-        const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
-
-        sortedDates.forEach((dateStr, dateIdx) => {
-            const dateObj = new Date(dateStr + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
-            const dayMeals = groups[dateStr];
-            
-            const details = document.createElement('details');
-            details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
-            if(dateIdx === 0) details.setAttribute('open', '');
-
-            details.innerHTML = `
-                <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                        <span class="text-xs font-black text-slate-700 uppercase tracking-wide">${formattedDate}</span>
-                    </div>
-                    <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
-                </summary>
-                <div class="p-4 space-y-4 bg-white grid grid-cols-1 gap-3"></div>
-            `;
-
-            const cardsContainer = details.querySelector('div');
-            dayMeals.forEach((m) => {
-                const globalIdx = profile.meals.findIndex(realM => realM === m);
-                let colorTheme = "text-amber-600 bg-amber-50";
-                if(m.momento === "Almoço") colorTheme = "text-emerald-600 bg-emerald-50";
-                if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
-                if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
-
-                cardsContainer.innerHTML += `
-                    <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors">
-                        <div>
-                            <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide inline-block">${m.momento}</span>
-                            <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">${m.itensStr}</p>
-                        </div>
-                        <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
-                            <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
-                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-333 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-            root.appendChild(details);
-        });
-        if(window.lucide) lucide.createIcons();
-    }
-
-    window.removeMealFromDiary = async function(globalIndex) {
-        if(globalIndex !== -1 && db[globalProfile]) {
-            db[globalProfile].meals.splice(globalIndex, 1);
-            await saveToFirestore();
-            refreshAppInterface();
-        }
-    }
-
-    window.saveBiometricsMetrics = async function() {
-        if(!db[globalProfile]) return;
-        const profile = db[globalProfile];
-        profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
-        profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
-        profile.pesoMeta = parseFloat(document.getElementById('bio-input-p-meta').value) || profile.pesoMeta;
-        profile.cintura = parseFloat(document.getElementById('bio-input-cintura').value) || profile.cintura;
-        
-        await saveToFirestore();
-        refreshAppInterface();
-        alert("Biometria sincronizada!");
-    }
-
-    window.saveConfigMeta = async function() {
-        if(!db[globalProfile]) return;
-        const calories = parseInt(document.getElementById('cfg-calories').value);
-        const protein = parseInt(document.getElementById('cfg-protein').value);
-        if(calories > 0 && protein > 0) {
-            db[globalProfile].targetCalories = calories;
-            db[globalProfile].targetProtein = protein;
-            await saveToFirestore();
-            refreshAppInterface();
-            alert("Metas sincronizadas!");
-        }
-    }
-
-    window.selectCalendarDay = function(day) { 
-        selectedCalendarDay = day; 
-        const lbl = document.getElementById('cal-selected-day-lbl');
-        if(lbl) lbl.innerText = `Dia Selecionado: ${day}`; 
-        renderInteractiveCalendar(); 
-    }
-    
-    window.setDayStatusColor = async function(colorName) {
-        if(!db[globalProfile]) return;
-        if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
-        db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
-        await saveToFirestore();
-        refreshAppInterface();
-    }
-
-    window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
-
-    function refreshAppInterface() {
-        if (!db || !db[globalProfile]) return;
-        const todayStr = new Date().toISOString().split('T')[0];
-        const profile = db[globalProfile];
-        
-        const todaysMeals = (profile.meals || []).filter(m => m.data === todayStr);
-        const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
-        const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
-        
-        const elCons = document.getElementById('wheel-consumed-val');
-        const elTar = document.getElementById('wheel-target-val');
-        const elProt = document.getElementById('bottom-protein-val');
-        const elLeft = document.getElementById('bottom-left-val');
-        
-        if(elCons) elCons.innerText = consumed;
-        if(elTar) elTar.innerText = profile.targetCalories || 2000;
-        if(elProt) elProt.innerText = `${protein}g / ${profile.targetProtein || 150}g`;
-        
-        const leftCal = (profile.targetCalories || 2000) - consumed;
-        if(elLeft) elLeft.innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
-
-        const circle = document.getElementById('wheel-stroke');
-        if(circle) {
-            circle.style.strokeDashoffset = "251.2";
-            const pct = Math.min(consumed / (profile.targetCalories || 2000), 1);
-            circle.style.strokeDashoffset = 251.2 - (pct * 251.2);
-        }
-
-        ['Gabriel', 'Raissa'].forEach(user => {
-            if(db[user]) {
-                const uMeals = (db[user].meals || []).filter(m => m.data === todayStr);
-                const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
-                const elPCons = document.getElementById(`p-cons-${user}`);
-                const elPLeft = document.getElementById(`p-left-${user}`);
-                const elPCount = document.getElementById(`p-count-${user}`);
                 
-                if(elPCons) elPCons.innerText = `${uConsumed} kcal`;
-                if(elPLeft) elPLeft.innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
-                if(elPCount) elPCount.innerText = uMeals.length;
+                // Preenche os inputs de biometria automaticamente com o que veio da nuvem
+                updateBiometricsInputs();
+                refreshAppInterface();
+            } catch (error) {
+                console.error("Erro ao conectar no banco Firestore:", error);
             }
-        });
+        }
 
-        renderDiaryAccordionSection();
-        renderInteractiveCalendar();
-        renderHistoryTimeline();
-    }
+        async function saveToFirestore() {
+            try {
+                const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
+                await docRef.set(db);
+            } catch (error) {
+                console.error("Erro ao salvar dados no Firestore:", error);
+            }
+        }
 
-    function renderInteractiveCalendar() {
-        const box = document.getElementById('interactive-grid-box');
-        if(!box || !db || !db[globalProfile]) return;
-        box.innerHTML = '';
-        const colorsMap = db[globalProfile].calendarColors || {};
+        function setTodayDateDisplay() {
+            const today = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const display = document.getElementById('date-display-inicio');
+            if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
+        }
+
+        window.setGlobalProfile = function(name) {
+            globalProfile = name;
+            ['Gabriel', 'Raissa'].forEach(p => {
+                const btnM = document.getElementById(`top-prof-mobile-${p}`);
+                const btnD = document.getElementById(`top-prof-desktop-${p}`);
+                if(p === name) {
+                    if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+                    if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+                } else {
+                    if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400";
+                    if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500";
+                }
+            });
+            updateBiometricsInputs();
+            refreshAppInterface();
+        }
+
+        window.switchTab = function(tabId) {
+            const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+            tabs.forEach(t => {
+                const tabEl = document.getElementById(`tab-${t}`);
+                const navEl = document.getElementById(`nav-${t}`);
+                if(tabEl) tabEl.classList.add('hidden');
+                if(navEl) navEl.classList.remove('bg-slate-800', 'text-white');
+                const mobileBtn = document.getElementById(`m-nav-${t}`);
+                if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400 scale-100";
+            });
+            
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeTab) activeTab.classList.remove('hidden');
+            if(activeNav) activeNav.classList.add('bg-slate-800', 'text-white');
+            
+            const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
+            if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
+            
+            const scrollEl = document.getElementById('main-content-scroll');
+            if(scrollEl) scrollEl.scrollTop = 0;
+            refreshAppInterface();
+        }
+
+        window.selectMealMomentCard = function(moment) {
+            selectedMealMoment = moment;
+            const maps = {'Café da Manhã': 'cafe-m', 'Almoço': 'almoco', 'Café da Tarde': 'cafe-t', 'Janta': 'janta'};
+            Object.keys(maps).forEach(k => {
+                const idSuffix = maps[k];
+                const card = document.getElementById(`meal-card-${idSuffix}`);
+                const iconBox = document.getElementById(`icon-box-${idSuffix}`);
+                if(card && iconBox) {
+                    if(k === moment) {
+                        card.className = "p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-blue-600 bg-blue-950/40 text-white";
+                        iconBox.className = "p-1.5 rounded-lg bg-blue-600 text-white";
+                    } else {
+                        card.className = "p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400";
+                        iconBox.className = "p-1.5 rounded-lg bg-slate-800 text-slate-400";
+                    }
+                }
+            });
+        }
+
+        window.handleFoodSearch = function(val) {
+            const dropdown = document.getElementById('search-results-dropdown');
+            if(!dropdown) return;
+            if(!val || val.trim() === '') { dropdown.classList.add('hidden'); return; }
+            const query = val.toLowerCase();
+            const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
+            
+            dropdown.innerHTML = '';
+            if(filtered.length === 0) {
+                dropdown.innerHTML = '<div class="p-3 text-xs text-slate-500 italic text-center">Nenhum alimento encontrado</div>';
+            } else {
+                filtered.slice(0, 15).forEach(food => {
+                    const row = document.createElement('div');
+                    row.className = "p-3 text-xs font-semibold text-slate-300 hover:bg-slate-800 cursor-pointer transition-all border-b border-slate-800 flex justify-between items-center";
+                    row.innerHTML = `<span>${food.n}</span><span class="text-blue-400 font-bold">${food.c} kcal / 100g</span>`;
+                    row.onclick = () => {
+                        document.getElementById('food-search-input').value = food.n;
+                        dropdown.classList.add('hidden');
+                    };
+                    dropdown.appendChild(row);
+                });
+            }
+            dropdown.classList.remove('hidden');
+        }
+
+        window.adjustWeightInput = function(val) {
+            const input = document.getElementById('food-weight-input');
+            if(input) input.value = Math.max((parseInt(input.value) || 0) + val, 0);
+        }
+
+        window.setWeightInputValue = function(val) { 
+            const input = document.getElementById('food-weight-input');
+            if(input) input.value = val; 
+        }
         
-        for(let i = 1; i <= 28; i++) {
-            let statusColor = colorsMap[i] || null;
-            let colorStyle = "bg-slate-100 text-slate-700 hover:bg-slate-200";
-            if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white shadow-sm";
-            if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white shadow-sm";
-            if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white shadow-sm";
-            if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white shadow-sm";
-
-            const isToday = (i === 22);
-            box.innerHTML += `<div onclick="selectCalendarDay(${i})" class="h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer font-bold relative ${colorStyle} ${(i === selectedCalendarDay) ? "ring-2 ring-slate-900 ring-offset-2" : ""} ${isToday ? "border-2 border-amber-500" : ""}">` + i + `</div>`;
+        window.updateFormUserHighlight = function() {
+            const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
+            if(!checkedRadio) return;
+            const selectedUser = checkedRadio.value;
+            ['Gabriel', 'Raissa'].forEach(u => {
+                const label = document.getElementById(`label-user-${u}`);
+                if(label) {
+                    label.className = (u === selectedUser) ? 
+                        "flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-blue-600 border-blue-500 text-white shadow" : 
+                        "flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-slate-900 border-slate-800 text-slate-400";
+                }
+            });
         }
-    }
 
-    function renderHistoryTimeline() {
-        const container = document.getElementById('history-timeline-output');
-        if(!container || !db || !db[globalProfile]) return;
-        container.innerHTML = '';
-        const meals = db[globalProfile].meals || [];
+        window.addSingleFoodToDraft = function() {
+            const searchInput = document.getElementById('food-search-input');
+            const weightInput = document.getElementById('food-weight-input');
+            if(!searchInput || !weightInput) return;
+            
+            const foodName = searchInput.value;
+            const weight = parseFloat(weightInput.value);
+            const foodObj = MASTER_FOODS_DATABASE.find(f => f.n === foodName);
 
-        if(meals.length === 0) {
-            container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center">Nenhum registro.</p>';
-            return;
+            if(!foodObj) { alert("Selecione um alimento válido da lista!"); return; }
+
+            if(weight > 0) {
+                const cCal = Math.round((foodObj.c * weight) / 100);
+                const cProt = Math.round((foodObj.p * weight) / 100);
+                draftFoodItems.push({ n: foodName, w: weight, c: cCal, p: cProt });
+                
+                const container = document.getElementById('draft-food-items-container');
+                if(container) {
+                    if(draftFoodItems.length === 1) container.innerHTML = '';
+                    container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-800/60 py-2 px-1"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-200">${cCal} kcal</span></div>`;
+                }
+                searchInput.value = '';
+            }
         }
-        meals.forEach(m => {
-            container.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full"><div class="text-center mx-auto"><span class="text-[10px] font-black text-slate-400 block uppercase mb-1">(${m.data})</span><span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span><p class="text-xs text-slate-500 mt-1">${m.itensStr}</p></div><span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span></div>`;
-        });
-    }
-</script>
+
+        window.finalizeCompleteMealDraft = async function() {
+            if(draftFoodItems.length === 0) { alert("Adicione pelo menos 1 alimento primeiro!"); return; }
+            const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
+            const targetUser = checkedRadio ? checkedRadio.value : 'Gabriel';
+            
+            const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
+            const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
+            const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
+            const todayStr = new Date().toISOString().split('T')[0];
+
+            if(!db[targetUser]) db[targetUser] = {};
+            if(!db[targetUser].meals) db[targetUser].meals = [];
+            
+            db[targetUser].meals.push({ data: todayStr, momento: selectedMealMoment, calorias: totalCal, proteinas: totalProt, itensStr: itemsStr });
+
+            await saveToFirestore();
+            draftFoodItems = [];
+            const container = document.getElementById('draft-food-items-container');
+            if(container) container.innerHTML = '<p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>';
+            refreshAppInterface();
+            alert("Refeição gravada com sucesso na nuvem!");
+        }
+
+        window.changeDiaryScope = function(scope) {
+            diaryScopeMode = scope;
+            ['dia', 'semana', 'mes', 'ano'].forEach(s => {
+                const btn = document.getElementById(`diary-scope-${s}`);
+                if(btn) {
+                    btn.className = (s === scope) ? 
+                        "flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-slate-800 text-white shadow" : 
+                        "flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400";
+                }
+            });
+            renderDiaryAccordionSection();
+        }
+
+        function renderDiaryAccordionSection() {
+            const root = document.getElementById('diary-accordion-root');
+            if(!root || !db || !db[globalProfile]) return;
+            root.innerHTML = '';
+            
+            const profile = db[globalProfile];
+            const today = new Date();
+            let filteredMeals = (profile.meals || []).filter(m => {
+                if(!m.data) return false;
+                const mDate = new Date(m.data + 'T00:00:00');
+                const diffDays = Math.ceil(Math.abs(today - mDate) / (1000 * 60 * 60 * 24));
+                if(diaryScopeMode === 'dia') return today.toISOString().split('T')[0] === m.data;
+                if(diaryScopeMode === 'semana') return diffDays <= 7;
+                if(diaryScopeMode === 'mes') return diffDays <= 30;
+                if(diaryScopeMode === 'ano') return diffDays <= 365;
+                return true;
+            });
+
+            if(filteredMeals.length === 0) {
+                root.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-8">Nenhuma refeição localizada neste período.</p>';
+                return;
+            }
+
+            const groups = {};
+            filteredMeals.forEach(m => { if(!groups[m.data]) groups[m.data] = []; groups[m.data].push(m); });
+            const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+
+            sortedDates.forEach((dateStr, dateIdx) => {
+                const dateObj = new Date(dateStr + 'T00:00:00');
+                const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+                const dayMeals = groups[dateStr];
+                
+                const details = document.createElement('details');
+                details.className = "bg-slate-950 rounded-2xl border border-slate-800/80 overflow-hidden transition-all";
+                if(dateIdx === 0) details.setAttribute('open', '');
+
+                details.innerHTML = `
+                    <summary class="bg-slate-900 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-800/50 transition-colors border-b border-slate-800/60">
+                        <span class="text-xs font-black text-slate-200 uppercase tracking-wide">${formattedDate}</span>
+                        <span class="text-xs font-bold bg-blue-500/10 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/20">${dayMeals.length} Pratos</span>
+                    </summary>
+                    <div class="p-4 space-y-3 bg-slate-950/60 grid grid-cols-1"></div>
+                `;
+
+                const cardsContainer = details.querySelector('div');
+                dayMeals.forEach((m) => {
+                    const globalIdx = profile.meals.findIndex(realM => realM === m);
+                    let colorTheme = "text-amber-400 bg-amber-500/10 border-amber-500/20";
+                    if(m.momento === "Almoço") colorTheme = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
+                    if(m.momento === "Café da Tarde") colorTheme = "text-orange-400 bg-orange-500/10 border-orange-500/20";
+                    if(m.momento === "Janta") colorTheme = "text-indigo-400 bg-indigo-500/10 border-indigo-500/20";
+
+                    cardsContainer.innerHTML += `
+                        <div class="border border-slate-800 p-4 rounded-xl flex justify-between items-center bg-slate-900/40 relative">
+                            <div>
+                                <span class="text-[10px] font-extrabold ${colorTheme} border px-2 py-0.5 rounded-md uppercase tracking-wide inline-block">${m.momento}</span>
+                                <p class="text-xs text-slate-300 mt-2 font-medium leading-relaxed">${m.itensStr}</p>
+                                <span class="text-[11px] font-bold text-slate-400 block mt-1.5">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+                            </div>
+                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-500 hover:text-rose-400 transition-colors p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </div>
+                    `;
+                });
+                root.appendChild(details);
+            });
+            if(window.lucide) lucide.createIcons();
+        }
+
+        window.removeMealFromDiary = async function(globalIndex) {
+            if(globalIndex !== -1 && db[globalProfile]) {
+                db[globalProfile].meals.splice(globalIndex, 1);
+                await saveToFirestore();
+                refreshAppInterface();
+            }
+        }
+
+        function updateBiometricsInputs() {
+            if(!db || !db[globalProfile]) return;
+            const profile = db[globalProfile];
+            const pIni = document.getElementById('bio-input-p-ini');
+            const pAtu = document.getElementById('bio-input-p-atual');
+            const pMet = document.getElementById('bio-input-p-meta');
+            const cint = document.getElementById('bio-input-cintura');
+            const cfgCal = document.getElementById('cfg-calories');
+            const cfgPrt = document.getElementById('cfg-protein');
+
+            if(pIni) pIni.value = profile.pesoInicial || "";
+            if(pAtu) pAtu.value = profile.pesoAtual || "";
+            if(pMet) pMet.value = profile.pesoMeta || "";
+            if(cint) cint.value = profile.cintura || "";
+            if(cfgCal) cfgCal.value = profile.targetCalories || "";
+            if(cfgPrt) cfgPrt.value = profile.targetProtein || "";
+        }
+
+        window.saveBiometricsMetrics = async function() {
+            if(!db[globalProfile]) return;
+            const profile = db[globalProfile];
+            profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
+            profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
+            profile.pesoMeta = parseFloat(document.getElementById('bio-input-p-meta').value) || profile.pesoMeta;
+            profile.cintura = parseFloat(document.getElementById('bio-input-cintura').value) || profile.cintura;
+            
+            await saveToFirestore();
+            refreshAppInterface();
+            alert("Métricas atualizadas no Firestore!");
+        }
+
+        window.saveConfigMeta = async function() {
+            if(!db[globalProfile]) return;
+            const calories = parseInt(document.getElementById('cfg-calories').value);
+            const protein = parseInt(document.getElementById('cfg-protein').value);
+            if(calories > 0 && protein > 0) {
+                db[globalProfile].targetCalories = calories;
+                db[globalProfile].targetProtein = protein;
+                await saveToFirestore();
+                refreshAppInterface();
+                alert("Metas sincronizadas na nuvem!");
+            }
+        }
+
+        window.selectCalendarDay = function(day) { 
+            selectedCalendarDay = day; 
+            const lbl = document.getElementById('cal-selected-day-lbl');
+            if(lbl) lbl.innerText = `Dia Selecionado: ${day}`; 
+            renderInteractiveCalendar(); 
+        }
+        
+        window.setDayStatusColor = async function(colorName) {
+            if(!db[globalProfile]) return;
+            if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
+            db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
+            await saveToFirestore();
+            refreshAppInterface();
+        }
+
+        window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
+
+        function refreshAppInterface() {
+            if (!db || !db[globalProfile]) return;
+            const todayStr = new Date().toISOString().split('T')[0];
+            const profile = db[globalProfile];
+            
+            const todaysMeals = (profile.meals || []).filter(m => m.data === todayStr);
+            const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
+            const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
+            
+            const elCons = document.getElementById('wheel-consumed-val');
+            const elTar = document.getElementById('wheel-target-val');
+            const elProt = document.getElementById('bottom-protein-val');
+            const elLeft = document.getElementById('bottom-left-val');
+            
+            if(elCons) elCons.innerText = consumed;
+            if(elTar) elTar.innerText = profile.targetCalories || 2000;
+            if(elProt) elProt.innerText = `${protein}g / ${profile.targetProtein || 150}g`;
+            
+            const leftCal = (profile.targetCalories || 2000) - consumed;
+            if(elLeft) elLeft.innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida 🎯";
+
+            const circle = document.getElementById('wheel-stroke');
+            if(circle) {
+                circle.style.strokeDashoffset = "251.2";
+                const pct = Math.min(consumed / (profile.targetCalories || 2000), 1);
+                circle.style.strokeDashoffset = 251.2 - (pct * 251.2);
+            }
+
+            ['Gabriel', 'Raissa'].forEach(user => {
+                if(db[user]) {
+                    const uMeals = (db[user].meals || []).filter(m => m.data === todayStr);
+                    const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
+                    const elPCons = document.getElementById(`p-cons-${user}`);
+                    const elPLeft = document.getElementById(`p-left-${user}`);
+                    const elPCount = document.getElementById(`p-count-${user}`);
+                    
+                    if(elPCons) elPCons.innerText = `${uConsumed} kcal`;
+                    if(elPLeft) elPLeft.innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
+                    if(elPCount) elPCount.innerText = uMeals.length + (uMeals.length === 1 ? " Refeição" : " Refeições");
+                }
+            });
+
+            renderDiaryAccordionSection();
+            renderInteractiveCalendar();
+            renderHistoryTimeline();
+        }
+
+        function renderInteractiveCalendar() {
+            const box = document.getElementById('interactive-grid-box');
+            if(!box || !db || !db[globalProfile]) return;
+            box.innerHTML = '';
+            const colorsMap = db[globalProfile].calendarColors || {};
+            
+            for(let i = 1; i <= 28; i++) {
+                let statusColor = colorsMap[i] || null;
+                let colorStyle = "bg-slate-900 text-slate-400 border border-slate-800/80 hover:bg-slate-800";
+                if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white border border-blue-500 shadow-lg";
+                if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white border border-emerald-500 shadow-lg";
+                if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white border border-purple-500 shadow-lg";
+                if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white border border-rose-500 shadow-lg";
+
+                const isToday = (i === 22);
+                box.innerHTML += `<div onclick="selectCalendarDay(${i})" class="h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer font-bold relative transition-all duration-150 ${colorStyle} ${(i === selectedCalendarDay) ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-950 scale-105" : ""} ${isToday ? "border-2 border-amber-500" : ""}">` + i + `</div>`;
+            }
+        }
+
+        function renderHistoryTimeline() {
+            const container = document.getElementById('history-timeline-output');
+            if(!container || !db || !db[globalProfile]) return;
+            container.innerHTML = '';
+            const meals = db[globalProfile].meals || [];
+
+            if(meals.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500 italic p-4 text-center">Nenhum registro no histórico.</p>';
+                return;
+            }
+            meals.forEach(m => {
+                container.innerHTML += `
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 shadow-md flex justify-between items-center text-left w-full">
+                        <div>
+                            <span class="text-[9px] font-black text-slate-500 block uppercase tracking-wider mb-1">${m.data}</span>
+                            <span class="text-xs font-bold text-slate-200 uppercase block">${m.momento}</span>
+                            <p class="text-xs text-slate-400 mt-1 font-medium">${m.itensStr}</p>
+                        </div>
+                        <span class="text-xs font-black bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-md">${m.calorias} kcal</span>
+                    </div>`;
+            });
+        }
+    </script>
+</body>
+</html>
