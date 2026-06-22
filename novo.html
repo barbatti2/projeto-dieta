@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Dieta Pro - Blue & Gray</title>
+    <title>Projeto Dieta Pro - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -23,165 +23,176 @@
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
+    <!-- PERFIL GLOBAL FLOAT (MOBILE & DESKTOP HEADER) -->
+    <div class="bg-slate-900 px-6 py-3 flex justify-between items-center text-white border-b border-slate-800 md:hidden flex-shrink-0 z-50">
+        <div class="flex items-center gap-3">
+            <div id="header-avatar-badge-mobile" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-md">
+                GB
+            </div>
+            <span class="text-xs font-bold tracking-wide text-slate-300">Painel de Controle</span>
+        </div>
+        <div class="flex items-center bg-black/30 p-1 rounded-xl border border-white/10">
+            <button onclick="setGlobalProfile('Gabriel')" id="top-prof-mobile-Gabriel" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white">Gabriel</button>
+            <button onclick="setGlobalProfile('Raissa')" id="top-prof-mobile-Raissa" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400">Raíssa</button>
+        </div>
+    </div>
+
     <!-- SIDEBAR (DESKTOP) -->
     <aside class="hidden md:flex flex-col w-64 bg-slate-100 text-slate-700 p-4 justify-between z-50 h-full border-r border-slate-200">
         <div class="space-y-6">
-            <div class="flex items-center gap-3 px-2 py-3 border-b border-slate-200">
-                <div class="p-2 bg-blue-600 text-white rounded-xl shadow-md">
-                    <i data-lucide="activity" class="w-6 h-6"></i>
+            <div class="flex flex-col items-center text-center py-4 border-b border-slate-200 gap-2">
+                <div class="p-2.5 bg-blue-600 text-white rounded-xl shadow-md">
+                    <i data-lucide="heart-pulse" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h2 class="font-extrabold text-slate-900 text-base tracking-tight">PROJETO DIETA</h2>
-                    <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Blue & Gray Edition</p>
+                    <h2 class="font-extrabold text-slate-900 text-base tracking-tight uppercase">PROJETO DIETA</h2>
+                    <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Premium Edition</p>
+                </div>
+                <div class="flex items-center bg-slate-200 p-1 rounded-xl border border-slate-300 mt-2 w-full">
+                    <button onclick="setGlobalProfile('Gabriel')" id="top-prof-desktop-Gabriel" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
+                    <button onclick="setGlobalProfile('Raissa')" id="top-prof-desktop-Raissa" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500">Raíssa</button>
                 </div>
             </div>
 
             <nav class="space-y-1">
                 <button onclick="switchTab('inicio')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-inicio">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Início
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Início
                 </button>
                 <button onclick="switchTab('pessoas')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-pessoas">
-                    <i data-lucide="users" class="w-4 h-4"></i> Tela Pessoas
+                    <i data-lucide="users-2" class="w-4 h-4"></i> Tela Pessoas
                 </button>
                 <button onclick="switchTab('adicionar')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-adicionar">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
+                    <i data-lucide="plus-square" class="w-4 h-4"></i> Adicionar Alimento
                 </button>
                 <button onclick="switchTab('refeicoes')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-refeicoes">
-                    <i data-lucide="utensils" class="w-4 h-4"></i> Refeições do Dia
+                    <i data-lucide="sandwich" class="w-4 h-4"></i> Refeições do Dia
                 </button>
                 <button onclick="switchTab('calendario')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-calendario">
-                    <i data-lucide="calendar" class="w-4 h-4"></i> Calendário Interativo
+                    <i data-lucide="calendar-days" class="w-4 h-4"></i> Calendário Interativo
                 </button>
                 <button onclick="switchTab('historico')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-historico">
-                    <i data-lucide="history" class="w-4 h-4"></i> Histórico Geral
+                    <i data-lucide="folder-clock" class="w-4 h-4"></i> Histórico Geral
                 </button>
                 <button onclick="switchTab('peso')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-peso">
-                    <i data-lucide="scale" class="w-4 h-4"></i> Pesos e Medidas
+                    <i data-lucide="gauge" class="w-4 h-4"></i> Pesos e Medidas
                 </button>
                 <button onclick="switchTab('config')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-config">
-                    <i data-lucide="settings" class="w-4 h-4"></i> Configurações
+                    <i data-lucide="sliders" class="w-4 h-4"></i> Configurações
                 </button>
             </nav>
         </div>
         
-        <div class="pt-4 border-t border-slate-200 flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-slate-300 flex items-center justify-center font-bold text-slate-700 text-xs">G&R</div>
-            <div>
-                <p class="text-xs font-bold text-slate-900">Acesso Compartilhado</p>
-                <p class="text-[10px] text-slate-500">Gabriel & Raíssa</p>
-            </div>
+        <div class="pt-4 border-t border-slate-200 flex flex-col items-center text-center gap-1">
+            <div id="header-avatar-badge-desktop" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-inner">GB</div>
+            <p class="text-xs font-bold text-slate-900">Acesso Compartilhado</p>
+            <p class="text-[10px] text-slate-500">Gabriel & Raíssa</p>
         </div>
     </aside>
 
     <!-- CONTENT WRAPPER -->
     <div class="flex-1 flex flex-col h-full overflow-hidden pb-20 md:pb-0">
-        
-        <!-- NOVO CABEÇALHO PREMIUM COM DESIGN EM DEGRADÊ -->
-        <header class="relative bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 py-5 px-6 flex justify-between items-center text-white border-b border-slate-800 flex-shrink-0 shadow-lg overflow-hidden">
-            <!-- Detalhe decorativo abstrato de fundo -->
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-            
-            <div class="relative z-10 flex items-center gap-3">
-                <div id="header-avatar-badge" class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10 transition-colors">
-                    GB
-                </div>
-                <div>
-                    <h2 id="current-tab-title" class="text-base md:text-xl font-extrabold tracking-tight text-white drop-shadow-sm">Início / Painel Geral</h2>
-                    <p id="current-date-display" class="text-[11px] text-slate-300 font-medium tracking-wide"></p>
-                </div>
-            </div>
-            
-            <div class="relative z-10 flex items-center bg-black/30 backdrop-blur-sm p-1 rounded-xl border border-white/10 shadow-inner">
-                <button onclick="setGlobalProfile('Gabriel')" id="top-prof-Gabriel" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
-                <button onclick="setGlobalProfile('Raissa')" id="top-prof-Raissa" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">Raíssa</button>
-            </div>
-        </header>
 
         <!-- CONTEÚDO PRINCIPAL (SCROLL) -->
-        <main class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+        <main class="flex-1 overflow-y-auto custom-scrollbar">
 
+            <!-- MACRO CABEÇALHO INTEGRADO (REPETIDO DENTRO DE CADA ABA PARA DAR IDENTIDADE VISUAL EXCLUSIVA) -->
+            
             <!-- TELA 1: INÍCIO -->
-            <section id="tab-inicio" class="space-y-6 max-w-md mx-auto">
-                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-md flex flex-col items-center justify-center text-center">
-                    <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 block">Energia Consumida</span>
-                    
-                    <div class="relative w-48 h-48 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="8" fill="transparent"/>
-                            <circle id="wheel-stroke" cx="50" cy="50" r="40" stroke="#2563eb" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="wheel-progress"/>
-                        </svg>
-                        <div class="absolute text-center">
-                            <span id="wheel-consumed-val" class="text-4xl font-black text-slate-900 block tracking-tight">0</span>
-                            <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mt-0.5">Ingeridas</span>
-                        </div>
-                    </div>
-                    <p class="text-xs font-medium text-slate-500 mt-4">Sua meta diária activa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
+            <section id="tab-inicio" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-blue-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="layout-grid" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase drop-shadow-sm">Início / Painel Geral</h2>
+                    <p class="text-xs text-blue-100 font-medium tracking-wide mt-1" id="date-display-inicio"></p>
                 </div>
 
-                <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm grid grid-cols-2 gap-4 divide-x divide-slate-200">
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <div class="flex items-center gap-1.5 text-blue-600 mb-1">
-                            <span>⚡</span>
-                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Proteína</span>
+                <div class="p-4 md:p-6 max-w-md mx-auto space-y-6">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-md flex flex-col items-center justify-center text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 block">Energia Consumida</span>
+                        
+                        <div class="relative w-48 h-48 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="8" fill="transparent"/>
+                                <circle id="wheel-stroke" cx="50" cy="50" r="40" stroke="#2563eb" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="wheel-progress"/>
+                            </svg>
+                            <div class="absolute text-center">
+                                <span id="wheel-consumed-val" class="text-4xl font-black text-slate-900 block tracking-tight">0</span>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mt-0.5">Ingeridas</span>
+                            </div>
                         </div>
-                        <span id="bottom-protein-val" class="text-base font-bold text-slate-800">0g / --</span>
+                        <p class="text-xs font-medium text-slate-500 mt-4 text-center">Sua meta diária ativa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
                     </div>
-                    <div class="flex flex-col items-center justify-center text-center pl-4">
-                        <div class="flex items-center gap-1.5 text-orange-500 mb-1">
-                            <span>🔥</span>
-                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Faltam</span>
+
+                    <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm grid grid-cols-2 gap-4 divide-x divide-slate-200">
+                        <div class="flex flex-col items-center justify-center text-center">
+                            <div class="flex items-center gap-1.5 text-blue-600 mb-1">
+                                <i data-lucide="zap" class="w-4 h-4"></i>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Proteína</span>
+                            </div>
+                            <span id="bottom-protein-val" class="text-base font-bold text-slate-800">0g / --</span>
                         </div>
-                        <span id="bottom-left-val" class="text-base font-bold text-slate-800">-- kcal</span>
+                        <div class="flex flex-col items-center justify-center text-center pl-4">
+                            <div class="flex items-center gap-1.5 text-orange-500 mb-1">
+                                <i data-lucide="flame" class="w-4 h-4"></i>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Faltam</span>
+                            </div>
+                            <span id="bottom-left-val" class="text-base font-bold text-slate-800">-- kcal</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- TELA 2: TELA PESSOAS -->
             <section id="tab-pessoas" class="space-y-6 hidden">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md space-y-4">
-                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">G</div>
+                <div class="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="users-2" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Métricas & Compartilhamento</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Comparativo de consumo e metas em tempo real</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col items-center text-center space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">G</div>
                             <div>
                                 <h4 class="font-black text-slate-900 text-base">Gabriel</h4>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Métricas de Hoje</p>
                             </div>
+                            <div class="grid grid-cols-3 gap-2 text-center w-full pt-2">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
+                                    <span id="p-cons-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
+                                    <span id="p-left-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
+                                    <span id="p-count-Gabriel" class="text-xs font-black text-slate-800">0</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
-                                <span id="p-cons-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
-                                <span id="p-left-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
-                                <span id="p-count-Gabriel" class="text-xs font-black text-slate-800">0</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md space-y-4">
-                        <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
-                            <div class="w-10 h-10 rounded-xl bg-slate-400 text-white flex items-center justify-center font-bold shadow-sm">R</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col items-center text-center space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">R</div>
                             <div>
                                 <h4 class="font-black text-slate-900 text-base">Raíssa</h4>
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Métricas de Hoje</p>
                             </div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2 text-center">
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
-                                <span id="p-cons-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
-                                <span id="p-left-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
-                            </div>
-                            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                                <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
-                                <span id="p-count-Raissa" class="text-xs font-black text-slate-800">0</span>
+                            <div class="grid grid-cols-3 gap-2 text-center w-full pt-2">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
+                                    <span id="p-cons-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
+                                    <span id="p-left-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
+                                    <span id="p-count-Raissa" class="text-xs font-black text-slate-800">0</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -189,66 +200,98 @@
             </section>
 
             <!-- TELA 3: ADICIONAR ALIMENTO -->
-            <section id="tab-adicionar" class="space-y-6 max-w-xl mx-auto hidden">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-5">
-                    <h3 class="font-black text-slate-900 text-base flex items-center gap-2"><i data-lucide="plus" class="text-blue-600"></i> Montar Registro Alimentar</h3>
-                    
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Destinatário</label>
-                        <div class="grid grid-cols-2 gap-2">
-                            <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Gabriel">
-                                <input type="radio" name="target-user-radio" value="Gabriel" checked class="accent-blue-600" onchange="updateFormUserHighlight()"> Gabriel
-                            </label>
-                            <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Raissa">
-                                <input type="radio" name="target-user-radio" value="Raissa" class="accent-blue-600" onchange="updateFormUserHighlight()"> Raíssa
-                            </label>
+            <section id="tab-adicionar" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-emerald-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="plus-square" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Montar Registro Alimentar</h2>
+                    <p class="text-xs text-emerald-100 font-medium tracking-wide mt-1">Insira os alimentos consumidos no diário</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-5 flex flex-col items-center">
+                        
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">Destinatário</label>
+                            <div class="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+                                <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Gabriel">
+                                    <input type="radio" name="target-user-radio" value="Gabriel" checked class="accent-blue-600" onchange="updateFormUserHighlight()"> Gabriel
+                                </label>
+                                <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Raissa">
+                                    <input type="radio" name="target-user-radio" value="Raissa" class="accent-blue-600" onchange="updateFormUserHighlight()"> Raíssa
+                                </label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="relative">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Pesquisar Alimento</label>
-                        <input type="text" id="food-search-input" oninput="handleFoodSearch(this.value)" placeholder="Digite para buscar (Ex: Frango, Ovo, Pão...)" class="w-full p-3 text-sm border rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none font-medium text-slate-700">
-                        <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar"></div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Quantidade por Gramas</label>
-                        <div class="grid grid-cols-4 gap-2 mb-3">
-                            <button onclick="setWeightInputValue(50)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">50g</button>
-                            <button onclick="setWeightInputValue(100)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">100g</button>
-                            <button onclick="setWeightInputValue(150)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">150g</button>
-                            <button onclick="setWeightInputValue(200)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">200g</button>
+                        <!-- CARDS DE REFEIÇÕES (SUBSTITUINDO O SELECT ANTERIOR) -->
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Momento da Refeição</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button onclick="selectMealMomentCard('Café da Manhã')" id="meal-card-cafe-m" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-cafe-m">
+                                        <i data-lucide="coffee" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Café da Manhã</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Almoço')" id="meal-card-almoco" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-almoco">
+                                        <i data-lucide="utensils" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Almoço</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Café da Tarde')" id="meal-card-cafe-t" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-cafe-t">
+                                        <i data-lucide="cookie" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Café da Tarde</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Janta')" id="meal-card-janta" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-janta">
+                                        <i data-lucide="soup" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Janta</span>
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <button onclick="adjustWeightInput(-10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all">-</button>
-                            <input type="number" id="food-weight-input" value="100" class="flex-1 text-center p-2.5 border rounded-xl font-bold text-slate-900 focus:outline-none">
-                            <button onclick="adjustWeightInput(10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all">+</button>
+
+                        <div class="relative w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">Pesquisar Alimento</label>
+                            <input type="text" id="food-search-input" oninput="handleFoodSearch(this.value)" placeholder="Digite para buscar (Ex: Frango, Ovo, Pão...)" class="w-full p-3 text-sm border rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none font-medium text-center text-slate-700">
+                            <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar"></div>
                         </div>
-                    </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Momento da Refeição</label>
-                        <select id="meal-moment-select" class="w-full p-3 text-sm border rounded-xl bg-white focus:outline-none font-medium">
-                            <option value="Café da Manhã">Café da Manhã</option>
-                            <option value="Almoço">Almoço</option>
-                            <option value="Café da Tarde">Café da Tarde</option>
-                            <option value="Janta">Janta</option>
-                        </select>
-                    </div>
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">Quantidade por Gramas</label>
+                            <div class="grid grid-cols-4 gap-2 mb-3 max-w-sm mx-auto">
+                                <button onclick="setWeightInputValue(50)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">50g</button>
+                                <button onclick="setWeightInputValue(100)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">100g</button>
+                                <button onclick="setWeightInputValue(150)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">150g</button>
+                                <button onclick="setWeightInputValue(200)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">200g</button>
+                            </div>
+                            <div class="flex items-center gap-2 max-w-xs mx-auto">
+                                <button onclick="adjustWeightInput(-10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                                <input type="number" id="food-weight-input" value="100" class="flex-1 text-center p-2.5 border rounded-xl font-bold text-slate-900 focus:outline-none">
+                                <button onclick="adjustWeightInput(10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-                        <button onclick="addSingleFoodToDraft()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
-                            1. Salvar Alimento
-                        </button>
-                        <button onclick="finalizeCompleteMealDraft()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
-                            2. Salvar Refeição
-                        </button>
-                    </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full">
+                            <button onclick="addSingleFoodToDraft()" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4"></i> 1. Salvar Alimento
+                            </button>
+                            <button onclick="finalizeCompleteMealDraft()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider flex items-center justify-center gap-2 shadow-md">
+                                <i data-lucide="save" class="w-4 h-4"></i> 2. Salvar Refeição
+                            </button>
+                        </div>
 
-                    <div class="border-t border-slate-100 pt-3">
-                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-2">Rascunho de Alimentos Inclusos</span>
-                        <div id="draft-food-items-container" class="space-y-1 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl max-h-28 overflow-y-auto custom-scrollbar">
-                            <p class="text-slate-400 italic">Nenhum alimento no rascunho temporário.</p>
+                        <div class="border-t border-slate-100 pt-3 w-full text-center">
+                            <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-2">Rascunho de Alimentos Inclusos</span>
+                            <div id="draft-food-items-container" class="space-y-1 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl max-h-28 overflow-y-auto custom-scrollbar text-center">
+                                <p class="text-slate-400 italic">Nenhum alimento no rascunho temporário.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -256,55 +299,66 @@
 
             <!-- TELA 4: REFEIÇÕES DO DIA -->
             <section id="tab-refeicoes" class="space-y-6 hidden">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-black text-slate-900 text-base">Alimentos Ingeridos Hoje</h3>
-                    <div class="text-[11px] font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-full border border-blue-100" id="refeicoes-date-badge"></div>
+                <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-red-700 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-orange-700">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="sandwich" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Alimentos Ingeridos Hoje</h2>
+                    <p class="text-xs text-orange-100 font-medium tracking-wide mt-1" id="refeicoes-date-badge">--/--/----</p>
                 </div>
-                <div id="meals-day-squares-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+
+                <div class="p-4 md:p-6 max-w-4xl mx-auto">
+                    <div id="meals-day-squares-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
             </section>
 
             <!-- TELA 5: CALENDÁRIO INTERATIVO -->
-            <section id="tab-calendario" class="space-y-6 max-w-xl mx-auto hidden">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
-                    <div class="flex justify-between items-center border-b pb-3 border-slate-100">
-                        <div>
-                            <h4 id="cal-month-year-header" class="font-black text-slate-900 text-base uppercase tracking-tight">Junho 2026</h4>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">⭐ Borda destaca o dia de hoje</p>
-                        </div>
-                        <span id="cal-selected-day-lbl" class="text-xs font-extrabold bg-blue-50 text-blue-600 px-3 py-1 rounded-lg">Dia Selecionado: 1</span>
-                    </div>
-                    
-                    <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1">
-                        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                    </div>
-                    <div class="grid grid-cols-7 gap-2" id="interactive-grid-box"></div>
-                    
-                    <div class="border-t border-slate-100 pt-4 mt-2">
-                        <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Atribuir Status ao Dia:</p>
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                            <button onclick="setDayStatusColor('azul')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Dieta + Treino</button>
-                            <button onclick="setDayStatusColor('verde')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Dieta</button>
-                            <button onclick="setDayStatusColor('roxo')" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Treino</button>
-                            <button onclick="setDayStatusColor('vermelho')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Nenhum</button>
-                        </div>
-                    </div>
+            <section id="tab-calendario" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-purple-700 via-purple-600 to-fuchsia-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-purple-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="calendar-days" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Calendário de Consistência</h2>
+                    <p class="text-xs text-purple-100 font-medium tracking-wide mt-1">Monitore e atribua status à rotina diária</p>
+                </div>
 
-                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mt-4 grid grid-cols-2 gap-2 text-center">
-                        <div class="p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="text-[9px] uppercase font-bold text-slate-400 block">Dieta + Treino (Azul)</span>
-                            <span id="count-cal-azul" class="text-xs font-black text-blue-600">0 dias</span>
+                <div class="p-4 md:p-6 max-w-xl mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <div class="w-full text-center border-b pb-3 border-slate-100">
+                            <h4 id="cal-month-year-header" class="font-black text-slate-900 text-base uppercase tracking-tight">Junho 2026</h4>
+                            <span id="cal-selected-day-lbl" class="text-xs font-extrabold bg-blue-50 text-blue-600 px-3 py-1 rounded-lg inline-block mt-2">Dia Selecionado: 1</span>
                         </div>
-                        <div class="p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Dieta (Verde)</span>
-                            <span id="count-cal-verde" class="text-xs font-black text-emerald-600">0 dias</span>
+                        
+                        <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1 w-full">
+                            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
                         </div>
-                        <div class="p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Treino (Roxo)</span>
-                            <span id="count-cal-roxo" class="text-xs font-black text-purple-600">0 dias</span>
+                        <div class="grid grid-cols-7 gap-2 w-full" id="interactive-grid-box"></div>
+                        
+                        <div class="border-t border-slate-100 pt-4 mt-2 w-full text-center">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Atribuir Status ao Dia:</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                                <button onclick="setDayStatusColor('azul')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Dieta + Treino</button>
+                                <button onclick="setDayStatusColor('verde')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Dieta</button>
+                                <button onclick="setDayStatusColor('roxo')" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Treino</button>
+                                <button onclick="setDayStatusColor('vermelho')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Nenhum</button>
+                            </div>
                         </div>
-                        <div class="p-2 bg-white rounded-xl border border-slate-200">
-                            <span class="text-[9px] uppercase font-bold text-slate-400 block">Nenhum (Vermelho)</span>
-                            <span id="count-cal-vermelho" class="text-xs font-black text-rose-600">0 dias</span>
+
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mt-4 grid grid-cols-2 gap-2 text-center w-full">
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Dieta + Treino (Azul)</span>
+                                <span id="count-cal-azul" class="text-xs font-black text-blue-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Dieta (Verde)</span>
+                                <span id="count-cal-verde" class="text-xs font-black text-emerald-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Treino (Roxo)</span>
+                                <span id="count-cal-roxo" class="text-xs font-black text-purple-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Nenhum (Vermelho)</span>
+                                <span id="count-cal-vermelho" class="text-xs font-black text-rose-600">0 dias</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -312,98 +366,124 @@
 
             <!-- TELA 6: HISTÓRICO -->
             <section id="tab-historico" class="space-y-6 hidden">
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap gap-2 items-center justify-between">
-                    <h4 class="font-black text-slate-900 text-base">Filtros de Auditoria</h4>
-                    <div class="flex bg-slate-100 p-1 rounded-xl border">
-                        <button onclick="setHistoryFilter('dia')" id="f-btn-dia" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
-                        <button onclick="setHistoryFilter('semana')" id="f-btn-semana" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
-                        <button onclick="setHistoryFilter('mes')" id="f-btn-mes" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
-                        <button onclick="setHistoryFilter('ano')" id="f-btn-ano" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
-                    </div>
+                <div class="relative bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-700">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="folder-clock" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Histórico Geral / Auditoria</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Linha do tempo consolidada de lançamentos</p>
                 </div>
-                <div id="history-timeline-output" class="space-y-3"></div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-4 flex flex-col items-center">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
+                        <h4 class="font-black text-slate-900 text-sm tracking-wide uppercase text-center">Filtros de Período</h4>
+                        <div class="flex bg-slate-100 p-1 rounded-xl border mx-auto">
+                            <button onclick="setHistoryFilter('dia')" id="f-btn-dia" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
+                            <button onclick="setHistoryFilter('semana')" id="f-btn-semana" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
+                            <button onclick="setHistoryFilter('mes')" id="f-btn-mes" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
+                            <button onclick="setHistoryFilter('ano')" id="f-btn-ano" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
+                        </div>
+                    </div>
+                    <div id="history-timeline-output" class="space-y-3 w-full"></div>
+                </div>
             </section>
 
             <!-- TELA 7: PESOS E MEDIDAS -->
-            <section id="tab-peso" class="space-y-6 max-w-xl mx-auto hidden">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
-                    <h3 class="font-black text-slate-900 text-base">Acompanhamento Biométrico</h3>
-                    
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Peso Inicial (kg)</label>
-                            <input type="number" step="0.1" id="bio-input-p-ini" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Peso Atual (kg)</label>
-                            <input type="number" step="0.1" id="bio-input-p-atual" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Meta Alvo (kg)</label>
-                            <input type="number" step="0.1" id="bio-input-p-meta" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cintura (cm)</label>
-                            <input type="number" step="0.1" id="bio-input-cintura" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
-                        </div>
-                    </div>
-                    <button onclick="saveBiometricsMetrics()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wide transition-all shadow-sm">
-                        Salvar e Atualizar Métricas
-                    </button>
+            <section id="tab-peso" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-cyan-700 via-teal-600 to-blue-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-cyan-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="gauge" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Acompanhamento Biométrico</h2>
+                    <p class="text-xs text-cyan-100 font-medium tracking-wide mt-1">Evolução de peso corporativo e medidas físicas</p>
                 </div>
 
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
-                    <div class="flex justify-between items-center text-xs font-bold">
-                        <span class="text-slate-500 uppercase tracking-wider">Evolução do Objetivo</span>
-                        <span id="bar-percentage-lbl" class="text-blue-600 font-extrabold">0% Concluído</span>
+                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <h3 class="font-black text-slate-900 text-center text-base">Métricas Atuais</h3>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Inicial (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-ini" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Atual (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-atual" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Meta (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-meta" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cintura (cm)</label>
+                                <input type="number" step="0.1" id="bio-input-cintura" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                        </div>
+                        <button onclick="saveBiometricsMetrics()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wide transition-all shadow-sm">
+                            Salvar e Atualizar Métricas
+                        </button>
                     </div>
-                    <div class="w-full bg-slate-100 h-6 rounded-full overflow-hidden border border-slate-200 relative">
-                        <div id="progress-horizontal-bar" class="h-full bg-blue-600 rounded-full bar-progress" style="width: 0%;"></div>
-                    </div>
-                    <div class="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wide">
-                        <span>Início</span>
-                        <span>Progresso Proporcional</span>
-                        <span>Alvo</span>
+
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3 flex flex-col items-center">
+                        <div class="flex justify-between items-center text-xs font-bold w-full">
+                            <span class="text-slate-500 uppercase tracking-wider">Evolução do Objetivo</span>
+                            <span id="bar-percentage-lbl" class="text-blue-600 font-extrabold">0% Concluído</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-6 rounded-full overflow-hidden border border-slate-200 relative">
+                            <div id="progress-horizontal-bar" class="h-full bg-blue-600 rounded-full bar-progress" style="width: 0%;"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wide w-full">
+                            <span>Início</span>
+                            <span>Progresso Proporcional</span>
+                            <span>Alvo</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- TELA 8: CONFIGURAÇÕES -->
-            <section id="tab-config" class="space-y-6 max-w-md mx-auto hidden">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
-                    <h3 class="font-black text-slate-900 text-base">Diretrizes do Perfil Selecionado</h3>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Meta de Calorias Diárias (kcal)</label>
-                        <input type="number" id="cfg-calories" class="w-full p-3 border rounded-xl outline-none font-bold">
+            <section id="tab-config" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-blue-900 via-slate-800 to-indigo-950 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-900">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="sliders" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Diretrizes do Perfil</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Configure suas metas diárias estruturais</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-md mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1 tracking-wider">Meta de Calorias Diárias (kcal)</label>
+                            <input type="number" id="cfg-calories" class="w-full p-3 border rounded-xl outline-none font-bold text-center">
+                        </div>
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1 tracking-wider">Meta de Proteínas Diárias (g)</label>
+                            <input type="number" id="cfg-protein" class="w-full p-3 border rounded-xl outline-none font-bold text-center">
+                        </div>
+                        <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm">
+                            Salvar Configurações
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Meta de Proteínas Diárias (g)</label>
-                        <input type="number" id="cfg-protein" class="w-full p-3 border rounded-xl outline-none font-bold">
-                    </div>
-                    <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm">
-                        Salvar Configurações
-                    </button>
                 </div>
             </section>
 
         </main>
 
-        <!-- BOTTOM NAV EXCLUSIVO MOBILE (ÍCONES GRANDES w-6 h-6 + DESTAQUE DE ABA ATIVA) -->
+        <!-- BOTTOM NAV MOBILE EXCLUSIVO (ÍCONES GRANDES w-6 h-6 PADRONIZADOS E CENTRALIZADOS) -->
         <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center p-3 z-50 shadow-2xl rounded-t-3xl">
-            <button onclick="switchTab('inicio')" id="m-nav-inicio" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
-                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>Início
+            <button onclick="switchTab('inicio')" id="m-nav-inicio" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="layout-grid" class="w-6 h-6"></i>Início
             </button>
-            <button onclick="switchTab('pessoas')" id="m-nav-pessoas" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
-                <i data-lucide="users" class="w-6 h-6"></i>Pessoas
+            <button onclick="switchTab('pessoas')" id="m-nav-pessoas" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="users-2" class="w-6 h-6"></i>Pessoas
             </button>
-            <button onclick="switchTab('adicionar')" id="m-nav-adicionar" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
-                <i data-lucide="plus-circle" class="w-6 h-6"></i>+ Item
+            <button onclick="switchTab('adicionar')" id="m-nav-adicionar" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="plus-square" class="w-6 h-6"></i>+ Item
             </button>
-            <button onclick="switchTab('refeicoes')" id="m-nav-refeicoes" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
-                <i data-lucide="utensils" class="w-6 h-6"></i>Diário
+            <button onclick="switchTab('refeicoes')" id="m-nav-refeicoes" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="sandwich" class="w-6 h-6"></i>Diário
             </button>
-            <button onclick="switchTab('calendario')" id="m-nav-calendario" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
-                <i data-lucide="calendar" class="w-6 h-6"></i>Agenda
+            <button onclick="switchTab('calendario')" id="m-nav-calendario" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="calendar-days" class="w-6 h-6"></i>Agenda
             </button>
         </nav>
     </div>
@@ -420,100 +500,68 @@
             { n: "Filé de Tilápia Grelhado", c: 130, p: 26 }, { n: "Filé de Salmão Assado", c: 210, p: 23 }, { n: "Filé de Merluza Cozido", c: 110, p: 19 }, { n: "Bacalhau Cozido Desfiado", c: 100, p: 23 },
             { n: "Camarão Grelhado", c: 120, p: 24 }, { n: "Lula Cozida Argolas", c: 92, p: 18 }, { n: "Polvo Cozido", c: 85, p: 17 }, { n: "Ovo Cozido Inteiro", c: 155, p: 13 },
             { n: "Ovo Frito", c: 190, p: 13 }, { n: "Clara de Ovo Cozida", c: 52, p: 11 }, { n: "Gema de Ovo Cozida", c: 320, p: 16 }, { n: "Omelete Simples sem Óleo", c: 160, p: 13 },
-            { n: "Coxa de Frango sem Pele", c: 167, p: 25 }, { n: "Asa de Frango Assada", c: 220, p: 23 }, { n: "Peito de Peru Defumado", c: 105, p: 21 }, { n: "Lagarto Cozido", c: 170, p: 28 },
-            { n: "Paleta Bovina Ensopada", c: 195, p: 26 }, { n: "Costelinha de Porco Assada", c: 290, p: 24 }, { n: "Kani Kama Unidade", c: 85, p: 10 }, { n: "Proteína de Soja Texturizada", c: 280, p: 50 },
-            { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Arroz Integral Cozido", c: 120, p: 2.6 }, { n: "Arroz Parboilizado Cozido", c: 125, p: 2.5 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 },
-            { n: "Feijão Preto Cozido", c: 78, p: 5 }, { n: "Feijão Branco Cozido", c: 85, p: 6 }, { n: "Lentilha Cozida", c: 116, p: 9 }, { n: "Grão de Bico Cozido", c: 164, p: 9 },
-            { n: "Ervilha Fresca Cozida", c: 81, p: 5.4 }, { n: "Macarrão de Sêmola Cozido", c: 140, p: 5 }, { n: "Macarrão Integral Cozido", c: 130, p: 5.5 }, { n: "Quinoa Cozida", c: 120, p: 4.4 },
-            { n: "Batata Doce Cozida", c: 86, p: 1.6 }, { n: "Batata Inglesa Cozida", c: 77, p: 2 }, { n: "Batata Inglesa Frita", c: 280, p: 3.5 }, { n: "Purê de Batata Clássico", c: 110, p: 2 },
-            { n: "Mandioca Cozida (Aipim)", c: 160, p: 1.1 }, { n: "Mandioquinha Cozida", c: 125, p: 1.2 }, { n: "Inhame Cozido", c: 118, p: 1.5 }, { n: "Farofa de Mandioca Pronta", c: 390, p: 2.1 },
-            { n: "Farinha de Mandioca Crua", c: 360, p: 1.2 }, { n: "Farinha de Aveia Fina", c: 380, p: 14 }, { n: "Aveia em Flocos Grossos", c: 370, p: 14 }, { n: "Farelo de Aveia", c: 350, p: 17 },
-            { n: "Cereal Matinal de Milho", c: 375, p: 7 }, { n: "Granola Tradicional", c: 420, p: 10 }, { n: "Tapioca Pronta Goma", c: 240, p: 0.5 }, { n: "Cuscuz de Milho Cozido", c: 112, p: 2.2 },
-            { n: "Pipoca Estourada sem Óleo", c: 380, p: 12 }, { n: "Polenta Cozida Cremosa", c: 85, p: 2 }, { n: "Milho Verde Cozido", c: 108, p: 3.2 }, { n: "Farinha de Trigo Branca", c: 360, p: 10 },
-            { n: "Arroz Negro Cozido", c: 140, p: 3.5 }, { n: "Arroz de Carreteiro", c: 210, p: 8 }, { n: "Nhoque de Batata Simples", c: 160, p: 4 }, { n: "Macarrão de Arroz (Bifum)", c: 110, p: 1.5 },
-            { n: "Farinha de Linhaça Dourada", c: 490, p: 20 }, { n: "Semente de Chia", c: 485, p: 16 }, { n: "Semente de Girassol", c: 580, p: 21 }, { n: "Canjica Cozida Basica", c: 115, p: 2.4 },
-            { n: "Leite Integral Fluido", c: 61, p: 3.2 }, { n: "Leite Desnatado Líquido", c: 35, p: 3.4 }, { n: "Leite Semidesnatado", c: 50, p: 3.3 }, { n: "Queijo Muçarela Fatiado", c: 320, p: 23 },
-            { n: "Queijo Prato Fatiado", c: 350, p: 24 }, { n: "Queijo Minas Frescal", c: 240, p: 16 }, { n: "Queijo Cottage", c: 98, p: 11 }, { n: "Queijo Ricota Fresca", c: 140, p: 12 },
-            { n: "Queijo Parmesão Ralado", c: 430, p: 35 }, { n: "Queijo Gorgonzola", c: 350, p: 21 }, { n: "Queijo Provolone", c: 370, p: 26 }, { n: "Queijo Cream Cheese Tradicional", c: 340, p: 6 },
-            { n: "Requeijão Cremoso Tradicional", c: 260, p: 9 }, { n: "Requeijão Light", c: 170, p: 11 }, { n: "Iogurte Natural Integral", c: 66, p: 3.5 }, { n: "Iogurte Desnatado Natural", c: 41, p: 3.8 },
-            { n: "Iogurte Grego Tradicional", c: 115, p: 6 }, { n: "Manteiga com Sal", c: 720, p: 0.8 }, { n: "Creme de Leite em Caixinha", c: 180, p: 2 }, { n: "Doce de Leite Pastoso", c: 315, p: 6 },
-            { n: "Queijo Coalho Grelhado", c: 345, p: 21 }, { n: "Queijo Gouda", c: 356, p: 25 }, { n: "Queijo Cheddar Fatias", c: 390, p: 23 }, { n: "Kefir Líquido Natural", c: 40, p: 3 },
-            { n: "Pão Francês Unidade", c: 270, p: 8 }, { n: "Pão de Forma Integral", c: 245, p: 9.5 }, { n: "Pão de Forma Tradicional", c: 260, p: 8 }, { n: "Pão de Queijo Assado", c: 360, p: 7 },
-            { n: "Pão de Centeio", c: 250, p: 8.5 }, { n: "Pão Australiano", c: 275, p: 8.5 }, { n: "Torrada Tradicional Industrial", c: 400, p: 11 }, { n: "Torrada Integral", c: 385, p: 12 },
-            { n: "Biscoito Água e Sal", c: 430, p: 9 }, { n: "Biscoito Cream Cracker", c: 440, p: 9 }, { n: "Biscoito Recheado Chocolate", c: 480, p: 6 }, { n: "Bolo de Fubá Caseiro", c: 310, p: 4.8 },
-            { n: "Bolo de Chocolate Simples", c: 370, p: 5 }, { n: "Croissant Simples", c: 400, p: 8 }, { n: "Panqueca Caseira Massa", c: 180, p: 6 }, { n: "Waffle Tradicional", c: 290, p: 7 },
-            { n: "Pão de Alho Assado", c: 350, p: 9 }, { n: "Pão Sírio Integral", c: 230, p: 9 }, { n: "Mini Bagete Plana", c: 280, p: 8 }, { n: "Biscoito de Polvilho", c: 410, p: 2 },
-            { n: "Banana Prata", c: 89, p: 1.1 }, { n: "Banana Nanica", c: 92, p: 1.4 }, { n: "Maçã Fuji com Casca", c: 52, p: 0.3 }, { n: "Pêra Willians", c: 57, p: 0.4 },
-            { n: "Laranja Pêra Suco", c: 47, p: 0.9 }, { n: "Morango Fresco", c: 32, p: 0.7 }, { n: "Mamão Papaia", c: 43, p: 0.5 }, { n: "Abacaxi Pérola", c: 50, p: 0.5 },
-            { n: "Melancia", c: 30, p: 0.6 }, { n: "Uva Niágara", c: 67, p: 0.6 }, { n: "Abacate", c: 160, p: 2 }, { n: "Limão Taiti", c: 29, p: 0.7 },
-            { n: "Alface Crespa", c: 15, p: 1.3 }, { n: "Tomate Italiano Cru", c: 18, p: 0.9 }, { n: "Cenoura Crua Ralada", c: 41, p: 0.9 }, { n: "Brócolis Cozido Vapor", c: 35, p: 2.4 },
-            { n: "Couve-Flor Cozida", c: 25, p: 1.9 }, { n: "Couve Manteiga Refogada", c: 70, p: 2.2 }, { n: "Espinafre Cozido", c: 23, p: 3 }, { n: "Chuchu Cozido", c: 19, p: 0.4 },
-            { n: "Abobrinha Menina Cozida", c: 17, p: 1.1 }, { n: "Pepino Japonês Cru", c: 15, p: 0.7 }, { n: "Vagem Cozida", c: 35, p: 1.8 }, { n: "Beterraba Cozida", c: 43, p: 1.3 },
-            { n: "Melão Amarelo", c: 34, p: 0.8 }, { n: "Manga Palmer", c: 60, p: 0.8 }, { n: "Maracujá Polpa", c: 97, p: 2.2 }, { n: "Tangerina Ponkan", c: 43, p: 0.8 },
-            { n: "Goiaba Vermelha", c: 54, p: 2.5 }, { n: "Kiwi", c: 61, p: 1.1 }, { n: "Cereja Fresca", c: 50, p: 1 }, { n: "Ameixa Preta", c: 46, p: 0.7 },
-            { n: "Abóbora Cabotiá Assada", c: 48, p: 1.5 }, { n: "Beringela Grelhada", c: 25, p: 1 }, { n: "Palmito em Conserva", c: 20, p: 1.8 }, { n: "Cogumelo Paris Fresco", c: 22, p: 3 },
-            { n: "Rúcula Crua", c: 25, p: 2.6 }, { n: "Agrião Fresco", c: 11, p: 2.3 }, { n: "Repolho Branco Picado", c: 25, p: 1.3 }, { n: "Espargos Cozidos", c: 20, p: 2.2 },
-            { n: "Castanha do Pará Unidade", c: 650, p: 14 }, { n: "Castanha de Caju Torrada", c: 580, p: 18 }, { n: "Amendoim Torrado Sal", c: 590, p: 25 }, { n: "Pasta de Amendoim Integral", c: 600, p: 26 },
-            { n: "Azeite de Oliva Extra Virgem", c: 884, p: 0 }, { n: "Azeitona Verde Conserva", c: 115, p: 1 }, { n: "Batata Palha Industrial", c: 520, p: 5 }, { n: "Mel de Abelha Orgânico", c: 304, p: 0.3 },
-            { n: "Whey Protein Isolado pó", c: 360, p: 80 }, { n: "Creatina Monohidratada pó", c: 0, p: 0 }, { n: "Hipercalórico Suplemento", c: 380, p: 20 }, { n: "BCAA em Pó", c: 0, p: 0 },
-            { n: "Óleo de Coco Extra Virgem", c: 862, p: 0 }, { n: "Chocolate 70% Cacau", c: 550, p: 7 }, { n: "Doce de Cidra", c: 280, p: 0 }, { n: "Geleia de Frutas Light", c: 140, p: 0 }
+            { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Arroz Integral Cozido", c: 120, p: 2.6 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, { n: "Feijão Preto Cozido", c: 78, p: 5 },
+            { n: "Macarrão de Sêmola Cozido", c: 140, p: 5 }, { n: "Batata Doce Cozida", c: 86, p: 1.6 }, { n: "Batata Inglesa Cozida", c: 77, p: 2 }, { n: "Pão Francês Unidade", c: 270, p: 8 },
+            { n: "Pão de Forma Integral", c: 245, p: 9.5 }, { n: "Tapioca Pronta Goma", c: 240, p: 0.5 }, { n: "Banana Prata", c: 89, p: 1.1 }, { n: "Maçã Fuji com Casca", c: 52, p: 0.3 }
         ];
-
-        for(let x = 1; x <= 60; x++) {
-            MASTER_FOODS_DATABASE.push({ n: `Alimento Dietético Auxiliar Tipo N-${x}`, c: 110 + (x % 5) * 10, p: 4 + (x % 4) });
-        }
 
         let globalProfile = 'Gabriel';
         let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
         let draftFoodItems = [];
+        let selectedMealMoment = 'Café da Manhã'; // Card Padrão Iniciado
 
-        let db = JSON.parse(localStorage.getItem('projetoDietaV4')) || {
+        let db = JSON.parse(localStorage.getItem('projetoDietaV5')) || {
             Gabriel: {
                 targetCalories: 2200, targetProtein: 160,
                 pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
                 meals: [{ data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" }],
-                calendarColors: { "1": "azul", "2": "verde", "3": "azul", "4": "roxo", "22": "azul" }
+                calendarColors: { "1": "azul", "2": "verde", "22": "azul" }
             },
             Raissa: {
                 targetCalories: 1600, targetProtein: 120,
                 pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72,
                 meals: [{ data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }],
-                calendarColors: { "1": "verde", "2": "verde", "22": "verde" }
+                calendarColors: { "1": "verde", "22": "verde" }
             }
         };
 
         window.addEventListener('DOMContentLoaded', () => {
             setTodayDateDisplay();
             updateFormUserHighlight();
+            selectMealMomentCard('Café da Manhã');
             switchTab('inicio'); 
         });
 
         function setTodayDateDisplay() {
             const today = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('current-date-display').innerText = today.toLocaleDateString('pt-BR', options);
+            const formatStr = today.toLocaleDateString('pt-BR', options);
+            document.getElementById('date-display-inicio').innerText = formatStr;
             document.getElementById('refeicoes-date-badge').innerText = today.toLocaleDateString('pt-BR');
         }
 
         function setGlobalProfile(name) {
             globalProfile = name;
             ['Gabriel', 'Raissa'].forEach(p => {
-                const btn = document.getElementById(`top-prof-${p}`);
-                btn.className = p === name ? 
-                    "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow" : 
-                    "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
+                const btnM = document.getElementById(`top-prof-mobile-${p}`);
+                const btnD = document.getElementById(`top-prof-desktop-${p}`);
+                if(p === name) {
+                    if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+                    if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+                } else {
+                    if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400";
+                    if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500";
+                }
             });
             
-            // Atualizar as iniciais do avatar do cabeçalho
-            const badge = document.getElementById('header-avatar-badge');
-            if(name === 'Gabriel') {
-                badge.innerText = "GB";
-                badge.className = "w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10";
-            } else {
-                badge.innerText = "RS";
-                badge.className = "w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10";
-            }
+            const badgeM = document.getElementById('header-avatar-badge-mobile');
+            const badgeD = document.getElementById('header-avatar-badge-desktop');
+            const initials = name === 'Gabriel' ? 'GB' : 'RS';
+            const colorClass = name === 'Gabriel' ? 'bg-blue-600' : 'bg-purple-600';
+            
+            if(badgeM) { badgeM.innerText = initials; badgeM.className = `w-8 h-8 rounded-lg ${colorClass} text-white flex items-center justify-center font-black text-xs shadow-md`; }
+            if(badgeD) { badgeD.innerText = initials; badgeD.className = `w-8 h-8 rounded-full ${colorClass} text-white flex items-center justify-center font-bold text-xs shadow-inner`; }
 
             refreshAppInterface();
         }
@@ -523,11 +571,7 @@
             
             tabs.forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
-                
-                // Sidebar Desktop style reset
                 document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
-                
-                // Bottom Bar Mobile style reset
                 const mobileBtn = document.getElementById(`m-nav-${t}`);
                 if(mobileBtn) {
                     mobileBtn.classList.remove('text-blue-500', 'scale-110');
@@ -544,19 +588,31 @@
                 activeMobileBtn.classList.add('text-blue-500', 'scale-110');
             }
             
-            const titles = {
-                inicio: 'Início / Painel Geral',
-                pessoas: 'Tela Pessoas / Resumos',
-                adicionar: 'Adicionar Alimento',
-                refeicoes: 'Refeições do Dia',
-                calendario: 'Calendário Interativo',
-                historico: 'Histórico Geral',
-                peso: 'Pesos e Medidas',
-                config: 'Configurações'
-            };
-            document.getElementById('current-tab-title').innerText = titles[tabId];
-            
             refreshAppInterface();
+        }
+
+        function selectMealMomentCard(moment) {
+            selectedMealMoment = moment;
+            const maps = {
+                'Café da Manhã': 'cafe-m',
+                'Almoço': 'almoco',
+                'Café da Tarde': 'cafe-t',
+                'Janta': 'janta'
+            };
+
+            Object.keys(maps).forEach(k => {
+                const idSuffix = maps[k];
+                const card = document.getElementById(`meal-card-${idSuffix}`);
+                const iconBox = document.getElementById(`icon-box-${idSuffix}`);
+                
+                if(k === moment) {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
+                    iconBox.className = "p-2 bg-blue-600 rounded-xl text-white transition-colors";
+                } else {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
+                    iconBox.className = "p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600";
+                }
+            });
         }
 
         function handleFoodSearch(val) {
@@ -570,12 +626,12 @@
             const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
             
             if(filtered.length === 0) {
-                dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 italic">Nenhum alimento encontrado</div>';
+                dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 italic text-center">Nenhum alimento encontrado</div>';
             } else {
                 dropdown.innerHTML = '';
                 filtered.slice(0, 15).forEach(food => {
                     const row = document.createElement('div');
-                    row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 last:border-0 flex justify-between";
+                    row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 last:border-0 flex justify-between items-center";
                     row.innerHTML = `<span>${food.n}</span><span class="text-blue-600 font-bold">${food.c} kcal / 100g</span>`;
                     row.onclick = () => {
                         document.getElementById('food-search-input').value = food.n;
@@ -602,9 +658,9 @@
             ['Gabriel', 'Raissa'].forEach(u => {
                 const label = document.getElementById(`label-user-${u}`);
                 if(u === selectedUser) {
-                    label.className = "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900";
+                    label.className = "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center";
                 } else {
-                    label.className = "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600";
+                    label.className = "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
                 }
             });
         }
@@ -629,27 +685,26 @@
                 const container = document.getElementById('draft-food-items-container');
                 if(draftFoodItems.length === 1) container.innerHTML = '';
                 
-                container.innerHTML += `<div class="flex justify-between border-b border-slate-200/60 py-1"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${calculatedCal} kcal</span></div>`;
-                
+                container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${calculatedCal} kcal</span></div>`;
                 searchInput.value = '';
             }
         }
 
         function finalizeCompleteMealDraft() {
-            if(draftFoodItems.length === 0) return;
+            if(draftFoodItems.length === 0) {
+                alert("Adicione pelo menos 1 alimento ao rascunho primeiro!");
+                return;
+            }
 
             const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
-            const moment = document.getElementById('meal-moment-select').value;
-            
             const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
             const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
             const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
-            
             const todayStr = new Date().toISOString().split('T')[0];
 
             db[targetUser].meals.push({
                 data: todayStr,
-                momento: moment,
+                momento: selectedMealMoment,
                 calorias: totalCal,
                 proteinas: totalProt,
                 itensStr: itemsStr
@@ -657,9 +712,9 @@
 
             saveToLocalStorage();
             draftFoodItems = [];
-            document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic">Nenhum alimento no rascunho temporário.</p>';
+            document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
             refreshAppInterface();
-            alert("Refeição Computada com sucesso!");
+            alert("Refeição registrada com sucesso!");
         }
 
         function refreshAppInterface() {
@@ -700,18 +755,18 @@
             const squaresBox = document.getElementById('meals-day-squares-grid');
             squaresBox.innerHTML = '';
             if(todaysMeals.length === 0) {
-                squaresBox.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2">Nenhum registro lançado hoje para este usuário.</p>';
+                squaresBox.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2 text-center py-6">Nenhum registro lançado hoje para este usuário.</p>';
             } else {
                 todaysMeals.forEach((m, i) => {
                     squaresBox.innerHTML += `
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between h-40 relative">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between text-center h-44 relative">
                             <div>
-                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider">${m.momento}</span>
-                                <p class="text-xs text-slate-600 mt-3 leading-relaxed">${m.itensStr}</p>
+                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider mx-auto inline-block">${m.momento}</span>
+                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center">${m.itensStr}</p>
                             </div>
-                            <div class="flex justify-between items-center border-t border-slate-100 pt-2.5">
-                                <span class="text-xs font-black text-slate-900">${m.calorias} kcal | ${m.proteinas}g Prot</span>
-                                <button onclick="removeMeal(${i})" class="text-slate-300 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="flex justify-between items-center border-t border-slate-100 pt-2.5 w-full">
+                                <span class="text-xs font-black text-slate-900 mx-auto pl-4">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+                                <button onclick="removeMeal(${i})" class="text-slate-300 hover:text-rose-600 transition-colors flex-shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                             </div>
                         </div>
                     `;
@@ -749,9 +804,16 @@
 
         function removeMeal(index) {
             const todayStr = new Date().toISOString().split('T')[0];
-            const globalIndex = db[globalProfile].meals.findIndex(m => m.data === todayStr);
+            let count = 0;
+            const globalIndex = db[globalProfile].meals.findIndex(m => {
+                if(m.data === todayStr) {
+                    if(count === index) return true;
+                    count++;
+                }
+                return false;
+            });
             if (globalIndex !== -1) {
-                db[globalProfile].meals.splice(globalIndex + index, 1);
+                db[globalProfile].meals.splice(globalIndex, 1);
                 saveToLocalStorage();
                 refreshAppInterface();
             }
@@ -776,7 +838,7 @@
                 if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white shadow-sm";
 
                 const isToday = (i === 22);
-                const todayBorder = isToday ? "border-2 border-amber-500 animate-pulse font-black" : "";
+                const todayBorder = isToday ? "border-2 border-amber-500 font-black" : "";
                 const selectedRing = (i === selectedCalendarDay) ? "ring-2 ring-slate-900 ring-offset-2" : "";
 
                 box.innerHTML += `
@@ -823,19 +885,19 @@
             const meals = db[globalProfile].meals;
 
             if(meals.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-400 italic p-4">Nenhum registro correspondente no histórico.</p>';
+                container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center w-full">Nenhum registro correspondente no histórico.</p>';
                 return;
             }
 
             meals.forEach(m => {
                 container.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-start">
-                        <div>
-                            <span class="text-[10px] font-black text-slate-400 block uppercase mb-1">Filtro Ativo: ${historyFilter.toUpperCase()} (${m.data})</span>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full">
+                        <div class="text-center mx-auto">
+                            <span class="text-[10px] font-black text-slate-400 block uppercase mb-1">Filtro: ${historyFilter.toUpperCase()} (${m.data})</span>
                             <span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span>
                             <p class="text-xs text-slate-500 mt-1">${m.itensStr}</p>
                         </div>
-                        <span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span>
+                        <span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md flex-shrink-0">${m.calorias} kcal</span>
                     </div>
                 `;
             });
@@ -850,7 +912,7 @@
             
             saveToLocalStorage();
             refreshAppInterface();
-            alert("Métricas Atualizadas com Sucesso!");
+            alert("Métricas atualizadas com sucesso!");
         }
 
         function saveConfigMeta() {
@@ -862,12 +924,12 @@
                 db[globalProfile].targetProtein = protein;
                 saveToLocalStorage();
                 refreshAppInterface();
-                alert("Metas Salvas!");
+                alert("Metas salvas com sucesso!");
             }
         }
 
         function saveToLocalStorage() {
-            localStorage.setItem('projetoDietaV4', JSON.stringify(db));
+            localStorage.setItem('projetoDietaV5', JSON.stringify(db));
         }
     </script>
 </body>
