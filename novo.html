@@ -724,14 +724,16 @@
             alert("Refeição registrada com sucesso!");
         }
 
-        function changeDiaryScope(scope) {
+function changeDiaryScope(scope) {
             diaryScopeMode = scope;
             ['dia', 'semana', 'mes', 'ano'].forEach(s => {
                 const btn = document.getElementById(`diary-scope-${s}`);
-                if(s === scope) {
-                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900";
-                } else {
-                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                if(btn) { // Proteção extra caso o botão demore a renderizar
+                    if(s === scope) {
+                        btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900";
+                    } else {
+                        btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                    }
                 }
             });
             renderDiaryAccordionSection();
@@ -739,18 +741,38 @@
 
        function renderDiaryAccordionSection() {
         const root = document.getElementById('diary-accordion-root');
-        if(!root || !db[globalProfile]) return; // Proteção contra erros caso o banco não carregue
+        if(!root || !db[globalProfile]) return; 
         root.innerHTML = '';
         
-        // 🛠️ FORÇA O HISTÓRICO A IR PARA BAIXO (O ROOT)
-        root.className = "flex flex-col gap-4 w-full block clear-both"; 
-        root.style.setProperty('display', 'block', 'important'); 
-        root.style.setProperty('width', '100%', 'important');
-
-        // 🛠️ FORÇA O PAI DO HISTÓRICO A IR PARA BAIXO TAMBÉM
-        if (root.parentElement) {
-            root.parentElement.style.setProperty('display', 'block', 'important');
-            root.parentElement.style.setProperty('flex-direction', 'column', 'important');
+        // 💣 ATÔMICO: Cria uma folha de estilo invisível que proíbe qualquer coisa de ir para o lado no diário
+        let styleHack = document.getElementById('diary-style-hack');
+        if (!styleHack) {
+            styleHack = document.createElement('style');
+            styleHack.id = 'diary-style-hack';
+            styleHack.innerHTML = `
+                #diary-accordion-root, 
+                #diary-accordion-root *, 
+                #diary-accordion-root details, 
+                #diary-accordion-root div {
+                    display: block !important;
+                    flex-direction: column !important;
+                    float: none !important;
+                    clear: both !important;
+                    width: 100% !important;
+                    box-sizing: border-box !important;
+                }
+                #diary-accordion-root summary,
+                #diary-accordion-root summary *,
+                #diary-accordion-root .border-t,
+                #diary-accordion-root .border-t * {
+                    display: flex !important; /* Mantém os alinhamentos internos dos textos e botões de lixeira */
+                    flex-direction: row !important;
+                }
+                #diary-accordion-root summary {
+                    justify-content: space-between !important;
+                }
+            `;
+            document.head.appendChild(styleHack);
         }
             
         const profile = db[globalProfile];
