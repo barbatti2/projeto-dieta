@@ -2,387 +2,548 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard de Dieta Avançado</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Dieta Pro - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { -webkit-tap-highlight-color: transparent; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .wheel-progress {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .bar-progress {
+            transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Estilização suave para o efeito Retrátil (Details/Summary) */
+        summary::-webkit-details-marker { display: none; }
+        summary { list-style: none; }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 font-sans antialiased selection:bg-blue-500/30 selection:text-blue-200 min-h-screen flex flex-col overflow-hidden">
+<body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
-    <div class="md:hidden bg-slate-900/90 backdrop-blur-md border-b border-slate-800/60 px-4 py-2.5 flex justify-between items-center z-40 sticky top-0">
-        <div class="flex items-center gap-2">
-            <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span class="text-xs font-black tracking-wider text-slate-400 uppercase">Dieta Compartilhada</span>
+    <div class="bg-slate-900 px-6 py-3 flex justify-between items-center text-white border-b border-slate-800 md:hidden flex-shrink-0 z-50">
+        <div class="flex items-center gap-3">
+            <div id="header-avatar-badge-mobile" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-md">
+                GB
+            </div>
+            <span class="text-xs font-bold tracking-wide text-slate-300">Painel de Controle</span>
         </div>
-        <div class="flex bg-slate-950 p-0.5 rounded-xl border border-slate-800/80 shadow-inner">
-            <button id="top-prof-mobile-Gabriel" onclick="setGlobalProfile('Gabriel')" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
-            <button id="top-prof-mobile-Raissa" onclick="setGlobalProfile('Raissa')" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400">Raíssa</button>
+        <div class="flex items-center bg-black/30 p-1 rounded-xl border border-white/10">
+            <button onclick="setGlobalProfile('Gabriel')" id="top-prof-mobile-Gabriel" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white">Gabriel</button>
+            <button onclick="setGlobalProfile('Raissa')" id="top-prof-mobile-Raissa" class="px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400">Raíssa</button>
         </div>
     </div>
 
-    <div class="flex flex-1 overflow-hidden relative">
-        
-        <aside class="hidden md:flex flex-col w-64 bg-slate-950 border-r border-slate-800/50 p-5 justify-between">
-            <div class="space-y-6">
-                <div class="bg-slate-900 p-3 rounded-xl border border-slate-800/80 text-center">
-                    <span class="text-[10px] font-black text-slate-500 block uppercase tracking-widest mb-1.5">Perfil Ativo</span>
-                    <div class="flex bg-slate-950 p-0.5 rounded-lg border border-slate-800/60">
-                        <button id="top-prof-desktop-Gabriel" onclick="setGlobalProfile('Gabriel')" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
-                        <button id="top-prof-desktop-Raissa" onclick="setGlobalProfile('Raissa')" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500">Raíssa</button>
-                    </div>
+    <aside class="hidden md:flex flex-col w-64 bg-slate-100 text-slate-700 p-4 justify-between z-50 h-full border-r border-slate-200">
+        <div class="space-y-6">
+            <div class="flex flex-col items-center text-center py-4 border-b border-slate-200 gap-2">
+                <div class="p-2.5 bg-blue-600 text-white rounded-xl shadow-md">
+                    <i data-lucide="heart-pulse" class="w-6 h-6"></i>
                 </div>
-                <nav class="space-y-1">
-                    <button id="nav-inicio" onclick="switchTab('inicio')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 bg-slate-800 text-white"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Início</button>
-                    <button id="nav-adicionar" onclick="switchTab('adicionar')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="plus-circle" class="w-4 h-4"></i>Adicionar Refeição</button>
-                    <button id="nav-refeicoes" onclick="switchTab('refeicoes')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="utensils" class="w-4 h-4"></i>Diário de Refeições</button>
-                    <button id="nav-calendario" onclick="switchTab('calendario')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="calendar" class="w-4 h-4"></i>Calendário Consistência</button>
-                    <button id="nav-historico" onclick="switchTab('historico')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="history" class="w-4 h-4"></i>Histórico Geral</button>
-                    <button id="nav-peso" onclick="switchTab('peso')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="scale" class="w-4 h-4"></i>Peso & Biometria</button>
-                    <button id="nav-config" onclick="switchTab('config')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200"><i data-lucide="settings" class="w-4 h-4"></i>Configurar Metas</button>
-                </nav>
+                <div>
+                    <h2 class="font-extrabold text-slate-900 text-base tracking-tight uppercase">PROJETO DIETA</h2>
+                    <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">Premium Edition</p>
+                </div>
+                <div class="flex items-center bg-slate-200 p-1 rounded-xl border border-slate-300 mt-2 w-full">
+                    <button onclick="setGlobalProfile('Gabriel')" id="top-prof-desktop-Gabriel" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
+                    <button onclick="setGlobalProfile('Raissa')" id="top-prof-desktop-Raissa" class="flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500">Raíssa</button>
+                </div>
             </div>
-        </aside>
 
-        <main id="main-content-scroll" class="flex-1 overflow-y-auto px-4 pb-28 pt-4 md:p-8 space-y-6 bg-slate-900 no-scrollbar">
-            
-            <section id="tab-inicio" class="space-y-6">
-                <div class="flex flex-col gap-1">
-                    <span id="date-display-inicio" class="text-xs font-bold text-blue-400 tracking-wide uppercase">Carregando data...</span>
-                    <h1 class="text-xl md:text-2xl font-black text-white tracking-tight">Painel Diário</h1>
+            <nav class="space-y-1">
+                <button onclick="switchTab('inicio')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-inicio">
+                    <i data-lucide="layout-grid" class="w-4 h-4"></i> Início
+                </button>
+                <button onclick="switchTab('pessoas')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-pessoas">
+                    <i data-lucide="users-2" class="w-4 h-4"></i> Tela Pessoas
+                </button>
+                <button onclick="switchTab('adicionar')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-adicionar">
+                    <i data-lucide="plus-square" class="w-4 h-4"></i> Adicionar Alimento
+                </button>
+                <button onclick="switchTab('refeicoes')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-refeicoes">
+                    <i data-lucide="sandwich" class="w-4 h-4"></i> Refeições do Dia
+                </button>
+                <button onclick="switchTab('calendario')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-calendario">
+                    <i data-lucide="calendar-days" class="w-4 h-4"></i> Calendário Interativo
+                </button>
+                <button onclick="switchTab('historico')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-historico">
+                    <i data-lucide="folder-clock" class="w-4 h-4"></i> Histórico Geral
+                </button>
+                <button onclick="switchTab('peso')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-peso">
+                    <i data-lucide="gauge" class="w-4 h-4"></i> Pesos e Medidas
+                </button>
+                <button onclick="switchTab('config')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-config">
+                    <i data-lucide="sliders" class="w-4 h-4"></i> Configurações
+                </button>
+            </nav>
+        </div>
+        
+        <div class="pt-4 border-t border-slate-200 flex flex-col items-center text-center gap-1">
+            <div id="header-avatar-badge-desktop" class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-inner">GB</div>
+            <p class="text-xs font-bold text-slate-900">Acesso Compartilhado</p>
+            <p class="text-[10px] text-slate-500">Gabriel & Raíssa</p>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+
+        <main id="main-content-scroll" class="flex-1 overflow-y-auto custom-scrollbar pb-28 md:pb-6">
+
+            <section id="tab-inicio" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-blue-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="layout-grid" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase drop-shadow-sm">Início / Painel Geral</h2>
+                    <p class="text-xs text-blue-100 font-medium tracking-wide mt-1" id="date-display-inicio"></p>
                 </div>
 
-                <div class="bg-slate-950 p-6 rounded-3xl border border-slate-800/80 shadow-xl flex flex-col items-center justify-center relative overflow-hidden group">
-                    <div class="relative w-44 h-44 flex items-center justify-center">
-                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" stroke="currentColor" stroke-width="6" class="text-slate-800/60" fill="transparent" />
-                            <circle id="wheel-stroke" cx="50" cy="50" r="40" stroke="url(#blueGradient)" stroke-width="7" stroke-dasharray="251.2" stroke-dashoffset="251.2" stroke-linecap="round" fill="transparent" class="transition-all duration-1000 ease-out" />
-                            <defs>
-                                <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#3b82f6" />
-                                    <stop offset="100%" stop-color="#1d4ed8" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                        <div class="absolute flex flex-col items-center text-center">
-                            <span id="wheel-consumed-val" class="text-3xl font-black text-white tracking-tight">0</span>
-                            <div class="w-8 h-px bg-slate-800 my-1"></div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Meta <span id="wheel-target-val">2000</span></span>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4 border-t border-slate-800/80 w-full mt-6 pt-4 text-center">
-                        <div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Proteína Consumida</span>
-                            <span id="bottom-protein-val" class="text-sm font-extrabold text-blue-400">0g / 0g</span>
-                        </div>
-                        <div>
-                            <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-0.5">Calorias Restantes</span>
-                            <span id="bottom-left-val" class="text-sm font-extrabold text-amber-500">0 kcal</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 flex flex-col justify-between gap-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-black text-white uppercase tracking-wider">Gabriel</span>
-                            <span id="p-count-Gabriel" class="text-[10px] font-bold bg-blue-500/10 text-blue-400 px-2 py-0.5 rounded-md border border-blue-500/20">0 Refeições</span>
-                        </div>
-                        <div class="flex gap-4 text-xs font-medium text-slate-400">
-                            <div>Consumido: <span id="p-cons-Gabriel" class="font-bold text-slate-200">0 kcal</span></div>
-                            <div>Falta: <span id="p-left-Gabriel" class="font-bold text-amber-500">0 kcal</span></div>
-                        </div>
-                    </div>
-                    <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 flex flex-col justify-between gap-3">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs font-black text-white uppercase tracking-wider">Raíssa</span>
-                            <span id="p-count-Raissa" class="text-[10px] font-bold bg-pink-500/10 text-pink-400 px-2 py-0.5 rounded-md border border-pink-500/20">0 Refeições</span>
-                        </div>
-                        <div class="flex gap-4 text-xs font-medium text-slate-400">
-                            <div>Consumido: <span id="p-cons-Raissa" class="font-bold text-slate-200">0 kcal</span></div>
-                            <div>Falta: <span id="p-left-Raissa" class="font-bold text-amber-500">0 kcal</span></div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="tab-adicionar" class="hidden space-y-5">
-                <h2 class="text-lg font-black text-white tracking-tight">Lançar Nova Refeição</h2>
-                
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-2.5">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">1. Quem consumiu a refeição?</span>
-                    <div class="flex gap-3">
-                        <input type="radio" id="radio-user-Gabriel" name="target-user-radio" value="Gabriel" checked class="hidden" onchange="updateFormUserHighlight()">
-                        <label id="label-user-Gabriel" for="radio-user-Gabriel" class="flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-blue-600 border-blue-500 text-white shadow">Gabriel</label>
+                <div class="p-4 md:p-6 max-w-md mx-auto space-y-6">
+                    <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-md flex flex-col items-center justify-center text-center">
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 block">Energia Consumida</span>
                         
-                        <input type="radio" id="radio-user-Raissa" name="target-user-radio" value="Raissa" class="hidden" onchange="updateFormUserHighlight()">
-                        <label id="label-user-Raissa" for="radio-user-Raissa" class="flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-slate-900 border-slate-800 text-slate-400">Raíssa</label>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">2. Qual o momento da refeição?</span>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <div id="meal-card-cafe-m" onclick="selectMealMomentCard('Café da Manhã')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-blue-600 bg-blue-950/40 text-white">
-                            <div id="icon-box-cafe-m" class="p-1.5 rounded-lg bg-blue-600 text-white"><i data-lucide="coffee" class="w-4 h-4"></i></div>
-                            <span class="text-xs font-bold">Café da Manhã</span>
+                        <div class="relative w-48 h-48 flex items-center justify-center">
+                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" stroke="#f1f5f9" stroke-width="8" fill="transparent"/>
+                                <circle id="wheel-stroke" cx="50" cy="50" r="40" stroke="#2563eb" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="251.2" class="wheel-progress"/>
+                            </svg>
+                            <div class="absolute text-center">
+                                <span id="wheel-consumed-val" class="text-4xl font-black text-slate-900 block tracking-tight">0</span>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mt-0.5">Ingeridas</span>
+                            </div>
                         </div>
-                        <div id="meal-card-almoco" onclick="selectMealMomentCard('Almoço')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
-                            <div id="icon-box-almoco" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="sun" class="w-4 h-4"></i></div>
-                            <span class="text-xs font-bold">Almoço</span>
-                        </div>
-                        <div id="meal-card-cafe-t" onclick="selectMealMomentCard('Café da Tarde')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
-                            <div id="icon-box-cafe-t" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="cookie" class="w-4 h-4"></i></div>
-                            <span class="text-xs font-bold">Café da Tarde</span>
-                        </div>
-                        <div id="meal-card-janta" onclick="selectMealMomentCard('Janta')" class="p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400">
-                            <div id="icon-box-janta" class="p-1.5 rounded-lg bg-slate-800 text-slate-400"><i data-lucide="moon" class="w-4 h-4"></i></div>
-                            <span class="text-xs font-bold">Janta</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3 relative">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">3. Buscar e Pesar Alimento (g)</span>
-                    <div class="relative">
-                        <input id="food-search-input" type="text" placeholder="Digite para pesquisar o alimento..." oninput="handleFoodSearch(this.value)" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-medium text-slate-200 focus:outline-none focus:border-blue-500 transition-colors">
-                        <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1.5 bg-slate-900 border border-slate-800 rounded-xl shadow-2xl max-h-48 overflow-y-auto hidden z-50 no-scrollbar"></div>
-                    </div>
-                    
-                    <div class="flex items-center gap-3">
-                        <div class="flex-1 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between px-1">
-                            <button onclick="adjustWeightInput(-50)" class="p-2 text-slate-400 hover:text-slate-200 font-bold text-sm">-50</button>
-                            <input id="food-weight-input" type="number" value="100" class="w-16 bg-transparent text-center text-xs font-black text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                            <button onclick="adjustWeightInput(50)" class="p-2 text-slate-400 hover:text-slate-200 font-bold text-sm">+50</button>
-                        </div>
-                        <div class="flex gap-1.5">
-                            <button onclick="setWeightInputValue(150)" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-colors">150g</button>
-                            <button onclick="setWeightInputValue(200)" class="bg-slate-900 border border-slate-800 px-3 py-2 rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-colors">200g</button>
-                        </div>
+                        <p class="text-xs font-medium text-slate-500 mt-4 text-center">Sua meta diária activa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
                     </div>
 
-                    <button onclick="addSingleFoodToDraft()" class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-blue-400 font-bold text-xs py-2.5 rounded-xl transition-all flex items-center justify-center gap-2 mt-2"><i data-lucide="plus" class="w-4 h-4"></i>Incluir no Prato</button>
-                </div>
-
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Componentes do Prato Ativo</span>
-                    <div id="draft-food-items-container" class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/40 text-xs text-slate-400 space-y-1">
-                        <p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>
-                    </div>
-                    <button onclick="finalizeCompleteMealDraft()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-black text-xs py-3 rounded-xl shadow-lg shadow-blue-900/20 transition-all flex items-center justify-center gap-2"><i data-lucide="check-circle" class="w-4 h-4"></i>Salvar Refeição na Nuvem</button>
-                </div>
-            </section>
-
-            <section id="tab-refeicoes" class="hidden space-y-5">
-                <div class="flex flex-col gap-2">
-                    <h2 class="text-lg font-black text-white tracking-tight">Diário de Consumo</h2>
-                    <div class="flex bg-slate-950 p-0.5 rounded-xl border border-slate-800/80 shadow-inner">
-                        <button id="diary-scope-dia" onclick="changeDiaryScope('dia')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-slate-800 text-white shadow">Hoje</button>
-                        <button id="diary-scope-semana" onclick="changeDiaryScope('semana')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">7 Dias</button>
-                        <button id="diary-scope-mes" onclick="changeDiaryScope('mes')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">30 Dias</button>
-                        <button id="diary-scope-ano" onclick="changeDiaryScope('ano')" class="flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400">Tudo</button>
-                    </div>
-                </div>
-                <div id="diary-accordion-root" class="space-y-3"></div>
-            </section>
-
-            <section id="tab-calendario" class="hidden space-y-5">
-                <div class="flex flex-col gap-0.5">
-                    <h2 class="text-lg font-black text-white tracking-tight">Calendário de Metas</h2>
-                    <p class="text-[11px] text-slate-400 font-medium">Monitore a consistência diária do mês ativo</p>
-                </div>
-                
-                <div class="bg-slate-950 p-4 rounded-3xl border border-slate-800/80 shadow-xl space-y-4">
-                    <div id="interactive-grid-box" class="grid grid-cols-7 gap-y-3 gap-x-2 text-center font-bold"></div>
-                    <div class="border-t border-slate-800/80 pt-4 text-center">
-                        <span id="cal-selected-day-lbl" class="text-xs font-black text-slate-300 block mb-3">Dia Selecionado: 22</span>
-                        <div class="grid grid-cols-4 gap-2">
-                            <button onclick="setDayStatusColor('verde')" class="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">100% Ok</button>
-                            <button onclick="setDayStatusColor('azul')" class="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Treino</button>
-                            <button onclick="setDayStatusColor('roxo')" class="bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Quase</button>
-                            <button onclick="setDayStatusColor('vermelho')" class="bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 text-[10px] font-bold py-2 rounded-xl transition-all">Jacou</button>
+                    <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm grid grid-cols-2 gap-4 divide-x divide-slate-200">
+                        <div class="flex flex-col items-center justify-center text-center">
+                            <div class="flex items-center gap-1.5 text-blue-600 mb-1">
+                                <i data-lucide="zap" class="w-4 h-4"></i>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Proteína</span>
+                            </div>
+                            <span id="bottom-protein-val" class="text-base font-bold text-slate-800">0g / --</span>
+                        </div>
+                        <div class="flex flex-col items-center justify-center text-center pl-4">
+                            <div class="flex items-center gap-1.5 text-orange-500 mb-1">
+                                <i data-lucide="flame" class="w-4 h-4"></i>
+                                <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Faltam</span>
+                            </div>
+                            <span id="bottom-left-val" class="text-base font-bold text-slate-800">-- kcal</span>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section id="tab-historico" class="hidden space-y-4">
-                <h2 class="text-lg font-black text-white tracking-tight">Linha do Tempo Completa</h2>
-                <div id="history-timeline-output" class="space-y-2.5"></div>
-            </section>
+            <section id="tab-pessoas" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="users-2" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Métricas & Compartilhamento</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Comparativo de consumo e metas em tempo real</p>
+                </div>
 
-            <section id="tab-peso" class="hidden space-y-5">
-                <h2 class="text-lg font-black text-white tracking-tight">Métricas Corporais</h2>
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-4">
-                    <div class="grid grid-cols-2 gap-3.5">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Peso Inicial (kg)</label>
-                            <input id="bio-input-p-ini" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                <div class="p-4 md:p-6 max-w-4xl mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col items-center text-center space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">G</div>
+                            <div>
+                                <h4 class="font-black text-slate-900 text-base">Gabriel</h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Métricas de Hoje</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center w-full pt-2">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
+                                    <span id="p-cons-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
+                                    <span id="p-left-Gabriel" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
+                                    <span id="p-count-Gabriel" class="text-xs font-black text-slate-800">0</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Peso Atual (kg)</label>
-                            <input id="bio-input-p-atual" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta de Peso (kg)</label>
-                            <input id="bio-input-p-meta" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Cintura (cm)</label>
-                            <input id="bio-input-cintura" type="number" step="0.1" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md flex flex-col items-center text-center space-y-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">R</div>
+                            <div>
+                                <h4 class="font-black text-slate-900 text-base">Raíssa</h4>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Métricas de Hoje</p>
+                            </div>
+                            <div class="grid grid-cols-3 gap-2 text-center w-full pt-2">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Consumido</span>
+                                    <span id="p-cons-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Faltam</span>
+                                    <span id="p-left-Raissa" class="text-xs font-black text-slate-800">0 kcal</span>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <span class="text-[9px] text-slate-400 uppercase font-bold block mb-0.5">Refeições</span>
+                                    <span id="p-count-Raissa" class="text-xs font-black text-slate-800">0</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="saveBiometricsMetrics()" class="w-full bg-slate-900 border border-slate-800 hover:bg-slate-800 text-blue-400 font-bold text-xs py-2.5 rounded-xl transition-all">Atualizar Métricas</button>
                 </div>
             </section>
 
-            <section id="tab-config" class="hidden space-y-5">
-                <h2 class="text-lg font-black text-white tracking-tight">Metas de Macronutrientes</h2>
-                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-4">
-                    <div class="grid grid-cols-2 gap-3.5">
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta Calórica (kcal)</label>
-                            <input id="cfg-calories" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+            <section id="tab-adicionar" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-emerald-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="plus-square" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Montar Registro Alimentar</h2>
+                    <p class="text-xs text-emerald-100 font-medium tracking-wide mt-1">Insira os alimentos consumidos no diário</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-5 flex flex-col items-center">
+                        
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-2 tracking-wider">Destinatário</label>
+                            <div class="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+                                <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Gabriel">
+                                    <input type="radio" name="target-user-radio" value="Gabriel" checked class="accent-blue-600" onchange="updateFormUserHighlight()"> Gabriel
+                                </label>
+                                <label class="flex items-center justify-center p-3 rounded-xl border cursor-pointer font-bold text-xs gap-2 transition-all" id="label-user-Raissa">
+                                    <input type="radio" name="target-user-radio" value="Raissa" class="accent-blue-600" onchange="updateFormUserHighlight()"> Raíssa
+                                </label>
+                            </div>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Meta de Proteína (g)</label>
-                            <input id="cfg-protein" type="number" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs font-bold text-slate-200 focus:outline-none">
+
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Momento da Refeição</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                <button onclick="selectMealMomentCard('Café da Manhã')" id="meal-card-cafe-m" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-cafe-m">
+                                        <i data-lucide="coffee" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Café da Manhã</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Almoço')" id="meal-card-almoco" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-almoco">
+                                        <i data-lucide="utensils" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Almoço</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Café da Tarde')" id="meal-card-cafe-t" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-cafe-t">
+                                        <i data-lucide="cookie" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Café da Tarde</span>
+                                </button>
+                                
+                                <button onclick="selectMealMomentCard('Janta')" id="meal-card-janta" class="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-400 transition-all gap-2 text-center group">
+                                    <div class="p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600" id="icon-box-janta">
+                                        <i data-lucide="soup" class="w-6 h-6"></i>
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-700">Janta</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">Pesquisar Alimento</label>
+                            <input type="text" id="food-search-input" oninput="handleFoodSearch(this.value)" placeholder="Digite para buscar (Ex: Frango, Ovo, Pão...)" class="w-full p-3 text-sm border rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none font-medium text-center text-slate-700">
+                            <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar"></div>
+                        </div>
+
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1.5 tracking-wider">Quantidade por Gramas</label>
+                            <div class="grid grid-cols-4 gap-2 mb-3 max-w-sm mx-auto">
+                                <button onclick="setWeightInputValue(50)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">50g</button>
+                                <button onclick="setWeightInputValue(100)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">100g</button>
+                                <button onclick="setWeightInputValue(150)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">150g</button>
+                                <button onclick="setWeightInputValue(200)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg transition-all">200g</button>
+                            </div>
+                            <div class="flex items-center gap-2 max-w-xs mx-auto">
+                                <button onclick="adjustWeightInput(-10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all"><i data-lucide="minus" class="w-4 h-4"></i></button>
+                                <input type="number" id="food-weight-input" value="100" class="flex-1 text-center p-2.5 border rounded-xl font-bold text-slate-900 focus:outline-none">
+                                <button onclick="adjustWeightInput(10)" class="bg-slate-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-slate-700 transition-all"><i data-lucide="plus" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 w-full">
+                            <button onclick="addSingleFoodToDraft()" class="w-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider flex items-center justify-center gap-2">
+                                <i data-lucide="check" class="w-4 h-4"></i> 1. Salvar Alimento
+                            </button>
+                            <button onclick="finalizeCompleteMealDraft()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider flex items-center justify-center gap-2 shadow-md">
+                                <i data-lucide="save" class="w-4 h-4"></i> 2. Salvar Refeição
+                            </button>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-3 w-full text-center">
+                            <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider block mb-2">Rascunho de Alimentos Inclusos</span>
+                            <div id="draft-food-items-container" class="space-y-1 text-xs text-slate-600 bg-slate-50 p-3 rounded-xl max-h-28 overflow-y-auto custom-scrollbar text-center">
+                                <p class="text-slate-400 italic">Nenhum alimento no rascunho temporário.</p>
+                            </div>
                         </div>
                     </div>
-                    <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-black text-xs py-2.5 rounded-xl transition-all shadow-md">Sincronizar Metas na Nuvem</button>
+                </div>
+            </section>
+
+            <section id="tab-refeicoes" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-red-700 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-orange-700">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="sandwich" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Diário Alimentar Histórico</h2>
+                    <p class="text-xs text-orange-100 font-medium tracking-wide mt-1">Acompanhe seu histórico de refeições sem poluição visual</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-2xl mx-auto space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
+                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Período de Visualização</span>
+                        <div class="flex bg-slate-100 p-1 rounded-xl border w-full max-w-sm mx-auto">
+                            <button onclick="changeDiaryScope('dia')" id="diary-scope-dia" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
+                            <button onclick="changeDiaryScope('semana')" id="diary-scope-semana" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
+                            <button onclick="changeDiaryScope('mes')" id="diary-scope-mes" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
+                            <button onclick="changeDiaryScope('ano')" id="diary-scope-ano" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
+                        </div>
+                    </div>
+
+                    <div id="diary-accordion-root" class="space-y-4 w-full">
+                        </div>
+                </div>
+            </section>
+
+            <section id="tab-calendario" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-purple-700 via-purple-600 to-fuchsia-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-purple-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="calendar-days" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Calendário de Consistência</h2>
+                    <p class="text-xs text-purple-100 font-medium tracking-wide mt-1">Monitore e atribua status à rotina diária</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <div class="w-full text-center border-b pb-3 border-slate-100">
+                            <h4 id="cal-month-year-header" class="font-black text-slate-900 text-base uppercase tracking-tight">Junho 2026</h4>
+                            <span id="cal-selected-day-lbl" class="text-xs font-extrabold bg-blue-50 text-blue-600 px-3 py-1 rounded-lg inline-block mt-2">Dia Selecionado: 1</span>
+                        </div>
+                        
+                        <div class="grid grid-cols-7 gap-2 text-center text-[10px] font-extrabold text-slate-400 uppercase tracking-wider pb-1 w-full">
+                            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                        </div>
+                        <div class="grid grid-cols-7 gap-2 w-full" id="interactive-grid-box"></div>
+                        
+                        <div class="border-t border-slate-100 pt-4 mt-2 w-full text-center">
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Atribuir Status ao Dia:</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full">
+                                <button onclick="setDayStatusColor('azul')" class="bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Dieta + Treino</button>
+                                <button onclick="setDayStatusColor('verde')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Dieta</button>
+                                <button onclick="setDayStatusColor('roxo')" class="bg-purple-600 hover:bg-purple-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Só Treino</button>
+                                <button onclick="setDayStatusColor('vermelho')" class="bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-sm">Nenhum</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mt-4 grid grid-cols-2 gap-2 text-center w-full">
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Dieta + Treino (Azul)</span>
+                                <span id="count-cal-azul" class="text-xs font-black text-blue-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Dieta (Verde)</span>
+                                <span id="count-cal-verde" class="text-xs font-black text-emerald-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Só Treino (Roxo)</span>
+                                <span id="count-cal-roxo" class="text-xs font-black text-purple-600">0 dias</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 flex flex-col items-center">
+                                <span class="text-[9px] uppercase font-bold text-slate-400 block">Nenhum (Vermelho)</span>
+                                <span id="count-cal-vermelho" class="text-xs font-black text-rose-600">0 dias</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-historico" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-700">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="folder-clock" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Histórico Geral / Auditoria</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Linha do tempo consolidada de lançamentos</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-4 flex flex-col items-center">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
+                        <h4 class="font-black text-slate-900 text-sm tracking-wide uppercase text-center">Filtros de Período</h4>
+                        <div class="flex bg-slate-100 p-1 rounded-xl border mx-auto">
+                            <button onclick="setHistoryFilter('dia')" id="f-btn-dia" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
+                            <button onclick="setHistoryFilter('semana')" id="f-btn-semana" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
+                            <button onclick="setHistoryFilter('mes')" id="f-btn-mes" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
+                            <button onclick="setHistoryFilter('ano')" id="f-btn-ano" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
+                        </div>
+                    </div>
+                    <div id="history-timeline-output" class="space-y-3 w-full"></div>
+                </div>
+            </section>
+
+            <section id="tab-peso" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-cyan-700 via-teal-600 to-blue-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-cyan-800">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="gauge" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Acompanhamento Biométrico</h2>
+                    <p class="text-xs text-cyan-100 font-medium tracking-wide mt-1">Evolução de peso corporativo e medidas físicas</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-6">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <h3 class="font-black text-slate-900 text-center text-base">Métricas Atuais</h3>
+                        
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full">
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Inicial (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-ini" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Atual (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-atual" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Meta (kg)</label>
+                                <input type="number" step="0.1" id="bio-input-p-meta" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                            <div class="text-center">
+                                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Cintura (cm)</label>
+                                <input type="number" step="0.1" id="bio-input-cintura" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
+                            </div>
+                        </div>
+                        <button onclick="saveBiometricsMetrics()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wide transition-all shadow-sm">
+                            Salvar e Atualizar Métricas
+                        </button>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3 flex flex-col items-center">
+                        <div class="flex justify-between items-center text-xs font-bold w-full">
+                            <span class="text-slate-500 uppercase tracking-wider">Evolução do Objetivo</span>
+                            <span id="bar-percentage-lbl" class="text-blue-600 font-extrabold">0% Concluído</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-6 rounded-full overflow-hidden border border-slate-200 relative">
+                            <div id="progress-horizontal-bar" class="h-full bg-blue-600 rounded-full bar-progress" style="width: 0%;"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-slate-400 font-bold uppercase tracking-wide w-full">
+                            <span>Início</span>
+                            <span>Progresso Proporcional</span>
+                            <span>Alvo</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="tab-config" class="space-y-6 hidden">
+                <div class="relative bg-gradient-to-r from-blue-900 via-slate-800 to-indigo-950 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-900">
+                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
+                    <i data-lucide="sliders" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Diretrizes do Perfil</h2>
+                    <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Configure suas metas diárias estruturais</p>
+                </div>
+
+                <div class="p-4 md:p-6 max-w-md mx-auto">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4 flex flex-col items-center">
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1 tracking-wider">Meta de Calorias Diárias (kcal)</label>
+                            <input type="number" id="cfg-calories" class="w-full p-3 border rounded-xl outline-none font-bold text-center">
+                        </div>
+                        <div class="w-full text-center">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1 tracking-wider">Meta de Proteínas Diárias (g)</label>
+                            <input type="number" id="cfg-protein" class="w-full p-3 border rounded-xl outline-none font-bold text-center">
+                        </div>
+                        <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm">
+                            Salvar Configurações
+                        </button>
+                    </div>
                 </div>
             </section>
 
         </main>
 
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-950/95 backdrop-blur-lg border-t border-slate-800/80 px-2 py-1.5 flex justify-around items-center z-40 shadow-2xl">
-            <button id="m-nav-inicio" onclick="switchTab('inicio')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110"><i data-lucide="layout-dashboard" class="w-4.5 h-4.5"></i>Início</button>
-            <button id="m-nav-adicionar" onclick="switchTab('adicionar')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="plus-circle" class="w-4.5 h-4.5"></i>Lançar</button>
-            <button id="m-nav-refeicoes" onclick="switchTab('refeicoes')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="utensils" class="w-4.5 h-4.5"></i>Diário</button>
-            <button id="m-nav-calendario" onclick="switchTab('calendario')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="calendar" class="w-4.5 h-4.5"></i>Metas</button>
-            <button id="m-nav-peso" onclick="switchTab('peso')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="scale" class="w-4.5 h-4.5"></i>Peso</button>
-            <button id="m-nav-config" onclick="switchTab('config')" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400"><i data-lucide="settings" class="w-4.5 h-4.5"></i>Ajustes</button>
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center p-3 z-50 shadow-2xl rounded-t-3xl flex-shrink-0">
+            <button onclick="switchTab('inicio')" id="m-nav-inicio" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="layout-grid" class="w-6 h-6"></i>Início
+            </button>
+            <button onclick="switchTab('pessoas')" id="m-nav-pessoas" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="users-2" class="w-6 h-6"></i>Pessoas
+            </button>
+            <button onclick="switchTab('adicionar')" id="m-nav-adicionar" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="plus-square" class="w-6 h-6"></i>+ Item
+            </button>
+            <button onclick="switchTab('refeicoes')" id="m-nav-refeicoes" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="sandwich" class="w-6 h-6"></i>Diário
+            </button>
+            <button onclick="switchTab('calendario')" id="m-nav-calendario" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
+                <i data-lucide="calendar-days" class="w-6 h-6"></i>Agenda
+            </button>
         </nav>
-
     </div>
 
     <script>
-        // Banco de dados local auxiliar padrão (Carrega instantaneamente mesmo com erro de rede)
-        let db = {
-            Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
-            Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
-        };
-        
+        const MASTER_FOODS_DATABASE = [
+            { n: "Peito de Frango Grelhado", c: 165, p: 31 }, { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, { n: "Frango Cozido Desfiado", c: 150, p: 29 }, { n: "Patinho Moído Cozido", c: 220, p: 36 },
+            { n: "Maminha Grelhada", c: 190, p: 28 }, { n: "Filé Mignon Assado", c: 200, p: 30 }, { n: "Alcatra Grelhada", c: 210, p: 29 }, { n: "Contra Filé Grelhado", c: 250, p: 28 },
+            { n: "Carne Moída de Acém", c: 240, p: 26 }, { n: "Cupim Assado", c: 310, p: 24 }, { n: "Costela de Boi Assada", c: 330, p: 22 }, { n: "Bife de Fígado Acebolado", c: 185, p: 26 },
+            { n: "Bisteca de Porco Grelhada", c: 230, p: 27 }, { n: "Lombo de Porco Assado", c: 170, p: 28 }, { n: "Carne de Porco Picada", c: 210, p: 26 }, { n: "Linguiça de Frango Grelhada", c: 180, p: 16 },
+            { n: "Linguiça Toscana Assada", c: 260, p: 15 }, { n: "Salame Tipo Italiano", c: 380, p: 22 }, { n: "Presunto Cozido de Peru", c: 95, p: 16 }, { n: "Presunto Magro de Porco", c: 110, p: 17 },
+            { n: "Blanquet de Peru", c: 90, p: 15 }, { n: "Carne Seca Desfiada", c: 290, p: 32 }, { n: "Copa Fatiada", c: 340, p: 21 }, { n: "Bacon Frito Picado", c: 540, p: 38 },
+            { n: "Atum Ralado em Lata Óleo", c: 200, p: 24 }, { n: "Atum em Lata ao Natural", c: 120, p: 26 }, { n: "Sardinha em Lata Óleo", c: 230, p: 22 }, { n: "Sardinha Cozida Tomate", c: 160, p: 20 },
+            { n: "Filé de Tilápia Grelhado", c: 130, p: 26 }, { n: "Filé de Salmão Assado", c: 210, p: 23 }, { n: "Filé de Merluza Cozido", c: 110, p: 19 }, { n: "Bacalhau Cozido Desfiado", c: 100, p: 23 },
+            { n: "Camarão Grelhado", c: 120, p: 24 }, { n: "Lula Cozida Argolas", c: 92, p: 18 }, { n: "Polvo Cozido", c: 85, p: 17 }, { n: "Ovo Cozido Inteiro", c: 155, p: 13 },
+            { n: "Ovo Frito", c: 190, p: 13 }, { n: "Clara de Ovo Cozida", c: 52, p: 11 }, { n: "Gema de Ovo Cozida", c: 320, p: 16 }, { n: "Omelete Simples sem Óleo", c: 160, p: 13 },
+            { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Arroz Integral Cozido", c: 120, p: 2.6 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, { n: "Feijão Preto Cozido", c: 78, p: 5 },
+            { n: "Macarrão de Sêmola Cozido", c: 140, p: 5 }, { n: "Batata Doce Cozida", c: 86, p: 1.6 }, { n: "Batata Inglesa Cozida", c: 77, p: 2 }, { n: "Pão Francês Unidade", c: 270, p: 8 },
+            { n: "Pão de Forma Integral", c: 245, p: 9.5 }, { n: "Tapioca Pronta Goma", c: 240, p: 0.5 }, { n: "Banana Prata", c: 89, p: 1.1 }, { n: "Maçã Fuji com Casca", c: 52, p: 0.3 }
+        ];
+
         let globalProfile = 'Gabriel';
         let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
-        let diaryScopeMode = 'dia';
+        let diaryScopeMode = 'dia'; // Escopo padrão do Diário Alimentar
         let draftFoodItems = [];
         let selectedMealMoment = 'Café da Manhã';
-        let firestoreDb = null;
 
-        const MASTER_FOODS_DATABASE = [
-            { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
-            { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
-            { n: "Frango Cozido Desfiado", c: 150, p: 29 }, 
-            { n: "Patinho Moído Cozido", c: 220, p: 36 },
-            { n: "Maminha Grelhada", c: 190, p: 28 }, 
-            { n: "Filé Mignon Assado", c: 200, p: 30 }, 
-            { n: "Alcatra Grelhada", c: 210, p: 29 }, 
-            { n: "Contra Filé Grelhado", c: 250, p: 28 },
-            { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, 
-            { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, 
-            { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, 
-            { n: "Pão Francês Unidade", c: 270, p: 8 }
-        ];
+        let db = JSON.parse(localStorage.getItem('projetoDietaV5')) || {
+            Gabriel: {
+                targetCalories: 2200, targetProtein: 160,
+                pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
+                meals: [
+                    { data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" },
+                    { data: "2026-06-21", momento: "Janta", calorias: 510, proteinas: 40, itensStr: "Patinho Moído Cozido (150g)<br>Feijão Preto Cozido (100g)" }
+                ],
+                calendarColors: { "1": "azul", "2": "verde", "22": "azul" }
+            },
+            Raissa: {
+                targetCalories: 1600, targetProtein: 120,
+                pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72,
+                meals: [{ data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }],
+                calendarColors: { "1": "verde", "22": "verde" }
+            }
+        };
 
-        // INICIALIZAÇÃO INCONDICIONAL: Desenha tudo na tela primeiro
         window.addEventListener('DOMContentLoaded', () => {
-            try {
-                if (window.lucide) lucide.createIcons();
-                setTodayDateDisplay();
-                updateFormUserHighlight();
-                selectMealMomentCard('Café da Manhã');
-                updateBiometricsInputs();
-                refreshAppInterface();
-                switchTab('inicio');
-                
-                // Inicializa o Firebase de forma assíncrona para não bloquear a renderização
-                initFirebaseConnection();
-            } catch (err) {
-                console.error("Erro crítico de renderização visual:", err);
-            }
+            setTodayDateDisplay();
+            updateFormUserHighlight();
+            selectMealMomentCard('Café da Manhã');
+            switchTab('inicio'); 
         });
-
-        function initFirebaseConnection() {
-            try {
-                const firebaseConfig = {
-                    apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
-                    authDomain: "projetodietanovo.firebaseapp.com",
-                    projectId: "projetodietanovo",
-                    storageBucket: "projetodietanovo.firebasestorage.app",
-                    messagingSenderId: "1082882912098",
-                    appId: "1:1082882912098:web:19895c25e9787d1e80863b",
-                    measurementId: "G-6QP0ZWW58P"
-                };
-
-                if (typeof firebase !== 'undefined') {
-                    firebase.initializeApp(firebaseConfig);
-                    firestoreDb = firebase.firestore();
-                    loadDataFromFirestore();
-                }
-            } catch (e) {
-                console.warn("Firebase não carregou, usando o banco local temporariamente:", e);
-            }
-        }
-
-        async function loadDataFromFirestore() {
-            if (!firestoreDb) return;
-            try {
-                const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
-                const docSnap = await docRef.get();
-
-                if (docSnap.exists) {
-                    db = docSnap.data();
-                } else {
-                    await docRef.set(db);
-                }
-                
-                updateBiometricsInputs();
-                refreshAppInterface();
-            } catch (error) {
-                console.error("Erro ao ler do Firestore:", error);
-            }
-        }
-
-        async function saveToFirestore() {
-            if (!firestoreDb) return;
-            try {
-                const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
-                await docRef.set(db);
-            } catch (error) {
-                console.error("Erro ao gravar no Firestore:", error);
-            }
-        }
 
         function setTodayDateDisplay() {
             const today = new Date();
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const display = document.getElementById('date-display-inicio');
-            if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
+            const formatStr = today.toLocaleDateString('pt-BR', options);
+            document.getElementById('date-display-inicio').innerText = formatStr;
         }
 
-        window.setGlobalProfile = function(name) {
+        function setGlobalProfile(name) {
             globalProfile = name;
             ['Gabriel', 'Raissa'].forEach(p => {
                 const btnM = document.getElementById(`top-prof-mobile-${p}`);
@@ -395,69 +556,88 @@
                     if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500";
                 }
             });
-            updateBiometricsInputs();
+            
+            const badgeM = document.getElementById('header-avatar-badge-mobile');
+            const badgeD = document.getElementById('header-avatar-badge-desktop');
+            const initials = name === 'Gabriel' ? 'GB' : 'RS';
+            const colorClass = name === 'Gabriel' ? 'bg-blue-600' : 'bg-purple-600';
+            
+            if(badgeM) { badgeM.innerText = initials; badgeM.className = `w-8 h-8 rounded-lg ${colorClass} text-white flex items-center justify-center font-black text-xs shadow-md`; }
+            if(badgeD) { badgeD.innerText = initials; badgeD.className = `w-8 h-8 rounded-full ${colorClass} text-white flex items-center justify-center font-bold text-xs shadow-inner`; }
+
             refreshAppInterface();
         }
 
-        window.switchTab = function(tabId) {
-            const tabs = ['inicio', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+        function switchTab(tabId) {
+            const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+            
             tabs.forEach(t => {
-                const tabEl = document.getElementById(`tab-${t}`);
-                const navEl = document.getElementById(`nav-${t}`);
-                if(tabEl) tabEl.classList.add('hidden');
-                if(navEl) navEl.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200";
-                
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
                 const mobileBtn = document.getElementById(`m-nav-${t}`);
-                if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400 scale-100";
+                if(mobileBtn) {
+                    mobileBtn.classList.remove('text-blue-500', 'scale-110');
+                    mobileBtn.classList.add('text-slate-400');
+                }
             });
             
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            const activeNav = document.getElementById(`nav-${tabId}`);
-            if(activeTab) activeTab.classList.remove('hidden');
-            if(activeNav) activeNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 bg-slate-800 text-white";
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
             
             const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
-            if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
+            if(activeMobileBtn) {
+                activeMobileBtn.classList.remove('text-slate-400');
+                activeMobileBtn.classList.add('text-blue-500', 'scale-110');
+            }
             
-            const scrollEl = document.getElementById('main-content-scroll');
-            if(scrollEl) scrollEl.scrollTop = 0;
+            // CORREÇÃO CRUCIAL: Forçar o scroll do container principal a voltar para o topo absoluto
+            document.getElementById('main-content-scroll').scrollTop = 0;
+
             refreshAppInterface();
         }
 
-        window.selectMealMomentCard = function(moment) {
+        function selectMealMomentCard(moment) {
             selectedMealMoment = moment;
-            const maps = {'Café da Manhã': 'cafe-m', 'Almoço': 'almoco', 'Café da Tarde': 'cafe-t', 'Janta': 'janta'};
+            const maps = {
+                'Café da Manhã': 'cafe-m',
+                'Almoço': 'almoco',
+                'Café da Tarde': 'cafe-t',
+                'Janta': 'janta'
+            };
+
             Object.keys(maps).forEach(k => {
                 const idSuffix = maps[k];
                 const card = document.getElementById(`meal-card-${idSuffix}`);
                 const iconBox = document.getElementById(`icon-box-${idSuffix}`);
-                if(card && iconBox) {
-                    if(k === moment) {
-                        card.className = "p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-blue-600 bg-blue-950/40 text-white";
-                        iconBox.className = "p-1.5 rounded-lg bg-blue-600 text-white";
-                    } else {
-                        card.className = "p-3 rounded-xl border-2 cursor-pointer transition-all text-center flex flex-col items-center gap-1.5 border-slate-850 bg-slate-900 text-slate-400";
-                        iconBox.className = "p-1.5 rounded-lg bg-slate-800 text-slate-400";
-                    }
+                
+                if(k === moment) {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
+                    iconBox.className = "p-2 bg-blue-600 rounded-xl text-white transition-colors";
+                } else {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
+                    iconBox.className = "p-2 bg-slate-100 rounded-xl group-hover:bg-slate-200 transition-colors text-slate-600";
                 }
             });
         }
 
-        window.handleFoodSearch = function(val) {
+        function handleFoodSearch(val) {
             const dropdown = document.getElementById('search-results-dropdown');
-            if(!dropdown) return;
-            if(!val || val.trim() === '') { dropdown.classList.add('hidden'); return; }
+            if(!val || val.trim() === '') {
+                dropdown.classList.add('hidden');
+                return;
+            }
+
             const query = val.toLowerCase();
             const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
             
-            dropdown.innerHTML = '';
             if(filtered.length === 0) {
-                dropdown.innerHTML = '<div class="p-3 text-xs text-slate-500 italic text-center">Nenhum alimento encontrado</div>';
+                dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 italic text-center">Nenhum alimento encontrado</div>';
             } else {
+                dropdown.innerHTML = '';
                 filtered.slice(0, 15).forEach(food => {
                     const row = document.createElement('div');
-                    row.className = "p-3 text-xs font-semibold text-slate-300 hover:bg-slate-800 cursor-pointer transition-all border-b border-slate-800 flex justify-between items-center";
-                    row.innerHTML = `<span>${food.n}</span><span class="text-blue-400 font-bold">${food.c} kcal / 100g</span>`;
+                    row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 last:border-0 flex justify-between items-center";
+                    row.innerHTML = `<span>${food.n}</span><span class="text-blue-600 font-bold">${food.c} kcal / 100g</span>`;
                     row.onclick = () => {
                         document.getElementById('food-search-input').value = food.n;
                         dropdown.classList.add('hidden');
@@ -468,86 +648,88 @@
             dropdown.classList.remove('hidden');
         }
 
-        window.adjustWeightInput = function(val) {
+        function adjustWeightInput(val) {
             const input = document.getElementById('food-weight-input');
-            if(input) input.value = Math.max((parseInt(input.value) || 0) + val, 0);
+            let curr = parseInt(input.value) || 0;
+            input.value = Math.max(curr + val, 0);
         }
 
-        window.setWeightInputValue = function(val) { 
-            const input = document.getElementById('food-weight-input');
-            if(input) input.value = val; 
+        function setWeightInputValue(val) {
+            document.getElementById('food-weight-input').value = val;
         }
-        
-        window.updateFormUserHighlight = function() {
-            const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
-            if(!checkedRadio) return;
-            const selectedUser = checkedRadio.value;
+
+        function updateFormUserHighlight() {
+            const selectedUser = document.querySelector('input[name="target-user-radio"]:checked').value;
             ['Gabriel', 'Raissa'].forEach(u => {
                 const label = document.getElementById(`label-user-${u}`);
-                if(label) {
-                    label.className = (u === selectedUser) ? 
-                        "flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-blue-600 border-blue-500 text-white shadow" : 
-                        "flex-1 text-center py-2.5 rounded-xl border font-bold text-xs cursor-pointer transition-all bg-slate-900 border-slate-800 text-slate-400";
+                if(u === selectedUser) {
+                    label.className = "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center";
+                } else {
+                    label.className = "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
                 }
             });
         }
 
-        window.addSingleFoodToDraft = function() {
+        function addSingleFoodToDraft() {
             const searchInput = document.getElementById('food-search-input');
-            const weightInput = document.getElementById('food-weight-input');
-            if(!searchInput || !weightInput) return;
-            
             const foodName = searchInput.value;
-            const weight = parseFloat(weightInput.value);
+            const weight = parseFloat(document.getElementById('food-weight-input').value);
             const foodObj = MASTER_FOODS_DATABASE.find(f => f.n === foodName);
 
-            if(!foodObj) { alert("Selecione um alimento válido da lista!"); return; }
+            if(!foodObj) {
+                alert("Selecione um alimento válido clicando na lista de pesquisa!");
+                return;
+            }
 
             if(weight > 0) {
-                const cCal = Math.round((foodObj.c * weight) / 100);
-                const cProt = Math.round((foodObj.p * weight) / 100);
-                draftFoodItems.push({ n: foodName, w: weight, c: cCal, p: cProt });
+                const calculatedCal = Math.round((foodObj.c * weight) / 100);
+                const calculatedProt = Math.round((foodObj.p * weight) / 100);
+
+                draftFoodItems.push({ n: foodName, w: weight, c: calculatedCal, p: calculatedProt });
                 
                 const container = document.getElementById('draft-food-items-container');
-                if(container) {
-                    if(draftFoodItems.length === 1) container.innerHTML = '';
-                    container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-800/60 py-2 px-1"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-200">${cCal} kcal</span></div>`;
-                }
+                if(draftFoodItems.length === 1) container.innerHTML = '';
+                
+                container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${calculatedCal} kcal</span></div>`;
                 searchInput.value = '';
             }
         }
 
-        window.finalizeCompleteMealDraft = async function() {
-            if(draftFoodItems.length === 0) { alert("Adicione pelo menos 1 alimento primeiro!"); return; }
-            const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
-            const targetUser = checkedRadio ? checkedRadio.value : 'Gabriel';
-            
+        function finalizeCompleteMealDraft() {
+            if(draftFoodItems.length === 0) {
+                alert("Adicione pelo menos 1 alimento ao rascunho primeiro!");
+                return;
+            }
+
+            const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
             const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
             const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
             const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
             const todayStr = new Date().toISOString().split('T')[0];
 
-            if(!db[targetUser]) db[targetUser] = {};
-            if(!db[targetUser].meals) db[targetUser].meals = [];
-            
-            db[targetUser].meals.push({ data: todayStr, momento: selectedMealMoment, calorias: totalCal, proteinas: totalProt, itensStr: itemsStr });
+            db[targetUser].meals.push({
+                data: todayStr,
+                momento: selectedMealMoment,
+                calorias: totalCal,
+                proteinas: totalProt,
+                itensStr: itemsStr
+            });
 
-            await saveToFirestore();
+            saveToLocalStorage();
             draftFoodItems = [];
-            const container = document.getElementById('draft-food-items-container');
-            if(container) container.innerHTML = '<p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>';
+            document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
             refreshAppInterface();
-            alert("Refeição gravada com sucesso!");
+            alert("Refeição registrada com sucesso!");
         }
 
-        window.changeDiaryScope = function(scope) {
+        function changeDiaryScope(scope) {
             diaryScopeMode = scope;
             ['dia', 'semana', 'mes', 'ano'].forEach(s => {
                 const btn = document.getElementById(`diary-scope-${s}`);
-                if(btn) {
-                    btn.className = (s === scope) ? 
-                        "flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all bg-slate-800 text-white shadow" : 
-                        "flex-1 py-1.5 text-[11px] font-bold rounded-lg transition-all text-slate-400";
+                if(s === scope) {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900";
+                } else {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
                 }
             });
             renderDiaryAccordionSection();
@@ -555,29 +737,42 @@
 
         function renderDiaryAccordionSection() {
             const root = document.getElementById('diary-accordion-root');
-            if(!root || !db || !db[globalProfile]) return;
             root.innerHTML = '';
             
             const profile = db[globalProfile];
             const today = new Date();
-            let filteredMeals = (profile.meals || []).filter(m => {
-                if(!m.data) return false;
+            
+            // Filtrar as refeições com base no escopo selecionado (Dia, Semana, Mês, Ano)
+            let filteredMeals = profile.meals.filter(m => {
                 const mDate = new Date(m.data + 'T00:00:00');
-                const diffDays = Math.ceil(Math.abs(today - mDate) / (1000 * 60 * 60 * 24));
-                if(diaryScopeMode === 'dia') return today.toISOString().split('T')[0] === m.data;
-                if(diaryScopeMode === 'semana') return diffDays <= 7;
-                if(diaryScopeMode === 'mes') return diffDays <= 30;
-                if(diaryScopeMode === 'ano') return diffDays <= 365;
+                const diffTime = Math.abs(today - mDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if(diaryScopeMode === 'dia') {
+                    return today.toISOString().split('T')[0] === m.data;
+                } else if(diaryScopeMode === 'semana') {
+                    return diffDays <= 7;
+                } else if(diaryScopeMode === 'mes') {
+                    return diffDays <= 30;
+                } else if(diaryScopeMode === 'ano') {
+                    return diffDays <= 365;
+                }
                 return true;
             });
 
             if(filteredMeals.length === 0) {
-                root.innerHTML = '<p class="text-xs text-slate-500 italic text-center py-8">Nenhuma refeição localizada neste período.</p>';
+                root.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-8">Nenhuma refeição localizada para este período.</p>';
                 return;
             }
 
+            // Agrupar refeições por data para criar o sistema Mostrar/Ocultar limpo
             const groups = {};
-            filteredMeals.forEach(m => { if(!groups[m.data]) groups[m.data] = []; groups[m.data].push(m); });
+            filteredMeals.forEach(m => {
+                if(!groups[m.data]) groups[m.data] = [];
+                groups[m.data].push(m);
+            });
+
+            // Ordenar datas de forma decrescente (Mais recentes no topo)
             const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
 
             sortedDates.forEach((dateStr, dateIdx) => {
@@ -585,196 +780,239 @@
                 const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
                 const dayMeals = groups[dateStr];
                 
+                // Criando o bloco colapsável nativo <details>
                 const details = document.createElement('details');
-                details.className = "bg-slate-950 rounded-2xl border border-slate-800/80 overflow-hidden transition-all";
-                if(dateIdx === 0) details.setAttribute('open', '');
+                details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
+                if(dateIdx === 0) details.setAttribute('open', ''); // Deixa apenas o dia mais recente aberto por padrão
 
+                // Tag <summary> funciona como o cabeçalho clicável do Accordion
                 details.innerHTML = `
-                    <summary class="bg-slate-900 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-800/50 transition-colors border-b border-slate-800/60">
-                        <span class="text-xs font-black text-slate-200 uppercase tracking-wide">${formattedDate}</span>
-                        <span class="text-xs font-bold bg-blue-500/10 text-blue-400 px-2.5 py-0.5 rounded-full border border-blue-500/20">${dayMeals.length} Pratos</span>
+                    <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+                            <span class="text-xs font-black text-slate-700 uppercase tracking-wide">${formattedDate}</span>
+                        </div>
+                        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
                     </summary>
-                    <div class="p-4 space-y-3 bg-slate-950/60 grid grid-cols-1"></div>
+                    <div class="p-4 space-y-4 bg-white grid grid-cols-1 gap-3">
+                        </div>
                 `;
 
                 const cardsContainer = details.querySelector('div');
+
                 dayMeals.forEach((m) => {
+                    // Descobrir o índice global real para exclusão segura
                     const globalIdx = profile.meals.findIndex(realM => realM === m);
-                    let colorTheme = "text-amber-400 bg-amber-500/10 border-amber-500/20";
-                    if(m.momento === "Almoço") colorTheme = "text-emerald-400 bg-emerald-500/10 border-emerald-500/20";
-                    if(m.momento === "Café da Tarde") colorTheme = "text-orange-400 bg-orange-500/10 border-orange-500/20";
-                    if(m.momento === "Janta") colorTheme = "text-indigo-400 bg-indigo-500/10 border-indigo-500/20";
+                    
+                    let colorTheme = "text-amber-600 bg-amber-50";
+                    if(m.momento === "Almoço") colorTheme = "text-emerald-600 bg-emerald-50";
+                    if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
+                    if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
 
                     cardsContainer.innerHTML += `
-                        <div class="border border-slate-800 p-4 rounded-xl flex justify-between items-center bg-slate-900/40 relative">
-                            <div>
-                                <span class="text-[10px] font-extrabold ${colorTheme} border px-2 py-0.5 rounded-md uppercase tracking-wide inline-block">${m.momento}</span>
-                                <p class="text-xs text-slate-300 mt-2 font-medium leading-relaxed">${m.itensStr}</p>
-                                <span class="text-[11px] font-bold text-slate-400 block mt-1.5">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+                        <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors">
+                            <div class="text-center">
+                                <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide mx-auto inline-block">${m.momento}</span>
+                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center font-medium">${m.itensStr}</p>
                             </div>
-                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-500 hover:text-rose-400 transition-colors p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
+                                <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+                                <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-300 hover:text-rose-600 transition-colors flex-shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
                         </div>
                     `;
                 });
+
                 root.appendChild(details);
             });
-            if(window.lucide) lucide.createIcons();
+
+            lucide.createIcons();
         }
 
-        window.removeMealFromDiary = async function(globalIndex) {
-            if(globalIndex !== -1 && db[globalProfile]) {
+        function removeMealFromDiary(globalIndex) {
+            if(globalIndex !== -1) {
                 db[globalProfile].meals.splice(globalIndex, 1);
-                await saveToFirestore();
+                saveToLocalStorage();
                 refreshAppInterface();
             }
         }
 
-        function updateBiometricsInputs() {
-            if(!db || !db[globalProfile]) return;
+        function refreshAppInterface() {
+            const todayStr = new Date().toISOString().split('T')[0];
             const profile = db[globalProfile];
-            const pIni = document.getElementById('bio-input-p-ini');
-            const pAtu = document.getElementById('bio-input-p-atual');
-            const pMet = document.getElementById('bio-input-p-meta');
-            const cint = document.getElementById('bio-input-cintura');
-            const cfgCal = document.getElementById('cfg-calories');
-            const cfgPrt = document.getElementById('cfg-protein');
+            
+            const todaysMeals = profile.meals.filter(m => m.data === todayStr);
+            const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
+            const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
+            
+            document.getElementById('wheel-consumed-val').innerText = consumed;
+            document.getElementById('wheel-target-val').innerText = profile.targetCalories;
+            document.getElementById('bottom-protein-val').innerText = `${protein}g / ${profile.targetProtein}g`;
+            
+            const leftCal = profile.targetCalories - consumed;
+            document.getElementById('bottom-left-val').innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
 
-            if(pIni) pIni.value = profile.pesoInicial || "";
-            if(pAtu) pAtu.value = profile.pesoAtual || "";
-            if(pMet) pMet.value = profile.pesoMeta || "";
-            if(cint) cint.value = profile.cintura || "";
-            if(cfgCal) cfgCal.value = profile.targetCalories || "";
-            if(cfgPrt) cfgPrt.value = profile.targetProtein || "";
+            const circle = document.getElementById('wheel-stroke');
+            if(circle) {
+                circle.style.strokeDashoffset = "251.2";
+                setTimeout(() => {
+                    const pct = Math.min(consumed / profile.targetCalories, 1);
+                    const offset = 251.2 - (pct * 251.2);
+                    circle.style.strokeDashoffset = offset;
+                }, 100);
+            }
+
+            ['Gabriel', 'Raissa'].forEach(user => {
+                const uMeals = db[user].meals.filter(m => m.data === todayStr);
+                const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
+                const uLeft = Math.max(db[user].targetCalories - uConsumed, 0);
+                
+                document.getElementById(`p-cons-${user}`).innerText = `${uConsumed} kcal`;
+                document.getElementById(`p-left-${user}`).innerText = `${uLeft} kcal`;
+                document.getElementById(`p-count-${user}`).innerText = uMeals.length;
+            });
+
+            document.getElementById('cfg-calories').value = profile.targetCalories;
+            document.getElementById('cfg-protein').value = profile.targetProtein;
+
+            document.getElementById('bio-input-p-ini').value = profile.pesoInicial;
+            document.getElementById('bio-input-p-atual').value = profile.pesoAtual || profile.pesoInicial;
+            document.getElementById('bio-input-p-meta').value = profile.pesoMeta;
+            document.getElementById('bio-input-cintura').value = profile.cintura;
+            
+            let barPct = 0;
+            const totalProgresso = profile.pesoInicial - profile.pesoAtual;
+            const metaTotal = profile.pesoInicial - profile.pesoMeta;
+            if(metaTotal > 0) {
+                barPct = Math.min(Math.max(Math.round((totalProgresso / metaTotal) * 100), 0), 100);
+            }
+            
+            document.getElementById('bar-percentage-lbl').innerText = `${barPct}% Concluído`;
+            const bar = document.getElementById('progress-horizontal-bar');
+            if(bar) {
+                bar.style.width = "0%";
+                setTimeout(() => {
+                    bar.style.width = `${barPct}%`;
+                }, 100);
+            }
+
+            renderDiaryAccordionSection();
+            renderInteractiveCalendar();
+            renderHistoryTimeline();
+            lucide.createIcons();
         }
 
-        window.saveBiometricsMetrics = async function() {
-            if(!db[globalProfile]) return;
+        function renderInteractiveCalendar() {
+            const box = document.getElementById('interactive-grid-box');
+            box.innerHTML = '';
+            const colorsMap = db[globalProfile].calendarColors || {};
+            let stats = { azul: 0, verde: 0, roxo: 0, vermelho: 0 };
+            
+            for(let i = 1; i <= 28; i++) {
+                let statusColor = colorsMap[i] || null;
+                if(statusColor && stats[statusColor] !== undefined) {
+                    stats[statusColor]++;
+                }
+
+                let colorStyle = "bg-slate-100 text-slate-700 hover:bg-slate-200";
+                if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white shadow-sm";
+                if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white shadow-sm";
+                if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white shadow-sm";
+                if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white shadow-sm";
+
+                const isToday = (i === 22);
+                const todayBorder = isToday ? "border-2 border-amber-500 font-black" : "";
+                const selectedRing = (i === selectedCalendarDay) ? "ring-2 ring-slate-900 ring-offset-2" : "";
+
+                box.innerHTML += `
+                    <div onclick="selectCalendarDay(${i})" class="h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer font-bold transition-all relative ${colorStyle} ${selectedRing} ${todayBorder}">
+                        ${i}
+                        ${isToday ? '<span class="absolute -top-1 -right-1 text-[8px]">⭐</span>' : ''}
+                    </div>
+                `;
+            }
+
+            document.getElementById('count-cal-azul').innerText = `${stats.azul} dias`;
+            document.getElementById('count-cal-verde').innerText = `${stats.verde} dias`;
+            document.getElementById('count-cal-roxo').innerText = `${stats.roxo} dias`;
+            document.getElementById('count-cal-vermelho').innerText = `${stats.vermelho} dias`;
+        }
+
+        function selectCalendarDay(day) {
+            selectedCalendarDay = day;
+            document.getElementById('cal-selected-day-lbl').innerText = `Dia Selecionado: ${day}`;
+            renderInteractiveCalendar();
+        }
+
+        function setDayStatusColor(colorName) {
+            if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
+            db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
+            saveToLocalStorage();
+            refreshAppInterface();
+        }
+
+        function setHistoryFilter(mode) {
+            historyFilter = mode;
+            ['dia', 'semana', 'mes', 'ano'].forEach(m => {
+                const btn = document.getElementById(`f-btn-${m}`);
+                btn.className = (m === mode) ? 
+                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
+                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+            });
+            renderHistoryTimeline();
+        }
+
+        function renderHistoryTimeline() {
+            const container = document.getElementById('history-timeline-output');
+            container.innerHTML = '';
+            const meals = db[globalProfile].meals;
+
+            if(meals.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center w-full">Nenhum registro correspondente no histórico.</p>';
+                return;
+            }
+
+            meals.forEach(m => {
+                container.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full">
+                        <div class="text-center mx-auto">
+                            <span class="text-[10px] font-black text-slate-400 block uppercase mb-1">Filtro: ${historyFilter.toUpperCase()} (${m.data})</span>
+                            <span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span>
+                            <p class="text-xs text-slate-500 mt-1">${m.itensStr}</p>
+                        </div>
+                        <span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md flex-shrink-0">${m.calorias} kcal</span>
+                    </div>
+                `;
+            });
+        }
+
+        function saveBiometricsMetrics() {
             const profile = db[globalProfile];
             profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
             profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
             profile.pesoMeta = parseFloat(document.getElementById('bio-input-p-meta').value) || profile.pesoMeta;
             profile.cintura = parseFloat(document.getElementById('bio-input-cintura').value) || profile.cintura;
             
-            await saveToFirestore();
+            saveToLocalStorage();
             refreshAppInterface();
-            alert("Métricas sincronizadas!");
+            alert("Métricas atualizadas com sucesso!");
         }
 
-        window.saveConfigMeta = async function() {
-            if(!db[globalProfile]) return;
+        function saveConfigMeta() {
             const calories = parseInt(document.getElementById('cfg-calories').value);
             const protein = parseInt(document.getElementById('cfg-protein').value);
+
             if(calories > 0 && protein > 0) {
                 db[globalProfile].targetCalories = calories;
                 db[globalProfile].targetProtein = protein;
-                await saveToFirestore();
+                saveToLocalStorage();
                 refreshAppInterface();
-                alert("Metas sincronizadas!");
+                alert("Metas salvas com sucesso!");
             }
         }
 
-        window.selectCalendarDay = function(day) { 
-            selectedCalendarDay = day; 
-            const lbl = document.getElementById('cal-selected-day-lbl');
-            if(lbl) lbl.innerText = `Dia Selecionado: ${day}`; 
-            renderInteractiveCalendar(); 
-        }
-        
-        window.setDayStatusColor = async function(colorName) {
-            if(!db[globalProfile]) return;
-            if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
-            db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
-            await saveToFirestore();
-            refreshAppInterface();
-        }
-
-        function refreshAppInterface() {
-            if (!db || !db[globalProfile]) return;
-            const todayStr = new Date().toISOString().split('T')[0];
-            const profile = db[globalProfile];
-            
-            const todaysMeals = (profile.meals || []).filter(m => m.data === todayStr);
-            const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
-            const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
-            
-            const elCons = document.getElementById('wheel-consumed-val');
-            const elTar = document.getElementById('wheel-target-val');
-            const elProt = document.getElementById('bottom-protein-val');
-            const elLeft = document.getElementById('bottom-left-val');
-            
-            if(elCons) elCons.innerText = consumed;
-            if(elTar) elTar.innerText = profile.targetCalories || 2000;
-            if(elProt) elProt.innerText = `${protein}g / ${profile.targetProtein || 150}g`;
-            
-            const leftCal = (profile.targetCalories || 2000) - consumed;
-            if(elLeft) elLeft.innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida 🎯";
-
-            const circle = document.getElementById('wheel-stroke');
-            if(circle) {
-                circle.style.strokeDashoffset = "251.2";
-                const pct = Math.min(consumed / (profile.targetCalories || 2000), 1);
-                circle.style.strokeDashoffset = 251.2 - (pct * 251.2);
-            }
-
-            ['Gabriel', 'Raissa'].forEach(user => {
-                if(db[user]) {
-                    const uMeals = (db[user].meals || []).filter(m => m.data === todayStr);
-                    const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
-                    const elPCons = document.getElementById(`p-cons-${user}`);
-                    const elPLeft = document.getElementById(`p-left-${user}`);
-                    const elPCount = document.getElementById(`p-count-${user}`);
-                    
-                    if(elPCons) elPCons.innerText = `${uConsumed} kcal`;
-                    if(elPLeft) elPLeft.innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
-                    if(elPCount) elPCount.innerText = uMeals.length + (uMeals.length === 1 ? " Refeição" : " Refeições");
-                }
-            });
-
-            renderDiaryAccordionSection();
-            renderInteractiveCalendar();
-            renderHistoryTimeline();
-        }
-
-        function renderInteractiveCalendar() {
-            const box = document.getElementById('interactive-grid-box');
-            if(!box || !db || !db[globalProfile]) return;
-            box.innerHTML = '';
-            const colorsMap = db[globalProfile].calendarColors || {};
-            
-            for(let i = 1; i <= 28; i++) {
-                let statusColor = colorsMap[i] || null;
-                let colorStyle = "bg-slate-900 text-slate-400 border border-slate-800/80 hover:bg-slate-800";
-                if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white border border-blue-500 shadow-lg";
-                if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white border border-emerald-500 shadow-lg";
-                if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white border border-purple-500 shadow-lg";
-                if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white border border-rose-500 shadow-lg";
-
-                const isToday = (i === 22);
-                box.innerHTML += `<div onclick="selectCalendarDay(${i})" class="h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer font-bold relative transition-all duration-150 ${colorStyle} ${(i === selectedCalendarDay) ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-slate-950 scale-105" : ""} ${isToday ? "border-2 border-amber-500" : ""}">` + i + `</div>`;
-            }
-        }
-
-        function renderHistoryTimeline() {
-            const container = document.getElementById('history-timeline-output');
-            if(!container || !db || !db[globalProfile]) return;
-            container.innerHTML = '';
-            const meals = db[globalProfile].meals || [];
-
-            if(meals.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-500 italic p-4 text-center">Nenhum registro no histórico.</p>';
-                return;
-            }
-            meals.forEach(m => {
-                container.innerHTML += `
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800/80 shadow-md flex justify-between items-center text-left w-full">
-                        <div>
-                            <span class="text-[9px] font-black text-slate-500 block uppercase tracking-wider mb-1">${m.data}</span>
-                            <span class="text-xs font-bold text-slate-200 uppercase block">${m.momento}</span>
-                            <p class="text-xs text-slate-400 mt-1 font-medium">${m.itensStr}</p>
-                        </div>
-                        <span class="text-xs font-black bg-slate-900 border border-slate-800 text-slate-300 px-2.5 py-1 rounded-md">${m.calorias} kcal</span>
-                    </div>`;
-            });
+        function saveToLocalStorage() {
+            localStorage.setItem('projetoDietaV5', JSON.stringify(db));
         }
     </script>
 </body>
