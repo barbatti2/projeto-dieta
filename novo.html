@@ -1,7 +1,7 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
+<script>
     // Suas chaves oficiais configuradas e prontas
     const firebaseConfig = {
         apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
@@ -13,14 +13,14 @@
         measurementId: "G-6QP0ZWW58P"
     };
 
-    // Inicializa o Firebase e o Firestore
-    const app = initializeApp(firebaseConfig);
-    const firestoreDb = getFirestore(app);
+    // Inicializa o Firebase no modo clássico
+    firebase.initializeApp(firebaseConfig);
+    const firestoreDb = firebase.firestore();
 
     // Banco de dados local auxiliar
     let db = {};
 
-    // Dados de Alimentos Estáticos (Adicione mais aqui mantendo a estrutura)
+    // Dados de Alimentos Estáticos
     const MASTER_FOODS_DATABASE = [
         { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
         { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
@@ -46,17 +46,17 @@
     // Carrega os dados direto do Firestore
     async function loadDataFromFirestore() {
         try {
-            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
-            const docSnap = await getDoc(docRef);
+            const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
+            const docSnap = await docRef.get();
 
-            if (docSnap.exists()) {
+            if (docSnap.exists) {
                 db = docSnap.data();
             } else {
                 db = {
                     Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
                     Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
                 };
-                await setDoc(docRef, db);
+                await docRef.set(db);
             }
             refreshAppInterface();
         } catch (error) {
@@ -67,8 +67,8 @@
     // Salva os dados no Firestore
     async function saveToFirestore() {
         try {
-            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
-            await setDoc(docRef, db);
+            const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
+            await docRef.set(db);
         } catch (error) {
             console.error("Erro ao salvar dados no Firestore:", error);
         }
@@ -90,7 +90,6 @@
         if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
     }
 
-    // Exportação das funções para o escopo global
     window.setGlobalProfile = function(name) {
         globalProfile = name;
         ['Gabriel', 'Raissa'].forEach(p => {
@@ -347,7 +346,7 @@
         
         await saveToFirestore();
         refreshAppInterface();
-        alert("Biometria updated!");
+        alert("Biometria salva!");
     }
 
     window.saveConfigMeta = async function() {
