@@ -576,16 +576,21 @@
         }
 
         function switchTab(tabId) {
-            const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+            // Lista oficial atualizada (sem a aba antiga de refeições)
+            const tabs = ['inicio', 'pessoas', 'adicionar', 'calendario', 'historico', 'peso', 'config'];
             
             tabs.forEach(t => {
                 const targetTab = document.getElementById(`tab-${t}`);
                 if (targetTab) {
                     targetTab.classList.add('hidden');
-                    // 🚨 REMOVE O ESTILO FLEX CASO ELE TENHA SIDO ADICIONADO ANTES
                     targetTab.style.display = ''; 
                 }
-                document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
+                
+                const pcBtn = document.getElementById(`nav-${t}`);
+                if (pcBtn) {
+                    pcBtn.classList.remove('bg-slate-200', 'text-slate-900');
+                }
+                
                 const mobileBtn = document.getElementById(`m-nav-${t}`);
                 if(mobileBtn) {
                     mobileBtn.classList.remove('text-blue-500', 'scale-110');
@@ -593,32 +598,41 @@
                 }
             });
 
-            // 🚨 ADICIONE ESSE BLOCO LOGO ABAIXO DO LOOP PARA FORÇAR A TELA A IR PARA BAIXO:
+            // Ativa a nova aba selecionada
             const activeTab = document.getElementById(`tab-${tabId}`);
             if (activeTab) {
                 activeTab.classList.remove('hidden');
-                // Se for a aba de refeições ou histórico, obriga a ser "block" (vertical)
-                if (tabId === 'refeicoes' || tabId === 'historico') {
-                    activeTab.style.setProperty('display', 'block', 'important');
-                } else {
-                    activeTab.style.display = 'block';
+                activeTab.style.display = 'block';
+                
+                // Destaque visual no menu do PC
+                const activePcBtn = document.getElementById(`nav-${tabId}`);
+                if (activePcBtn) {
+                    activePcBtn.classList.add('bg-slate-200', 'text-slate-900');
+                }
+                
+                // Destaque visual no menu do Celular
+                const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
+                if (activeMobileBtn) {
+                    activeMobileBtn.classList.remove('text-slate-400');
+                    activeMobileBtn.classList.add('text-blue-500', 'scale-110');
+                }
+                
+                // DISPARADOR: Se abrir o Histórico, carrega a lista nova com as lixeiras
+                if (tabId === 'historico') {
+                    renderFullHistory();
                 }
             }
             
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
-            
-            const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
-            if(activeMobileBtn) {
-                activeMobileBtn.classList.remove('text-slate-400');
-                activeMobileBtn.classList.add('text-blue-500', 'scale-110');
+            // Mantém suas correções de scroll e interface originais
+            const scrollContainer = document.getElementById('main-content-scroll');
+            if (scrollContainer) {
+                scrollContainer.scrollTop = 0;
             }
-            
-            // CORREÇÃO CRUCIAL: Forçar o scroll do container principal a voltar para o topo absoluto
-            document.getElementById('main-content-scroll').scrollTop = 0;
 
-            refreshAppInterface();
-        }
+            if (typeof refreshAppInterface === 'function') {
+                refreshAppInterface();
+            }
+}
 
         function selectMealMomentCard(moment) {
             selectedMealMoment = moment;
