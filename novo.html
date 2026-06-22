@@ -487,6 +487,69 @@
         </nav>
     </div>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // CONFIGURAÇÃO DO SEU FIREBASE (Substitua pelos seus dados reais aqui)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicializa o Firebase e o Firestore
+        const app = initializeApp(firebaseConfig);
+        const firestore = getFirestore(app);
+
+        // Documento unificado dentro do Firestore na coleção 'apps' com ID 'projetoDieta'
+        const docRef = doc(firestore, "apps", "projetoDieta");
+
+        // Objeto de dados padrão estrutural para primeira inicialização caso o banco esteja vazio
+        const defaultDbState = {
+            Gabriel: {
+                targetCalories: 2200, targetProtein: 160,
+                pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
+                meals: [
+                    { data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" },
+                    { data: "2026-06-21", momento: "Janta", calorias: 510, proteinas: 40, itensStr: "Patinho Moído Cozido (150g)<br>Feijão Preto Cozido (100g)" }
+                ],
+                calendarColors: { "1": "azul", "2": "verde", "22": "azul" }
+            },
+            Raissa: {
+                targetCalories: 1600, targetProtein: 120,
+                pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72,
+                meals: [{ data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }],
+                calendarColors: { "1": "verde", "22": "verde" }
+            }
+        };
+
+        // Escuta em tempo real as mudanças no Firestore e atualiza o estado local global automaticamente
+        onSnapshot(docRef, (snapshot) => {
+            if (snapshot.exists()) {
+                window.db = snapshot.data();
+            } else {
+                window.db = defaultDbState;
+                setDoc(docRef, defaultDbState);
+            }
+            window.refreshAppInterface();
+        });
+
+        // Expõe a função de persistência do Firestore globalmente para o escopo tradicional do script
+        window.saveToFirestore = async function() {
+            if (window.db) {
+                try {
+                    await setDoc(docRef, window.db);
+                } catch (error) {
+                    console.error("Erro ao sincronizar com o Firestore: ", error);
+                }
+            }
+        };
+    </script>
+
     <script>
         const MASTER_FOODS_DATABASE = [
             { n: "Peito de Frango Grelhado", c: 165, p: 31 }, { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, { n: "Frango Cozido Desfiado", c: 150, p: 29 }, { n: "Patinho Moído Cozido", c: 220, p: 36 },
@@ -507,27 +570,12 @@
         let globalProfile = 'Gabriel';
         let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
-        let diaryScopeMode = 'dia'; // Escopo padrão do Diário Alimentar
+        let diaryScopeMode = 'dia'; 
         let draftFoodItems = [];
         let selectedMealMoment = 'Café da Manhã';
 
-        let db = JSON.parse(localStorage.getItem('projetoDietaV5')) || {
-            Gabriel: {
-                targetCalories: 2200, targetProtein: 160,
-                pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
-                meals: [
-                    { data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" },
-                    { data: "2026-06-21", momento: "Janta", calorias: 510, proteinas: 40, itensStr: "Patinho Moído Cozido (150g)<br>Feijão Preto Cozido (100g)" }
-                ],
-                calendarColors: { "1": "azul", "2": "verde", "22": "azul" }
-            },
-            Raissa: {
-                targetCalories: 1600, targetProtein: 120,
-                pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72,
-                meals: [{ data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }],
-                calendarColors: { "1": "verde", "22": "verde" }
-            }
-        };
+        // Inicializador em objeto vazio para ser preenchido imediatamente pelo onSnapshot do Firestore
+        let db = { Gabriel: {}, Raissa: {} };
 
         window.addEventListener('DOMContentLoaded', () => {
             setTodayDateDisplay();
@@ -590,7 +638,6 @@
                 activeMobileBtn.classList.add('text-blue-500', 'scale-110');
             }
             
-            // CORREÇÃO CRUCIAL: Forçar o scroll do container principal a voltar para o topo absoluto
             document.getElementById('main-content-scroll').scrollTop = 0;
 
             refreshAppInterface();
@@ -707,6 +754,8 @@
             const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
             const todayStr = new Date().toISOString().split('T')[0];
 
+            if(!db[targetUser].meals) db[targetUser].meals = [];
+
             db[targetUser].meals.push({
                 data: todayStr,
                 momento: selectedMealMoment,
@@ -715,7 +764,7 @@
                 itensStr: itemsStr
             });
 
-            saveToLocalStorage();
+            saveToFirestore();
             draftFoodItems = [];
             document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
             refreshAppInterface();
@@ -737,12 +786,14 @@
 
         function renderDiaryAccordionSection() {
             const root = document.getElementById('diary-accordion-root');
+            if(!root) return;
             root.innerHTML = '';
             
             const profile = db[globalProfile];
+            if(!profile || !profile.meals) return;
+
             const today = new Date();
             
-            // Filtrar as refeições com base no escopo selecionado (Dia, Semana, Mês, Ano)
             let filteredMeals = profile.meals.filter(m => {
                 const mDate = new Date(m.data + 'T00:00:00');
                 const diffTime = Math.abs(today - mDate);
@@ -765,14 +816,12 @@
                 return;
             }
 
-            // Agrupar refeições por data para criar o sistema Mostrar/Ocultar limpo
             const groups = {};
             filteredMeals.forEach(m => {
                 if(!groups[m.data]) groups[m.data] = [];
                 groups[m.data].push(m);
             });
 
-            // Ordenar datas de forma decrescente (Mais recentes no topo)
             const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
 
             sortedDates.forEach((dateStr, dateIdx) => {
@@ -780,12 +829,10 @@
                 const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
                 const dayMeals = groups[dateStr];
                 
-                // Criando o bloco colapsável nativo <details>
                 const details = document.createElement('details');
                 details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
-                if(dateIdx === 0) details.setAttribute('open', ''); // Deixa apenas o dia mais recente aberto por padrão
+                if(dateIdx === 0) details.setAttribute('open', ''); 
 
-                // Tag <summary> funciona como o cabeçalho clicável do Accordion
                 details.innerHTML = `
                     <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
                         <div class="flex items-center gap-2">
@@ -801,7 +848,6 @@
                 const cardsContainer = details.querySelector('div');
 
                 dayMeals.forEach((m) => {
-                    // Descobrir o índice global real para exclusão segura
                     const globalIdx = profile.meals.findIndex(realM => realM === m);
                     
                     let colorTheme = "text-amber-600 bg-amber-50";
@@ -830,9 +876,9 @@
         }
 
         function removeMealFromDiary(globalIndex) {
-            if(globalIndex !== -1) {
+            if(globalIndex !== -1 && db[globalProfile] && db[globalProfile].meals) {
                 db[globalProfile].meals.splice(globalIndex, 1);
-                saveToLocalStorage();
+                saveToFirestore();
                 refreshAppInterface();
             }
         }
@@ -841,19 +887,21 @@
             const todayStr = new Date().toISOString().split('T')[0];
             const profile = db[globalProfile];
             
+            if (!profile || !profile.meals) return;
+
             const todaysMeals = profile.meals.filter(m => m.data === todayStr);
             const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
             const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
             
             document.getElementById('wheel-consumed-val').innerText = consumed;
-            document.getElementById('wheel-target-val').innerText = profile.targetCalories;
-            document.getElementById('bottom-protein-val').innerText = `${protein}g / ${profile.targetProtein}g`;
+            document.getElementById('wheel-target-val').innerText = profile.targetCalories || 0;
+            document.getElementById('bottom-protein-val').innerText = `${protein}g / ${profile.targetProtein || 0}g`;
             
-            const leftCal = profile.targetCalories - consumed;
+            const leftCal = (profile.targetCalories || 0) - consumed;
             document.getElementById('bottom-left-val').innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
 
             const circle = document.getElementById('wheel-stroke');
-            if(circle) {
+            if(circle && profile.targetCalories) {
                 circle.style.strokeDashoffset = "251.2";
                 setTimeout(() => {
                     const pct = Math.min(consumed / profile.targetCalories, 1);
@@ -863,26 +911,28 @@
             }
 
             ['Gabriel', 'Raissa'].forEach(user => {
-                const uMeals = db[user].meals.filter(m => m.data === todayStr);
-                const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
-                const uLeft = Math.max(db[user].targetCalories - uConsumed, 0);
-                
-                document.getElementById(`p-cons-${user}`).innerText = `${uConsumed} kcal`;
-                document.getElementById(`p-left-${user}`).innerText = `${uLeft} kcal`;
-                document.getElementById(`p-count-${user}`).innerText = uMeals.length;
+                if(db[user] && db[user].meals) {
+                    const uMeals = db[user].meals.filter(m => m.data === todayStr);
+                    const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
+                    const uLeft = Math.max((db[user].targetCalories || 0) - uConsumed, 0);
+                    
+                    document.getElementById(`p-cons-${user}`).innerText = `${uConsumed} kcal`;
+                    document.getElementById(`p-left-${user}`).innerText = `${uLeft} kcal`;
+                    document.getElementById(`p-count-${user}`).innerText = uMeals.length;
+                }
             });
 
-            document.getElementById('cfg-calories').value = profile.targetCalories;
-            document.getElementById('cfg-protein').value = profile.targetProtein;
+            document.getElementById('cfg-calories').value = profile.targetCalories || 0;
+            document.getElementById('cfg-protein').value = profile.targetProtein || 0;
 
-            document.getElementById('bio-input-p-ini').value = profile.pesoInicial;
-            document.getElementById('bio-input-p-atual').value = profile.pesoAtual || profile.pesoInicial;
-            document.getElementById('bio-input-p-meta').value = profile.pesoMeta;
-            document.getElementById('bio-input-cintura').value = profile.cintura;
+            document.getElementById('bio-input-p-ini').value = profile.pesoInicial || 0;
+            document.getElementById('bio-input-p-atual').value = profile.pesoAtual || profile.pesoInicial || 0;
+            document.getElementById('bio-input-p-meta').value = profile.pesoMeta || 0;
+            document.getElementById('bio-input-cintura').value = profile.cintura || 0;
             
             let barPct = 0;
-            const totalProgresso = profile.pesoInicial - profile.pesoAtual;
-            const metaTotal = profile.pesoInicial - profile.pesoMeta;
+            const totalProgresso = (profile.pesoInicial || 0) - (profile.pesoAtual || 0);
+            const metaTotal = (profile.pesoInicial || 0) - (profile.pesoMeta || 0);
             if(metaTotal > 0) {
                 barPct = Math.min(Math.max(Math.round((totalProgresso / metaTotal) * 100), 0), 100);
             }
@@ -904,6 +954,7 @@
 
         function renderInteractiveCalendar() {
             const box = document.getElementById('interactive-grid-box');
+            if(!box || !db[globalProfile]) return;
             box.innerHTML = '';
             const colorsMap = db[globalProfile].calendarColors || {};
             let stats = { azul: 0, verde: 0, roxo: 0, vermelho: 0 };
@@ -947,7 +998,7 @@
         function setDayStatusColor(colorName) {
             if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
             db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
-            saveToLocalStorage();
+            saveToFirestore();
             refreshAppInterface();
         }
 
@@ -955,17 +1006,20 @@
             historyFilter = mode;
             ['dia', 'semana', 'mes', 'ano'].forEach(m => {
                 const btn = document.getElementById(`f-btn-${m}`);
-                btn.className = (m === mode) ? 
-                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
-                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                if(btn) {
+                    btn.className = (m === mode) ? 
+                        "px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
+                        "px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                }
             });
             renderHistoryTimeline();
         }
 
         function renderHistoryTimeline() {
             const container = document.getElementById('history-timeline-output');
+            if(!container || !db[globalProfile]) return;
             container.innerHTML = '';
-            const meals = db[globalProfile].meals;
+            const meals = db[globalProfile].meals || [];
 
             if(meals.length === 0) {
                 container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center w-full">Nenhum registro correspondente no histórico.</p>';
@@ -988,31 +1042,35 @@
 
         function saveBiometricsMetrics() {
             const profile = db[globalProfile];
+            if(!profile) return;
             profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
             profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
             profile.pesoMeta = parseFloat(document.getElementById('bio-input-p-meta').value) || profile.pesoMeta;
             profile.cintura = parseFloat(document.getElementById('bio-input-cintura').value) || profile.cintura;
             
-            saveToLocalStorage();
+            saveToFirestore();
             refreshAppInterface();
-            alert("Métricas atualizadas com sucesso!");
+            alert("Métricas updated com sucesso!");
         }
 
         function saveConfigMeta() {
             const calories = parseInt(document.getElementById('cfg-calories').value);
             const protein = parseInt(document.getElementById('cfg-protein').value);
 
-            if(calories > 0 && protein > 0) {
+            if(calories > 0 && protein > 0 && db[globalProfile]) {
                 db[globalProfile].targetCalories = calories;
                 db[globalProfile].targetProtein = protein;
-                saveToLocalStorage();
+                saveToFirestore();
                 refreshAppInterface();
                 alert("Metas salvas com sucesso!");
             }
         }
 
+        // Esta função agora é um redirecionamento seguro mapeado pela tag de módulo do Firebase
         function saveToLocalStorage() {
-            localStorage.setItem('projetoDietaV5', JSON.stringify(db));
+            if(window.saveToFirestore) {
+                window.saveToFirestore();
+            }
         }
     </script>
 </body>
