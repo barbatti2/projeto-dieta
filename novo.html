@@ -1469,6 +1469,10 @@
 
         root.innerHTML = '';
 
+        // 👇 ADICIONE ESSAS DUAS LINHAS AQUI EMBAIXO:
+        root.className = "flex flex-col gap-4 w-full block clear-both"; 
+        root.style.setProperty('display', 'block', 'important'); // Força o histórico a ir para baixo
+
         
 
         const profile = db[globalProfile];
