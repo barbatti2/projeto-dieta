@@ -66,9 +66,6 @@
                 <button onclick="switchTab('adicionar')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-adicionar">
                     <i data-lucide="plus-square" class="w-4 h-4"></i> Adicionar Alimento
                 </button>
-                <button onclick="switchTab('refeicoes')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-refeicoes">
-                    <i data-lucide="sandwich" class="w-4 h-4"></i> Refeições do Dia
-                </button>
                 <button onclick="switchTab('calendario')" class="w-full flex items-center gap-3 p-2.5 rounded-xl text-slate-600 hover:bg-slate-200/70 hover:text-slate-900 transition-all text-sm font-semibold" id="nav-calendario">
                     <i data-lucide="calendar-days" class="w-4 h-4"></i> Calendário Interativo
                 </button>
@@ -369,7 +366,7 @@
                 </div>
             </section>
 
-            <section id="tab-historico" class="space-y-6 hidden">
+           <section id="tab-historico" class="space-y-6 hidden block w-full">
                 <div class="relative bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-700">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
                     <i data-lucide="folder-clock" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
@@ -377,18 +374,20 @@
                     <p class="text-xs text-slate-300 font-medium tracking-wide mt-1">Linha do tempo consolidada de lançamentos</p>
                 </div>
 
-                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-4 flex flex-col items-center">
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
-                        <h4 class="font-black text-slate-900 text-sm tracking-wide uppercase text-center">Filtros de Período</h4>
-                        <div class="flex bg-slate-100 p-1 rounded-xl border mx-auto">
-                            <button onclick="setHistoryFilter('dia')" id="f-btn-dia" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
-                            <button onclick="setHistoryFilter('semana')" id="f-btn-semana" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
-                            <button onclick="setHistoryFilter('mes')" id="f-btn-mes" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
-                            <button onclick="setHistoryFilter('ano')" id="f-btn-ano" class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
+                <div class="p-4 md:p-6 max-w-xl mx-auto space-y-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
+                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Período de Visualização</span>
+                        <div class="flex bg-slate-100 p-1 rounded-xl border w-full">
+                            <button onclick="changeHistoryFilter('dia')" id="btn-hist-dia" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm">Dia</button>
+                            <button onclick="changeHistoryFilter('semana')" id="btn-hist-semana" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
+                            <button onclick="changeHistoryFilter('mes')" id="btn-hist-mes" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
+                            <button onclick="changeHistoryFilter('ano')" id="btn-hist-ano" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
                         </div>
                     </div>
-                    <div id="history-timeline-output" class="space-y-3 w-full"></div>
+                    
+                    <div id="history-list-root" class="space-y-3 w-full pb-24"></div>
                 </div>
+</section>
             </section>
 
             <section id="tab-peso" class="space-y-6 hidden">
@@ -1885,15 +1884,127 @@ function changeDiaryScope(scope) {
 
             return;
 
+}
+        meals.forEach(m => {
+            container.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full"><div class="text-center mx-auto"><span class="text-[10px] font-black text-slate-400 block uppercase mb-1">(${m.data})</span><span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span><p class="text-xs text-slate-500 mt-1">${m.itensStr}</p></div><span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span></div>`;
+        });
+    }
+
+    // 👇 COLE O NOVO CÓDIGO EXATAMENTE AQUI:
+    
+    let currentHistoryFilter = 'dia';
+
+    function changeHistoryFilter(filter) {
+        currentHistoryFilter = filter;
+        ['dia', 'semana', 'mes', 'ano'].forEach(f => {
+            const btn = document.getElementById(`btn-hist-${f}`);
+            if(btn) {
+                if(f === filter) {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
+                } else {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                }
+            }
+        });
+        renderFullHistory();
+    }
+
+    function renderFullHistory() {
+        const root = document.getElementById('history-list-root');
+        if (!root || !db[globalProfile] || !db[globalProfile].diario) {
+            root.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado.</div>`;
+            return;
         }
 
-        meals.forEach(m => {
+        root.innerHTML = '';
+        const hoje = new Date();
+        const refeicoes = db[globalProfile].diario; 
 
-            container.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full"><div class="text-center mx-auto"><span class="text-[10px] font-black text-slate-400 block uppercase mb-1">(${m.data})</span><span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span><p class="text-xs text-slate-500 mt-1">${m.itensStr}</p></div><span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span></div>`;
+        const refeicoesFiltradas = refeicoes.filter(ref => {
+            const dataRef = new Date(ref.data + 'T00:00:00');
+            const diffTempo = Math.abs(hoje - dataRef);
+            const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
 
+            if (currentHistoryFilter === 'dia') {
+                return dataRef.toDateString() === hoje.toDateString();
+            }
+            if (currentHistoryFilter === 'semana') {
+                return diffDias <= 7;
+            }
+            if (currentHistoryFilter === 'mes') {
+                return dataRef.getMonth() === hoje.getMonth() && dataRef.getFullYear() === hoje.getFullYear();
+            }
+            if (currentHistoryFilter === 'ano') {
+                return dataRef.getFullYear() === hoje.getFullYear();
+            }
+            return true;
         });
 
+        if (refeicoesFiltradas.length === 0) {
+            root.innerHTML = `
+                <div class="bg-white p-8 rounded-2xl border border-slate-100 text-center text-slate-400 space-y-2 shadow-sm">
+                    <p class="font-bold text-sm">Nenhuma refeição neste período</p>
+                </div>`;
+            return;
+        }
+
+        const gruposPorData = {};
+        refeicoesFiltradas.forEach(ref => {
+            if (!gruposPorData[ref.data]) {
+                gruposPorData[ref.data] = [];
+            }
+            gruposPorData[ref.data].push(ref);
+        });
+
+        const datasOrdenadas = Object.keys(gruposPorData).sort((a, b) => new Date(b) - new Date(a));
+
+        datasOrdenadas.forEach(dataStr => {
+            const partes = dataStr.split('-');
+            const dataObjeto = new Date(partes[0], partes[1] - 1, partes[2]);
+            const dataFormatada = dataObjeto.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+            let blocoDataHTML = `
+                <div class="space-y-2 text-left">
+                    <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-4 px-1">${dataFormatada}</div>
+                    <div class="space-y-2">
+            `;
+
+            gruposPorData[dataStr].forEach(ref => {
+                blocoDataHTML += `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="font-black text-slate-900 text-sm truncate">${ref.nome}</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-md">${ref.hora || '00:00'}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 truncate">${ref.descricao || 'Sem descrição'}</p>
+                        </div>
+                        <button onclick="excluirRefeicaoDoHistorico('${ref.id}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 active:scale-95 transition-all duration-150 flex-shrink-0">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            });
+
+            blocoDataHTML += `</div></div>`;
+            root.innerHTML += blocoDataHTML;
+        });
+
+        if(typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
+
+    function excluirRefeicaoDoHistorico(idRefeicao) {
+        if (!confirm("Tem certeza que deseja excluir este lançamento do histórico?")) return;
+
+        if (db[globalProfile] && db[globalProfile].diario) {
+            db[globalProfile].diario = db[globalProfile].diario.filter(ref => ref.id !== idRefeicao);
+            saveDB();
+            renderFullHistory();
+        }
+    }
+    // 👆 ATÉ AQUI
 
     </script> 
 </body>
