@@ -574,7 +574,12 @@
             const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
             
             tabs.forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const targetTab = document.getElementById(`tab-${t}`);
+                if (targetTab) {
+                    targetTab.classList.add('hidden');
+                    // 🚨 REMOVE O ESTILO FLEX CASO ELE TENHA SIDO ADICIONADO ANTES
+                    targetTab.style.display = ''; 
+                }
                 document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
                 const mobileBtn = document.getElementById(`m-nav-${t}`);
                 if(mobileBtn) {
@@ -582,6 +587,18 @@
                     mobileBtn.classList.add('text-slate-400');
                 }
             });
+
+            // 🚨 ADICIONE ESSE BLOCO LOGO ABAIXO DO LOOP PARA FORÇAR A TELA A IR PARA BAIXO:
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+                // Se for a aba de refeições ou histórico, obriga a ser "block" (vertical)
+                if (tabId === 'refeicoes' || tabId === 'historico') {
+                    activeTab.style.setProperty('display', 'block', 'important');
+                } else {
+                    activeTab.style.display = 'block';
+                }
+            }
             
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
