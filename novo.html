@@ -737,30 +737,42 @@
             renderDiaryAccordionSection();
         }
 
-        function renderDiaryAccordionSection() {
-            const root = document.getElementById('diary-accordion-root');
-            root.innerHTML = '';
-            
-            const profile = db[globalProfile];
-            const today = new Date();
-            
-            // Filtrar as refeições com base no escopo selecionado (Dia, Semana, Mês, Ano)
-            let filteredMeals = profile.meals.filter(m => {
-                const mDate = new Date(m.data + 'T00:00:00');
-                const diffTime = Math.abs(today - mDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+       function renderDiaryAccordionSection() {
+        const root = document.getElementById('diary-accordion-root');
+        if(!root || !db[globalProfile]) return; // Proteção contra erros caso o banco não carregue
+        root.innerHTML = '';
+        
+        // 🛠️ FORÇA O HISTÓRICO A IR PARA BAIXO (O ROOT)
+        root.className = "flex flex-col gap-4 w-full block clear-both"; 
+        root.style.setProperty('display', 'block', 'important'); 
+        root.style.setProperty('width', '100%', 'important');
 
-                if(diaryScopeMode === 'dia') {
-                    return today.toISOString().split('T')[0] === m.data;
-                } else if(diaryScopeMode === 'semana') {
-                    return diffDays <= 7;
-                } else if(diaryScopeMode === 'mes') {
-                    return diffDays <= 30;
-                } else if(diaryScopeMode === 'ano') {
-                    return diffDays <= 365;
-                }
-                return true;
-            });
+        // 🛠️ FORÇA O PAI DO HISTÓRICO A IR PARA BAIXO TAMBÉM
+        if (root.parentElement) {
+            root.parentElement.style.setProperty('display', 'block', 'important');
+            root.parentElement.style.setProperty('flex-direction', 'column', 'important');
+        }
+            
+        const profile = db[globalProfile];
+        const today = new Date();
+        
+        // Filtrar as refeições com base no escopo selecionado (Dia, Semana, Mês, Ano)
+        let filteredMeals = profile.meals.filter(m => {
+            const mDate = new Date(m.data + 'T00:00:00');
+            const diffTime = Math.abs(today - mDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if(diaryScopeMode === 'dia') {
+                return today.toISOString().split('T')[0] === m.data;
+            } else if(diaryScopeMode === 'semana') {
+                return diffDays <= 7;
+            } else if(diaryScopeMode === 'mes') {
+                return diffDays <= 30;
+            } else if(diaryScopeMode === 'ano') {
+                return diffDays <= 365;
+            }
+            return true;
+        });
 
             if(filteredMeals.length === 0) {
                 root.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-8">Nenhuma refeição localizada para este período.</p>';
