@@ -1907,8 +1907,7 @@ function changeDiaryScope(scope) {
         });
     }
 
-    // 👇 COLE O NOVO CÓDIGO EXATAMENTE AQUI:
-    
+    // --- INÍCIO DO CÓDIGO DO HISTÓRICO ---
     let currentHistoryFilter = 'dia';
 
     function changeHistoryFilter(filter) {
@@ -1916,14 +1915,91 @@ function changeDiaryScope(scope) {
         ['dia', 'semana', 'mes', 'ano'].forEach(f => {
             const btn = document.getElementById(`btn-hist-${f}`);
             if(btn) {
-                if(f === filter) {
-                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm";
-                } else {
-                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
-                }
+                btn.className = (f === filter) 
+                    ? "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow-sm"
+                    : "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
             }
         });
         renderFullHistory();
+    }
+
+    function renderFullHistory() {
+        const root = document.getElementById('history-list-root');
+        if (!root) return;
+        
+        if (!db[globalProfile] || !db[globalProfile].diario || db[globalProfile].diario.length === 0) {
+            root.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado.</div>`;
+            return;
+        }
+
+        root.innerHTML = '';
+        const hoje = new Date();
+        const refeicoes = db[globalProfile].diario; 
+
+        const refeicoesFiltradas = refeicoes.filter(ref => {
+            if(!ref.data) return false;
+            const dataRef = new Date(ref.data + 'T00:00:00');
+            const diffDias = Math.ceil(Math.abs(hoje - dataRef) / (1000 * 60 * 60 * 24));
+
+            if (currentHistoryFilter === 'dia') return dataRef.toDateString() === hoje.toDateString();
+            if (currentHistoryFilter === 'semana') return diffDias <= 7;
+            if (currentHistoryFilter === 'mes') return dataRef.getMonth() === hoje.getMonth() && dataRef.getFullYear() === hoje.getFullYear();
+            if (currentHistoryFilter === 'ano') return dataRef.getFullYear() === hoje.getFullYear();
+            return true;
+        });
+
+        if (refeicoesFiltradas.length === 0) {
+            root.innerHTML = `<div class="text-center py-8 text-slate-400">Nenhuma refeição neste período.</div>`;
+            return;
+        }
+
+        const gruposPorData = {};
+        refeicoesFiltradas.forEach(ref => {
+            if (!gruposPorData[ref.data]) gruposPorData[ref.data] = [];
+            gruposPorData[ref.data].push(ref);
+        });
+
+        const datasOrdenadas = Object.keys(gruposPorData).sort((a, b) => new Date(b) - new Date(a));
+
+        datasOrdenadas.forEach(dataStr => {
+            const partes = dataStr.split('-');
+            const dataObjeto = new Date(partes[0], partes[1] - 1, partes[2]);
+            const dataFormatada = dataObjeto.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+
+            let blocoDataHTML = `<div class="space-y-2 text-left"><div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-4 px-1">${dataFormatada}</div><div class="space-y-2">`;
+
+            gruposPorData[dataStr].forEach(ref => {
+                blocoDataHTML += `
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="font-black text-slate-900 text-sm truncate">${ref.nome}</span>
+                                <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-md">${ref.hora || '00:00'}</span>
+                            </div>
+                            <p class="text-xs text-slate-500 truncate">${ref.descricao || 'Sem descrição'}</p>
+                        </div>
+                        <button onclick="excluirRefeicaoDoHistorico('${ref.id}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>`;
+            });
+
+            blocoDataHTML += `</div></div>`;
+            root.innerHTML += blocoDataHTML;
+        });
+
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function excluirRefeicaoDoHistorico(idRefeicao) {
+        if (!confirm("Tem certeza que deseja excluir?")) return;
+        if (db[globalProfile] && db[globalProfile].diario) {
+            db[globalProfile].diario = db[globalProfile].diario.filter(ref => ref.id !== idRefeicao);
+            saveDB();
+            renderFullHistory();
+        }
+    }
+    // --- FIM DO CÓDIGO DO HISTÓRICO ---
     }
 
     function renderFullHistory() {
