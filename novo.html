@@ -175,7 +175,7 @@
                 </div>
 
                 <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800/60 space-y-3">
-                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Componentes do Prato Atual</span>
+                    <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Componentes do Prato Ativo</span>
                     <div id="draft-food-items-container" class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/40 text-xs text-slate-400 space-y-1">
                         <p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>
                     </div>
@@ -277,31 +277,20 @@
     </div>
 
     <script>
-        // Suas chaves oficiais do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
-            authDomain: "projetodietanovo.firebaseapp.com",
-            projectId: "projetodietanovo",
-            storageBucket: "projetodietanovo.firebasestorage.app",
-            messagingSenderId: "1082882912098",
-            appId: "1:1082882912098:web:19895c25e9787d1e80863b",
-            measurementId: "G-6QP0ZWW58P"
+        // Banco de dados local auxiliar padrão (Carrega instantaneamente mesmo com erro de rede)
+        let db = {
+            Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
+            Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
         };
-
-        // Inicializa o Firebase no modo Compat (Sem riscos de travamento no celular)
-        firebase.initializeApp(firebaseConfig);
-        const firestoreDb = firebase.firestore();
-
-        // Banco de dados local reativo
-        let db = {};
+        
         let globalProfile = 'Gabriel';
         let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
         let diaryScopeMode = 'dia';
         let draftFoodItems = [];
         let selectedMealMoment = 'Café da Manhã';
+        let firestoreDb = null;
 
-        // Tabela estática de alimentos nutricionais
         const MASTER_FOODS_DATABASE = [
             { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
             { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
@@ -317,19 +306,48 @@
             { n: "Pão Francês Unidade", c: 270, p: 8 }
         ];
 
-        // STARTUP SEGURO: Inicializa a tela ANTES e o Firebase DEPOIS
+        // INICIALIZAÇÃO INCONDICIONAL: Desenha tudo na tela primeiro
         window.addEventListener('DOMContentLoaded', () => {
-            if (window.lucide) lucide.createIcons();
-            setTodayDateDisplay();
-            updateFormUserHighlight();
-            selectMealMomentCard('Café da Manhã');
-            switchTab('inicio');
-            
-            // Puxa as informações na nuvem em segundo plano sem travar
-            loadDataFromFirestore();
+            try {
+                if (window.lucide) lucide.createIcons();
+                setTodayDateDisplay();
+                updateFormUserHighlight();
+                selectMealMomentCard('Café da Manhã');
+                updateBiometricsInputs();
+                refreshAppInterface();
+                switchTab('inicio');
+                
+                // Inicializa o Firebase de forma assíncrona para não bloquear a renderização
+                initFirebaseConnection();
+            } catch (err) {
+                console.error("Erro crítico de renderização visual:", err);
+            }
         });
 
+        function initFirebaseConnection() {
+            try {
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
+                    authDomain: "projetodietanovo.firebaseapp.com",
+                    projectId: "projetodietanovo",
+                    storageBucket: "projetodietanovo.firebasestorage.app",
+                    messagingSenderId: "1082882912098",
+                    appId: "1:1082882912098:web:19895c25e9787d1e80863b",
+                    measurementId: "G-6QP0ZWW58P"
+                };
+
+                if (typeof firebase !== 'undefined') {
+                    firebase.initializeApp(firebaseConfig);
+                    firestoreDb = firebase.firestore();
+                    loadDataFromFirestore();
+                }
+            } catch (e) {
+                console.warn("Firebase não carregou, usando o banco local temporariamente:", e);
+            }
+        }
+
         async function loadDataFromFirestore() {
+            if (!firestoreDb) return;
             try {
                 const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
                 const docSnap = await docRef.get();
@@ -337,27 +355,23 @@
                 if (docSnap.exists) {
                     db = docSnap.data();
                 } else {
-                    db = {
-                        Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
-                        Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
-                    };
                     await docRef.set(db);
                 }
                 
-                // Preenche os inputs de biometria automaticamente com o que veio da nuvem
                 updateBiometricsInputs();
                 refreshAppInterface();
             } catch (error) {
-                console.error("Erro ao conectar no banco Firestore:", error);
+                console.error("Erro ao ler do Firestore:", error);
             }
         }
 
         async function saveToFirestore() {
+            if (!firestoreDb) return;
             try {
                 const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
                 await docRef.set(db);
             } catch (error) {
-                console.error("Erro ao salvar dados no Firestore:", error);
+                console.error("Erro ao gravar no Firestore:", error);
             }
         }
 
@@ -522,7 +536,7 @@
             const container = document.getElementById('draft-food-items-container');
             if(container) container.innerHTML = '<p class="italic text-center py-2">Nenhum alimento no rascunho temporário.</p>';
             refreshAppInterface();
-            alert("Refeição gravada com sucesso na nuvem!");
+            alert("Refeição gravada com sucesso!");
         }
 
         window.changeDiaryScope = function(scope) {
@@ -642,7 +656,7 @@
             
             await saveToFirestore();
             refreshAppInterface();
-            alert("Métricas atualizadas no Firestore!");
+            alert("Métricas sincronizadas!");
         }
 
         window.saveConfigMeta = async function() {
@@ -654,7 +668,7 @@
                 db[globalProfile].targetProtein = protein;
                 await saveToFirestore();
                 refreshAppInterface();
-                alert("Metas sincronizadas na nuvem!");
+                alert("Metas sincronizadas!");
             }
         }
 
@@ -672,8 +686,6 @@
             await saveToFirestore();
             refreshAppInterface();
         }
-
-        window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
 
         function refreshAppInterface() {
             if (!db || !db[globalProfile]) return;
