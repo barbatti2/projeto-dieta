@@ -23,6 +23,22 @@
         /* Estilização suave para o efeito Retrátil (Details/Summary) */
         summary::-webkit-details-marker { display: none; }
         summary { list-style: none; }
+        
+        /* 🚨 TRAVA ANTIBUG: Força o histórico e os cartões a irem para baixo de qualquer jeito */
+        #main-content-scroll,
+        #tab-refeicoes,
+        #diary-accordion-root {
+            display: block !important;
+            width: 100% !important;
+            float: none !important;
+            clear: both !important;
+        }
+        
+        #diary-accordion-root details {
+            display: block !important;
+            width: 100% !important;
+            margin-bottom: 1rem !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen overflow-y-auto md:overflow-hidden flex flex-col md:flex-row">
