@@ -1015,5 +1015,825 @@
             localStorage.setItem('projetoDietaV5', JSON.stringify(db));
         }
     </script>
+
+    <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+
+
+
+    // ⚠️ SUBSTITUA ESTE BLOCO PELOS DADOS DO SEU CONSOLE DO FIREBASE
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
+        authDomain: "projetodietanovo.firebaseapp.com",
+        projectId: "projetodietanovo",
+        storageBucket: "projetodietanovo.firebasestorage.app",
+        messagingSenderId: "1082882912098",
+        appId: "1:1082882912098:web:19895c25e9787d1e80863b",
+
+    };
+
+
+
+    // Inicializa o Firebase e o Firestore
+
+    const app = initializeApp(firebaseConfig);
+
+    const firestoreDb = getFirestore(app);
+
+
+
+    // Banco de dados local auxiliar (será sincronizado com a nuvem)
+
+    let db = {};
+
+
+
+    // Dados de Alimentos Estáticos
+
+    const MASTER_FOODS_DATABASE = [
+
+        { n: "Peito de Frango Grelhado", c: 165, p: 31 }, { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, { n: "Frango Cozido Desfiado", c: 150, p: 29 }, { n: "Patinho Moído Cozido", c: 220, p: 36 },
+
+        { n: "Maminha Grelhada", c: 190, p: 28 }, { n: "Filé Mignon Assado", c: 200, p: 30 }, { n: "Alcatra Grelhada", c: 210, p: 29 }, { n: "Contra Filé Grelhado", c: 250, p: 28 },
+
+        { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, { n: "Pão Francês Unidade", c: 270, p: 8 }
+
+        // ... (você pode manter a lista completa de alimentos aqui)
+
+    ];
+
+
+
+    let globalProfile = 'Gabriel';
+
+    let selectedCalendarDay = 22; 
+
+    let historyFilter = 'dia';
+
+    let diaryScopeMode = 'dia';
+
+    let draftFoodItems = [];
+
+    let selectedMealMoment = 'Café da Manhã';
+
+
+
+    // 🚀 NOVA FUNÇÃO: Carrega os dados direto da nuvem (Firestore)
+
+    async function loadDataFromFirestore() {
+
+        try {
+
+            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
+
+            const docSnap = await getDoc(docRef);
+
+
+
+            if (docSnap.exists()) {
+
+                db = docSnap.data();
+
+            } else {
+
+                // Estrutura inicial caso o banco esteja vazio
+
+                db = {
+
+                    Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
+
+                    Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
+
+                };
+
+                await setDoc(docRef, db);
+
+            }
+
+            refreshAppInterface();
+
+        } catch (error) {
+
+            console.error("Erro ao carregar dados do Firestore:", error);
+
+        }
+
+    }
+
+
+
+    // 🚀 NOVA FUNÇÃO: Salva os dados na nuvem (Firestore)
+
+    async function saveToFirestore() {
+
+        try {
+
+            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
+
+            await setDoc(docRef, db);
+
+        } catch (error) {
+
+            console.error("Erro ao salvar dados no Firestore:", error);
+
+        }
+
+    }
+
+
+
+    // Inicialização da Página
+
+    window.addEventListener('DOMContentLoaded', () => {
+
+        setTodayDateDisplay();
+
+        updateFormUserHighlight();
+
+        selectMealMomentCard('Café da Manhã');
+
+        switchTab('inicio');
+
+        loadDataFromFirestore(); // Puxa os dados da Nuvem assim que abre o site
+
+    });
+
+
+
+    function setTodayDateDisplay() {
+
+        const today = new Date();
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+        document.getElementById('date-display-inicio').innerText = today.toLocaleDateString('pt-BR', options);
+
+    }
+
+
+
+    // Vincula as funções ao objeto window para que os botões HTML continuem funcionando
+
+    window.setGlobalProfile = function(name) {
+
+        globalProfile = name;
+
+        ['Gabriel', 'Raissa'].forEach(p => {
+
+            const btnM = document.getElementById(`top-prof-mobile-${p}`);
+
+            const btnD = document.getElementById(`top-prof-desktop-${p}`);
+
+            if(p === name) {
+
+                if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+
+                if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow";
+
+            } else {
+
+                if(btnM) btnM.className = "px-3 py-1 text-[11px] font-bold rounded-lg transition-all text-slate-400";
+
+                if(btnD) btnD.className = "flex-1 py-1 text-xs font-bold rounded-lg transition-all text-slate-500";
+
+            }
+
+        });
+
+        refreshAppInterface();
+
+    }
+
+
+
+    window.switchTab = function(tabId) {
+
+        const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+
+        tabs.forEach(t => {
+
+            document.getElementById(`tab-${t}`).classList.add('hidden');
+
+            document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
+
+            const mobileBtn = document.getElementById(`m-nav-${t}`);
+
+            if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
+
+        });
+
+        
+
+        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+        document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
+
+        
+
+        const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
+
+        if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
+
+        
+
+        document.getElementById('main-content-scroll').scrollTop = 0;
+
+        if(Object.keys(db).length > 0) refreshAppInterface();
+
+    }
+
+
+
+    window.selectMealMomentCard = function(moment) {
+
+        selectedMealMoment = moment;
+
+        const maps = {'Café da Manhã': 'cafe-m', 'Almoço': 'almoco', 'Café da Tarde': 'cafe-t', 'Janta': 'janta'};
+
+        Object.keys(maps).forEach(k => {
+
+            const idSuffix = maps[k];
+
+            const card = document.getElementById(`meal-card-${idSuffix}`);
+
+            const iconBox = document.getElementById(`icon-box-${idSuffix}`);
+
+            if(k === moment) {
+
+                card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
+
+                iconBox.className = "p-2 bg-blue-600 rounded-xl text-white";
+
+            } else {
+
+                card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
+
+                iconBox.className = "p-2 bg-slate-100 rounded-xl text-slate-600";
+
+            }
+
+        });
+
+    }
+
+
+
+    window.handleFoodSearch = function(val) {
+
+        const dropdown = document.getElementById('search-results-dropdown');
+
+        if(!val || val.trim() === '') { dropdown.classList.add('hidden'); return; }
+
+        const query = val.toLowerCase();
+
+        const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
+
+        
+
+        dropdown.innerHTML = '';
+
+        if(filtered.length === 0) {
+
+            dropdown.innerHTML = '<div class="p-3 text-xs text-slate-400 italic text-center">Nenhum alimento encontrado</div>';
+
+        } else {
+
+            filtered.slice(0, 15).forEach(food => {
+
+                const row = document.createElement('div');
+
+                row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 flex justify-between items-center";
+
+                row.innerHTML = `<span>${food.n}</span><span class="text-blue-600 font-bold">${food.c} kcal / 100g</span>`;
+
+                row.onclick = () => {
+
+                    document.getElementById('food-search-input').value = food.n;
+
+                    dropdown.classList.add('hidden');
+
+                };
+
+                dropdown.appendChild(row);
+
+            });
+
+        }
+
+        dropdown.classList.remove('hidden');
+
+    }
+
+
+
+    window.adjustWeightInput = function(val) {
+
+        const input = document.getElementById('food-weight-input');
+
+        input.value = Math.max((parseInt(input.value) || 0) + val, 0);
+
+    }
+
+
+
+    window.setWeightInputValue = function(val) { document.getElementById('food-weight-input').value = val; }
+
+    window.updateFormUserHighlight = function() {
+
+        const selectedUser = document.querySelector('input[name="target-user-radio"]:checked').value;
+
+        ['Gabriel', 'Raissa'].forEach(u => {
+
+            const label = document.getElementById(`label-user-${u}`);
+
+            label.className = (u === selectedUser) ? 
+
+                "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center" : 
+
+                "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
+
+        });
+
+    }
+
+
+
+    window.addSingleFoodToDraft = function() {
+
+        const searchInput = document.getElementById('food-search-input');
+
+        const foodName = searchInput.value;
+
+        const weight = parseFloat(document.getElementById('food-weight-input').value);
+
+        const foodObj = MASTER_FOODS_DATABASE.find(f => f.n === foodName);
+
+
+
+        if(!foodObj) { alert("Selecione um alimento válido da lista!"); return; }
+
+
+
+        if(weight > 0) {
+
+            const cCal = Math.round((foodObj.c * weight) / 100);
+
+            const cProt = Math.round((foodObj.p * weight) / 100);
+
+            draftFoodItems.push({ n: foodName, w: weight, c: cCal, p: cProt });
+
+            
+
+            const container = document.getElementById('draft-food-items-container');
+
+            if(draftFoodItems.length === 1) container.innerHTML = '';
+
+            container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${cCal} kcal</span></div>`;
+
+            searchInput.value = '';
+
+        }
+
+    }
+
+
+
+    window.finalizeCompleteMealDraft = async function() {
+
+        if(draftFoodItems.length === 0) { alert("Adicione pelo menos 1 alimento primeiro!"); return; }
+
+        const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
+
+        const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
+
+        const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
+
+        const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+
+
+        if(!db[targetUser].meals) db[targetUser].meals = [];
+
+        db[targetUser].meals.push({ data: todayStr, momento: selectedMealMoment, calorias: totalCal, proteinas: totalProt, itensStr: itemsStr });
+
+
+
+        await saveToFirestore(); // 🔥 Salva no Firebase
+
+        draftFoodItems = [];
+
+        document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
+
+        refreshAppInterface();
+
+        alert("Refeição salva na nuvem com sucesso!");
+
+    }
+
+
+
+    window.changeDiaryScope = function(scope) {
+
+        diaryScopeMode = scope;
+
+        ['dia', 'semana', 'mes', 'ano'].forEach(s => {
+
+            document.getElementById(`diary-scope-${s}`).className = (s === scope) ? 
+
+                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
+
+                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+
+        });
+
+        renderDiaryAccordionSection();
+
+    }
+
+
+
+    function renderDiaryAccordionSection() {
+
+        const root = document.getElementById('diary-accordion-root');
+
+        if(!root || !db[globalProfile]) return;
+
+        root.innerHTML = '';
+
+        
+
+        const profile = db[globalProfile];
+
+        const today = new Date();
+
+        let filteredMeals = (profile.meals || []).filter(m => {
+
+            const mDate = new Date(m.data + 'T00:00:00');
+
+            const diffDays = Math.ceil(Math.abs(today - mDate) / (1000 * 60 * 60 * 24));
+
+            if(diaryScopeMode === 'dia') return today.toISOString().split('T')[0] === m.data;
+
+            if(diaryScopeMode === 'semana') return diffDays <= 7;
+
+            if(diaryScopeMode === 'mes') return diffDays <= 30;
+
+            if(diaryScopeMode === 'ano') return diffDays <= 365;
+
+            return true;
+
+        });
+
+
+
+        if(filteredMeals.length === 0) {
+
+            root.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-8">Nenhuma refeição localizada.</p>';
+
+            return;
+
+        }
+
+
+
+        const groups = {};
+
+        filteredMeals.forEach(m => { if(!groups[m.data]) groups[m.data] = []; groups[m.data].push(m); });
+
+        const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+
+
+
+        sortedDates.forEach((dateStr, dateIdx) => {
+
+            const dateObj = new Date(dateStr + 'T00:00:00');
+
+            const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            const dayMeals = groups[dateStr];
+
+            
+
+            const details = document.createElement('details');
+
+            details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
+
+            if(dateIdx === 0) details.setAttribute('open', '');
+
+
+
+            details.innerHTML = `
+
+                <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
+
+                    <div class="flex items-center gap-2">
+
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+
+                        <span class="text-xs font-black text-slate-700 uppercase tracking-wide">${formattedDate}</span>
+
+                    </div>
+
+                    <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
+
+                </summary>
+
+                <div class="p-4 space-y-4 bg-white grid grid-cols-1 gap-3"></div>
+
+            `;
+
+
+
+            const cardsContainer = details.querySelector('div');
+
+            dayMeals.forEach((m) => {
+
+                const globalIdx = profile.meals.findIndex(realM => realM === m);
+
+                let colorTheme = "text-amber-600 bg-amber-50";
+
+                if(m.momento === "Almoço") colorTheme = "text-emerald-600 bg-emerald-50";
+
+                if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
+
+                if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
+
+
+
+                cardsContainer.innerHTML += `
+
+                    <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors">
+
+                        <div>
+
+                            <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide inline-block">${m.momento}</span>
+
+                            <p class="text-xs text-slate-600 mt-3 leading-relaxed font-medium">${m.itensStr}</p>
+
+                        </div>
+
+                        <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
+
+                            <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+
+                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-300 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            });
+
+            root.appendChild(details);
+
+        });
+
+        lucide.createIcons();
+
+    }
+
+
+
+    window.removeMealFromDiary = async function(globalIndex) {
+
+        if(globalIndex !== -1) {
+
+            db[globalProfile].meals.splice(globalIndex, 1);
+
+            await saveToFirestore();
+
+            refreshAppInterface();
+
+        }
+
+    }
+
+
+
+    window.saveBiometricsMetrics = async function() {
+
+        const profile = db[globalProfile];
+
+        profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
+
+        profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
+
+        profile.pesoMeta = parseFloat(document.getElementById('bio-input-p-meta').value) || profile.pesoMeta;
+
+        profile.cintura = parseFloat(document.getElementById('bio-input-cintura').value) || profile.cintura;
+
+        
+
+        await saveToFirestore();
+
+        refreshAppInterface();
+
+        alert("Biometria atualizada na nuvem!");
+
+    }
+
+
+
+    window.saveConfigMeta = async function() {
+
+        const calories = parseInt(document.getElementById('cfg-calories').value);
+
+        const protein = parseInt(document.getElementById('cfg-protein').value);
+
+        if(calories > 0 && protein > 0) {
+
+            db[globalProfile].targetCalories = calories;
+
+            db[globalProfile].targetProtein = protein;
+
+            await saveToFirestore();
+
+            refreshAppInterface();
+
+            alert("Metas sincronizadas!");
+
+        }
+
+    }
+
+
+
+    window.selectCalendarDay = function(day) { selectedCalendarDay = day; document.getElementById('cal-selected-day-lbl').innerText = `Dia Selecionado: ${day}`; renderInteractiveCalendar(); }
+
+    window.setDayStatusColor = async function(colorName) {
+
+        if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
+
+        db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
+
+        await saveToFirestore();
+
+        refreshAppInterface();
+
+    }
+
+
+
+    window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
+
+
+
+    function refreshAppInterface() {
+
+        if (!db[globalProfile]) return;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+
+        const profile = db[globalProfile];
+
+        
+
+        const todaysMeals = (profile.meals || []).filter(m => m.data === todayStr);
+
+        const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
+
+        const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
+
+        
+
+        document.getElementById('wheel-consumed-val').innerText = consumed;
+
+        document.getElementById('wheel-target-val').innerText = profile.targetCalories || 2000;
+
+        document.getElementById('bottom-protein-val').innerText = `${protein}g / ${profile.targetProtein || 150}g`;
+
+        
+
+        const leftCal = (profile.targetCalories || 2000) - consumed;
+
+        document.getElementById('bottom-left-val').innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
+
+
+
+        const circle = document.getElementById('wheel-stroke');
+
+        if(circle) {
+
+            circle.style.strokeDashoffset = "251.2";
+
+            const pct = Math.min(consumed / (profile.targetCalories || 2000), 1);
+
+            circle.style.strokeDashoffset = 251.2 - (pct * 251.2);
+
+        }
+
+
+
+        ['Gabriel', 'Raissa'].forEach(user => {
+
+            if(db[user]) {
+
+                const uMeals = (db[user].meals || []).filter(m => m.data === todayStr);
+
+                const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
+
+                document.getElementById(`p-cons-${user}`).innerText = `${uConsumed} kcal`;
+
+                document.getElementById(`p-left-${user}`).innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
+
+                document.getElementById(`p-count-${user}`).innerText = uMeals.length;
+
+            }
+
+        });
+
+
+
+        renderDiaryAccordionSection();
+
+        renderInteractiveCalendar();
+
+        renderHistoryTimeline();
+
+    }
+
+
+
+    function renderInteractiveCalendar() {
+
+        const box = document.getElementById('interactive-grid-box');
+
+        if(!box || !db[globalProfile]) return;
+
+        box.innerHTML = '';
+
+        const colorsMap = db[globalProfile].calendarColors || {};
+
+        let stats = { azul: 0, verde: 0, roxo: 0, vermelho: 0 };
+
+        
+
+        for(let i = 1; i <= 28; i++) {
+
+            let statusColor = colorsMap[i] || null;
+
+            if(statusColor && stats[statusColor] !== undefined) stats[statusColor]++;
+
+
+
+            let colorStyle = "bg-slate-100 text-slate-700 hover:bg-slate-200";
+
+            if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white shadow-sm";
+
+            if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white shadow-sm";
+
+            if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white shadow-sm";
+
+            if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white shadow-sm";
+
+
+
+            const isToday = (i === 22);
+
+            box.innerHTML += `<div onclick="selectCalendarDay(${i})" class="h-9 w-9 mx-auto rounded-xl flex items-center justify-center text-xs cursor-pointer font-bold relative ${colorStyle} ${(i === selectedCalendarDay) ? "ring-2 ring-slate-900 ring-offset-2" : ""} ${isToday ? "border-2 border-amber-500" : ""}">` + i + `</div>`;
+
+        }
+
+    }
+
+
+
+    function renderHistoryTimeline() {
+
+        const container = document.getElementById('history-timeline-output');
+
+        if(!container || !db[globalProfile]) return;
+
+        container.innerHTML = '';
+
+        const meals = db[globalProfile].meals || [];
+
+
+
+        if(meals.length === 0) {
+
+            container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center">Nenhum registro.</p>';
+
+            return;
+
+        }
+
+        meals.forEach(m => {
+
+            container.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full"><div class="text-center mx-auto"><span class="text-[10px] font-black text-slate-400 block uppercase mb-1">(${m.data})</span><span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span><p class="text-xs text-slate-500 mt-1">${m.itensStr}</p></div><span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span></div>`;
+
+        });
+
+    }
+
+    </script> 
 </body>
 </html>
