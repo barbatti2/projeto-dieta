@@ -1,7 +1,7 @@
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-<script>
     // Suas chaves oficiais configuradas e prontas
     const firebaseConfig = {
         apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
@@ -13,9 +13,9 @@
         measurementId: "G-6QP0ZWW58P"
     };
 
-    // Inicializa o Firebase no modo clássico
-    firebase.initializeApp(firebaseConfig);
-    const firestoreDb = firebase.firestore();
+    // Inicializa o Firebase e o Firestore
+    const app = initializeApp(firebaseConfig);
+    const firestoreDb = getFirestore(app);
 
     // Banco de dados local auxiliar
     let db = {};
@@ -46,17 +46,17 @@
     // Carrega os dados direto do Firestore
     async function loadDataFromFirestore() {
         try {
-            const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
-            const docSnap = await docRef.get();
+            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
+            const docSnap = await getDoc(docRef);
 
-            if (docSnap.exists) {
+            if (docSnap.exists()) {
                 db = docSnap.data();
             } else {
                 db = {
                     Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
                     Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
                 };
-                await docRef.set(db);
+                await setDoc(docRef, db);
             }
             refreshAppInterface();
         } catch (error) {
@@ -67,8 +67,8 @@
     // Salva os dados no Firestore
     async function saveToFirestore() {
         try {
-            const docRef = firestoreDb.collection("dieta_app").doc("shared_data");
-            await docRef.set(db);
+            const docRef = doc(firestoreDb, "dieta_app", "shared_data");
+            await setDoc(docRef, db);
         } catch (error) {
             console.error("Erro ao salvar dados no Firestore:", error);
         }
@@ -90,6 +90,7 @@
         if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
     }
 
+    // Exportação segura para escopo global (Indispensável para o GitHub Pages com type="module")
     window.setGlobalProfile = function(name) {
         globalProfile = name;
         ['Gabriel', 'Raissa'].forEach(p => {
@@ -127,7 +128,7 @@
         
         const scrollEl = document.getElementById('main-content-scroll');
         if(scrollEl) scrollEl.scrollTop = 0;
-        if(Object.keys(db).length > 0) refreshAppInterface();
+        if(db && Object.keys(db).length > 0) refreshAppInterface();
     }
 
     window.selectMealMomentCard = function(moment) {
@@ -165,7 +166,8 @@
                 row.className = "p-3 text-xs font-semibold text-slate-700 hover:bg-slate-100 cursor-pointer transition-all border-b border-slate-100 flex justify-between items-center";
                 row.innerHTML = `<span>${food.n}</span><span class="text-blue-600 font-bold">${food.c} kcal / 100g</span>`;
                 row.onclick = () => {
-                    document.getElementById('food-search-input').value = food.n;
+                    const input = document.getElementById('food-search-input');
+                    if(input) input.value = food.n;
                     dropdown.classList.add('hidden');
                 };
                 dropdown.appendChild(row);
@@ -346,7 +348,7 @@
         
         await saveToFirestore();
         refreshAppInterface();
-        alert("Biometria salva!");
+        alert("Biometria sincronizada!");
     }
 
     window.saveConfigMeta = async function() {
@@ -378,7 +380,7 @@
     window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
 
     function refreshAppInterface() {
-        if (!db[globalProfile]) return;
+        if (!db || !db[globalProfile]) return;
         const todayStr = new Date().toISOString().split('T')[0];
         const profile = db[globalProfile];
         
@@ -426,7 +428,7 @@
 
     function renderInteractiveCalendar() {
         const box = document.getElementById('interactive-grid-box');
-        if(!box || !db[globalProfile]) return;
+        if(!box || !db || !db[globalProfile]) return;
         box.innerHTML = '';
         const colorsMap = db[globalProfile].calendarColors || {};
         
@@ -445,7 +447,7 @@
 
     function renderHistoryTimeline() {
         const container = document.getElementById('history-timeline-output');
-        if(!container || !db[globalProfile]) return;
+        if(!container || !db || !db[globalProfile]) return;
         container.innerHTML = '';
         const meals = db[globalProfile].meals || [];
 
