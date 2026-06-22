@@ -734,31 +734,42 @@
         }
 
         function finalizeCompleteMealDraft() {
-            if(draftFoodItems.length === 0) {
-                alert("Adicione pelo menos 1 alimento ao rascunho primeiro!");
-                return;
-            }
+    if(draftFoodItems.length === 0) {
+        alert("Adicione pelo menos 1 alimento ao rascunho primeiro!");
+        return;
+    }
 
-            const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
-            const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
-            const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
-            const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
-            const todayStr = new Date().toISOString().split('T')[0];
+    const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
+    const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
+    const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
+    
+    // Criando o objeto da forma que o Histórico espera
+    const novaRefeicao = {
+        id: Date.now().toString(),
+        data: new Date().toISOString().split('T')[0],
+        hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        nome: selectedMealMoment, // Usa o momento (Café, Almoço, etc)
+        descricao: draftFoodItems.map(f => `${f.n} (${f.w}g)`).join(', '),
+        calorias: totalCal,
+        proteinas: totalProt
+    };
 
-            db[targetUser].meals.push({
-                data: todayStr,
-                momento: selectedMealMoment,
-                calorias: totalCal,
-                proteinas: totalProt,
-                itensStr: itemsStr
-            });
+    // Garante que o array diario existe
+    if (!db[targetUser].diario) db[targetUser].diario = [];
+    
+    // Salva no diário
+    db[targetUser].diario.push(novaRefeicao);
 
-            saveToLocalStorage();
-            draftFoodItems = [];
-            document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
-            refreshAppInterface();
-            alert("Refeição registrada com sucesso!");
-        }
+    saveToLocalStorage();
+    draftFoodItems = [];
+    
+    document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
+    
+    refreshAppInterface();
+    renderFullHistory(); // Adicionado: Atualiza o histórico imediatamente
+    
+    alert("Refeição registrada com sucesso!");
+}
 
 function changeDiaryScope(scope) {
             diaryScopeMode = scope;
