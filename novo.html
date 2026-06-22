@@ -54,7 +54,7 @@
             </div>
         </aside>
 
-        <main id="main-content-scroll" class="flex-1 overflow-y-auto px-4 pb-24 pt-4 md:p-8 space-y-6 bg-slate-900 no-scrollbar">
+        <main id="main-content-scroll" class="flex-1 overflow-y-auto px-4 pb-28 pt-4 md:p-8 space-y-6 bg-slate-900 no-scrollbar">
             
             <section id="tab-inicio" class="space-y-6">
                 <div class="flex flex-col gap-1">
@@ -400,12 +400,13 @@
         }
 
         window.switchTab = function(tabId) {
-            const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+            const tabs = ['inicio', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
             tabs.forEach(t => {
                 const tabEl = document.getElementById(`tab-${t}`);
                 const navEl = document.getElementById(`nav-${t}`);
                 if(tabEl) tabEl.classList.add('hidden');
-                if(navEl) navEl.classList.remove('bg-slate-800', 'text-white');
+                if(navEl) navEl.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 text-slate-400 hover:bg-slate-900 hover:text-slate-200";
+                
                 const mobileBtn = document.getElementById(`m-nav-${t}`);
                 if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400 scale-100";
             });
@@ -413,7 +414,7 @@
             const activeTab = document.getElementById(`tab-${tabId}`);
             const activeNav = document.getElementById(`nav-${tabId}`);
             if(activeTab) activeTab.classList.remove('hidden');
-            if(activeNav) activeNav.classList.add('bg-slate-800', 'text-white');
+            if(activeNav) activeNav.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-150 bg-slate-800 text-white";
             
             const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
             if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
