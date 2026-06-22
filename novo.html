@@ -6,7 +6,7 @@
     <title>Projeto Dieta Pro - Premium Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -19,11 +19,14 @@
         .bar-progress {
             transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
+        /* Estilização suave para o efeito Retrátil (Details/Summary) */
+        summary::-webkit-details-marker { display: none; }
+        summary { list-style: none; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
-    <!-- PERFIL GLOBAL FLOAT (MOBILE & DESKTOP HEADER) -->
     <div class="bg-slate-900 px-6 py-3 flex justify-between items-center text-white border-b border-slate-800 md:hidden flex-shrink-0 z-50">
         <div class="flex items-center gap-3">
             <div id="header-avatar-badge-mobile" class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-md">
@@ -37,7 +40,6 @@
         </div>
     </div>
 
-    <!-- SIDEBAR (DESKTOP) -->
     <aside class="hidden md:flex flex-col w-64 bg-slate-100 text-slate-700 p-4 justify-between z-50 h-full border-r border-slate-200">
         <div class="space-y-6">
             <div class="flex flex-col items-center text-center py-4 border-b border-slate-200 gap-2">
@@ -89,15 +91,10 @@
         </div>
     </aside>
 
-    <!-- CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden pb-20 md:pb-0">
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
 
-        <!-- CONTEÚDO PRINCIPAL (SCROLL) -->
-        <main class="flex-1 overflow-y-auto custom-scrollbar">
+        <main id="main-content-scroll" class="flex-1 overflow-y-auto custom-scrollbar pb-28 md:pb-6">
 
-            <!-- MACRO CABEÇALHO INTEGRADO (REPETIDO DENTRO DE CADA ABA PARA DAR IDENTIDADE VISUAL EXCLUSIVA) -->
-            
-            <!-- TELA 1: INÍCIO -->
             <section id="tab-inicio" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-blue-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -120,7 +117,7 @@
                                 <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mt-0.5">Ingeridas</span>
                             </div>
                         </div>
-                        <p class="text-xs font-medium text-slate-500 mt-4 text-center">Sua meta diária ativa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
+                        <p class="text-xs font-medium text-slate-500 mt-4 text-center">Sua meta diária activa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
                     </div>
 
                     <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm grid grid-cols-2 gap-4 divide-x divide-slate-200">
@@ -142,7 +139,6 @@
                 </div>
             </section>
 
-            <!-- TELA 2: TELA PESSOAS -->
             <section id="tab-pessoas" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -199,7 +195,6 @@
                 </div>
             </section>
 
-            <!-- TELA 3: ADICIONAR ALIMENTO -->
             <section id="tab-adicionar" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-emerald-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -223,7 +218,6 @@
                             </div>
                         </div>
 
-                        <!-- CARDS DE REFEIÇÕES (SUBSTITUINDO O SELECT ANTERIOR) -->
                         <div class="w-full text-center">
                             <label class="block text-xs font-bold text-slate-400 uppercase mb-3 tracking-wider">Momento da Refeição</label>
                             <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -297,21 +291,30 @@
                 </div>
             </section>
 
-            <!-- TELA 4: REFEIÇÕES DO DIA -->
             <section id="tab-refeicoes" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-red-700 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-orange-700">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
                     <i data-lucide="sandwich" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
-                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Alimentos Ingeridos Hoje</h2>
-                    <p class="text-xs text-orange-100 font-medium tracking-wide mt-1" id="refeicoes-date-badge">--/--/----</p>
+                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Diário Alimentar Histórico</h2>
+                    <p class="text-xs text-orange-100 font-medium tracking-wide mt-1">Acompanhe seu histórico de refeições sem poluição visual</p>
                 </div>
 
-                <div class="p-4 md:p-6 max-w-4xl mx-auto">
-                    <div id="meals-day-squares-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                <div class="p-4 md:p-6 max-w-2xl mx-auto space-y-6">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
+                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Período de Visualização</span>
+                        <div class="flex bg-slate-100 p-1 rounded-xl border w-full max-w-sm mx-auto">
+                            <button onclick="changeDiaryScope('dia')" id="diary-scope-dia" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
+                            <button onclick="changeDiaryScope('semana')" id="diary-scope-semana" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
+                            <button onclick="changeDiaryScope('mes')" id="diary-scope-mes" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
+                            <button onclick="changeDiaryScope('ano')" id="diary-scope-ano" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
+                        </div>
+                    </div>
+
+                    <div id="diary-accordion-root" class="space-y-4 w-full">
+                        </div>
                 </div>
             </section>
 
-            <!-- TELA 5: CALENDÁRIO INTERATIVO -->
             <section id="tab-calendario" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-purple-700 via-purple-600 to-fuchsia-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-purple-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -364,7 +367,6 @@
                 </div>
             </section>
 
-            <!-- TELA 6: HISTÓRICO -->
             <section id="tab-historico" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-slate-700 via-slate-600 to-slate-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-700">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -387,7 +389,6 @@
                 </div>
             </section>
 
-            <!-- TELA 7: PESOS E MEDIDAS -->
             <section id="tab-peso" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-cyan-700 via-teal-600 to-blue-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-cyan-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -440,7 +441,6 @@
                 </div>
             </section>
 
-            <!-- TELA 8: CONFIGURAÇÕES -->
             <section id="tab-config" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-blue-900 via-slate-800 to-indigo-950 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-slate-900">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -468,8 +468,7 @@
 
         </main>
 
-        <!-- BOTTOM NAV MOBILE EXCLUSIVO (ÍCONES GRANDES w-6 h-6 PADRONIZADOS E CENTRALIZADOS) -->
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center p-3 z-50 shadow-2xl rounded-t-3xl">
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center p-3 z-50 shadow-2xl rounded-t-3xl flex-shrink-0">
             <button onclick="switchTab('inicio')" id="m-nav-inicio" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center">
                 <i data-lucide="layout-grid" class="w-6 h-6"></i>Início
             </button>
@@ -508,14 +507,18 @@
         let globalProfile = 'Gabriel';
         let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
+        let diaryScopeMode = 'dia'; // Escopo padrão do Diário Alimentar
         let draftFoodItems = [];
-        let selectedMealMoment = 'Café da Manhã'; // Card Padrão Iniciado
+        let selectedMealMoment = 'Café da Manhã';
 
         let db = JSON.parse(localStorage.getItem('projetoDietaV5')) || {
             Gabriel: {
                 targetCalories: 2200, targetProtein: 160,
                 pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
-                meals: [{ data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" }],
+                meals: [
+                    { data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" },
+                    { data: "2026-06-21", momento: "Janta", calorias: 510, proteinas: 40, itensStr: "Patinho Moído Cozido (150g)<br>Feijão Preto Cozido (100g)" }
+                ],
                 calendarColors: { "1": "azul", "2": "verde", "22": "azul" }
             },
             Raissa: {
@@ -538,7 +541,6 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const formatStr = today.toLocaleDateString('pt-BR', options);
             document.getElementById('date-display-inicio').innerText = formatStr;
-            document.getElementById('refeicoes-date-badge').innerText = today.toLocaleDateString('pt-BR');
         }
 
         function setGlobalProfile(name) {
@@ -588,6 +590,9 @@
                 activeMobileBtn.classList.add('text-blue-500', 'scale-110');
             }
             
+            // CORREÇÃO CRUCIAL: Forçar o scroll do container principal a voltar para o topo absoluto
+            document.getElementById('main-content-scroll').scrollTop = 0;
+
             refreshAppInterface();
         }
 
@@ -717,6 +722,121 @@
             alert("Refeição registrada com sucesso!");
         }
 
+        function changeDiaryScope(scope) {
+            diaryScopeMode = scope;
+            ['dia', 'semana', 'mes', 'ano'].forEach(s => {
+                const btn = document.getElementById(`diary-scope-${s}`);
+                if(s === scope) {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900";
+                } else {
+                    btn.className = "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                }
+            });
+            renderDiaryAccordionSection();
+        }
+
+        function renderDiaryAccordionSection() {
+            const root = document.getElementById('diary-accordion-root');
+            root.innerHTML = '';
+            
+            const profile = db[globalProfile];
+            const today = new Date();
+            
+            // Filtrar as refeições com base no escopo selecionado (Dia, Semana, Mês, Ano)
+            let filteredMeals = profile.meals.filter(m => {
+                const mDate = new Date(m.data + 'T00:00:00');
+                const diffTime = Math.abs(today - mDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if(diaryScopeMode === 'dia') {
+                    return today.toISOString().split('T')[0] === m.data;
+                } else if(diaryScopeMode === 'semana') {
+                    return diffDays <= 7;
+                } else if(diaryScopeMode === 'mes') {
+                    return diffDays <= 30;
+                } else if(diaryScopeMode === 'ano') {
+                    return diffDays <= 365;
+                }
+                return true;
+            });
+
+            if(filteredMeals.length === 0) {
+                root.innerHTML = '<p class="text-xs text-slate-400 italic text-center py-8">Nenhuma refeição localizada para este período.</p>';
+                return;
+            }
+
+            // Agrupar refeições por data para criar o sistema Mostrar/Ocultar limpo
+            const groups = {};
+            filteredMeals.forEach(m => {
+                if(!groups[m.data]) groups[m.data] = [];
+                groups[m.data].push(m);
+            });
+
+            // Ordenar datas de forma decrescente (Mais recentes no topo)
+            const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
+
+            sortedDates.forEach((dateStr, dateIdx) => {
+                const dateObj = new Date(dateStr + 'T00:00:00');
+                const formattedDate = dateObj.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+                const dayMeals = groups[dateStr];
+                
+                // Criando o bloco colapsável nativo <details>
+                const details = document.createElement('details');
+                details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
+                if(dateIdx === 0) details.setAttribute('open', ''); // Deixa apenas o dia mais recente aberto por padrão
+
+                // Tag <summary> funciona como o cabeçalho clicável do Accordion
+                details.innerHTML = `
+                    <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+                            <span class="text-xs font-black text-slate-700 uppercase tracking-wide">${formattedDate}</span>
+                        </div>
+                        <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
+                    </summary>
+                    <div class="p-4 space-y-4 bg-white grid grid-cols-1 gap-3">
+                        </div>
+                `;
+
+                const cardsContainer = details.querySelector('div');
+
+                dayMeals.forEach((m) => {
+                    // Descobrir o índice global real para exclusão segura
+                    const globalIdx = profile.meals.findIndex(realM => realM === m);
+                    
+                    let colorTheme = "text-amber-600 bg-amber-50";
+                    if(m.momento === "Almoço") colorTheme = "text-emerald-600 bg-emerald-50";
+                    if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
+                    if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
+
+                    cardsContainer.innerHTML += `
+                        <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors">
+                            <div class="text-center">
+                                <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide mx-auto inline-block">${m.momento}</span>
+                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center font-medium">${m.itensStr}</p>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
+                                <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
+                                <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-300 hover:text-rose-600 transition-colors flex-shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                root.appendChild(details);
+            });
+
+            lucide.createIcons();
+        }
+
+        function removeMealFromDiary(globalIndex) {
+            if(globalIndex !== -1) {
+                db[globalProfile].meals.splice(globalIndex, 1);
+                saveToLocalStorage();
+                refreshAppInterface();
+            }
+        }
+
         function refreshAppInterface() {
             const todayStr = new Date().toISOString().split('T')[0];
             const profile = db[globalProfile];
@@ -752,27 +872,6 @@
                 document.getElementById(`p-count-${user}`).innerText = uMeals.length;
             });
 
-            const squaresBox = document.getElementById('meals-day-squares-grid');
-            squaresBox.innerHTML = '';
-            if(todaysMeals.length === 0) {
-                squaresBox.innerHTML = '<p class="text-xs text-slate-400 italic col-span-2 text-center py-6">Nenhum registro lançado hoje para este usuário.</p>';
-            } else {
-                todaysMeals.forEach((m, i) => {
-                    squaresBox.innerHTML += `
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between text-center h-44 relative">
-                            <div>
-                                <span class="text-[10px] font-black text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider mx-auto inline-block">${m.momento}</span>
-                                <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center">${m.itensStr}</p>
-                            </div>
-                            <div class="flex justify-between items-center border-t border-slate-100 pt-2.5 w-full">
-                                <span class="text-xs font-black text-slate-900 mx-auto pl-4">${m.calorias} kcal | ${m.proteinas}g Prot</span>
-                                <button onclick="removeMeal(${i})" class="text-slate-300 hover:text-rose-600 transition-colors flex-shrink-0"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
             document.getElementById('cfg-calories').value = profile.targetCalories;
             document.getElementById('cfg-protein').value = profile.targetProtein;
 
@@ -797,26 +896,10 @@
                 }, 100);
             }
 
+            renderDiaryAccordionSection();
             renderInteractiveCalendar();
             renderHistoryTimeline();
             lucide.createIcons();
-        }
-
-        function removeMeal(index) {
-            const todayStr = new Date().toISOString().split('T')[0];
-            let count = 0;
-            const globalIndex = db[globalProfile].meals.findIndex(m => {
-                if(m.data === todayStr) {
-                    if(count === index) return true;
-                    count++;
-                }
-                return false;
-            });
-            if (globalIndex !== -1) {
-                db[globalProfile].meals.splice(globalIndex, 1);
-                saveToLocalStorage();
-                refreshAppInterface();
-            }
         }
 
         function renderInteractiveCalendar() {
