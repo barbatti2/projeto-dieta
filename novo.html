@@ -774,7 +774,7 @@
                 groups[m.data].push(m);
             });
 
-            // Ordenar datas de forma decrescente (Mais recentes no topo)
+           // Ordenar datas de forma decrescente (Mais recentes no topo)
             const sortedDates = Object.keys(groups).sort((a,b) => new Date(b) - new Date(a));
 
             sortedDates.forEach((dateStr, dateIdx) => {
@@ -784,10 +784,11 @@
                 
                 // Criando o bloco colapsável nativo <details>
                 const details = document.createElement('details');
-                details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all";
+                details.className = "bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all w-full box-border";
                 if(dateIdx === 0) details.setAttribute('open', ''); // Deixa apenas o dia mais recente aberto por padrão
 
                 // Tag <summary> funciona como o cabeçalho clicável do Accordion
+                // 🛠️ FIX: Mudamos a div de baixo para 'flex flex-col' para empilhar reto sem ir para o lado
                 details.innerHTML = `
                     <summary class="bg-slate-50 p-4 flex justify-between items-center cursor-pointer select-none hover:bg-slate-100/80 transition-colors border-b border-slate-100">
                         <div class="flex items-center gap-2">
@@ -796,7 +797,7 @@
                         </div>
                         <span class="text-xs font-bold bg-blue-50 text-blue-700 px-2.5 py-0.5 rounded-full">${dayMeals.length} Refeições</span>
                     </summary>
-                    <div class="p-4 space-y-4 bg-white grid grid-cols-1 gap-3">
+                    <div class="p-4 bg-white flex flex-col gap-3 w-full box-border overflow-hidden">
                         </div>
                 `;
 
@@ -811,8 +812,9 @@
                     if(m.momento === "Café da Tarde") colorTheme = "text-orange-600 bg-orange-50";
                     if(m.momento === "Janta") colorTheme = "text-indigo-600 bg-indigo-50";
 
+                    // 🛠️ FIX: Adicionado 'w-full box-border' no card de cada refeição para ele respeitar a largura do celular
                     cardsContainer.innerHTML += `
-                        <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors">
+                        <div class="border border-slate-100 p-4 rounded-xl flex flex-col justify-between text-center relative hover:bg-slate-50/50 transition-colors w-full box-border">
                             <div class="text-center">
                                 <span class="text-lg font-extrabold ${colorTheme} px-4 py-1 rounded-xl uppercase tracking-wide mx-auto inline-block">${m.momento}</span>
                                 <p class="text-xs text-slate-600 mt-3 leading-relaxed text-center font-medium">${m.itensStr}</p>
