@@ -1,8 +1,9 @@
+<!-- Importa os Scripts do Firebase (SDK v9 via CDN de Módulos) -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-    // Suas chaves oficiais configuradas e prontas
+    // Suas chaves oficiais prontas
     const firebaseConfig = {
         apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
         authDomain: "projetodietanovo.firebaseapp.com",
@@ -13,12 +14,15 @@
         measurementId: "G-6QP0ZWW58P"
     };
 
-    // Inicializa o Firebase e o Firestore
-    const app = initializeApp(firebaseConfig);
-    const firestoreDb = getFirestore(app);
-
-    // Banco de dados local auxiliar
+    // Variáveis globais do app
+    let app, firestoreDb;
     let db = {};
+    let globalProfile = 'Gabriel';
+    let selectedCalendarDay = 22; 
+    let historyFilter = 'dia';
+    let diaryScopeMode = 'dia';
+    let draftFoodItems = [];
+    let selectedMealMoment = 'Café da Manhã';
 
     // Dados de Alimentos Estáticos
     const MASTER_FOODS_DATABASE = [
@@ -36,16 +40,30 @@
         { n: "Pão Francês Unidade", c: 270, p: 8 }
     ];
 
-    let globalProfile = 'Gabriel';
-    let selectedCalendarDay = 22; 
-    let historyFilter = 'dia';
-    let diaryScopeMode = 'dia';
-    let draftFoodItems = [];
-    let selectedMealMoment = 'Café da Manhã';
+    // INICIALIZAÇÃO SEGURA: Só roda quando o HTML estiver totalmente renderizado
+    window.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Inicializa a interface visual básica primeiro para evitar tela branca
+            setTodayDateDisplay();
+            updateFormUserHighlight();
+            selectMealMomentCard('Café da Manhã');
+            switchTab('inicio');
+
+            // Inicializa o Firebase em segundo plano
+            app = initializeApp(firebaseConfig);
+            firestoreDb = getFirestore(app);
+
+            // Carrega os dados da nuvem
+            await loadDataFromFirestore();
+        } catch (e) {
+            console.error("Erro na inicialização do sistema:", e);
+        }
+    });
 
     // Carrega os dados direto do Firestore
     async function loadDataFromFirestore() {
         try {
+            if (!firestoreDb) return;
             const docRef = doc(firestoreDb, "dieta_app", "shared_data");
             const docSnap = await getDoc(docRef);
 
@@ -67,21 +85,13 @@
     // Salva os dados no Firestore
     async function saveToFirestore() {
         try {
+            if (!firestoreDb) return;
             const docRef = doc(firestoreDb, "dieta_app", "shared_data");
             await setDoc(docRef, db);
         } catch (error) {
             console.error("Erro ao salvar dados no Firestore:", error);
         }
     }
-
-    // Inicialização da Página
-    window.addEventListener('DOMContentLoaded', () => {
-        setTodayDateDisplay();
-        updateFormUserHighlight();
-        selectMealMomentCard('Café da Manhã');
-        switchTab('inicio');
-        loadDataFromFirestore();
-    });
 
     function setTodayDateDisplay() {
         const today = new Date();
@@ -90,7 +100,7 @@
         if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
     }
 
-    // Exportação segura para escopo global (Indispensável para o GitHub Pages com type="module")
+    // Exportação segura das funções para botões do HTML
     window.setGlobalProfile = function(name) {
         globalProfile = name;
         ['Gabriel', 'Raissa'].forEach(p => {
@@ -128,7 +138,7 @@
         
         const scrollEl = document.getElementById('main-content-scroll');
         if(scrollEl) scrollEl.scrollTop = 0;
-        if(db && Object.keys(db).length > 0) refreshAppInterface();
+        refreshAppInterface();
     }
 
     window.selectMealMomentCard = function(moment) {
@@ -235,6 +245,7 @@
         const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
         const todayStr = new Date().toISOString().split('T')[0];
 
+        if(!db[targetUser]) db[targetUser] = {};
         if(!db[targetUser].meals) db[targetUser].meals = [];
         db[targetUser].meals.push({ data: todayStr, momento: selectedMealMoment, calorias: totalCal, proteinas: totalProt, itensStr: itemsStr });
 
@@ -261,12 +272,13 @@
 
     function renderDiaryAccordionSection() {
         const root = document.getElementById('diary-accordion-root');
-        if(!root || !db[globalProfile]) return;
+        if(!root || !db || !db[globalProfile]) return;
         root.innerHTML = '';
         
         const profile = db[globalProfile];
         const today = new Date();
         let filteredMeals = (profile.meals || []).filter(m => {
+            if(!m.data) return false;
             const mDate = new Date(m.data + 'T00:00:00');
             const diffDays = Math.ceil(Math.abs(today - mDate) / (1000 * 60 * 60 * 24));
             if(diaryScopeMode === 'dia') return today.toISOString().split('T')[0] === m.data;
@@ -321,7 +333,7 @@
                         </div>
                         <div class="flex justify-between items-center border-t border-slate-100 mt-3 pt-2.5 w-full">
                             <span class="text-xs font-black text-slate-900 mx-auto pl-6">${m.calorias} kcal | ${m.proteinas}g Prot</span>
-                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-300 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            <button onclick="removeMealFromDiary(${globalIdx})" class="text-slate-333 hover:text-rose-600 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     </div>
                 `;
@@ -332,7 +344,7 @@
     }
 
     window.removeMealFromDiary = async function(globalIndex) {
-        if(globalIndex !== -1) {
+        if(globalIndex !== -1 && db[globalProfile]) {
             db[globalProfile].meals.splice(globalIndex, 1);
             await saveToFirestore();
             refreshAppInterface();
@@ -340,6 +352,7 @@
     }
 
     window.saveBiometricsMetrics = async function() {
+        if(!db[globalProfile]) return;
         const profile = db[globalProfile];
         profile.pesoInicial = parseFloat(document.getElementById('bio-input-p-ini').value) || profile.pesoInicial;
         profile.pesoAtual = parseFloat(document.getElementById('bio-input-p-atual').value) || profile.pesoAtual;
@@ -352,6 +365,7 @@
     }
 
     window.saveConfigMeta = async function() {
+        if(!db[globalProfile]) return;
         const calories = parseInt(document.getElementById('cfg-calories').value);
         const protein = parseInt(document.getElementById('cfg-protein').value);
         if(calories > 0 && protein > 0) {
@@ -371,6 +385,7 @@
     }
     
     window.setDayStatusColor = async function(colorName) {
+        if(!db[globalProfile]) return;
         if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
         db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
         await saveToFirestore();
