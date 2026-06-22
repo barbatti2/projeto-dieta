@@ -1284,20 +1284,33 @@ function changeDiaryScope(scope) {
 
 
     window.switchTab = function(tabId) {
+    // Removi 'refeicoes' desta lista, pois a seção correta é 'historico'
+    const tabs = ['inicio', 'pessoas', 'adicionar', 'calendario', 'historico', 'peso', 'config'];
 
-        const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+    tabs.forEach(t => {
+        const tabElement = document.getElementById(`tab-${t}`);
+        const navElement = document.getElementById(`nav-${t}`);
+        
+        // Verifica se existem antes de tentar alterar a classe
+        if (tabElement) tabElement.classList.add('hidden');
+        if (navElement) navElement.classList.remove('bg-slate-200', 'text-slate-900');
 
-        tabs.forEach(t => {
+        const mobileBtn = document.getElementById(`m-nav-${t}`);
+        if(mobileBtn) {
+            mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
+        }
+    });
 
-            document.getElementById(`tab-${t}`).classList.add('hidden');
-
-            document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
-
-            const mobileBtn = document.getElementById(`m-nav-${t}`);
-
-            if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
-
-        });
+    // Ativa a aba clicada
+    const activeTab = document.getElementById(`tab-${tabId}`);
+    const activeNav = document.getElementById(`nav-${tabId}`);
+    
+    if (activeTab) activeTab.classList.remove('hidden');
+    if (activeNav) activeNav.classList.add('bg-slate-200', 'text-slate-900');
+    
+    // Atualiza ícones do Lucide se houver ícones na nova tela
+    if(typeof lucide !== 'undefined') lucide.createIcons();
+};
 
         
 
