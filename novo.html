@@ -1,4 +1,3 @@
-<!-- Importa os Scripts do Firebase (SDK v9 via CDN) -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
     import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
@@ -18,15 +17,23 @@
     const app = initializeApp(firebaseConfig);
     const firestoreDb = getFirestore(app);
 
-    // Banco de dados local auxiliar (será sincronizado com a nuvem)
+    // Banco de dados local auxiliar
     let db = {};
 
-    // Dados de Alimentos Estáticos
+    // Dados de Alimentos Estáticos (Adicione mais aqui mantendo a estrutura)
     const MASTER_FOODS_DATABASE = [
-        { n: "Peito de Frango Grelhado", c: 165, p: 31 }, { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, { n: "Frango Cozido Desfiado", c: 150, p: 29 }, { n: "Patinho Moído Cozido", c: 220, p: 36 },
-        { n: "Maminha Grelhada", c: 190, p: 28 }, { n: "Filé Mignon Assado", c: 200, p: 30 }, { n: "Alcatra Grelhada", c: 210, p: 29 }, { n: "Contra Filé Grelhado", c: 250, p: 28 },
-        { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, { n: "Pão Francês Unidade", c: 270, p: 8 }
-        // ... (sua lista de alimentos permanece idêntica aqui)
+        { n: "Peito de Frango Grelhado", c: 165, p: 31 }, 
+        { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, 
+        { n: "Frango Cozido Desfiado", c: 150, p: 29 }, 
+        { n: "Patinho Moído Cozido", c: 220, p: 36 },
+        { n: "Maminha Grelhada", c: 190, p: 28 }, 
+        { n: "Filé Mignon Assado", c: 200, p: 30 }, 
+        { n: "Alcatra Grelhada", c: 210, p: 29 }, 
+        { n: "Contra Filé Grelhado", c: 250, p: 28 },
+        { n: "Ovo Cozido Inteiro", c: 155, p: 13 }, 
+        { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, 
+        { n: "Feijão Carioca Cozido", c: 76, p: 4.8 }, 
+        { n: "Pão Francês Unidade", c: 270, p: 8 }
     ];
 
     let globalProfile = 'Gabriel';
@@ -45,7 +52,6 @@
             if (docSnap.exists()) {
                 db = docSnap.data();
             } else {
-                // Estrutura inicial padrão se for a primeira vez rodando
                 db = {
                     Gabriel: { targetCalories: 2200, targetProtein: 160, pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90, meals: [], calendarColors: {} },
                     Raissa: { targetCalories: 1600, targetProtein: 120, pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72, meals: [], calendarColors: {} }
@@ -74,16 +80,17 @@
         updateFormUserHighlight();
         selectMealMomentCard('Café da Manhã');
         switchTab('inicio');
-        loadDataFromFirestore(); // Conecta e puxa a dieta ao abrir o app
+        loadDataFromFirestore();
     });
 
     function setTodayDateDisplay() {
         const today = new Date();
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        document.getElementById('date-display-inicio').innerText = today.toLocaleDateString('pt-BR', options);
+        const display = document.getElementById('date-display-inicio');
+        if(display) display.innerText = today.toLocaleDateString('pt-BR', options);
     }
 
-    // Exportação das funções para o escopo global (garante o funcionamento dos botões HTML)
+    // Exportação das funções para o escopo global
     window.setGlobalProfile = function(name) {
         globalProfile = name;
         ['Gabriel', 'Raissa'].forEach(p => {
@@ -103,19 +110,24 @@
     window.switchTab = function(tabId) {
         const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
         tabs.forEach(t => {
-            document.getElementById(`tab-${t}`).classList.add('hidden');
-            document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
+            const tabEl = document.getElementById(`tab-${t}`);
+            const navEl = document.getElementById(`nav-${t}`);
+            if(tabEl) tabEl.classList.add('hidden');
+            if(navEl) navEl.classList.remove('bg-slate-200', 'text-slate-900');
             const mobileBtn = document.getElementById(`m-nav-${t}`);
             if(mobileBtn) mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
         });
         
-        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
+        const activeTab = document.getElementById(`tab-${tabId}`);
+        const activeNav = document.getElementById(`nav-${tabId}`);
+        if(activeTab) activeTab.classList.remove('hidden');
+        if(activeNav) activeNav.classList.add('bg-slate-200', 'text-slate-900');
         
         const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
         if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
         
-        document.getElementById('main-content-scroll').scrollTop = 0;
+        const scrollEl = document.getElementById('main-content-scroll');
+        if(scrollEl) scrollEl.scrollTop = 0;
         if(Object.keys(db).length > 0) refreshAppInterface();
     }
 
@@ -126,18 +138,21 @@
             const idSuffix = maps[k];
             const card = document.getElementById(`meal-card-${idSuffix}`);
             const iconBox = document.getElementById(`icon-box-${idSuffix}`);
-            if(k === moment) {
-                card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
-                iconBox.className = "p-2 bg-blue-600 rounded-xl text-white";
-            } else {
-                card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
-                iconBox.className = "p-2 bg-slate-100 rounded-xl text-slate-600";
+            if(card && iconBox) {
+                if(k === moment) {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-blue-600 bg-blue-50/50 shadow-sm transition-all gap-2 text-center";
+                    iconBox.className = "p-2 bg-blue-600 rounded-xl text-white";
+                } else {
+                    card.className = "flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-all gap-2 text-center group";
+                    iconBox.className = "p-2 bg-slate-100 rounded-xl text-slate-600";
+                }
             }
         });
     }
 
     window.handleFoodSearch = function(val) {
         const dropdown = document.getElementById('search-results-dropdown');
+        if(!dropdown) return;
         if(!val || val.trim() === '') { dropdown.classList.add('hidden'); return; }
         const query = val.toLowerCase();
         const filtered = MASTER_FOODS_DATABASE.filter(f => f.n.toLowerCase().includes(query));
@@ -162,24 +177,35 @@
 
     window.adjustWeightInput = function(val) {
         const input = document.getElementById('food-weight-input');
-        input.value = Math.max((parseInt(input.value) || 0) + val, 0);
+        if(input) input.value = Math.max((parseInt(input.value) || 0) + val, 0);
     }
 
-    window.setWeightInputValue = function(val) { document.getElementById('food-weight-input').value = val; }
+    window.setWeightInputValue = function(val) { 
+        const input = document.getElementById('food-weight-input');
+        if(input) input.value = val; 
+    }
+    
     window.updateFormUserHighlight = function() {
-        const selectedUser = document.querySelector('input[name="target-user-radio"]:checked').value;
+        const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
+        if(!checkedRadio) return;
+        const selectedUser = checkedRadio.value;
         ['Gabriel', 'Raissa'].forEach(u => {
             const label = document.getElementById(`label-user-${u}`);
-            label.className = (u === selectedUser) ? 
-                "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center" : 
-                "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
+            if(label) {
+                label.className = (u === selectedUser) ? 
+                    "flex items-center justify-center p-3 rounded-xl border-2 border-blue-600 cursor-pointer font-bold text-xs gap-2 transition-all bg-blue-50 text-blue-900 flex-1 text-center" : 
+                    "flex items-center justify-center p-3 rounded-xl border border-slate-200 cursor-pointer font-bold text-xs gap-2 transition-all bg-slate-50 text-slate-600 flex-1 text-center";
+            }
         });
     }
 
     window.addSingleFoodToDraft = function() {
         const searchInput = document.getElementById('food-search-input');
+        const weightInput = document.getElementById('food-weight-input');
+        if(!searchInput || !weightInput) return;
+        
         const foodName = searchInput.value;
-        const weight = parseFloat(document.getElementById('food-weight-input').value);
+        const weight = parseFloat(weightInput.value);
         const foodObj = MASTER_FOODS_DATABASE.find(f => f.n === foodName);
 
         if(!foodObj) { alert("Selecione um alimento válido da lista!"); return; }
@@ -190,15 +216,19 @@
             draftFoodItems.push({ n: foodName, w: weight, c: cCal, p: cProt });
             
             const container = document.getElementById('draft-food-items-container');
-            if(draftFoodItems.length === 1) container.innerHTML = '';
-            container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${cCal} kcal</span></div>`;
+            if(container) {
+                if(draftFoodItems.length === 1) container.innerHTML = '';
+                container.innerHTML += `<div class="flex justify-between items-center border-b border-slate-200/60 py-1.5 px-2 text-center"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${cCal} kcal</span></div>`;
+            }
             searchInput.value = '';
         }
     }
 
     window.finalizeCompleteMealDraft = async function() {
         if(draftFoodItems.length === 0) { alert("Adicione pelo menos 1 alimento primeiro!"); return; }
-        const targetUser = document.querySelector('input[name="target-user-radio"]:checked').value;
+        const checkedRadio = document.querySelector('input[name="target-user-radio"]:checked');
+        const targetUser = checkedRadio ? checkedRadio.value : 'Gabriel';
+        
         const totalCal = draftFoodItems.reduce((a, b) => a + b.c, 0);
         const totalProt = draftFoodItems.reduce((a, b) => a + b.p, 0);
         const itemsStr = draftFoodItems.map(f => `${f.n} (${f.w}g)`).join('<br>');
@@ -209,7 +239,8 @@
 
         await saveToFirestore();
         draftFoodItems = [];
-        document.getElementById('draft-food-items-container').innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
+        const container = document.getElementById('draft-food-items-container');
+        if(container) container.innerHTML = '<p class="text-slate-400 italic text-center">Nenhum alimento no rascunho temporário.</p>';
         refreshAppInterface();
         alert("Refeição salva na nuvem com sucesso!");
     }
@@ -217,9 +248,12 @@
     window.changeDiaryScope = function(scope) {
         diaryScopeMode = scope;
         ['dia', 'semana', 'mes', 'ano'].forEach(s => {
-            document.getElementById(`diary-scope-${s}`).className = (s === scope) ? 
-                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
-                "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+            const btn = document.getElementById(`diary-scope-${s}`);
+            if(btn) {
+                btn.className = (s === scope) ? 
+                    "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
+                    "flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+            }
         });
         renderDiaryAccordionSection();
     }
@@ -293,7 +327,7 @@
             });
             root.appendChild(details);
         });
-        lucide.createIcons();
+        if(window.lucide) lucide.createIcons();
     }
 
     window.removeMealFromDiary = async function(globalIndex) {
@@ -313,7 +347,7 @@
         
         await saveToFirestore();
         refreshAppInterface();
-        alert("Biometria atualizada na nuvem!");
+        alert("Biometria updated!");
     }
 
     window.saveConfigMeta = async function() {
@@ -328,7 +362,13 @@
         }
     }
 
-    window.selectCalendarDay = function(day) { selectedCalendarDay = day; document.getElementById('cal-selected-day-lbl').innerText = `Dia Selecionado: ${day}`; renderInteractiveCalendar(); }
+    window.selectCalendarDay = function(day) { 
+        selectedCalendarDay = day; 
+        const lbl = document.getElementById('cal-selected-day-lbl');
+        if(lbl) lbl.innerText = `Dia Selecionado: ${day}`; 
+        renderInteractiveCalendar(); 
+    }
+    
     window.setDayStatusColor = async function(colorName) {
         if(!db[globalProfile].calendarColors) db[globalProfile].calendarColors = {};
         db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
@@ -347,12 +387,17 @@
         const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
         const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
         
-        document.getElementById('wheel-consumed-val').innerText = consumed;
-        document.getElementById('wheel-target-val').innerText = profile.targetCalories || 2000;
-        document.getElementById('bottom-protein-val').innerText = `${protein}g / ${profile.targetProtein || 150}g`;
+        const elCons = document.getElementById('wheel-consumed-val');
+        const elTar = document.getElementById('wheel-target-val');
+        const elProt = document.getElementById('bottom-protein-val');
+        const elLeft = document.getElementById('bottom-left-val');
+        
+        if(elCons) elCons.innerText = consumed;
+        if(elTar) elTar.innerText = profile.targetCalories || 2000;
+        if(elProt) elProt.innerText = `${protein}g / ${profile.targetProtein || 150}g`;
         
         const leftCal = (profile.targetCalories || 2000) - consumed;
-        document.getElementById('bottom-left-val').innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
+        if(elLeft) elLeft.innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
 
         const circle = document.getElementById('wheel-stroke');
         if(circle) {
@@ -365,9 +410,13 @@
             if(db[user]) {
                 const uMeals = (db[user].meals || []).filter(m => m.data === todayStr);
                 const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
-                document.getElementById(`p-cons-${user}`).innerText = `${uConsumed} kcal`;
-                document.getElementById(`p-left-${user}`).innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
-                document.getElementById(`p-count-${user}`).innerText = uMeals.length;
+                const elPCons = document.getElementById(`p-cons-${user}`);
+                const elPLeft = document.getElementById(`p-left-${user}`);
+                const elPCount = document.getElementById(`p-count-${user}`);
+                
+                if(elPCons) elPCons.innerText = `${uConsumed} kcal`;
+                if(elPLeft) elPLeft.innerText = `${Math.max((db[user].targetCalories || 2000) - uConsumed, 0)} kcal`;
+                if(elPCount) elPCount.innerText = uMeals.length;
             }
         });
 
@@ -381,12 +430,9 @@
         if(!box || !db[globalProfile]) return;
         box.innerHTML = '';
         const colorsMap = db[globalProfile].calendarColors || {};
-        let stats = { azul: 0, verde: 0, roxo: 0, vermelho: 0 };
         
         for(let i = 1; i <= 28; i++) {
             let statusColor = colorsMap[i] || null;
-            if(statusColor && stats[statusColor] !== undefined) stats[statusColor]++;
-
             let colorStyle = "bg-slate-100 text-slate-700 hover:bg-slate-200";
             if(statusColor === 'azul') colorStyle = "bg-blue-600 text-white shadow-sm";
             if(statusColor === 'verde') colorStyle = "bg-emerald-600 text-white shadow-sm";
