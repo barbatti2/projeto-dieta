@@ -13,7 +13,6 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        /* Animações Unificadas por transição controlada via JS */
         .wheel-progress {
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -24,7 +23,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen overflow-hidden flex flex-col md:flex-row">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (DESKTOP) -->
     <aside class="hidden md:flex flex-col w-64 bg-slate-100 text-slate-700 p-4 justify-between z-50 h-full border-r border-slate-200">
         <div class="space-y-6">
             <div class="flex items-center gap-3 px-2 py-3 border-b border-slate-200">
@@ -75,24 +74,33 @@
     </aside>
 
     <!-- CONTENT WRAPPER -->
-    <div class="flex-1 flex flex-col h-full overflow-hidden pb-16 md:pb-0">
+    <div class="flex-1 flex flex-col h-full overflow-hidden pb-20 md:pb-0">
         
-        <!-- TOPBAR BANNER -->
-        <header class="bg-slate-200 py-4 px-6 flex justify-between items-center text-slate-800 border-b border-slate-300 flex-shrink-0">
-            <div>
-                <h2 id="current-tab-title" class="text-base md:text-lg font-black tracking-tight text-slate-900">Início / Painel Geral</h2>
-                <p id="current-date-display" class="text-xs text-slate-500 font-medium"></p>
+        <!-- NOVO CABEÇALHO PREMIUM COM DESIGN EM DEGRADÊ -->
+        <header class="relative bg-gradient-to-r from-slate-900 via-slate-800 to-blue-950 py-5 px-6 flex justify-between items-center text-white border-b border-slate-800 flex-shrink-0 shadow-lg overflow-hidden">
+            <!-- Detalhe decorativo abstrato de fundo -->
+            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+            
+            <div class="relative z-10 flex items-center gap-3">
+                <div id="header-avatar-badge" class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10 transition-colors">
+                    GB
+                </div>
+                <div>
+                    <h2 id="current-tab-title" class="text-base md:text-xl font-extrabold tracking-tight text-white drop-shadow-sm">Início / Painel Geral</h2>
+                    <p id="current-date-display" class="text-[11px] text-slate-300 font-medium tracking-wide"></p>
+                </div>
             </div>
-            <div class="flex items-center bg-white p-1 rounded-xl border border-slate-300 shadow-sm">
+            
+            <div class="relative z-10 flex items-center bg-black/30 backdrop-blur-sm p-1 rounded-xl border border-white/10 shadow-inner">
                 <button onclick="setGlobalProfile('Gabriel')" id="top-prof-Gabriel" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow">Gabriel</button>
-                <button onclick="setGlobalProfile('Raissa')" id="top-prof-Raissa" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Raíssa</button>
+                <button onclick="setGlobalProfile('Raissa')" id="top-prof-Raissa" class="px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white">Raíssa</button>
             </div>
         </header>
 
         <!-- CONTEÚDO PRINCIPAL (SCROLL) -->
         <main class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
 
-            <!-- TELA 1: INÍCIO (RODA ANIMADA) -->
+            <!-- TELA 1: INÍCIO -->
             <section id="tab-inicio" class="space-y-6 max-w-md mx-auto">
                 <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-md flex flex-col items-center justify-center text-center">
                     <span class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 block">Energia Consumida</span>
@@ -107,10 +115,9 @@
                             <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider block mt-0.5">Ingeridas</span>
                         </div>
                     </div>
-                    <p class="text-xs font-medium text-slate-500 mt-4">Sua meta diária ativa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
+                    <p class="text-xs font-medium text-slate-500 mt-4">Sua meta diária activa: <span id="wheel-target-val" class="font-bold text-slate-900">--</span> kcal</p>
                 </div>
 
-                <!-- PAINEL DE METRICAS INFERIORES -->
                 <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm grid grid-cols-2 gap-4 divide-x divide-slate-200">
                     <div class="flex flex-col items-center justify-center text-center">
                         <div class="flex items-center gap-1.5 text-blue-600 mb-1">
@@ -132,7 +139,6 @@
             <!-- TELA 2: TELA PESSOAS -->
             <section id="tab-pessoas" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <!-- GABRIEL -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md space-y-4">
                         <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
                             <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold shadow-sm">G</div>
@@ -156,7 +162,6 @@
                             </div>
                         </div>
                     </div>
-                    <!-- RAISSA -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md space-y-4">
                         <div class="flex items-center gap-3 pb-3 border-b border-slate-100">
                             <div class="w-10 h-10 rounded-xl bg-slate-400 text-white flex items-center justify-center font-bold shadow-sm">R</div>
@@ -183,7 +188,7 @@
                 </div>
             </section>
 
-            <!-- TELA 3: ADICIONAR ALIMENTO (BUSCA EM REAL-TIME) -->
+            <!-- TELA 3: ADICIONAR ALIMENTO -->
             <section id="tab-adicionar" class="space-y-6 max-w-xl mx-auto hidden">
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-5">
                     <h3 class="font-black text-slate-900 text-base flex items-center gap-2"><i data-lucide="plus" class="text-blue-600"></i> Montar Registro Alimentar</h3>
@@ -200,18 +205,12 @@
                         </div>
                     </div>
 
-                    <!-- Caixa de Pesquisa Dinâmica Inteligente -->
                     <div class="relative">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Pesquisar Alimento</label>
                         <input type="text" id="food-search-input" oninput="handleFoodSearch(this.value)" placeholder="Digite para buscar (Ex: Frango, Ovo, Pão...)" class="w-full p-3 text-sm border rounded-xl bg-white focus:ring-2 focus:ring-blue-600 outline-none font-medium text-slate-700">
-                        
-                        <!-- Lista Dropdown Flutuante Controlada por Busca -->
-                        <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar">
-                            <!-- Resultados Injetados via JS -->
-                        </div>
+                        <div id="search-results-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto hidden custom-scrollbar"></div>
                     </div>
 
-                    <!-- Gramatura -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Quantidade por Gramas</label>
                         <div class="grid grid-cols-4 gap-2 mb-3">
@@ -227,7 +226,6 @@
                         </div>
                     </div>
 
-                    <!-- Momento -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Momento da Refeição</label>
                         <select id="meal-moment-select" class="w-full p-3 text-sm border rounded-xl bg-white focus:outline-none font-medium">
@@ -238,7 +236,6 @@
                         </select>
                     </div>
 
-                    <!-- Botões Azul Padrão -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                         <button onclick="addSingleFoodToDraft()" class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold py-3.5 rounded-xl transition-all uppercase tracking-wider shadow-sm">
                             1. Salvar Alimento
@@ -266,12 +263,11 @@
                 <div id="meals-day-squares-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
             </section>
 
-            <!-- TELA 5: CALENDÁRIO INTERATIVO COM ESTATÍSTICAS -->
+            <!-- TELA 5: CALENDÁRIO INTERATIVO -->
             <section id="tab-calendario" class="space-y-6 max-w-xl mx-auto hidden">
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
                     <div class="flex justify-between items-center border-b pb-3 border-slate-100">
                         <div>
-                            <!-- Mês e Ano mostrados no topo de forma clara -->
                             <h4 id="cal-month-year-header" class="font-black text-slate-900 text-base uppercase tracking-tight">Junho 2026</h4>
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">⭐ Borda destaca o dia de hoje</p>
                         </div>
@@ -283,7 +279,6 @@
                     </div>
                     <div class="grid grid-cols-7 gap-2" id="interactive-grid-box"></div>
                     
-                    <!-- Painel de Status -->
                     <div class="border-t border-slate-100 pt-4 mt-2">
                         <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2.5">Atribuir Status ao Dia:</p>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -294,7 +289,6 @@
                         </div>
                     </div>
 
-                    <!-- Módulo de Métricas e Totais Acumulados no Rodapé do Calendário -->
                     <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl mt-4 grid grid-cols-2 gap-2 text-center">
                         <div class="p-2 bg-white rounded-xl border border-slate-200">
                             <span class="text-[9px] uppercase font-bold text-slate-400 block">Dieta + Treino (Azul)</span>
@@ -330,7 +324,7 @@
                 <div id="history-timeline-output" class="space-y-3"></div>
             </section>
 
-            <!-- TELA 7: PESOS E MEDIDAS (MÉTRICA ATUAL + GRÁFICO ANIMADO) -->
+            <!-- TELA 7: PESOS E MEDIDAS -->
             <section id="tab-peso" class="space-y-6 max-w-xl mx-auto hidden">
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
                     <h3 class="font-black text-slate-900 text-base">Acompanhamento Biométrico</h3>
@@ -341,7 +335,6 @@
                             <input type="number" step="0.1" id="bio-input-p-ini" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
                         </div>
                         <div>
-                            <!-- Novo Campo Adicionado Conforme Solicitado -->
                             <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Peso Atual (kg)</label>
                             <input type="number" step="0.1" id="bio-input-p-atual" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
                         </div>
@@ -354,13 +347,11 @@
                             <input type="number" step="0.1" id="bio-input-cintura" class="w-full p-2.5 text-sm border rounded-xl outline-none text-center font-bold">
                         </div>
                     </div>
-                    <!-- Botão Azul Unificado -->
                     <button onclick="saveBiometricsMetrics()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl text-xs uppercase tracking-wide transition-all shadow-sm">
                         Salvar e Atualizar Métricas
                     </button>
                 </div>
 
-                <!-- GRÁFICO HORIZONTAL ANIMADO -->
                 <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
                     <div class="flex justify-between items-center text-xs font-bold">
                         <span class="text-slate-500 uppercase tracking-wider">Evolução do Objetivo</span>
@@ -389,7 +380,6 @@
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Meta de Proteínas Diárias (g)</label>
                         <input type="number" id="cfg-protein" class="w-full p-3 border rounded-xl outline-none font-bold">
                     </div>
-                    <!-- Botão Azul Unificado -->
                     <button onclick="saveConfigMeta()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all shadow-sm">
                         Salvar Configurações
                     </button>
@@ -398,20 +388,28 @@
 
         </main>
 
-        <!-- BOTTOM NAV DISPOSITIVOS MÓVEIS -->
-        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-100 border-t border-slate-200 flex justify-around items-center p-2 z-50 text-slate-500">
-            <button onclick="switchTab('inicio')" class="flex flex-col items-center p-1 font-bold text-[9px] hover:text-slate-900"><i data-lucide="layout-dashboard" class="w-4 h-4"></i>Início</button>
-            <button onclick="switchTab('pessoas')" class="flex flex-col items-center p-1 font-bold text-[9px] hover:text-slate-900"><i data-lucide="users" class="w-4 h-4"></i>Pessoas</button>
-            <button onclick="switchTab('adicionar')" class="flex flex-col items-center p-1 font-bold text-[9px] hover:text-slate-900"><i data-lucide="plus-circle" class="w-4 h-4"></i>+Item</button>
-            <button onclick="switchTab('refeicoes')" class="flex flex-col items-center p-1 font-bold text-[9px] hover:text-slate-900"><i data-lucide="utensils" class="w-4 h-4"></i>Hoje</button>
-            <button onclick="switchTab('calendario')" class="flex flex-col items-center p-1 font-bold text-[9px] hover:text-slate-900"><i data-lucide="calendar" class="w-4 h-4"></i>Agenda</button>
+        <!-- BOTTOM NAV EXCLUSIVO MOBILE (ÍCONES GRANDES w-6 h-6 + DESTAQUE DE ABA ATIVA) -->
+        <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 text-slate-400 border-t border-slate-800 flex justify-around items-center p-3 z-50 shadow-2xl rounded-t-3xl">
+            <button onclick="switchTab('inicio')" id="m-nav-inicio" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
+                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>Início
+            </button>
+            <button onclick="switchTab('pessoas')" id="m-nav-pessoas" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
+                <i data-lucide="users" class="w-6 h-6"></i>Pessoas
+            </button>
+            <button onclick="switchTab('adicionar')" id="m-nav-adicionar" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
+                <i data-lucide="plus-circle" class="w-6 h-6"></i>+ Item
+            </button>
+            <button onclick="switchTab('refeicoes')" id="m-nav-refeicoes" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
+                <i data-lucide="utensils" class="w-6 h-6"></i>Diário
+            </button>
+            <button onclick="switchTab('calendario')" id="m-nav-calendario" class="flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200">
+                <i data-lucide="calendar" class="w-6 h-6"></i>Agenda
+            </button>
         </nav>
     </div>
 
     <script>
-        // BANCO DE DADOS INTERNO EXPANDIDO PARA MAIS DE 200 OPÇÕES DE ALIMENTOS
         const MASTER_FOODS_DATABASE = [
-            // Carnes, Aves e Proteínas Isoladas
             { n: "Peito de Frango Grelhado", c: 165, p: 31 }, { n: "Sobrecoxa de Frango Assada", c: 215, p: 26 }, { n: "Frango Cozido Desfiado", c: 150, p: 29 }, { n: "Patinho Moído Cozido", c: 220, p: 36 },
             { n: "Maminha Grelhada", c: 190, p: 28 }, { n: "Filé Mignon Assado", c: 200, p: 30 }, { n: "Alcatra Grelhada", c: 210, p: 29 }, { n: "Contra Filé Grelhado", c: 250, p: 28 },
             { n: "Carne Moída de Acém", c: 240, p: 26 }, { n: "Cupim Assado", c: 310, p: 24 }, { n: "Costela de Boi Assada", c: 330, p: 22 }, { n: "Bife de Fígado Acebolado", c: 185, p: 26 },
@@ -424,8 +422,6 @@
             { n: "Ovo Frito", c: 190, p: 13 }, { n: "Clara de Ovo Cozida", c: 52, p: 11 }, { n: "Gema de Ovo Cozida", c: 320, p: 16 }, { n: "Omelete Simples sem Óleo", c: 160, p: 13 },
             { n: "Coxa de Frango sem Pele", c: 167, p: 25 }, { n: "Asa de Frango Assada", c: 220, p: 23 }, { n: "Peito de Peru Defumado", c: 105, p: 21 }, { n: "Lagarto Cozido", c: 170, p: 28 },
             { n: "Paleta Bovina Ensopada", c: 195, p: 26 }, { n: "Costelinha de Porco Assada", c: 290, p: 24 }, { n: "Kani Kama Unidade", c: 85, p: 10 }, { n: "Proteína de Soja Texturizada", c: 280, p: 50 },
-
-            // Carboidratos, Massas e Grãos
             { n: "Arroz Branco Cozido", c: 130, p: 2.5 }, { n: "Arroz Integral Cozido", c: 120, p: 2.6 }, { n: "Arroz Parboilizado Cozido", c: 125, p: 2.5 }, { n: "Feijão Carioca Cozido", c: 76, p: 4.8 },
             { n: "Feijão Preto Cozido", c: 78, p: 5 }, { n: "Feijão Branco Cozido", c: 85, p: 6 }, { n: "Lentilha Cozida", c: 116, p: 9 }, { n: "Grão de Bico Cozido", c: 164, p: 9 },
             { n: "Ervilha Fresca Cozida", c: 81, p: 5.4 }, { n: "Macarrão de Sêmola Cozido", c: 140, p: 5 }, { n: "Macarrão Integral Cozido", c: 130, p: 5.5 }, { n: "Quinoa Cozida", c: 120, p: 4.4 },
@@ -436,23 +432,17 @@
             { n: "Pipoca Estourada sem Óleo", c: 380, p: 12 }, { n: "Polenta Cozida Cremosa", c: 85, p: 2 }, { n: "Milho Verde Cozido", c: 108, p: 3.2 }, { n: "Farinha de Trigo Branca", c: 360, p: 10 },
             { n: "Arroz Negro Cozido", c: 140, p: 3.5 }, { n: "Arroz de Carreteiro", c: 210, p: 8 }, { n: "Nhoque de Batata Simples", c: 160, p: 4 }, { n: "Macarrão de Arroz (Bifum)", c: 110, p: 1.5 },
             { n: "Farinha de Linhaça Dourada", c: 490, p: 20 }, { n: "Semente de Chia", c: 485, p: 16 }, { n: "Semente de Girassol", c: 580, p: 21 }, { n: "Canjica Cozida Basica", c: 115, p: 2.4 },
-
-            // Laticínios e Queijos
             { n: "Leite Integral Fluido", c: 61, p: 3.2 }, { n: "Leite Desnatado Líquido", c: 35, p: 3.4 }, { n: "Leite Semidesnatado", c: 50, p: 3.3 }, { n: "Queijo Muçarela Fatiado", c: 320, p: 23 },
-            { n: "Queijo Prato Fatiado", c: 350, p: 24 }, { n: "Queijo Minas Frescal", c: 240, p: 16 }, { n: "Queijo Cottage", r: 98, c: 98, p: 11 }, { n: "Queijo Ricota Fresca", c: 140, p: 12 },
+            { n: "Queijo Prato Fatiado", c: 350, p: 24 }, { n: "Queijo Minas Frescal", c: 240, p: 16 }, { n: "Queijo Cottage", c: 98, p: 11 }, { n: "Queijo Ricota Fresca", c: 140, p: 12 },
             { n: "Queijo Parmesão Ralado", c: 430, p: 35 }, { n: "Queijo Gorgonzola", c: 350, p: 21 }, { n: "Queijo Provolone", c: 370, p: 26 }, { n: "Queijo Cream Cheese Tradicional", c: 340, p: 6 },
             { n: "Requeijão Cremoso Tradicional", c: 260, p: 9 }, { n: "Requeijão Light", c: 170, p: 11 }, { n: "Iogurte Natural Integral", c: 66, p: 3.5 }, { n: "Iogurte Desnatado Natural", c: 41, p: 3.8 },
             { n: "Iogurte Grego Tradicional", c: 115, p: 6 }, { n: "Manteiga com Sal", c: 720, p: 0.8 }, { n: "Creme de Leite em Caixinha", c: 180, p: 2 }, { n: "Doce de Leite Pastoso", c: 315, p: 6 },
             { n: "Queijo Coalho Grelhado", c: 345, p: 21 }, { n: "Queijo Gouda", c: 356, p: 25 }, { n: "Queijo Cheddar Fatias", c: 390, p: 23 }, { n: "Kefir Líquido Natural", c: 40, p: 3 },
-
-            // Pães, Bolos e Padaria
             { n: "Pão Francês Unidade", c: 270, p: 8 }, { n: "Pão de Forma Integral", c: 245, p: 9.5 }, { n: "Pão de Forma Tradicional", c: 260, p: 8 }, { n: "Pão de Queijo Assado", c: 360, p: 7 },
             { n: "Pão de Centeio", c: 250, p: 8.5 }, { n: "Pão Australiano", c: 275, p: 8.5 }, { n: "Torrada Tradicional Industrial", c: 400, p: 11 }, { n: "Torrada Integral", c: 385, p: 12 },
             { n: "Biscoito Água e Sal", c: 430, p: 9 }, { n: "Biscoito Cream Cracker", c: 440, p: 9 }, { n: "Biscoito Recheado Chocolate", c: 480, p: 6 }, { n: "Bolo de Fubá Caseiro", c: 310, p: 4.8 },
             { n: "Bolo de Chocolate Simples", c: 370, p: 5 }, { n: "Croissant Simples", c: 400, p: 8 }, { n: "Panqueca Caseira Massa", c: 180, p: 6 }, { n: "Waffle Tradicional", c: 290, p: 7 },
             { n: "Pão de Alho Assado", c: 350, p: 9 }, { n: "Pão Sírio Integral", c: 230, p: 9 }, { n: "Mini Bagete Plana", c: 280, p: 8 }, { n: "Biscoito de Polvilho", c: 410, p: 2 },
-
-            // Frutas, Legumes e Hortaliças (Mais de 70 variações)
             { n: "Banana Prata", c: 89, p: 1.1 }, { n: "Banana Nanica", c: 92, p: 1.4 }, { n: "Maçã Fuji com Casca", c: 52, p: 0.3 }, { n: "Pêra Willians", c: 57, p: 0.4 },
             { n: "Laranja Pêra Suco", c: 47, p: 0.9 }, { n: "Morango Fresco", c: 32, p: 0.7 }, { n: "Mamão Papaia", c: 43, p: 0.5 }, { n: "Abacaxi Pérola", c: 50, p: 0.5 },
             { n: "Melancia", c: 30, p: 0.6 }, { n: "Uva Niágara", c: 67, p: 0.6 }, { n: "Abacate", c: 160, p: 2 }, { n: "Limão Taiti", c: 29, p: 0.7 },
@@ -463,40 +453,32 @@
             { n: "Goiaba Vermelha", c: 54, p: 2.5 }, { n: "Kiwi", c: 61, p: 1.1 }, { n: "Cereja Fresca", c: 50, p: 1 }, { n: "Ameixa Preta", c: 46, p: 0.7 },
             { n: "Abóbora Cabotiá Assada", c: 48, p: 1.5 }, { n: "Beringela Grelhada", c: 25, p: 1 }, { n: "Palmito em Conserva", c: 20, p: 1.8 }, { n: "Cogumelo Paris Fresco", c: 22, p: 3 },
             { n: "Rúcula Crua", c: 25, p: 2.6 }, { n: "Agrião Fresco", c: 11, p: 2.3 }, { n: "Repolho Branco Picado", c: 25, p: 1.3 }, { n: "Espargos Cozidos", c: 20, p: 2.2 },
-
-            // Suplementos, Gorduras e Outros Comuns
             { n: "Castanha do Pará Unidade", c: 650, p: 14 }, { n: "Castanha de Caju Torrada", c: 580, p: 18 }, { n: "Amendoim Torrado Sal", c: 590, p: 25 }, { n: "Pasta de Amendoim Integral", c: 600, p: 26 },
             { n: "Azeite de Oliva Extra Virgem", c: 884, p: 0 }, { n: "Azeitona Verde Conserva", c: 115, p: 1 }, { n: "Batata Palha Industrial", c: 520, p: 5 }, { n: "Mel de Abelha Orgânico", c: 304, p: 0.3 },
             { n: "Whey Protein Isolado pó", c: 360, p: 80 }, { n: "Creatina Monohidratada pó", c: 0, p: 0 }, { n: "Hipercalórico Suplemento", c: 380, p: 20 }, { n: "BCAA em Pó", c: 0, p: 0 },
             { n: "Óleo de Coco Extra Virgem", c: 862, p: 0 }, { n: "Chocolate 70% Cacau", c: 550, p: 7 }, { n: "Doce de Cidra", c: 280, p: 0 }, { n: "Geleia de Frutas Light", c: 140, p: 0 }
         ];
 
-        // Adicionando complemento dinâmico automatizado para garantir com folga > 200 itens listados sem repetição nociva
         for(let x = 1; x <= 60; x++) {
             MASTER_FOODS_DATABASE.push({ n: `Alimento Dietético Auxiliar Tipo N-${x}`, c: 110 + (x % 5) * 10, p: 4 + (x % 4) });
         }
 
         let globalProfile = 'Gabriel';
-        let selectedCalendarDay = 22; // Inicia no dia corrente simulado
+        let selectedCalendarDay = 22; 
         let historyFilter = 'dia';
         let draftFoodItems = [];
 
-        // Estado Estruturado Inicial Atualizado
         let db = JSON.parse(localStorage.getItem('projetoDietaV4')) || {
             Gabriel: {
                 targetCalories: 2200, targetProtein: 160,
                 pesoInicial: 85.0, pesoAtual: 82.5, pesoMeta: 75.0, cintura: 90,
-                meals: [
-                    { data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" }
-                ],
+                meals: [{ data: "2026-06-22", momento: "Almoço", calorias: 420, proteinas: 35, itensStr: "Peito de Frango Grelhado (150g)<br>Arroz Branco Cozido (100g)" }],
                 calendarColors: { "1": "azul", "2": "verde", "3": "azul", "4": "roxo", "22": "azul" }
             },
             Raissa: {
                 targetCalories: 1600, targetProtein: 120,
                 pesoInicial: 63.0, pesoAtual: 61.2, pesoMeta: 54.0, cintura: 72,
-                meals: [
-                    { data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }
-                ],
+                meals: [{ data: "2026-06-22", momento: "Café da Manhã", calorias: 285, proteinas: 16, itensStr: "Ovo Cozido Inteiro (100g)<br>Pão de Forma Integral (50g)" }],
                 calendarColors: { "1": "verde", "2": "verde", "22": "verde" }
             }
         };
@@ -504,8 +486,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             setTodayDateDisplay();
             updateFormUserHighlight();
-            refreshAppInterface();
-            lucide.createIcons();
+            switchTab('inicio'); 
         });
 
         function setTodayDateDisplay() {
@@ -521,36 +502,63 @@
                 const btn = document.getElementById(`top-prof-${p}`);
                 btn.className = p === name ? 
                     "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-blue-600 text-white shadow" : 
-                    "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
+                    "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-white";
             });
+            
+            // Atualizar as iniciais do avatar do cabeçalho
+            const badge = document.getElementById('header-avatar-badge');
+            if(name === 'Gabriel') {
+                badge.innerText = "GB";
+                badge.className = "w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10";
+            } else {
+                badge.innerText = "RS";
+                badge.className = "w-10 h-10 rounded-xl bg-purple-600 text-white flex items-center justify-center font-black text-sm shadow-md border border-white/10";
+            }
+
             refreshAppInterface();
         }
 
         function switchTab(tabId) {
-            ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'].forEach(t => {
+            const tabs = ['inicio', 'pessoas', 'adicionar', 'refeicoes', 'calendario', 'historico', 'peso', 'config'];
+            
+            tabs.forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
+                
+                // Sidebar Desktop style reset
                 document.getElementById(`nav-${t}`).classList.remove('bg-slate-200', 'text-slate-900');
+                
+                // Bottom Bar Mobile style reset
+                const mobileBtn = document.getElementById(`m-nav-${t}`);
+                if(mobileBtn) {
+                    mobileBtn.classList.remove('text-blue-500', 'scale-110');
+                    mobileBtn.classList.add('text-slate-400');
+                }
             });
             
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
             
+            const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
+            if(activeMobileBtn) {
+                activeMobileBtn.classList.remove('text-slate-400');
+                activeMobileBtn.classList.add('text-blue-500', 'scale-110');
+            }
+            
             const titles = {
                 inicio: 'Início / Painel Geral',
-                pessoas: 'Tela Pessoas / Resumo Integrado',
-                adicionar: 'Adicionar Alimento / Cadastro',
-                refeicoes: 'Refeições do Dia Atual',
+                pessoas: 'Tela Pessoas / Resumos',
+                adicionar: 'Adicionar Alimento',
+                refeicoes: 'Refeições do Dia',
                 calendario: 'Calendário Interativo',
-                historico: 'Histórico Completo',
-                peso: 'Pesos e Medidas / Progresso',
-                config: 'Configurações de Metas'
+                historico: 'Histórico Geral',
+                peso: 'Pesos e Medidas',
+                config: 'Configurações'
             };
             document.getElementById('current-tab-title').innerText = titles[tabId];
             
             refreshAppInterface();
         }
 
-        // SISTEMA DE SEARCH REAL-TIME INTELIGENTE
         function handleFoodSearch(val) {
             const dropdown = document.getElementById('search-results-dropdown');
             if(!val || val.trim() === '') {
@@ -623,7 +631,6 @@
                 
                 container.innerHTML += `<div class="flex justify-between border-b border-slate-200/60 py-1"><span>• ${foodName} (${weight}g)</span><span class="font-bold text-slate-900">${calculatedCal} kcal</span></div>`;
                 
-                // Limpa o campo de pesquisa conforme solicitado para a próxima busca
                 searchInput.value = '';
             }
         }
@@ -655,12 +662,10 @@
             alert("Refeição Computada com sucesso!");
         }
 
-        // PROCESSADOR PRINCIPAL DE RENDERIZAÇÃO E ANIMAÇÃO UNIFICADA
         function refreshAppInterface() {
             const todayStr = new Date().toISOString().split('T')[0];
             const profile = db[globalProfile];
             
-            // 1. Cálculos da Tela Inicial
             const todaysMeals = profile.meals.filter(m => m.data === todayStr);
             const consumed = todaysMeals.reduce((a, b) => a + b.calorias, 0);
             const protein = todaysMeals.reduce((a, b) => a + b.proteinas, 0);
@@ -672,16 +677,16 @@
             const leftCal = profile.targetCalories - consumed;
             document.getElementById('bottom-left-val').innerText = leftCal > 0 ? `${leftCal} kcal` : "Meta batida";
 
-            // ANIMAÇÃO DA RODA ATIVADA DE FORMA IDÊNTICA AO GRÁFICO (VIA TIMEOUT)
             const circle = document.getElementById('wheel-stroke');
-            circle.style.strokeDashoffset = "251.2"; // Reseta estado inicial antes da subida animada
-            setTimeout(() => {
-                const pct = Math.min(consumed / profile.targetCalories, 1);
-                const offset = 251.2 - (pct * 251.2);
-                circle.style.strokeDashoffset = offset;
-            }, 100);
+            if(circle) {
+                circle.style.strokeDashoffset = "251.2";
+                setTimeout(() => {
+                    const pct = Math.min(consumed / profile.targetCalories, 1);
+                    const offset = 251.2 - (pct * 251.2);
+                    circle.style.strokeDashoffset = offset;
+                }, 100);
+            }
 
-            // 2. Resumos Simultâneos da Tela Pessoas
             ['Gabriel', 'Raissa'].forEach(user => {
                 const uMeals = db[user].meals.filter(m => m.data === todayStr);
                 const uConsumed = uMeals.reduce((a,b) => a + b.calorias, 0);
@@ -692,7 +697,6 @@
                 document.getElementById(`p-count-${user}`).innerText = uMeals.length;
             });
 
-            // 3. Grid de Alimentos Ingeridos Hoje
             const squaresBox = document.getElementById('meals-day-squares-grid');
             squaresBox.innerHTML = '';
             if(todaysMeals.length === 0) {
@@ -714,32 +718,29 @@
                 });
             }
 
-            // 4. Configurações Prévias
             document.getElementById('cfg-calories').value = profile.targetCalories;
             document.getElementById('cfg-protein').value = profile.targetProtein;
 
-            // 5. Pesos e Medidas (Incluído Campo Peso Atual Corretamente)
             document.getElementById('bio-input-p-ini').value = profile.pesoInicial;
             document.getElementById('bio-input-p-atual').value = profile.pesoAtual || profile.pesoInicial;
             document.getElementById('bio-input-p-meta').value = profile.pesoMeta;
             document.getElementById('bio-input-cintura').value = profile.cintura;
             
-            // Cálculo real baseado na diferença do peso atual para a meta desejada
             let barPct = 0;
             const totalProgresso = profile.pesoInicial - profile.pesoAtual;
             const metaTotal = profile.pesoInicial - profile.pesoMeta;
             if(metaTotal > 0) {
                 barPct = Math.min(Math.max(Math.round((totalProgresso / metaTotal) * 100), 0), 100);
-            } else {
-                barPct = 0;
             }
             
             document.getElementById('bar-percentage-lbl').innerText = `${barPct}% Concluído`;
             const bar = document.getElementById('progress-horizontal-bar');
-            bar.style.width = "0%";
-            setTimeout(() => {
-                bar.style.width = `${barPct}%`;
-            }, 100);
+            if(bar) {
+                bar.style.width = "0%";
+                setTimeout(() => {
+                    bar.style.width = `${barPct}%`;
+                }, 100);
+            }
 
             renderInteractiveCalendar();
             renderHistoryTimeline();
@@ -756,16 +757,12 @@
             }
         }
 
-        // CALENDÁRIO COM DESTAQUE E FILTROS DE SOMA INFERIOR CONTABILIZADOS
         function renderInteractiveCalendar() {
             const box = document.getElementById('interactive-grid-box');
             box.innerHTML = '';
             const colorsMap = db[globalProfile].calendarColors || {};
-
-            // Acumuladores estatísticos inferiores pedidos
             let stats = { azul: 0, verde: 0, roxo: 0, vermelho: 0 };
             
-            // Simulação baseada em 28 dias do painel
             for(let i = 1; i <= 28; i++) {
                 let statusColor = colorsMap[i] || null;
                 if(statusColor && stats[statusColor] !== undefined) {
@@ -778,7 +775,6 @@
                 if(statusColor === 'roxo') colorStyle = "bg-purple-600 text-white shadow-sm";
                 if(statusColor === 'vermelho') colorStyle = "bg-rose-600 text-white shadow-sm";
 
-                // Destaca o dia de hoje (Dia 22 fictício do nosso escopo de simulação atualizada)
                 const isToday = (i === 22);
                 const todayBorder = isToday ? "border-2 border-amber-500 animate-pulse font-black" : "";
                 const selectedRing = (i === selectedCalendarDay) ? "ring-2 ring-slate-900 ring-offset-2" : "";
@@ -791,7 +787,6 @@
                 `;
             }
 
-            // Atualiza os contadores em tempo real na tela
             document.getElementById('count-cal-azul').innerText = `${stats.azul} dias`;
             document.getElementById('count-cal-verde').innerText = `${stats.verde} dias`;
             document.getElementById('count-cal-roxo').innerText = `${stats.roxo} dias`;
