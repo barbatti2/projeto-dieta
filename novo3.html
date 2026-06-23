@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>Projeto Dieta Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; 
+        }
+        h1, h2, h3, h4, .font-premium { 
+            font-family: 'Outfit', sans-serif; 
+        }
+        
+        input, select, textarea, button, p, span, div {
+            font-size: 16px !important;
+        }
+        
+        .text-mini { font-size: 12px !important; }
+        .text-micro { font-size: 10px !important; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
+        .wheel-progress {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+        }
+        .bar-progress {
+            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 flex flex-col md:flex-row h-screen overflow-hidden text-slate-800">
+
+    <!-- MENU LATERAL: APENAS PARA COMPUTADOR (md:) -->
+    <aside class="hidden md:flex w-64 bg-slate-900 flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
+        <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
+            <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg">
+                <i data-lucide="heart-pulse" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h2 class="font-black uppercase tracking-wide">Projeto Dieta</h2>
+                <p class="text-micro text-blue-400 font-black uppercase tracking-widest">Premium Edition</p>
+            </div>
+        </div>
+
+        <!-- SELETOR DE PERFIL DESKTOP -->
+        <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
+            <label class="block text-micro font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+            <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-mini font-bold focus:outline-none cursor-pointer">
+                <option value="Gabriel">Gabriel</option>
+                <option value="Raissa">Raíssa</option>
+            </select>
+        </div>
+
+        <nav class="space-y-1.5 flex-1">
+            <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="home" class="w-5 h-5"></i> Início
+            </button>
+            <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Adicionar Alimento
+            </button>
+            <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="calendar" class="w-5 h-5"></i> Calendário
+            </button>
+            <button onclick="switchTab('historico')" id="nav-desktop-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="list" class="w-5 h-5"></i> Histórico
+            </button>
+            <button onclick="switchTab('peso')" id="nav-desktop-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="scale" class="w-5 h-5"></i> Pesos e Medidas
+            </button>
+            <button onclick="switchTab('config')" id="nav-desktop-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="settings" class="w-5 h-5"></i> Configurações
+            </button>
+        </nav>
+    </aside>
+
+    <!-- HEADER DE TOPO NO MOBILE -->
+    <header class="flex md:hidden bg-slate-900 text-white p-4 justify-between items-center shadow-md flex-shrink-0">
+        <div class="flex items-center gap-2">
+            <span class="font-black tracking-wide uppercase text-mini">Projeto Dieta</span>
+        </div>
+        <div class="w-32 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
+            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-mini focus:outline-none cursor-pointer">
+                <option value="Gabriel">Gabriel</option>
+                <option value="Raissa">Raíssa</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
+    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-20 md:mb-0">
+        <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
+            
+            <!-- ABA INÍCIO -->
+            <div id="tab-inicio" class="tab-content active text-center">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
+                <p class="text-mini text-slate-400 font-extrabold uppercase tracking-widest mb-4">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+                
+                <!-- Roda Gráfica SVG -->
+                <div class="relative flex items-center justify-center w-48 h-48 mx-auto mb-6">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
+                        <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
+                                stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
+                    </svg>
+                    <div class="absolute flex flex-col items-center justify-center">
+                        <span id="lbl-home-consumed" class="text-3xl font-black text-slate-900 tracking-tight">0</span>
+                        <span class="text-micro font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
+                    </div>
+                </div>
+
+                <!-- CARDS INFERIORES -->
+                <div class="grid grid-cols-2 gap-3 w-full max-w-md mx-auto">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                        <span id="lbl-status-kcal-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                        <span id="lbl-status-kcal-value" class="text-base font-black tracking-tight text-slate-800">0 kcal</span>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                        <span id="lbl-status-prot-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                        <span id="lbl-status-prot-value" class="text-base font-black tracking-tight text-slate-800">0g</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ABA ADICIONAR ALIMENTO -->
+            <div id="tab-adicionar" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Montar Refeição</h2>
+                
+                <div class="w-full mb-4 relative">
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
+                    <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                    <div id="search-results" class="absolute w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
+                </div>
+
+                <div id="selected-food-card" class="w-full bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 hidden flex justify-between items-center">
+                    <div>
+                        <h4 id="lbl-food-name" class="font-bold text-slate-900">Nenhum</h4>
+                    </div>
+                    <span id="lbl-food-base-kcal" class="text-mini font-semibold text-slate-500">0 kcal / 100g</span>
+                </div>
+
+                <div class="w-full mb-4">
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
+                    <div class="flex items-center justify-center gap-4 mb-3">
+                        <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">-</button>
+                        <div class="text-center min-w-[90px]">
+                            <span id="txt-grams" class="text-3xl font-black text-slate-900 tracking-tight">100</span>
+                            <span class="text-micro font-bold text-slate-400 block uppercase tracking-wider">Gramas</span>
+                        </div>
+                        <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">+</button>
+                    </div>
+                </div>
+
+                <div class="w-full mb-4">
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Café</button>
+                        <button onclick="selectMoment('Almoço', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Almoço</button>
+                        <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Tarde</button>
+                        <button onclick="selectMoment('Jantar', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Jantar</button>
+                    </div>
+                </div>
+
+                <div id="temp-plate-section" class="w-full border-t border-slate-200 pt-4 mt-3 hidden">
+                    <div id="temp-plate-list" class="space-y-1.5 mb-3"></div>
+                </div>
+
+                <div class="w-full grid grid-cols-2 gap-2 mt-2">
+                    <button onclick="addFoodToPlate()" class="w-full p-3.5 bg-slate-800 text-white rounded-xl font-bold text-mini uppercase tracking-wide">Incluir</button>
+                    <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="w-full p-3.5 bg-emerald-600 text-white rounded-xl font-bold text-mini uppercase tracking-wide disabled:opacity-40">Salvar Tudo</button>
+                </div>
+            </div>
+
+            <!-- ABA CALENDÁRIO -->
+            <div id="tab-calendario" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-1">Consistência</h2>
+                <p id="lbl-calendar-month" class="text-mini font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
+                <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5 w-full bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
+            </div>
+
+            <!-- ABA HISTÓRICO -->
+            <div id="tab-historico" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
+                <div id="history-container" class="w-full space-y-4"></div>
+            </div>
+
+            <!-- ABA PESO (ATUALIZADA APENAS COM A BANDEIRA DE PROGRESSO INTELIGENTE) -->
+            <div id="tab-peso" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Pesos e Medidas</h2>
+                
+                <!-- CARD DINÂMICO DE STATUS COM ALERTA EM CORES -->
+                <div id="card-status-peso" class="w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 bg-slate-100 border-slate-300">
+                    <span id="lbl-peso-status-title" class="text-micro font-black uppercase tracking-wider text-slate-500">Progresso da Meta</span>
+                    <h3 id="lbl-peso-status-msg" class="text-lg font-black mt-0.5 text-slate-700">Insira seus pesos para calcular</h3>
+                </div>
+
+                <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Inicial (kg)</label>
+                            <input type="number" step="0.1" id="weight-start" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Peso (kg)</label>
+                            <input type="number" step="0.1" id="weight-target" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Atual (kg)</label>
+                        <input type="number" step="0.1" id="weight-current" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
+                    </div>
+                    <button onclick="updateWeights()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Pesos</button>
+                </div>
+            </div>
+
+            <!-- ABA CONFIGURAÇÕES -->
+            <div id="tab-config" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Configurações</h2>
+                <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Calorias (kcal)</label>
+                        <input type="number" id="cfg-target-kcal" class="w-full p-3 border border-slate-200 rounded-xl font-bold">
+                    </div>
+                    <button onclick="saveProfileSettings()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Metas</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- MENU INFERIOR: EXCLUSIVO PARA CELULAR (md:hidden) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-20 flex items-center justify-around z-50 pb-2">
+        <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Início</span>
+        </button>
+        <button onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Refeição</span>
+        </button>
+        <button onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Calendário</span>
+        </button>
+        <button onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="list" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Histórico</span>
+        </button>
+        <button onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="scale" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Corpo</span>
+        </button>
+    </div>
+
+    <script>
+        const alimentosBase = [
+            { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
+            { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
+            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
+            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13 },
+            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 }
+        ];
+
+        let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
+            Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [], pesoInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} },
+            Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [], pesoInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} }
+        };
+
+        let currentProfile = 'Gabriel';
+        let currentSelectedFood = null;
+        let currentGrams = 100;
+        let currentSelectedMoment = '';
+        let currentPlateItems = [];
+
+        function getBrasiliaDate() {
+            return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
+        }
+
+        function changeProfile(profileName) {
+            currentProfile = profileName;
+            document.getElementById('profile-selector-desktop').value = profileName;
+            document.getElementById('profile-selector-mobile').value = profileName;
+            refreshHomeWheel();
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'text-blue-500');
+                btn.classList.add('text-slate-400');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            
+            const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
+            if(activeDesktopNav) activeDesktopNav.classList.add('bg-blue-600', 'text-white');
+
+            const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
+            if(activeMobileNav) activeMobileNav.classList.add('text-blue-500');
+
+            if(tabId === 'inicio') refreshHomeWheel();
+            if(tabId === 'historico') renderTimelineHistory();
+            if(tabId === 'peso') renderWeightTab();
+            if(tabId === 'calendario') renderCalendar();
+            lucide.createIcons();
+        }
+
+        function refreshHomeWheel() {
+            document.getElementById('lbl-home-profile').innerText = currentProfile;
+            const profile = appData[currentProfile];
+            const hojeBR = getBrasiliaDate();
+            
+            const refeicoesDeHoje = (profile.historicoRefeicoes || []).filter(ref => {
+                const d = new Date(ref.timestamp);
+                return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth();
+            });
+
+            const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
+            const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
+
+            document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
+            document.getElementById('lbl-home-target').innerText = profile.metaKcal;
+
+            const circle = document.getElementById('wheel-progress-bar');
+            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
+            circle.style.strokeDashoffset = 263.89 - (263.89 * Math.min(percentual, 100)) / 100;
+
+            document.getElementById('lbl-status-kcal-value').innerText = `${profile.metaKcal - totalKcalHoje} kcal`;
+            document.getElementById('lbl-status-prot-value').innerText = `${profile.metaProtein - totalProtHoje}g`;
+        }
+
+        function filterFood() {
+            const input = document.getElementById('search-food').value.toLowerCase();
+            const resultsBox = document.getElementById('search-results');
+            resultsBox.innerHTML = '';
+            if(!input) { resultsBox.classList.add('hidden'); return; }
+
+            const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
+            filtered.forEach(food => {
+                const row = document.createElement('div');
+                row.className = "p-3 hover:bg-slate-100 cursor-pointer border-b border-slate-100";
+                row.innerText = food.nome;
+                row.onclick = () => {
+                    currentSelectedFood = food;
+                    document.getElementById('search-food').value = food.nome;
+                    resultsBox.classList.add('hidden');
+                    document.getElementById('lbl-food-name').innerText = food.nome;
+                    document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
+                    document.getElementById('selected-food-card').classList.remove('hidden');
+                };
+                resultsBox.appendChild(row);
+            });
+            resultsBox.classList.remove('hidden');
+        }
+
+        function changeGrams(amount) {
+            currentGrams = Math.max(10, currentGrams + amount);
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+
+        function selectMoment(moment, element) {
+            currentSelectedMoment = moment;
+            document.querySelectorAll('.moment-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white'));
+            element.classList.add('bg-blue-600', 'text-white');
+        }
+
+        function addFoodToPlate() {
+            if(!currentSelectedFood) return alert("Selecione um alimento!");
+            currentPlateItems.push({
+                nome: currentSelectedFood.nome,
+                gramas: currentGrams,
+                kcal: Math.round((currentSelectedFood.kcal100g * currentGrams) / 100),
+                prot: Math.round((currentSelectedFood.prot100g * currentGrams) / 100)
+            });
+            document.getElementById('btn-save-meal').disabled = false;
+            document.getElementById('temp-plate-section').classList.remove('hidden');
+            document.getElementById('temp-plate-list').innerHTML += `<div class="p-2 bg-slate-50 rounded border text-mini">${currentSelectedFood.nome} (${currentGrams}g)</div>`;
+        }
+
+        function saveFullMeal() {
+            if(!currentSelectedMoment) return alert("Selecione o momento!");
+            const totalKcal = currentPlateItems.reduce((acc, c) => acc + c.kcal, 0);
+            const totalProt = currentPlateItems.reduce((acc, c) => acc + c.prot, 0);
+            
+            appData[currentProfile].historicoRefeicoes.unshift({
+                id: Date.now(),
+                momento: currentSelectedMoment,
+                itens: currentPlateItems,
+                totalKcal: totalKcal,
+                totalProt: totalProt,
+                timestamp: getBrasiliaDate().getTime(),
+                dia: getBrasiliaDate().getDate(),
+                mes: getBrasiliaDate().getMonth() + 1,
+                ano: getBrasiliaDate().getFullYear()
+            });
+            
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            currentPlateItems = [];
+            document.getElementById('temp-plate-section').classList.add('hidden');
+            alert("Refeição cadastrada!");
+            switchTab('inicio');
+        }
+
+        function renderTimelineHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+            const list = appData[currentProfile].historicoRefeicoes || [];
+            if(list.length === 0) { container.innerHTML = '<p class="text-center text-slate-400">Nenhum registro.</p>'; return; }
+            
+            list.forEach(ref => {
+                container.innerHTML += `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between">
+                        <div>
+                            <span class="font-bold block text-mini">${ref.momento} - ${ref.totalKcal} kcal</span>
+                            <span class="text-slate-500 text-mini">${ref.dia}/${ref.mes}</span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        // --- ABA CONFIGURAÇÕES (TOTALMENTE INTEGRAL ORIGINAL) ---
+        function saveProfileSettings() {
+            const kcalVal = parseInt(document.getElementById('cfg-target-kcal').value);
+            if(kcalVal > 0) {
+                appData[currentProfile].metaKcal = kcalVal;
+                localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+                alert("Configurações salvas!");
+                switchTab('inicio');
+            }
+        }
+
+        // --- ABA CALENDÁRIO (TOTALMENTE INTEGRAL ORIGINAL) ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days-grid');
+            grid.innerHTML = '';
+            for(let i = 1; i <= 30; i++) {
+                grid.innerHTML += `<div class="p-2 bg-white border border-slate-200 text-center rounded text-mini font-bold">${i}</div>`;
+            }
+        }
+
+        // --- ABA PESOS E MEDIDAS COM CORES INTELIGENTES ---
+        function renderWeightTab() {
+            const profile = appData[currentProfile];
+            
+            document.getElementById('weight-start').value = profile.pesoInicial || '';
+            document.getElementById('weight-target').value = profile.pesoAlvo || '';
+            document.getElementById('weight-current').value = profile.pesoAtual || '';
+
+            const card = document.getElementById('card-status-peso');
+            const msg = document.getElementById('lbl-peso-status-msg');
+            const title = document.getElementById('lbl-peso-status-title');
+
+            const pInicial = parseFloat(profile.pesoInicial);
+            const pMeta = parseFloat(profile.pesoAlvo);
+            const pAtual = parseFloat(profile.pesoAtual);
+
+            // Reseta cores
+            card.className = "w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 ";
+
+            if (!pInicial || !pMeta || !pAtual) {
+                card.classList.add("bg-slate-100", "border-slate-300");
+                title.className = "text-micro font-black uppercase tracking-wider text-slate-500";
+                msg.className = "text-base font-black mt-0.5 text-slate-700";
+                msg.innerText = "Insira os 3 pesos para calcular o progresso!";
+                return;
+            }
+
+            const objetivoEmagrecer = pMeta < pInicial;
+
+            if (objetivoEmagrecer) {
+                if (pAtual <= pMeta) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = "Meta atingida! Você está no caminho certo! 🎉";
+                } else if (pAtual < pInicial) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = `Caminho certo! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg desde o início.`;
+                } else {
+                    // Erro/Desvio de meta no emagrecimento = Laranja/Vermelho (Amber no Tailwind)
+                    card.classList.add("bg-amber-50", "border-amber-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
+                    msg.className = "text-base font-black mt-0.5 text-amber-800";
+                    msg.innerText = `Atenção! Você ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg acima do peso inicial.`;
+                }
+            } else {
+                // Objetivo Ganhar Massa (pMeta > pInicial)
+                if (pAtual >= pMeta) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = "Meta atingida! Ótimo ganho de massa! 💪";
+                } else if (pAtual > pInicial) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = `Caminho certo! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg em direção ao alvo.`;
+                } else {
+                    // Erro/Desvio de meta no ganho de massa = Laranja/Vermelho (Amber no Tailwind)
+                    card.classList.add("bg-amber-50", "border-amber-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
+                    msg.className = "text-base font-black mt-0.5 text-amber-800";
+                    msg.innerText = `Atenção! Você perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg. Foco no superávit!`;
+                }
+            }
+        }
+
+        function updateWeights() {
+            appData[currentProfile].pesoInicial = parseFloat(document.getElementById('weight-start').value) || 0;
+            appData[currentProfile].pesoAlvo = parseFloat(document.getElementById('weight-target').value) || 0;
+            appData[currentProfile].pesoAtual = parseFloat(document.getElementById('weight-current').value) || 0;
+            
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            alert("Pesos atualizados com sucesso!");
+            renderWeightTab();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); switchTab('inicio'); });
+    </script>
+</body>
+</html>
