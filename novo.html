@@ -549,9 +549,14 @@
             if(badgeD) { badgeD.innerText = initials; badgeD.className = `w-8 h-8 rounded-full ${colorClass} text-white flex items-center justify-center font-bold text-xs shadow-inner`; }
 
             refreshAppInterface();
-        }
+    } // Esta chave fecha a função que contém o refreshAppInterface
 
-        function switchTab(tabId) {
+    // Esta linha abaixo é a que provavelmente estava causando o erro
+    // Remova o }); se ele não estiver fechando nada importante, 
+    // ou apenas certifique-se de que o código abaixo comece assim:
+
+    function switchTab(tabId) {
+        // ... (resto do seu código)
             // Lista oficial atualizada (sem a aba antiga de refeições)
             const tabs = ['inicio', 'pessoas', 'adicionar', 'calendario', 'historico', 'peso', 'config'];
             
