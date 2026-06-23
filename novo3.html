@@ -311,11 +311,19 @@
                     </div>
 
                     <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
-                        <div class="w-10 h-32 bg-slate-200 rounded-full relative overflow-hidden flex flex-col justify-end border border-slate-300/40 my-2">
-                            <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
-                        </div>
-                        <div>
+                        <span <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[150px] w-full">
+    <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+    
+    <div class="w-full h-6 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40 my-3">
+        <div id="weight-bar-fill" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 bar-progress rounded-full" style="width: 0%; transition: width 1.5s ease;"></div>
+    </div>
+    
+    <div class="flex flex-col items-center">
+        <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
+        <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
+    </div>
+</div>
+
                             <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
                             <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
                         </div>
@@ -503,56 +511,51 @@
             switchTab('inicio');
         }
 
-         function renderWeightTab() {
-                const prof = appData[currentProfile];
-                document.getElementById('weight-initial').value = prof.pesoInicial || '';
-                document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-                document.getElementById('weight-target').value = prof.pesoAlvo || '';
-                document.getElementById('weight-current').value = prof.pesoAtual || '';
-        
-                const fillBar = document.getElementById('weight-bar-fill');
-                const percentText = document.getElementById('weight-progress-percent');
-            
-            // Convertendo para números para evitar erro de concatenação de string
-                const pIni = parseFloat(prof.pesoInicial || 0);
-                const pAlvo = parseFloat(prof.pesoAlvo || 0);
-                const pAtual = parseFloat(prof.pesoAtual || 0);
-        
-            if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
-                // 1. Define se o objetivo é emagrecer (negativo) ou ganhar (positivo)
-                const objetivoEmagrecer = pAlvo < pIni;
-                
-                // 2. Cálculo da diferença total esperada (meta)
-                const totalMeta = Math.abs(pAlvo - pIni);
-                
-                // 3. Cálculo da diferença real atingida até agora
-                const totalReal = Math.abs(pAtual - pIni);
-                
-                // 4. Cálculo da porcentagem (regra de três)
-                let progresso = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-                
-                // 5. Lógica de correção (limita entre 0 e 100)
-                // Se você já passou da meta, ele fica em 100%. 
-                // Se o cálculo deu negativo por algum motivo, ele fica em 0%.
-                progresso = Math.max(0, Math.min(progresso, 100));
-        
-                // 6. Atualização visual
-                setTimeout(() => {
-                    // Se o seu HTML usar 'height' ou 'width', ajuste aqui
-                    fillBar.style.height = `${progresso}%`; 
-                    percentText.innerText = `${Math.round(progresso)}%`;
-                }, 150);
-            }
-        }
+        function renderWeightTab() {
+    const prof = appData[currentProfile];
+    document.getElementById('weight-initial').value = prof.pesoInicial || '';
+    document.getElementById('waist-initial').value = prof.cinturaInicial || '';
+    document.getElementById('weight-target').value = prof.pesoAlvo || '';
+    document.getElementById('weight-current').value = prof.pesoAtual || '';
 
-                const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
-                remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
-            } else {
-                fillBar.style.height = '0%';
-                percentText.innerText = '0%';
-                remainingText.innerText = 'Configure ao lado';
-            }
+    const fillBar = document.getElementById('weight-bar-fill');
+    const percentText = document.getElementById('weight-progress-percent');
+    const remainingText = document.getElementById('weight-remaining-lbl');
+
+    const pIni = parseFloat(prof.pesoInicial || 0);
+    const pAlvo = parseFloat(prof.pesoAlvo || 0);
+    const pAtual = parseFloat(prof.pesoAtual || 0);
+
+    if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
+        // Cálculo da distância total da meta e quanto já foi percorrido
+        const totalMeta = Math.abs(pAlvo - pIni);
+        const totalPercorrido = Math.abs(pAtual - pIni);
+        
+        // Regra de três: se totalMeta for 0, progresso é 0
+        let progresso = totalMeta > 0 ? (totalPercorrido / totalMeta) * 100 : 0;
+        progresso = Math.max(0, Math.min(progresso, 100)); // Trava entre 0 e 100%
+
+        setTimeout(() => {
+            fillBar.style.width = `${progresso}%`; // Agora altera a largura (horizontal)
+            percentText.innerText = `${Math.round(progresso)}%`;
+        }, 150);
+
+        // Lógica de texto: calcula quanto falta para a meta
+        const diferenca = (pAtual - pAlvo); 
+
+        if (Math.abs(diferenca) < 0.1) {
+            remainingText.innerText = "Meta atingida!";
+        } else {
+            // Se pAtual < pAlvo (emagrecimento) ou pAtual > pAlvo (ganho), mostra o saldo
+            remainingText.innerText = `Faltam ${Math.abs(diferenca).toFixed(1)} kg`;
         }
+    } else {
+        fillBar.style.width = '0%';
+        percentText.innerText = '0%';
+        remainingText.innerText = 'Defina as metas';
+    }
+}
+
 
         function saveWeightGoals() {
             const pIni = parseFloat(document.getElementById('weight-initial').value);
