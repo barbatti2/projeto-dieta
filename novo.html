@@ -290,30 +290,6 @@
                 </div>
             </section>
 
-            <section id="tab-refeicoes" class="space-y-6 hidden">
-                <div class="relative bg-gradient-to-r from-orange-600 via-amber-600 to-red-700 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-orange-700">
-                    <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
-                    <i data-lucide="sandwich" class="w-8 h-8 mx-auto mb-2 opacity-80"></i>
-                    <h2 class="text-xl md:text-2xl font-black tracking-tight uppercase">Diário Alimentar Histórico</h2>
-                    <p class="text-xs text-orange-100 font-medium tracking-wide mt-1">Acompanhe seu histórico de refeições sem poluição visual</p>
-                </div>
-
-                <div class="p-4 md:p-6 max-w-2xl mx-auto space-y-6">
-                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center gap-3 w-full">
-                        <span class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Período de Visualização</span>
-                        <div class="flex bg-slate-100 p-1 rounded-xl border w-full max-w-sm mx-auto">
-                            <button onclick="changeDiaryScope('dia')" id="diary-scope-dia" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900">Dia</button>
-                            <button onclick="changeDiaryScope('semana')" id="diary-scope-semana" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Semana</button>
-                            <button onclick="changeDiaryScope('mes')" id="diary-scope-mes" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Mês</button>
-                            <button onclick="changeDiaryScope('ano')" id="diary-scope-ano" class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900">Ano</button>
-                        </div>
-                    </div>
-
-                    <div id="diary-accordion-root" class="space-y-4 w-full">
-                        </div>
-                </div>
-            </section>
-
             <section id="tab-calendario" class="space-y-6 hidden">
                 <div class="relative bg-gradient-to-r from-purple-700 via-purple-600 to-fuchsia-800 py-10 px-6 text-center text-white shadow-lg overflow-hidden border-b border-purple-800">
                     <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none"></div>
@@ -1931,7 +1907,7 @@ function changeDiaryScope(scope) {
         });
     }
 
-    // --- INÍCIO DO CÓDIGO DO HISTÓRICO ---
+   // --- INÍCIO DO CÓDIGO DO HISTÓRICO ---
     let currentHistoryFilter = 'dia';
 
     function changeHistoryFilter(filter) {
@@ -1949,8 +1925,8 @@ function changeDiaryScope(scope) {
 
     function renderFullHistory() {
         const root = document.getElementById('history-list-root');
-        if (!root) return;
-        
+        if (!root) return; 
+
         if (!db[globalProfile] || !db[globalProfile].diario || db[globalProfile].diario.length === 0) {
             root.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado.</div>`;
             return;
@@ -1977,39 +1953,21 @@ function changeDiaryScope(scope) {
             return;
         }
 
-        const gruposPorData = {};
-        refeicoesFiltradas.forEach(ref => {
-            if (!gruposPorData[ref.data]) gruposPorData[ref.data] = [];
-            gruposPorData[ref.data].push(ref);
-        });
-
-        const datasOrdenadas = Object.keys(gruposPorData).sort((a, b) => new Date(b) - new Date(a));
-
-        datasOrdenadas.forEach(dataStr => {
-            const partes = dataStr.split('-');
-            const dataObjeto = new Date(partes[0], partes[1] - 1, partes[2]);
-            const dataFormatada = dataObjeto.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
-
-            let blocoDataHTML = `<div class="space-y-2 text-left"><div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mt-4 px-1">${dataFormatada}</div><div class="space-y-2">`;
-
-            gruposPorData[dataStr].forEach(ref => {
-                blocoDataHTML += `
-                    <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-0.5">
-                                <span class="font-black text-slate-900 text-sm truncate">${ref.nome}</span>
-                                <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-md">${ref.hora || '00:00'}</span>
-                            </div>
-                            <p class="text-xs text-slate-500 truncate">${ref.descricao || 'Sem descrição'}</p>
+        // Renderiza
+        refeicoesFiltradas.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(ref => {
+            root.innerHTML += `
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-0.5">
+                            <span class="font-black text-slate-900 text-sm truncate">${ref.nome || 'Refeição'}</span>
+                            <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-1.5 py-0.5 rounded-md">${ref.hora || '00:00'}</span>
                         </div>
-                        <button onclick="excluirRefeicaoDoHistorico('${ref.id}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </div>`;
-            });
-
-            blocoDataHTML += `</div></div>`;
-            root.innerHTML += blocoDataHTML;
+                        <p class="text-xs text-slate-500 truncate">${ref.descricao || 'Sem descrição'}</p>
+                    </div>
+                    <button onclick="excluirRefeicaoDoHistorico('${ref.id}')" class="w-9 h-9 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>`;
         });
 
         if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -2024,7 +1982,6 @@ function changeDiaryScope(scope) {
         }
     }
     // --- FIM DO CÓDIGO DO HISTÓRICO ---
-
     </script> 
 </body>
 </html>
