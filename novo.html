@@ -958,7 +958,6 @@ function changeDiaryScope(scope) {
 
             renderDiaryAccordionSection();
             renderInteractiveCalendar();
-            renderHistoryTimeline();
             lucide.createIcons();
         }
 
@@ -1009,41 +1008,6 @@ function changeDiaryScope(scope) {
             db[globalProfile].calendarColors[selectedCalendarDay] = colorName;
             saveToLocalStorage();
             refreshAppInterface();
-        }
-
-        function setHistoryFilter(mode) {
-            historyFilter = mode;
-            ['dia', 'semana', 'mes', 'ano'].forEach(m => {
-                const btn = document.getElementById(`f-btn-${m}`);
-                btn.className = (m === mode) ? 
-                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all bg-white shadow-sm text-slate-900" : 
-                    "px-4 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-900";
-            });
-            renderHistoryTimeline();
-        }
-
-        function renderHistoryTimeline() {
-            const container = document.getElementById('history-timeline-output');
-            container.innerHTML = '';
-            const meals = db[globalProfile].meals;
-
-            if(meals.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center w-full">Nenhum registro correspondente no histórico.</p>';
-                return;
-            }
-
-            meals.forEach(m => {
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full">
-                        <div class="text-center mx-auto">
-                            <span class="text-[10px] font-black text-slate-400 block uppercase mb-1">Filtro: ${historyFilter.toUpperCase()} (${m.data})</span>
-                            <span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span>
-                            <p class="text-xs text-slate-500 mt-1">${m.itensStr}</p>
-                        </div>
-                        <span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md flex-shrink-0">${m.calorias} kcal</span>
-                    </div>
-                `;
-            });
         }
 
         function saveBiometricsMetrics() {
@@ -1759,10 +1723,6 @@ function changeDiaryScope(scope) {
 
 
 
-    window.setHistoryFilter = function(mode) { historyFilter = mode; renderHistoryTimeline(); }
-
-
-
     function refreshAppInterface() {
 
         if (!db[globalProfile]) return;
@@ -1830,11 +1790,8 @@ function changeDiaryScope(scope) {
 
 
         renderDiaryAccordionSection();
-
         renderInteractiveCalendar();
-
-        renderHistoryTimeline();
-
+        
     }
 
 
@@ -1879,32 +1836,6 @@ function changeDiaryScope(scope) {
 
         }
 
-    }
-
-
-
-    function renderHistoryTimeline() {
-
-        const container = document.getElementById('history-timeline-output');
-
-        if(!container || !db[globalProfile]) return;
-
-        container.innerHTML = '';
-
-        const meals = db[globalProfile].meals || [];
-
-
-
-        if(meals.length === 0) {
-
-            container.innerHTML = '<p class="text-xs text-slate-400 italic p-4 text-center">Nenhum registro.</p>';
-
-            return;
-
-}
-        meals.forEach(m => {
-            container.innerHTML += `<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center text-center w-full"><div class="text-center mx-auto"><span class="text-[10px] font-black text-slate-400 block uppercase mb-1">(${m.data})</span><span class="text-xs font-bold text-slate-900 uppercase block">${m.momento}</span><p class="text-xs text-slate-500 mt-1">${m.itensStr}</p></div><span class="text-xs font-black bg-slate-100 text-slate-800 px-2.5 py-1 rounded-md">${m.calorias} kcal</span></div>`;
-        });
     }
 
    // --- INÍCIO DO CÓDIGO DO HISTÓRICO ---
