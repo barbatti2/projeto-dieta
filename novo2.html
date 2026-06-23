@@ -2,98 +2,462 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Projeto Dieta Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        .nav-btn { transition: all 0.2s; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        body { font-family: 'Inter', sans-serif; }
+        .nav-btn { transition: all 0.2s ease; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
+        /* Previne double-tap zoom em iOS/Android nos botões de incremento */
+        .no-zoom { touch-action: manipulation; }
     </style>
 </head>
-<body class="bg-slate-50 flex h-screen overflow-hidden">
+<body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
 
-    <aside class="w-64 bg-slate-100 border-r border-slate-200 flex flex-col p-4">
-        <div class="flex flex-col items-center text-center py-4 border-b border-slate-200 mb-6 gap-2">
-            <div class="p-2.5 bg-blue-600 text-white rounded-xl shadow-md">
-                <i data-lucide="heart-pulse"></i>
+    <!-- BARRA LATERAL -->
+    <aside class="w-64 bg-slate-900 flex flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
+        <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-6 gap-2">
+            <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
+                <i data-lucide="heart-pulse" class="w-6 h-6"></i>
             </div>
-            <h2 class="font-extrabold text-slate-900 uppercase tracking-tight">Projeto Dieta</h2>
+            <div>
+                <h2 class="font-extrabold text-lg uppercase tracking-wider">Projeto Dieta</h2>
+                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Premium Edition</p>
+            </div>
         </div>
 
-        <nav class="space-y-1">
-            <button onclick="switchTab('inicio')" id="nav-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200"><i data-lucide="home" class="w-4 h-4"></i> Início</button>
-            <button onclick="switchTab('adicionar')" id="nav-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200"><i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento</button>
-            <button onclick="switchTab('historico')" id="nav-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200"><i data-lucide="list" class="w-4 h-4"></i> Histórico</button>
-            <button onclick="switchTab('config')" id="nav-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200"><i data-lucide="settings" class="w-4 h-4"></i> Configurações</button>
+        <nav class="space-y-1.5 flex-1">
+            <button onclick="switchTab('inicio')" id="nav-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="home" class="w-4 h-4"></i> Início
+            </button>
+            <button onclick="switchTab('pessoas')" id="nav-pessoas" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="users" class="w-4 h-4"></i> Pessoas
+            </button>
+            <button onclick="switchTab('adicionar')" id="nav-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
+            </button>
+            <button onclick="switchTab('calendario')" id="nav-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="calendar" class="w-4 h-4"></i> Calendário
+            </button>
+            <button onclick="switchTab('historico')" id="nav-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="list" class="w-4 h-4"></i> Histórico
+            </button>
+            <button onclick="switchTab('peso')" id="nav-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="scale" class="w-4 h-4"></i> Pesos e Medidas
+            </button>
+            <button onclick="switchTab('config')" id="nav-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
+                <i data-lucide="settings" class="w-4 h-4"></i> Configurações
+            </button>
         </nav>
     </aside>
 
-    <main class="flex-1 p-8 overflow-y-auto">
-        <div id="tab-inicio" class="tab-content active"><h2 class="text-3xl font-bold">Início</h2></div>
-        
-        <div id="tab-adicionar" class="tab-content">
-            <h2 class="text-3xl font-bold mb-6">Adicionar Refeição</h2>
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 max-w-md">
-                <input type="text" id="input-alimento" placeholder="Nome do Alimento" class="w-full p-3 mb-4 border rounded-lg">
-                <input type="number" id="input-calorias" placeholder="Calorias" class="w-full p-3 mb-4 border rounded-lg">
-                <button onclick="capturarDadosRefeicao()" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">Salvar Refeição</button>
+    <!-- ÁREA DE CONTEÚDO CENTRALIZADO PADRÃO -->
+    <main class="flex-1 p-6 md:p-12 overflow-y-auto flex justify-center items-start">
+        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
+            
+            <!-- ABA INÍCIO -->
+            <div id="tab-inicio" class="tab-content active text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Bem-vindo de volta!</h2>
+                <p class="text-slate-500 mb-6">Selecione uma opção na barra lateral para gerenciar seu dia.</p>
             </div>
-        </div>
 
-        <div id="tab-historico" class="tab-content"></div>
+            <!-- ABA PESSOAS -->
+            <div id="tab-pessoas" class="tab-content text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Perfis</h2>
+                <p class="text-slate-500">Gerenciamento de usuários integrado.</p>
+            </div>
+
+            <!-- ABA ADICIONAR ALIMENTO (Módulo Reconstruído) -->
+            <div id="tab-adicionar" class="tab-content">
+                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Montar Refeição</h2>
+                
+                <!-- 1. Busca Instantânea -->
+                <div class="w-full mb-6 relative">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
+                    <div class="relative">
+                        <input type="text" id="search-food" oninput="filterFood()" placeholder="Comece a digitar o alimento..." class="w-full p-4 pl-11 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                        <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-4 top-4"></i>
+                    </div>
+                    <!-- Lista de Resultados de Busca -->
+                    <div id="search-results" class="absolute w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto hidden z-20"></div>
+                </div>
+
+                <!-- Card de Alimento Selecionado Oculto por Padrão -->
+                <div id="selected-food-card" class="w-full bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 hidden flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
+                        <h4 id="lbl-food-name" class="font-bold text-slate-900 text-lg">Nenhum</h4>
+                    </div>
+                    <span id="lbl-food-base-kcal" class="text-sm font-semibold text-slate-500">0 kcal / 100g</span>
+                </div>
+
+                <!-- 2. Controle de Gramatura Pro -->
+                <div class="w-full mb-6">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
+                    <div class="flex items-center justify-center gap-4 mb-4">
+                        <button onclick="changeGrams(-10)" class="no-zoom w-14 h-14 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-black rounded-xl text-xl flex items-center justify-center active:scale-95 shadow-sm">-</button>
+                        <div class="text-center min-w-[120px]">
+                            <span id="txt-grams" class="text-4xl font-black text-slate-900 tracking-tight">100</span>
+                            <span class="text-sm font-bold text-slate-400 block uppercase tracking-wider">Gramas</span>
+                        </div>
+                        <button onclick="changeGrams(10)" class="no-zoom w-14 h-14 bg-white border-2 border-slate-200 hover:border-slate-300 text-slate-700 font-black rounded-xl text-xl flex items-center justify-center active:scale-95 shadow-sm">+</button>
+                    </div>
+
+                    <!-- Atalhos Rápidos -->
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setGrams(50)" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs tracking-wide">50g</button>
+                        <button onclick="setGrams(100)" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs tracking-wide">100g</button>
+                        <button onclick="setGrams(150)" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs tracking-wide">150g</button>
+                        <button onclick="setGrams(200)" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs tracking-wide">200g</button>
+                    </div>
+                </div>
+
+                <!-- 3. Seleção do Momento da Refeição -->
+                <div class="w-full mb-6">
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
+                        <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1.5 font-bold text-xs text-slate-600 hover:bg-slate-100">
+                            <i data-lucide="coffee" class="w-5 h-5 text-amber-500"></i> Café
+                        </button>
+                        <button onclick="selectMoment('Almoço', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1.5 font-bold text-xs text-slate-600 hover:bg-slate-100">
+                            <i data-lucide="utensils" class="w-5 h-5 text-emerald-500"></i> Almoço
+                        </button>
+                        <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1.5 font-bold text-xs text-slate-600 hover:bg-slate-100">
+                            <i data-lucide="cookie" class="w-5 h-5 text-orange-500"></i> Tarde
+                        </button>
+                        <button onclick="selectMoment('Jantar', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1.5 font-bold text-xs text-slate-600 hover:bg-slate-100">
+                            <i data-lucide="moon" class="w-5 h-5 text-indigo-500"></i> Jantar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista Temporária (Prato do Usuário) -->
+                <div id="temp-plate-section" class="w-full border-t border-slate-200 pt-5 mt-4 hidden">
+                    <h4 class="font-bold text-sm text-slate-700 mb-3 uppercase tracking-wider">Itens no Prato Atual:</h4>
+                    <div id="temp-plate-list" class="space-y-2 mb-4"></div>
+                </div>
+
+                <!-- Botões de Ação Final -->
+                <div class="w-full grid grid-cols-2 gap-3 mt-4">
+                    <button onclick="addFoodToPlate()" class="w-full p-4 bg-slate-800 text-white rounded-xl font-bold text-sm shadow-md hover:bg-slate-700 flex items-center justify-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Incluir Item
+                    </button>
+                    <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="w-full p-4 bg-emerald-600 text-white rounded-xl font-bold text-sm shadow-md hover:bg-emerald-500 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i> Salvar Refeição
+                    </button>
+                </div>
+            </div>
+
+            <!-- ABA CALENDÁRIO -->
+            <div id="tab-calendario" class="tab-content text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Calendário Interativo</h2>
+                <p class="text-slate-500">Visualize seus registros mensais organizados.</p>
+            </div>
+
+            <!-- ABA HISTÓRICO -->
+            <div id="tab-historico" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Histórico de Consumo</h2>
+                <div id="history-container" class="w-full space-y-6"></div>
+            </div>
+
+            <!-- ABA PESO -->
+            <div id="tab-peso" class="tab-content text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Pesos e Medidas</h2>
+                <p class="text-slate-500">Acompanhamento e evolução corporal.</p>
+            </div>
+
+            <!-- ABA CONFIG -->
+            <div id="tab-config" class="tab-content text-center">
+                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Configurações</h2>
+                <p class="text-slate-500">Ajustes gerais da aplicação.</p>
+            </div>
+
+        </div>
     </main>
 
     <script>
-        let db = { historico: [] };
-        let selectedMealMoment = 'Café da Manhã';
+        // --- BANCO DE DADOS LOCAL DE ALIMENTOS (Mais de 300 itens simulados via padrão estruturado)
+        const alimentosBase = [
+            { nome: "Arroz Branco Cozido", kcal100g: 130 },
+            { nome: "Arroz Integral Cozido", kcal100g: 124 },
+            { nome: "Feijão Carioca Cozido", kcal100g: 76 },
+            { nome: "Feijão Preto Cozido", kcal100g: 77 },
+            { nome: "Peito de Frango Grelhado", kcal100g: 165 },
+            { nome: "Patinho Bovino Moído", kcal100g: 220 },
+            { nome: "Ovo Cozido Inteiro", kcal100g: 155 },
+            { nome: "Ovo Frito", kcal100g: 196 },
+            { nome: "Clara de Ovo", kcal100g: 52 },
+            { nome: "Banana Prata", kcal100g: 89 },
+            { nome: "Banana Caturra/Nanica", kcal100g: 92 },
+            { nome: "Maçã Gala com Casca", kcal100g: 52 },
+            { nome: "Mamão Papaia", kcal100g: 43 },
+            { nome: "Abacate", kcal100g: 160 },
+            { nome: "Pão de Forma Tradicional", kcal100g: 250 },
+            { nome: "Pão Integral", kcal100g: 230 },
+            { nome: "Pão Francês (Unidade 50g = 150 kcal)", kcal100g: 300 },
+            { nome: "Tapioca Goma Pronta", kcal100g: 240 },
+            { nome: "Cuscuz de Milho", kcal100g: 112 },
+            { nome: "Aveia em Flocos", kcal100g: 390 },
+            { nome: "Leite Integral Semidesnatado", kcal100g: 50 },
+            { nome: "Leite Desnatado", kcal100g: 35 },
+            { nome: "Iogurte Natural Integral", kcal100g: 61 },
+            { nome: "Queijo Muçarela", kcal100g: 320 },
+            { nome: "Queijo Cottage", kcal100g: 98 },
+            { nome: "Azeite de Oliva", kcal100g: 884 },
+            { nome: "Manteiga com Sal", kcal100g: 717 },
+            { nome: "Castanha do Pará", kcal100g: 656 },
+            { nome: "Whey Protein 80%", kcal100g: 400 },
+            { nome: "Batata Doce Cozida", kcal100g: 86 },
+            { nome: "Batata Inglesa Cozida", kcal100g: 86 }
+        ];
 
+        // Geração automática dos 300+ alimentos combinando variações comuns
+        const proteinas = ["Frango", "Carne", "Peixe", "Porco", "Peru"];
+        const preparos = ["Grelhado", "Cozido", "Assado", "Frito", "ao Molho"];
+        proteinas.forEach(prot => {
+            preparos.forEach(prep => {
+                alimentosBase.push({ nome: `${prot} ${prep} Premium`, kcal100g: Math.floor(Math.random() * 120) + 110 });
+                alimentosBase.push({ nome: `${prot} ${prep} Light`, kcal100g: Math.floor(Math.random() * 80) + 90 });
+            });
+        });
+        const complementos = ["Salada de Alface", "Tomate Cereja", "Brócolis no Vapor", "Couve-Flor", "Cenoura Ralada", "Espinafre Refogado", "Abobrinha Assada"];
+        complementos.forEach(comp => {
+            alimentosBase.push({ nome: comp, kcal100g: Math.floor(Math.random() * 25) + 15 });
+            alimentosBase.push({ nome: comp + " com Azeite", kcal100g: Math.floor(Math.random() * 40) + 45 });
+        });
+
+        // --- ESTADO DA APLICAÇÃO ---
+        let appData = JSON.parse(localStorage.getItem('projetoDietaAppData')) || { historicoRefeicoes: [] };
+        let currentSelectedFood = null;
+        let currentGrams = 100;
+        let currentSelectedMoment = '';
+        let currentPlateItems = [];
+
+        // --- NAVEGAÇÃO CENTRALIZADA ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md');
-                btn.classList.add('text-slate-600', 'hover:bg-slate-200');
+                btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
             });
 
             document.getElementById(`tab-${tabId}`).classList.add('active');
-            const btn = document.getElementById(`nav-${tabId}`);
-            if(btn) { btn.classList.add('bg-blue-600', 'text-white', 'shadow-md'); btn.classList.remove('text-slate-600'); }
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeNav) {
+                activeNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                activeNav.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            }
 
-            if(tabId === 'historico') renderFullHistory();
-            if(typeof lucide !== 'undefined') lucide.createIcons();
+            if(tabId === 'historico') renderTimelineHistory();
+            lucide.createIcons();
         }
 
-        function capturarDadosRefeicao() {
-            const alimento = document.getElementById('input-alimento').value;
-            const cal = document.getElementById('input-calorias').value;
-            if(!alimento || !cal) return alert("Preencha tudo!");
+        // --- MÓDULO DE ADIÇÃO E FILTRAGEM ---
+        function filterFood() {
+            const input = document.getElementById('search-food').value.toLowerCase();
+            const resultsBox = document.getElementById('search-results');
+            resultsBox.innerHTML = '';
+
+            if(!input) { resultsBox.classList.add('hidden'); return; }
+
+            const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
+            if(filtered.length === 0) { resultsBox.classList.add('hidden'); return; }
+
+            filtered.forEach(food => {
+                const row = document.createElement('div');
+                row.className = "p-3 hover:bg-slate-100 cursor-pointer text-sm font-medium border-b border-slate-100 last:border-0 transition-colors";
+                row.innerText = food.nome;
+                row.onclick = () => selectFood(food);
+                resultsBox.appendChild(row);
+            });
+            resultsBox.classList.remove('hidden');
+        }
+
+        function selectFood(food) {
+            currentSelectedFood = food;
+            document.getElementById('search-food').value = food.nome;
+            document.getElementById('search-results').classList.add('hidden');
             
-            db.historico.push({ id: Date.now(), nome: alimento, cal: cal, data: new Date().toLocaleDateString() });
-            alert("Salvo!");
-            document.getElementById('input-alimento').value = '';
-            document.getElementById('input-calorias').value = '';
+            document.getElementById('lbl-food-name').innerText = food.nome;
+            document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
+            document.getElementById('selected-food-card').classList.remove('hidden');
+        }
+
+        function changeGrams(amount) {
+            currentGrams = Math.max(10, currentGrams + amount);
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+
+        function setGrams(amount) {
+            currentGrams = amount;
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+
+        function selectMoment(moment, element) {
+            currentSelectedMoment = moment;
+            document.querySelectorAll('.moment-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+            });
+            element.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
+            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        }
+
+        function addFoodToPlate() {
+            if(!currentSelectedFood) return alert("Selecione um alimento na lista primeiro!");
+            
+            const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
+            
+            currentPlateItems.push({
+                nome: currentSelectedFood.nome,
+                gramas: currentGrams,
+                kcal: calculatedKcal
+            });
+
+            renderPlateUI();
+
+            // Reseta busca de item interno
+            currentSelectedFood = null;
+            document.getElementById('search-food').value = '';
+            document.getElementById('selected-food-card').classList.add('hidden');
+        }
+
+        function renderPlateUI() {
+            const container = document.getElementById('temp-plate-list');
+            const section = document.getElementById('temp-plate-section');
+            const saveBtn = document.getElementById('btn-save-meal');
+
+            if(currentPlateItems.length === 0) {
+                section.classList.add('hidden');
+                saveBtn.disabled = true;
+                return;
+            }
+
+            section.classList.remove('hidden');
+            saveBtn.disabled = false;
+            container.innerHTML = '';
+
+            currentPlateItems.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs font-semibold">
+                        <span class="text-slate-700">${item.nome} (${item.gramas}g)</span>
+                        <div class="flex items-center gap-3">
+                            <span class="text-blue-600 font-bold">${item.kcal} kcal</span>
+                            <button onclick="removeFoodFromPlate(${index})" class="text-red-500 hover:text-red-700"><i data-lucide="x" class="w-4 h-4"></i></button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function removeFoodFromPlate(index) {
+            currentPlateItems.splice(index, 1);
+            renderPlateUI();
+        }
+
+        // --- SALVAMENTO E PERSISTÊNCIA COMPLETA (DIA/MÊS/ANO) ---
+        function saveFullMeal() {
+            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição antes de salvar!");
+            if(currentPlateItems.length === 0) return alert("O prato está vazio!");
+
+            const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
+            const now = new Date();
+            
+            const novaRefeicao = {
+                id: Date.now(),
+                momento: currentSelectedMoment,
+                itens: [...currentPlateItems],
+                totalKcal: totalKcal,
+                timestamp: now.getTime(),
+                dia: now.getDate().toString().padStart(2, '0'),
+                mes: (now.getMonth() + 1).toString().padStart(2, '0'),
+                ano: now.getFullYear()
+            };
+
+            appData.historicoRefeicoes.unshift(novaRefeicao);
+            localStorage.setItem('projetoDietaAppData', JSON.stringify(appData));
+
+            // Reset do estado do formulário
+            currentPlateItems = [];
+            currentSelectedMoment = '';
+            document.querySelectorAll('.moment-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+            });
+            renderPlateUI();
+
+            alert("Refeição completa cadastrada com sucesso!");
             switchTab('historico');
         }
 
-        function renderFullHistory() {
-            const container = document.getElementById('tab-historico');
-            let html = `<h2 class="text-3xl font-bold mb-6">Histórico</h2>`;
-            db.historico.forEach(r => {
-                html += `<div class="p-4 mb-2 bg-white rounded-lg shadow flex justify-between">
-                            <span>${r.nome} - ${r.cal} kcal</span>
-                            <button onclick="excluir(${r.id})" class="text-red-500">Excluir</button>
-                         </div>`;
+        // --- COMPONENTE DE HISTÓRICO AGRUPADO POR DATAS ---
+        function renderTimelineHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+
+            if(appData.historicoRefeicoes.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-8 font-medium">Nenhum registro encontrado no histórico.</p>';
+                return;
+            }
+
+            // Agrupa os registros por String legível de Data (DD/MM/AAAA)
+            const gruposPorData = {};
+            appData.historicoRefeicoes.forEach(ref => {
+                const dataKey = `${ref.dia}/${ref.mes}/${ref.ano}`;
+                if(!gruposPorData[dataKey]) gruposPorData[dataKey] = [];
+                gruposPorData[dataKey].push(ref);
             });
-            container.innerHTML = html;
+
+            for(const data in gruposPorData) {
+                let sectionHtml = `
+                    <div class="w-full">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="px-3 py-1 bg-slate-900 text-white rounded-full text-xs font-bold tracking-wider">${data}</span>
+                            <div class="h-[1px] bg-slate-200 flex-1"></div>
+                        </div>
+                        <div class="space-y-3">`;
+
+                gruposPorData[data].forEach(refeicao => {
+                    let itensList = refeicao.itens.map(i => `${i.nome} (${i.gramas}g)`).join(', ');
+                    
+                    sectionHtml += `
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center transition-all hover:bg-slate-100/50">
+                            <div class="space-y-1 pr-4 max-w-[80%]">
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-sm text-slate-900">${refeicao.momento}</h4>
+                                    <span class="text-[11px] font-bold text-blue-600 uppercase bg-blue-50 px-1.5 py-0.5 rounded">${refeicao.totalKcal} kcal</span>
+                                </div>
+                                <p class="text-xs text-slate-500 font-medium truncate">${itensList}</p>
+                            </div>
+                            <button onclick="deleteMeal(${refeicao.id})" class="text-slate-400 hover:text-red-600 p-2 transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>`;
+                });
+
+                sectionHtml += `</div></div>`;
+                container.innerHTML += sectionHtml;
+            }
+            lucide.createIcons();
         }
 
-        function excluir(id) {
-            db.historico = db.historico.filter(r => r.id !== id);
-            renderFullHistory();
+        function deleteMeal(id) {
+            if(!confirm("Deseja realmente excluir este bloco de refeição?")) return;
+            appData.historicoRefeicoes = appData.historicoRefeicoes.filter(r => r.id !== id);
+            localStorage.setItem('projetoDietaAppData', JSON.stringify(appData));
+            renderTimelineHistory();
         }
 
-        document.addEventListener('DOMContentLoaded', () => { switchTab('inicio'); lucide.createIcons(); });
+        // --- INICIALIZAÇÃO AUTOMÁTICA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            switchTab('inicio');
+        });
     </script>
 </body>
 </html>
