@@ -18,6 +18,7 @@
 </head>
 <body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
 
+    <!-- BARRA LATERAL -->
     <aside class="w-64 bg-slate-900 flex flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
         <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-6 gap-2">
             <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
@@ -54,19 +55,23 @@
         </nav>
     </aside>
 
+    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
     <main class="flex-1 p-6 md:p-12 overflow-y-auto flex justify-center items-start">
         <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
             
+            <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Bem-vindo de volta!</h2>
                 <p class="text-slate-500 mb-6">Selecione uma opção na barra lateral para gerenciar seu dia.</p>
             </div>
 
+            <!-- ABA PESSOAS -->
             <div id="tab-pessoas" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Perfis</h2>
                 <p class="text-slate-500">Gerenciamento de usuários integrado.</p>
             </div>
 
+            <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Montar Refeição</h2>
                 
@@ -139,14 +144,17 @@
                 </div>
             </div>
 
+            <!-- ABA CALENDÁRIO -->
             <div id="tab-calendario" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Calendário Interativo</h2>
                 <p class="text-slate-500">Visualize seus registros mensais organizados.</p>
             </div>
 
+            <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-4">Histórico de Consumo</h2>
                 
+                <!-- Seletores de Período do Histórico -->
                 <div class="w-full grid grid-cols-4 gap-2 mb-6 border-b border-slate-100 pb-4">
                     <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2 bg-blue-600 text-white font-bold rounded-xl text-xs tracking-wide shadow-sm">Dia</button>
                     <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-2 bg-slate-100 text-slate-600 font-bold rounded-xl text-xs tracking-wide">Semana</button>
@@ -157,6 +165,7 @@
                 <div id="history-container" class="w-full space-y-6"></div>
             </div>
 
+            <!-- ABA PESSOAS, CONFIG, PESO -->
             <div id="tab-peso" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Pesos e Medidas</h2>
                 <p class="text-slate-500">Acompanhamento e evolução corporal.</p>
@@ -200,7 +209,7 @@
         let currentGrams = 100;
         let currentSelectedMoment = '';
         let currentPlateItems = [];
-        let currentHistoryFilter = 'dia'; // Filtro ativo padrão ('dia', 'semana', 'mes', 'ano')
+        let currentHistoryFilter = 'dia';
 
         // --- NAVEGAÇÃO CENTRALIZADA ---
         function switchTab(tabId) {
@@ -353,7 +362,7 @@
             switchTab('historico');
         }
 
-        // --- MÓDULO HISTÓRICO COM ABAS TEMPORAIS E FILTRAGEM ---
+        // --- MÓDULO HISTÓRICO COM ABAS TEMPORAIS ---
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
             
@@ -363,7 +372,7 @@
             });
 
             const activeBtn = document.getElementById(`filter-${filtro}`);
-            if(activeNav) {
+            if(activeBtn) {
                 activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
                 activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
             }
@@ -377,7 +386,6 @@
 
             const agora = new Date();
             
-            // Filtra os itens com base no tempo ativo selecionado
             const refeicoesFiltradas = appData.historicoRefeicoes.filter(ref => {
                 const dataRef = new Date(ref.timestamp);
                 
@@ -403,7 +411,6 @@
                 return;
             }
 
-            // Agrupamento por Data Dinâmica na Exibição
             const gruposPorData = {};
             refeicoesFiltradas.forEach(ref => {
                 const dataKey = `${ref.dia}/${ref.mes}/${ref.ano}`;
@@ -424,7 +431,7 @@
                     let itensList = refeicao.itens.map(i => `${i.nome} (${i.gramas}g)`).join(', ');
                     
                     sectionHtml += `
-                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center transition-all">
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center">
                             <div class="space-y-1 pr-4 max-w-[80%]">
                                 <div class="flex items-center gap-2">
                                     <h4 class="font-bold text-sm text-slate-900">${refeicao.momento}</h4>
