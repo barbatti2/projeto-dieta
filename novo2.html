@@ -22,6 +22,7 @@
 </head>
 <body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
 
+    <!-- BARRA LATERAL -->
     <aside class="w-64 bg-slate-900 flex flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
         <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
             <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
@@ -33,6 +34,7 @@
             </div>
         </div>
 
+        <!-- SELETOR DE PERFIL -->
         <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
             <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
             <select id="profile-selector" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer">
@@ -63,13 +65,16 @@
         </nav>
     </aside>
 
+    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
     <main class="flex-1 p-6 md:p-12 overflow-y-auto flex justify-center items-start">
         <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
             
+            <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">Resumo Diário</h2>
                 <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
                 
+                <!-- Roda Gráfica SVG -->
                 <div class="relative flex items-center justify-center w-56 h-56 mx-auto mb-8">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
@@ -82,25 +87,29 @@
                     </div>
                 </div>
 
+                <!-- CARDS COMPLEMENTARES INFERIORES (Padrão de Cor Fixo Premium) -->
                 <div class="grid grid-cols-2 gap-4 w-full max-w-md mx-auto">
-                    <div id="card-calorias-status" class="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div id="icon-container-kcal" class="p-2 rounded-lg text-white">
+                    <!-- Status de Calorias Faltantes/Excedidas (Padrão Azul) -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-2 rounded-lg text-white bg-blue-600 shadow-sm shadow-blue-600/20">
                             <i data-lucide="zap" class="w-5 h-5"></i>
                         </div>
-                        <span id="lbl-status-kcal-text" class="text-xs font-bold uppercase tracking-wide mt-1">Carregando...</span>
-                        <span id="lbl-status-kcal-value" class="text-lg font-black tracking-tight">0 kcal</span>
+                        <span id="lbl-status-kcal-text" class="text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
+                        <span id="lbl-status-kcal-value" class="text-lg font-black tracking-tight text-slate-800">0 kcal</span>
                     </div>
 
-                    <div id="card-proteinas-status" class="bg-slate-50 border border-slate-200/60 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div id="icon-container-prot" class="p-2 rounded-lg text-white">
+                    <!-- Status de Proteínas Faltantes/Excedidas (Padrão Laranja/Bronze) -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-2 rounded-lg text-white bg-orange-500 shadow-sm shadow-orange-500/20">
                             <i data-lucide="flame" class="w-5 h-5"></i>
                         </div>
-                        <span id="lbl-status-prot-text" class="text-xs font-bold uppercase tracking-wide mt-1">Carregando...</span>
-                        <span id="lbl-status-prot-value" class="text-lg font-black tracking-tight">0g</span>
+                        <span id="lbl-status-prot-text" class="text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
+                        <span id="lbl-status-prot-value" class="text-lg font-black tracking-tight text-slate-800">0g</span>
                     </div>
                 </div>
             </div>
 
+            <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Montar Refeição</h2>
                 
@@ -173,11 +182,13 @@
                 </div>
             </div>
 
+            <!-- ABA CALENDÁRIO -->
             <div id="tab-calendario" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Calendário Interativo</h2>
                 <p class="text-slate-500">Visualize seus registros organizados temporalmente.</p>
             </div>
 
+            <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-4">Histórico de Consumo</h2>
                 
@@ -191,11 +202,13 @@
                 <div id="history-container" class="w-full space-y-6"></div>
             </div>
 
+            <!-- ABA PESO -->
             <div id="tab-peso" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Pesos e Medidas</h2>
                 <p class="text-slate-500">Acompanhamento e evolução corporal.</p>
             </div>
 
+            <!-- ABA CONFIGURAÇÕES -->
             <div id="tab-config" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-1">Configurações de Metas</h2>
                 <p class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center mb-6">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
@@ -315,56 +328,38 @@
                 if (percentual <= 100) {
                     circle.setAttribute('stroke', '#10b981'); // Verde
                 } else if (percentual > 100 && percentual <= 120) {
-                    circle.setAttribute('stroke', '#fb923c'); // Laranja Mais Claro (Premium)
+                    circle.setAttribute('stroke', '#fb923c'); // Laranja Suave Premium
                 } else {
                     circle.setAttribute('stroke', '#ef4444'); // Vermelho
                 }
             }, 100);
 
-            // LOGICA INTELEGENTE DO CARD DE CALORIAS
+            // LOGICA DOS NUMEROS DO CARD DE CALORIAS (Cor Padrão Fixa)
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
-            const cardKcal = document.getElementById('card-calorias-status');
-            const iconKcal = document.getElementById('icon-container-kcal');
             const labelKcalTxt = document.getElementById('lbl-status-kcal-text');
             const labelKcalVal = document.getElementById('lbl-status-kcal-value');
 
             if (kcalFaltaOuPassa >= 0) {
                 labelKcalTxt.innerText = "Faltam";
-                labelKcalTxt.className = "text-xs font-bold uppercase tracking-wide mt-1 text-emerald-600";
                 labelKcalVal.innerText = `${kcalFaltaOuPassa} kcal`;
-                labelKcalVal.className = "text-lg font-black tracking-tight text-emerald-700";
-                iconKcal.className = "p-2 rounded-lg text-white bg-emerald-500 shadow-sm";
-                cardKcal.className = "bg-emerald-50/40 border border-emerald-100 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1";
             } else {
-                labelKcalTxt.innerText = "Passou";
-                labelKcalTxt.className = "text-xs font-bold uppercase tracking-wide mt-1 text-red-600";
-                labelKcalVal.innerText = `${Math.abs(kcalFaltaOuPassa)} kcal`;
-                labelKcalVal.className = "text-lg font-black tracking-tight text-red-700";
-                iconKcal.className = "p-2 rounded-lg text-white bg-red-500 shadow-sm";
-                cardKcal.className = "bg-red-50/40 border border-red-100 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1";
+                labelKcalTxt.innerText = "Excedeu";
+                // Exibe o número negativo (ex: -250 kcal)
+                labelKcalVal.innerText = `${kcalFaltaOuPassa} kcal`;
             }
 
-            // LOGICA INTELEGENTE DO CARD DE PROTEINAS
+            // LOGICA DOS NUMEROS DO CARD DE PROTEINAS (Cor Padrão Fixa)
             const protFaltaOuPassa = profile.metaProtein - totalProtHoje;
-            const cardProt = document.getElementById('card-proteinas-status');
-            const iconProt = document.getElementById('icon-container-prot');
             const labelProtTxt = document.getElementById('lbl-status-prot-text');
             const labelProtVal = document.getElementById('lbl-status-prot-value');
 
             if (protFaltaOuPassa >= 0) {
                 labelProtTxt.innerText = "Faltam";
-                labelProtTxt.className = "text-xs font-bold uppercase tracking-wide mt-1 text-emerald-600";
                 labelProtVal.innerText = `${protFaltaOuPassa}g`;
-                labelProtVal.className = "text-lg font-black tracking-tight text-emerald-700";
-                iconProt.className = "p-2 rounded-lg text-white bg-emerald-500 shadow-sm";
-                cardProt.className = "bg-emerald-50/40 border border-emerald-100 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1";
             } else {
-                labelProtTxt.innerText = "Passou";
-                labelProtTxt.className = "text-xs font-bold uppercase tracking-wide mt-1 text-red-600";
-                labelProtVal.innerText = `${Math.abs(protFaltaOuPassa)}g`;
-                labelProtVal.className = "text-lg font-black tracking-tight text-red-700";
-                iconProt.className = "p-2 rounded-lg text-white bg-red-500 shadow-sm";
-                cardProt.className = "bg-red-50/40 border border-red-100 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1";
+                labelProtTxt.innerText = "Excedeu";
+                // Exibe o número negativo (ex: -15g)
+                labelProtVal.innerText = `${protFaltaOuPassa}g`;
             }
             lucide.createIcons();
         }
@@ -491,7 +486,6 @@
             renderPlateUI();
         }
 
-        // --- SALVAR REFEIÇÃO COMPLETA ---
         function saveFullMeal() {
             if(!currentSelectedMoment) return alert("Selecione o tipo da refeição antes de salvar!");
             if(currentPlateItems.length === 0) return alert("O prato está vazio!");
@@ -527,7 +521,6 @@
             switchTab('historico');
         }
 
-        // --- HISTÓRICO DE CONSUMO ---
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
             
@@ -625,7 +618,6 @@
             renderTimelineHistory();
         }
 
-        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             switchTab('inicio');
         });
