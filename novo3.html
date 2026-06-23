@@ -518,16 +518,18 @@
     const pAtual = parseFloat(prof.pesoAtual || 0);
 
     if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
-        const totalMeta = pAlvo - pIni;
-        const realAtingido = pAtual - pIni;
-        let progresso = totalMeta !== 0 ? (realAtingido / totalMeta) * 100 : 0;
+        // A lógica correta para perda de peso:
+        const totalPerdaNecessaria = pIni - pAlvo; // Quanto precisa perder no total
+        const jaPerdido = pIni - pAtual;           // Quanto já perdeu
         
-        // Define as cores baseadas no progresso
+        // Se a meta é perder peso, o progresso é (o que já perdeu / total necessário)
+        let progresso = totalPerdaNecessaria !== 0 ? (jaPerdido / totalPerdaNecessaria) * 100 : 0;
+        
         let cor;
         if (progresso < 0) {
-            cor = '#ef4444'; // Vermelho (Regrediu/Negativo)
+            cor = '#ef4444'; // Vermelho (ganhou peso em relação ao inicial)
         } else if (progresso >= 100) {
-            cor = '#10b981'; // Verde (Atingiu ou passou de 100%)
+            cor = '#10b981'; // Verde (Meta atingida)
         } else {
             cor = '#2563eb'; // Azul (Progresso normal)
         }
@@ -535,29 +537,24 @@
         const progressoVisual = Math.max(0, Math.min(progresso, 100));
 
         setTimeout(() => {
-            // Aplica a largura
             fillBar.style.width = `${progressoVisual}%`;
-            
-            // APLICA A COR NA BARRA (Isto garante que a barra mude de cor)
             fillBar.style.backgroundColor = cor; 
-            
-            // Aplica a cor no texto
             percentText.innerText = `${Math.round(progresso)}%`;
             percentText.style.color = cor;
         }, 150);
 
-        // Lógica de texto
         const falta = pAtual - pAlvo;
         if (Math.abs(falta) < 0.1) {
             remainingText.innerText = "Meta atingida!";
         } else {
+            // Se falta > 0, significa que o peso atual é maior que a meta (ainda falta perder)
             remainingText.innerText = falta > 0 
-                ? `Passou da meta em ${falta.toFixed(1)} kg` 
-                : `Faltam ${Math.abs(falta).toFixed(1)} kg`;
+                ? `Faltam ${falta.toFixed(1)} kg` 
+                : `Passou da meta em ${Math.abs(falta).toFixed(1)} kg`;
         }
     } else {
         fillBar.style.width = '0%';
-        fillBar.style.backgroundColor = '#2563eb'; // Cor padrão[span_5](start_span)[span_5](end_span)
+        fillBar.style.backgroundColor = '#2563eb';
         percentText.innerText = '';
         remainingText.innerText = '';
     }
