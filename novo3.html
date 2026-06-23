@@ -874,10 +874,34 @@
             renderTimelineHistory();
         }
 
-        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
+        function saveToLocalStorage() { 
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
+        }
 
+        // SUBSTITUA O BLOCO ANTIGO POR ESTE AQUI:
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('inicio');
+            // 1. Esconde todas as abas e reseta botões
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+                btn.classList.add('text-slate-400');
+            });
+
+            // 2. Ativa especificamente a aba de início
+            document.getElementById('tab-inicio').classList.add('active');
+            
+            // 3. Destaca o botão de início (Desktop e Mobile)
+            const navD = document.getElementById('nav-desktop-inicio');
+            if(navD) {
+                navD.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+                navD.classList.remove('text-slate-400');
+            }
+            const navM = document.getElementById('nav-mobile-inicio');
+            if(navM) navM.classList.add('text-blue-500');
+
+            // 4. Inicializa ícones e carrega dados
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            refreshHomeWheel();
         });
     </script>
 </body>
