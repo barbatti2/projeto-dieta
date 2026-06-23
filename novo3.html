@@ -527,32 +527,41 @@
     const pAtual = parseFloat(prof.pesoAtual || 0);
 
     if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
-        // Cálculo da distância total da meta e quanto já foi percorrido
-        const totalMeta = Math.abs(pAlvo - pIni);
-        const totalPercorrido = Math.abs(pAtual - pIni);
+        // Define se o objetivo é emagrecer (meta < inicial) ou ganhar (meta > inicial)
+        const metaEmagrecer = pAlvo < pIni;
+        const totalMeta = pAlvo - pIni; // Ex: 65 - 70 = -5 (meta de perda de 5kg)
+        const realAtingido = pAtual - pIni; // Ex: 72 - 70 = +2 (ganhou 2kg)
+
+        // Calcula a % em relação à meta
+        // Se a meta é emagrecer e você ganhou peso, a % será negativa
+        let progresso = totalMeta !== 0 ? (realAtingido / totalMeta) * 100 : 0;
         
-        // Regra de três: se totalMeta for 0, progresso é 0
-        let progresso = totalMeta > 0 ? (totalPercorrido / totalMeta) * 100 : 0;
-        progresso = Math.max(0, Math.min(progresso, 100)); // Trava entre 0 e 100%
+        // Se a meta é ganhar peso e você emagreceu, a % será negativa
+        if (!metaEmagrecer && realAtingido < 0) progresso = (realAtingido / totalMeta) * 100;
+
+        // Limita a exibição visual para a barra entre 0% e 100%
+        // Mas o texto mostrará o valor real (ex: -40%)
+        const progressoVisual = Math.max(0, Math.min(progresso, 100));
 
         setTimeout(() => {
-            fillBar.style.width = `${progresso}%`; // Agora altera a largura (horizontal)
+            fillBar.style.width = `${progressoVisual}%`; 
+            // Mostra o valor calculado, permitindo valores negativos
             percentText.innerText = `${Math.round(progresso)}%`;
         }, 150);
 
-        // Lógica de texto: calcula quanto falta para a meta
-        const diferenca = (pAtual - pAlvo); 
-
-        if (Math.abs(diferenca) < 0.1) {
+        // Texto informativo
+        const falta = pAtual - pAlvo;
+        if (Math.abs(falta) < 0.1) {
             remainingText.innerText = "Meta atingida!";
         } else {
-            // Se pAtual < pAlvo (emagrecimento) ou pAtual > pAlvo (ganho), mostra o saldo
-            remainingText.innerText = `Faltam ${Math.abs(diferenca).toFixed(1)} kg`;
+            remainingText.innerText = falta > 0 
+                ? `Passou da meta em ${falta.toFixed(1)} kg` 
+                : `Faltam ${Math.abs(falta).toFixed(1)} kg`;
         }
     } else {
         fillBar.style.width = '0%';
         percentText.innerText = '0%';
-        remainingText.innerText = 'Defina as metas';
+        remainingText.innerText = 'Configure ao lado';
     }
 }
 
