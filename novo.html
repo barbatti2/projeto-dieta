@@ -1857,19 +1857,22 @@ function changeDiaryScope(scope) {
 
     function renderFullHistory() {
         const root = document.getElementById('history-list-root');
-        if (!root) return; 
+        if (!root) return;
 
-        if (!db[globalProfile] || !db[globalProfile].diario || db[globalProfile].diario.length === 0) {
-            root.innerHTML = `<div class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado.</div>`;
+        // Pega o diário de forma segura
+        const diario = (db[globalProfile] && db[globalProfile].diario) ? db[globalProfile].diario : [];
+
+        if (diario.length === 0) {
+            root.innerHTML = `<div class="text-center py-8 text-slate-400">Nenhum registro encontrado.</div>`;
             return;
         }
 
         root.innerHTML = '';
         const hoje = new Date();
-        const refeicoes = db[globalProfile].diario; 
 
-        const refeicoesFiltradas = refeicoes.filter(ref => {
-            if(!ref.data) return false;
+        // Filtra as refeições
+        const filtradas = diario.filter(ref => {
+            if (!ref.data) return false;
             const dataRef = new Date(ref.data + 'T00:00:00');
             const diffDias = Math.ceil(Math.abs(hoje - dataRef) / (1000 * 60 * 60 * 24));
 
@@ -1880,10 +1883,34 @@ function changeDiaryScope(scope) {
             return true;
         });
 
-        if (refeicoesFiltradas.length === 0) {
+        if (filtradas.length === 0) {
             root.innerHTML = `<div class="text-center py-8 text-slate-400">Nenhuma refeição neste período.</div>`;
             return;
         }
+
+        // Renderiza a lista
+        filtradas.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(ref => {
+            root.innerHTML += `
+                <div class="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <span class="font-black text-slate-900 text-sm">${ref.nome || 'Refeição'}</span>
+                        <p class="text-xs text-slate-500">${ref.descricao || 'Sem descrição'}</p>
+                    </div>
+                    <button onclick="excluirRefeicaoDoHistorico('${ref.id}')" class="text-red-500 text-xs font-bold">Excluir</button>
+                </div>`;
+        });
+
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    function excluirRefeicaoDoHistorico(idRefeicao) {
+        if (!confirm("Tem certeza que deseja excluir?")) return;
+        if (db[globalProfile] && db[globalProfile].diario) {
+            db[globalProfile].diario = db[globalProfile].diario.filter(ref => ref.id !== idRefeicao);
+            saveDB();
+            renderFullHistory();
+        }
+    }
 
         // Renderiza
         refeicoesFiltradas.sort((a, b) => new Date(b.data) - new Date(a.data)).forEach(ref => {
@@ -1905,17 +1932,21 @@ function changeDiaryScope(scope) {
         if(typeof lucide !== 'undefined') lucide.createIcons();
     }
 
+   // ... (restante do seu código) ...
+
     function excluirRefeicaoDoHistorico(idRefeicao) {
         if (!confirm("Tem certeza que deseja excluir?")) return;
-        
         if (db[globalProfile] && db[globalProfile].diario) {
             db[globalProfile].diario = db[globalProfile].diario.filter(ref => ref.id !== idRefeicao);
             saveDB();
             renderFullHistory();
         }
-    } // Esta chave fecha a função excluirRefeicaoDoHistorico
-    
-    // --- FIM DO CÓDIGO DO HISTÓRICO ---
+    } 
+    // ESTA CHAVE ACIMA FECHA A FUNÇÃO excluirRefeicaoDoHistorico
+
+    // VERIFIQUE SE NÃO EXISTE MAIS NENHUMA CHAVE } AQUI EMBAIXO
+    // SE HOUVER, APAGUE!
+
 </script> 
 </body>
 </html>
