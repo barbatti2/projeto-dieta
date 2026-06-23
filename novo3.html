@@ -309,19 +309,20 @@
                             </div>
                         </div> 
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-center text-center w-full">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">Progresso da Meta</span>
-                        
-                        <div class="w-full h-6 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
-                            <div id="weight-bar-fill" class="h-full w-0 transition-all duration-1000" style="width: 0%;"></div>
-                        </div>
-                        
-                        <div class="mt-2">
-                            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block"></span>
-                            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5"></span>
-                        </div>
+                    </div> 
+
+                 <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">Progresso da Meta</span>
+                    <div class="w-full h-6 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
+                        <div id="weight-bar-fill" class="h-full w-0 transition-all duration-1000" style="width: 0%;"></div>
                     </div>
-                </div> </div> ```
+                    <div class="mt-2">
+                        <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block"></span>
+                        <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block"></span>
+                    </div>
+                </div>
+            </div> </div> <div id="tab-config" class="tab-content w-full hidden">
+            </div>
 
 ### O que você precisa fazer após colar:
 1. **Verifique no seu código JavaScript** se você ainda tem aquela função `renderWeightTab` que configuramos anteriormente (a que define `fillBar.style.backgroundColor = cor`). Ela é necessária para que a barra mude de cor quando ficar negativa.
