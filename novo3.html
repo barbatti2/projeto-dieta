@@ -314,21 +314,13 @@
     <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
     
     <div class="w-full h-6 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40 my-3">
-        <div id="weight-bar-fill" class="h-full bg-blue-600 bar-progress rounded-full" style="width: 0%; transition: width 1.5s ease;"></div>
+        <div id="weight-bar-fill" class="h-full w-0 transition-all duration-1000" style="width: 0%;"></div>
     </div>
     
     <div class="flex flex-col items-center">
         <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
         <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
     </div>
-</div>
-
-                            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
-                            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
             <div id="tab-config" class="tab-content w-full">
                 <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
@@ -533,21 +525,25 @@
         // Define as cores baseadas no progresso
         let cor;
         if (progresso < 0) {
-            cor = '#ef4444'; // Vermelho (Regrediu/Negativo)[span_0](start_span)[span_0](end_span)
+            cor = '#ef4444'; // Vermelho (Regrediu/Negativo)
         } else if (progresso >= 100) {
-            cor = '#10b981'; // Verde (Atingiu ou passou de 100%)[span_1](start_span)[span_1](end_span)
+            cor = '#10b981'; // Verde (Atingiu ou passou de 100%)
         } else {
-            cor = '#2563eb'; // Azul (Progresso normal)[span_2](start_span)[span_2](end_span)
+            cor = '#2563eb'; // Azul (Progresso normal)
         }
 
         const progressoVisual = Math.max(0, Math.min(progresso, 100));
 
         setTimeout(() => {
-            // Animação e aplicação das cores
-            fillBar.style.width = `${progressoVisual}%`; 
-            fillBar.style.backgroundColor = cor; // Aplica a cor na barra[span_3](start_span)[span_3](end_span)
+            // Aplica a largura
+            fillBar.style.width = `${progressoVisual}%`;
+            
+            // APLICA A COR NA BARRA (Isto garante que a barra mude de cor)
+            fillBar.style.backgroundColor = cor; 
+            
+            // Aplica a cor no texto
             percentText.innerText = `${Math.round(progresso)}%`;
-            percentText.style.color = cor; // Aplica a cor no texto[span_4](start_span)[span_4](end_span)
+            percentText.style.color = cor;
         }, 150);
 
         // Lógica de texto
