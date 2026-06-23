@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Projeto Dieta Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,22 +12,19 @@
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; 
         }
         h1, h2, h3, h4, .font-premium { 
             font-family: 'Outfit', sans-serif; 
         }
         
-        /* Previne zoom e comportamento duplo no mobile */
-        input, select, textarea, button {
-            touch-action: manipulation;
+        /* Prevenção de Zoom automático no Mobile */
+        input, select, textarea, button, p, span, div {
+            font-size: 16px !important;
         }
-
-        /* Hack essencial: Fontes de inputs no mobile precisam ter no mínimo 16px para evitar o zoom automático do iOS/Android */
-        @media (max-width: 768px) {
-            input, select, textarea {
-                font-size: 16px !important;
-            }
-        }
+        
+        .text-mini { font-size: 12px !important; }
+        .text-micro { font-size: 10px !important; }
 
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -38,7 +35,7 @@
         .bar-progress {
             transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         @keyframes pulse-brilho {
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
             50% { transform: scale(1.05); box-shadow: 0 0 10px 3px rgba(37, 99, 235, 0.4); }
@@ -51,176 +48,161 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen overflow-hidden text-slate-800">
 
+    <!-- MENU LATERAL: APENAS PARA COMPUTADOR (md:) -->
     <aside class="hidden md:flex w-64 bg-slate-900 flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
         <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
-            <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
+            <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg">
                 <i data-lucide="heart-pulse" class="w-6 h-6"></i>
             </div>
             <div>
-                <h2 class="font-black text-xl uppercase tracking-wide">Projeto Dieta</h2>
-                <p class="text-[10px] text-blue-400 font-black uppercase tracking-widest">Premium Edition</p>
+                <h2 class="font-black uppercase tracking-wide">Projeto Dieta</h2>
+                <p class="text-micro text-blue-400 font-black uppercase tracking-widest">Premium Edition</p>
             </div>
         </div>
 
+        <!-- SELETOR DE PERFIL DESKTOP -->
         <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
-            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
-            <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer">
+            <label class="block text-micro font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+            <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-mini font-bold focus:outline-none cursor-pointer">
                 <option value="Gabriel">Gabriel</option>
                 <option value="Raissa">Raíssa</option>
             </select>
         </div>
 
         <nav class="space-y-1.5 flex-1">
-            <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="home" class="w-4 h-4"></i> Início
+            <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="home" class="w-5 h-5"></i> Início
             </button>
-            <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
+            <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="plus-circle" class="w-5 h-5"></i> Adicionar Alimento
             </button>
-            <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="calendar" class="w-4 h-4"></i> Calendário
+            <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="calendar" class="w-5 h-5"></i> Calendário
             </button>
-            <button onclick="switchTab('historico')" id="nav-desktop-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="list" class="w-4 h-4"></i> Histórico
+            <button onclick="switchTab('historico')" id="nav-desktop-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="list" class="w-5 h-5"></i> Histórico
             </button>
-            <button onclick="switchTab('peso')" id="nav-desktop-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="scale" class="w-4 h-4"></i> Pesos e Medidas
+            <button onclick="switchTab('peso')" id="nav-desktop-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="scale" class="w-5 h-5"></i> Pesos e Medidas
             </button>
-            <button onclick="switchTab('config')" id="nav-desktop-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
-                <i data-lucide="settings" class="w-4 h-4"></i> Configurações
+            <button onclick="switchTab('config')" id="nav-desktop-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
+                <i data-lucide="settings" class="w-5 h-5"></i> Configurações
             </button>
         </nav>
     </aside>
 
+    <!-- HEADER DE TOPO NO MOBILE -->
     <header class="flex md:hidden bg-slate-900 text-white p-4 justify-between items-center shadow-md flex-shrink-0">
         <div class="flex items-center gap-2">
-            <div class="p-1.5 bg-blue-600 rounded-lg text-white">
-                <i data-lucide="heart-pulse" class="w-4 h-4"></i>
-            </div>
-            <span class="font-black tracking-wide text-sm uppercase">Projeto Dieta</span>
+            <span class="font-black tracking-wide uppercase text-mini">Projeto Dieta</span>
         </div>
-        <div class="w-28 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
-            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+        <div class="w-32 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
+            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-mini focus:outline-none cursor-pointer">
                 <option value="Gabriel">Gabriel</option>
                 <option value="Raissa">Raíssa</option>
             </select>
         </div>
     </header>
 
-    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
+    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
+    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-20 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
             
+            <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
-                <p class="text-[10px] md:text-xs text-slate-400 font-extrabold uppercase tracking-widest mb-4 md:mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
+                <p class="text-mini text-slate-400 font-extrabold uppercase tracking-widest mb-4">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
                 
-                <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
+                <!-- Roda Gráfica SVG -->
+                <div class="relative flex items-center justify-center w-48 h-48 mx-auto mb-6">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
                         <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
                                 stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
                     </svg>
                     <div class="absolute flex flex-col items-center justify-center">
-                        <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
+                        <span id="lbl-home-consumed" class="text-3xl font-black text-slate-900 tracking-tight">0</span>
+                        <span class="text-micro font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-md mx-auto">
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
-                            <i data-lucide="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
+                <!-- CARDS INFERIORES -->
+                <div class="grid grid-cols-2 gap-3 w-full max-w-md mx-auto">
+                    <!-- Status de Calorias Faltantes/Excedidas (Padrão Azul) -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-1.5 rounded-lg text-white bg-blue-600 shadow-sm shadow-blue-600/20">
+                            <i data-lucide="zap" class="w-4 h-4"></i>
                         </div>
-                        <span id="lbl-status-kcal-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
-                        <span id="lbl-status-kcal-value" class="text-base md:text-lg font-black tracking-tight text-slate-800">0 kcal</span>
+                        <span id="lbl-status-kcal-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                        <span id="lbl-status-kcal-value" class="text-base font-black tracking-tight text-slate-800">0 kcal</span>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-2 rounded-xl text-white bg-orange-500 shadow-sm shadow-orange-500/20">
-                            <i data-lucide="flame" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    <!-- Status de Proteínas Faltantes/Excedidas (Padrão Laranja) -->
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-1.5 rounded-lg text-white bg-orange-500 shadow-sm shadow-orange-500/20">
+                            <i data-lucide="flame" class="w-4 h-4"></i>
                         </div>
-                        <span id="lbl-status-prot-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
-                        <span id="lbl-status-prot-value" class="text-base md:text-lg font-black tracking-tight text-slate-800">0g</span>
+                        <span id="lbl-status-prot-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                        <span id="lbl-status-prot-value" class="text-base font-black tracking-tight text-slate-800">0g</span>
                     </div>
                 </div>
             </div>
 
+            <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content w-full">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-4 md:mb-6">Montar Refeição</h2>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Montar Refeição</h2>
                 
                 <div class="w-full mb-4 relative">
-                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
-                    <div class="relative">
-                        <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-4"></i>
-                    </div>
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
+                    <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                     <div id="search-results" class="absolute w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
                 </div>
 
                 <div id="selected-food-card" class="w-full bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 hidden flex justify-between items-center">
                     <div>
-                        <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
-                        <h4 id="lbl-food-name" class="font-bold text-slate-900 text-sm md:text-base">Nenhum</h4>
+                        <h4 id="lbl-food-name" class="font-bold text-slate-900">Nenhum</h4>
                     </div>
-                    <span id="lbl-food-base-kcal" class="text-xs font-semibold text-slate-500">0 kcal / 100g</span>
+                    <span id="lbl-food-base-kcal" class="text-mini font-semibold text-slate-500">0 kcal / 100g</span>
                 </div>
 
                 <div class="w-full mb-4">
-                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
                     <div class="flex items-center justify-center gap-4 mb-3">
-                        <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center active:scale-95 shadow-sm">-</button>
+                        <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">-</button>
                         <div class="text-center min-w-[90px]">
                             <span id="txt-grams" class="text-3xl font-black text-slate-900 tracking-tight">100</span>
-                            <span class="text-[10px] font-bold text-slate-400 block uppercase tracking-wider">Gramas</span>
+                            <span class="text-micro font-bold text-slate-400 block uppercase tracking-wider">Gramas</span>
                         </div>
-                        <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center active:scale-95 shadow-sm">+</button>
-                    </div>
-
-                    <div class="grid grid-cols-4 gap-2">
-                        <button onclick="setGrams(50)" class="py-2 bg-slate-100 font-bold rounded-lg text-xs">50g</button>
-                        <button onclick="setGrams(100)" class="py-2 bg-slate-100 font-bold rounded-lg text-xs">100g</button>
-                        <button onclick="setGrams(150)" class="py-2 bg-slate-100 font-bold rounded-lg text-xs">150g</button>
-                        <button onclick="setGrams(200)" class="py-2 bg-slate-100 font-bold rounded-lg text-xs">200g</button>
+                        <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">+</button>
                     </div>
                 </div>
 
                 <div class="w-full mb-4">
-                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
-                        <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-600">
-                            <i data-lucide="coffee" class="w-4 h-4 text-amber-500"></i> Café
-                        </button>
-                        <button onclick="selectMoment('Almoço', this)" class="moment-btn p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-600">
-                            <i data-lucide="utensils" class="w-4 h-4 text-emerald-500"></i> Almoço
-                        </button>
-                        <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-600">
-                            <i data-lucide="cookie" class="w-4 h-4 text-orange-500"></i> Tarde
-                        </button>
-                        <button onclick="selectMoment('Jantar', this)" class="moment-btn p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-600">
-                            <i data-lucide="moon" class="w-4 h-4 text-indigo-500"></i> Jantar
-                        </button>
+                    <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Café</button>
+                        <button onclick="selectMoment('Almoço', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Almoço</button>
+                        <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Tarde</button>
+                        <button onclick="selectMoment('Jantar', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl font-bold text-mini text-slate-600">Jantar</button>
                     </div>
                 </div>
 
                 <div id="temp-plate-section" class="w-full border-t border-slate-200 pt-4 mt-3 hidden">
-                    <h4 class="font-bold text-xs text-slate-700 mb-2 uppercase tracking-wider">Itens no Prato Atual:</h4>
                     <div id="temp-plate-list" class="space-y-1.5 mb-3"></div>
                 </div>
 
                 <div class="w-full grid grid-cols-2 gap-2 mt-2">
-                    <button onclick="addFoodToPlate()" class="w-full p-3.5 bg-slate-800 text-white rounded-xl font-bold text-xs uppercase tracking-wide shadow-md flex items-center justify-center gap-1.5">
-                        <i data-lucide="plus" class="w-4 h-4"></i> Incluir Item
-                    </button>
-                    <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="w-full p-3.5 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase tracking-wide shadow-md disabled:opacity-40 flex items-center justify-center gap-1.5">
-                        <i data-lucide="check-circle" class="w-4 h-4"></i> Salvar Tudo
-                    </button>
+                    <button onclick="addFoodToPlate()" class="w-full p-3.5 bg-slate-800 text-white rounded-xl font-bold text-mini uppercase tracking-wide">Incluir</button>
+                    <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="w-full p-3.5 bg-emerald-600 text-white rounded-xl font-bold text-mini uppercase tracking-wide disabled:opacity-40">Salvar Tudo</button>
                 </div>
             </div>
 
+            <!-- ABA CALENDÁRIO -->
             <div id="tab-calendario" class="tab-content w-full">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Consistência</h2>
-                <p id="lbl-calendar-month" class="text-xs font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-1">Consistência</h2>
+                <p id="lbl-calendar-month" class="text-mini font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
                 
+                <!-- Placar acumulado -->
                 <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
                     <div class="bg-emerald-50 border border-emerald-100 p-1.5 rounded-xl">
                         <span id="count-ambos" class="block text-base font-black text-emerald-700">0</span>
@@ -247,6 +229,7 @@
                     <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
                 </div>
 
+                <!-- Modal do Calendário -->
                 <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div class="bg-white rounded-2xl p-5 w-full max-w-xs shadow-xl border border-slate-100">
                         <h3 class="text-lg font-black text-slate-900 mb-0.5">Registrar Dia</h3>
@@ -263,8 +246,9 @@
                 </div>
             </div>
 
+            <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
                 
                 <div class="w-full grid grid-cols-4 gap-1.5 mb-4 border-b border-slate-100 pb-3">
                     <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-blue-600 text-white font-bold rounded-lg text-xs">Dia</button>
@@ -280,33 +264,44 @@
             <div id="tab-peso" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Pesos e Medidas</h2>
                 
-                <!-- CARD DINÂMICO DE PROGRESSO INTELIGENTE COM ALERTA EM CORES -->
+                <!-- CARD DINÂMICO DE PROGRESSO INTELIGENTE COM CORES DINÂMICAS -->
                 <div id="card-status-peso" class="w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 bg-slate-100 border-slate-300">
                     <span id="lbl-peso-status-title" class="text-micro font-black uppercase tracking-wider text-slate-500">Progresso da Meta</span>
                     <h3 id="lbl-peso-status-msg" class="text-lg font-black mt-0.5 text-slate-700">Insira seus pesos para calcular</h3>
                 </div>
 
-                <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Inicial (kg)</label>
-                            <input type="number" step="0.1" id="weight-start" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
+                <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+                    <div class="md:col-span-2 space-y-3">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Inicial (kg)</label>
+                                    <input type="number" step="0.1" id="weight-start" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Cintura (cm)</label>
+                                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Alvo (kg)</label>
+                                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Peso (kg)</label>
-                            <input type="number" step="0.1" id="weight-target" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Atual (kg)</label>
-                        <input type="number" step="0.1" id="weight-current" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
-                    </div>
-                    <button onclick="updateWeights()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Pesos</button>
-                </div>
-            </div>
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+                        <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-100 space-y-2">
+                            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização</h3>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase text-blue-600 mb-1">Peso Atual (kg)</label>
+                                <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Vertical de Progresso em Barra -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
+                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Porcentagem</span>
                         <div class="w-10 h-32 bg-slate-200 rounded-full relative overflow-hidden flex flex-col justify-end border border-slate-300/40 my-2">
                             <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
                         </div>
@@ -316,10 +311,13 @@
                         </div>
                     </div>
                 </div>
+
+                <button onclick="updateWeights()" class="w-full mt-3 py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider text-xs">Salvar Tudo e Calcular</button>
             </div>
 
+            <!-- ABA CONFIGURAÇÕES -->
             <div id="tab-config" class="tab-content w-full">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
                 <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
                 
                 <div class="w-full max-w-sm mx-auto space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
@@ -338,43 +336,41 @@
         </div>
     </main>
 
-    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-16 flex items-center justify-around z-50 px-2">
-        <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
-            <i data-lucide="home" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold mt-1">Início</span>
+    <!-- MENU INFERIOR: EXCLUSIVO PARA CELULAR (md:hidden) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-20 flex items-center justify-around z-50 pb-2">
+        <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Início</span>
         </button>
-        <button onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
-            <i data-lucide="plus-circle" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold mt-1">Refeição</span>
+        <button onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Refeição</span>
         </button>
-        <button onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
-            <i data-lucide="calendar" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold mt-1">Calendário</span>
+        <button onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Calendário</span>
         </button>
-        <button onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
-            <i data-lucide="list" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold mt-1">Histórico</span>
+        <button onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="list" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Histórico</span>
         </button>
-        <button onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
-            <i data-lucide="scale" class="w-5 h-5"></i>
-            <span class="text-[9px] font-bold mt-1">Corpo</span>
+        <button onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
+            <i data-lucide="scale" class="w-6 h-6"></i>
+            <span class="text-micro font-bold mt-1">Corpo</span>
         </button>
     </div>
 
     <script>
+        // --- BASE DE ALIMENTOS ---
         const alimentosBase = [
             { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
-            { nome: "Arroz Integral Cozido", kcal100g: 124, prot100g: 2.6 },
             { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
             { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
-            { nome: "Patinho Bovino Moído", kcal100g: 220, prot100g: 28 },
             { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13 },
-            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
-            { nome: "Pão de Forma", kcal100g: 250, prot100g: 8 },
-            { nome: "Batata Doce Cozida", kcal100g: 86, prot100g: 1.5 },
-            { nome: "Whey Protein 80%", kcal100g: 400, prot100g: 80 }
+            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 }
         ];
 
+        // --- DADOS MULTIPERFIL INTEGRADOR ---
         let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
             Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [], pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} },
             Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [], pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} }
@@ -389,14 +385,13 @@
         let selectedCalendarDayKey = '';
 
         function getBrasiliaDate() {
-            const stringData = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
-            return new Date(stringData);
+            return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
         }
 
         function changeProfile(profileName) {
             currentProfile = profileName;
             
-            // Sincronizar seletores mobile e desktop simultaneamente
+            // Sincronizando seletores entre mobile e desktop
             document.getElementById('profile-selector-desktop').value = profileName;
             document.getElementById('profile-selector-mobile').value = profileName;
 
@@ -409,40 +404,31 @@
             renderCalendar();
         }
 
+        // --- SISTEMA DE NAVEGAÇÃO ENTRE ABAS ---
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            
-            // Limpa todos os botões (mobile e desktop)
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+                btn.classList.remove('bg-blue-600', 'text-white', 'text-blue-500');
                 btn.classList.add('text-slate-400');
             });
 
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            // Ativa no menu desktop se visível
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
-            if(activeDesktopNav) {
-                activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                activeDesktopNav.classList.remove('text-slate-400');
-            }
+            if(activeDesktopNav) activeDesktopNav.classList.add('bg-blue-600', 'text-white');
 
-            // Ativa no menu mobile se visível
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
-            if(activeMobileNav) {
-                activeMobileNav.classList.add('text-blue-500');
-                activeMobileNav.classList.remove('text-slate-400');
-            }
+            if(activeMobileNav) activeMobileNav.classList.add('text-blue-500');
 
             if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
             if(tabId === 'config') loadConfigFields();
             if(tabId === 'peso') renderWeightTab();
             if(tabId === 'calendario') renderCalendar();
-
             lucide.createIcons();
         }
 
+        // --- CÁLCULO E ANIMAÇÃO DA RODA DIÁRIA (HOME) ---
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
             const profile = appData[currentProfile];
@@ -466,92 +452,124 @@
             setTimeout(() => {
                 let strokePercent = Math.min(percentual, 100);
                 circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
-                if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
-                else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
-                else circle.setAttribute('stroke', '#ef4444');
+                
+                if (percentual <= 100) {
+                    circle.setAttribute('stroke', '#10b981'); // Verde
+                } else if (percentual <= 120) {
+                    circle.setAttribute('stroke', '#fb923c'); // Laranja claro
+                } else {
+                    circle.setAttribute('stroke', '#ef4444'); // Vermelho
+                }
             }, 100);
 
+            // Bloco de calorias restante (Padrão Fixo)
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
             document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
             document.getElementById('lbl-status-kcal-value').innerText = `${kcalFaltaOuPassa} kcal`;
 
+            // Bloco de proteínas restante (Padrão Fixo)
             const protFaltaOuPassa = profile.metaProtein - totalProtHoje;
             document.getElementById('lbl-status-prot-text').innerText = protFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
             document.getElementById('lbl-status-prot-value').innerText = `${protFaltaOuPassa}g`;
-            lucide.createIcons();
         }
 
-        function loadConfigFields() {
-            document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
-            document.getElementById('cfg-target-kcal').value = appData[currentProfile].metaKcal;
-            document.getElementById('cfg-target-protein').value = appData[currentProfile].metaProtein;
+        // --- FILTRAGEM E ADIÇÃO DE ALIMENTOS ---
+        function filterFood() {
+            const input = document.getElementById('search-food').value.toLowerCase();
+            const resultsBox = document.getElementById('search-results');
+            resultsBox.innerHTML = '';
+            if(!input) { resultsBox.classList.add('hidden'); return; }
+
+            const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
+            filtered.forEach(food => {
+                const row = document.createElement('div');
+                row.className = "p-3 hover:bg-slate-100 cursor-pointer border-b border-slate-100 last:border-b-0";
+                row.innerText = food.nome;
+                row.onclick = () => {
+                    currentSelectedFood = food;
+                    document.getElementById('search-food').value = food.nome;
+                    resultsBox.classList.add('hidden');
+                    document.getElementById('lbl-food-name').innerText = food.nome;
+                    document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
+                    document.getElementById('selected-food-card').classList.remove('hidden');
+                };
+                resultsBox.appendChild(row);
+            });
+            resultsBox.classList.remove('hidden');
         }
 
-        function saveProfileSettings() {
-            const kcal = parseInt(document.getElementById('cfg-target-kcal').value);
-            const protein = parseInt(document.getElementById('cfg-target-protein').value);
-            if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Valores inválidos!");
-            appData[currentProfile].metaKcal = kcal;
-            appData[currentProfile].metaProtein = protein;
-            saveToLocalStorage();
-            alert("Metas atualizadas!");
+        function changeGrams(amount) {
+            currentGrams = Math.max(10, currentGrams + amount);
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+
+        function selectMoment(moment, element) {
+            currentSelectedMoment = moment;
+            document.querySelectorAll('.moment-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'text-white'));
+            element.classList.add('bg-blue-600', 'text-white');
+        }
+
+        function addFoodToPlate() {
+            if(!currentSelectedFood) return alert("Selecione um alimento!");
+            currentPlateItems.push({
+                nome: currentSelectedFood.nome,
+                gramas: currentGrams,
+                kcal: Math.round((currentSelectedFood.kcal100g * currentGrams) / 100),
+                prot: Math.round((currentSelectedFood.prot100g * currentGrams) / 100)
+            });
+            document.getElementById('btn-save-meal').disabled = false;
+            document.getElementById('temp-plate-section').classList.remove('hidden');
+            
+            const listContainer = document.getElementById('temp-plate-list');
+            listContainer.innerHTML = '';
+            currentPlateItems.forEach((item, index) => {
+                listContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-2 rounded border text-mini font-semibold">
+                        <span>${item.nome} (${item.gramas}g)</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-blue-600">${item.kcal} kcal</span>
+                            <button onclick="removeFoodFromPlate(${index})" class="text-red-500 font-bold">X</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function removeFoodFromPlate(index) {
+            currentPlateItems.splice(index, 1);
+            if(currentPlateItems.length === 0) {
+                document.getElementById('temp-plate-section').classList.add('hidden');
+                document.getElementById('btn-save-meal').disabled = true;
+            }
+            addFoodToPlate(); // Atualiza a UI remontando a lista
+        }
+
+        function saveFullMeal() {
+            if(!currentSelectedMoment) return alert("Selecione o momento!");
+            const totalKcal = currentPlateItems.reduce((acc, c) => acc + c.kcal, 0);
+            const totalProt = currentPlateItems.reduce((acc, c) => acc + c.prot, 0);
+            
+            appData[currentProfile].historicoRefeicoes.unshift({
+                id: Date.now(),
+                momento: currentSelectedMoment,
+                itens: [...currentPlateItems],
+                totalKcal: totalKcal,
+                totalProt: totalProt,
+                timestamp: getBrasiliaDate().getTime(),
+                dia: getBrasiliaDate().getDate().toString().padStart(2, '0'),
+                mes: (getBrasiliaDate().getMonth() + 1).toString().padStart(2, '0'),
+                ano: getBrasiliaDate().getFullYear()
+            });
+            
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            currentPlateItems = [];
+            document.getElementById('temp-plate-section').classList.add('hidden');
+            document.getElementById('btn-save-meal').disabled = true;
+            
+            alert("Refeição cadastrada!");
             switchTab('inicio');
         }
 
-        function renderWeightTab() {
-            const prof = appData[currentProfile];
-            document.getElementById('weight-initial').value = prof.pesoInicial || '';
-            document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-            document.getElementById('weight-target').value = prof.pesoAlvo || '';
-            document.getElementById('weight-current').value = prof.pesoAtual || '';
-
-            const fillBar = document.getElementById('weight-bar-fill');
-            const percentText = document.getElementById('weight-progress-percent');
-            const remainingText = document.getElementById('weight-remaining-lbl');
-
-            if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
-                const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
-                const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
-                let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
-                progresso = Math.max(0, Math.min(progresso, 100));
-
-                setTimeout(() => {
-                    fillBar.style.height = `${progresso}%`;
-                    percentText.innerText = `${progresso}%`;
-                }, 150);
-
-                const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
-                remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
-            } else {
-                fillBar.style.height = '0%';
-                percentText.innerText = '0%';
-                remainingText.innerText = 'Configure ao lado';
-            }
-        }
-
-        function saveWeightGoals() {
-            const pIni = parseFloat(document.getElementById('weight-initial').value);
-            const cIni = parseFloat(document.getElementById('waist-initial').value);
-            const pAlv = parseFloat(document.getElementById('weight-target').value);
-            if(!pIni || !pAlv) return alert("Digite os pesos inicial e alvo!");
-            appData[currentProfile].pesoInicial = pIni;
-            appData[currentProfile].cinturaInicial = cIni || 0;
-            appData[currentProfile].pesoAlvo = pAlv;
-            if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
-            saveToLocalStorage();
-            renderWeightTab();
-            alert("Metas salvas!");
-        }
-
-        function updateCurrentWeight() {
-            const pAtu = parseFloat(document.getElementById('weight-current').value);
-            if(!pAtu || pAtu <= 0) return alert("Digite um peso válido!");
-            appData[currentProfile].pesoAtual = pAtu;
-            saveToLocalStorage();
-            renderWeightTab();
-            alert("Peso atualizado!");
-        }
-
+        // --- SISTEMA DE CONSISTÊNCIA E CALENDÁRIO ---
         function renderCalendar() {
             const hojeBR = getBrasiliaDate();
             const anoAtual = hojeBR.getFullYear();
@@ -606,133 +624,12 @@
         function setDayStatus(status) {
             if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
             appData[currentProfile].calendarioStatus[selectedCalendarDayKey] = status;
-            saveToLocalStorage();
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
             closeCalendarModal();
             renderCalendar();
         }
 
-        function filterFood() {
-            const input = document.getElementById('search-food').value.toLowerCase();
-            const resultsBox = document.getElementById('search-results');
-            resultsBox.innerHTML = '';
-            if(!input) { resultsBox.classList.add('hidden'); return; }
-
-            const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
-            if(filtered.length === 0) { resultsBox.classList.add('hidden'); return; }
-
-            filtered.forEach(food => {
-                const row = document.createElement('div');
-                row.className = "p-3 hover:bg-slate-100 cursor-pointer text-sm font-medium border-b border-slate-100 last:border-0";
-                row.innerText = food.nome;
-                row.onclick = () => selectFood(food);
-                resultsBox.appendChild(row);
-            });
-            resultsBox.classList.remove('hidden');
-        }
-
-        function selectFood(food) {
-            currentSelectedFood = food;
-            document.getElementById('search-food').value = food.nome;
-            document.getElementById('search-results').classList.add('hidden');
-            document.getElementById('lbl-food-name').innerText = food.nome;
-            document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
-            document.getElementById('selected-food-card').classList.remove('hidden');
-        }
-
-        function changeGrams(amount) {
-            currentGrams = Math.max(10, currentGrams + amount);
-            document.getElementById('txt-grams').innerText = currentGrams;
-        }
-
-        function setGrams(amount) {
-            currentGrams = amount;
-            document.getElementById('txt-grams').innerText = currentGrams;
-        }
-
-        function selectMoment(moment, element) {
-            currentSelectedMoment = moment;
-            document.querySelectorAll('.moment-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
-            });
-            element.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
-            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
-        }
-
-        function addFoodToPlate() {
-            if(!currentSelectedFood) return alert("Selecione um alimento!");
-            const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
-            const calculatedProt = Math.round(((currentSelectedFood.prot100g || 0) * currentGrams) / 100);
-            
-            currentPlateItems.push({ nome: currentSelectedFood.nome, gramas: currentGrams, kcal: calculatedKcal, prot: calculatedProt });
-            renderPlateUI();
-            currentSelectedFood = null;
-            document.getElementById('search-food').value = '';
-            document.getElementById('selected-food-card').classList.add('hidden');
-        }
-
-        function renderPlateUI() {
-            const container = document.getElementById('temp-plate-list');
-            const section = document.getElementById('temp-plate-section');
-            const saveBtn = document.getElementById('btn-save-meal');
-
-            if(currentPlateItems.length === 0) {
-                section.classList.add('hidden');
-                saveBtn.disabled = true;
-                return;
-            }
-
-            section.classList.remove('hidden');
-            saveBtn.disabled = false;
-            container.innerHTML = '';
-
-            currentPlateItems.forEach((item, index) => {
-                container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-semibold">
-                        <span class="text-slate-700 truncate max-w-[60%]">${item.nome} (${item.gramas}g)</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-blue-600 font-bold">${item.kcal} kcal</span>
-                            <button onclick="removeFoodFromPlate(${index})" class="text-red-500 p-1"><i data-lucide="x" class="w-4 h-4"></i></button>
-                        </div>
-                    </div>`;
-            });
-            lucide.createIcons();
-        }
-
-        function removeFoodFromPlate(index) {
-            currentPlateItems.splice(index, 1);
-            renderPlateUI();
-        }
-
-        // Modificado para redirecionar para a Home (Início) após salvar
-        function saveFullMeal() {
-            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição!");
-            const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
-            const totalProt = currentPlateItems.reduce((acc, current) => acc + current.prot, 0);
-            const brTime = getBrasiliaDate();
-            
-            const novaRefeicao = {
-                id: Date.now(),
-                momento: currentSelectedMoment,
-                itens: [...currentPlateItems],
-                totalKcal: totalKcal,
-                totalProt: totalProt,
-                timestamp: brTime.getTime(),
-                dia: brTime.getDate().toString().padStart(2, '0'),
-                mes: (brTime.getMonth() + 1).toString().padStart(2, '0'),
-                ano: brTime.getFullYear()
-            };
-
-            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
-            saveToLocalStorage();
-
-            currentPlateItems = [];
-            currentSelectedMoment = '';
-            renderPlateUI();
-            alert("Refeição salva com sucesso!");
-            switchTab('inicio'); // Direciona para a tela inicial atualizada
-        }
-
+        // --- RENDERING HISTÓRICO ---
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
@@ -746,61 +643,158 @@
         function renderTimelineHistory() {
             const container = document.getElementById('history-container');
             container.innerHTML = '';
-            const hojeBR = getBrasiliaDate();
-            const historico = appData[currentProfile].historicoRefeicoes || [];
+            const list = appData[currentProfile].historicoRefeicoes || [];
+            if(list.length === 0) { container.innerHTML = '<p class="text-center text-slate-400">Nenhum registro.</p>'; return; }
             
-            const filtrado = historico.filter(ref => {
-                const dRef = new Date(ref.timestamp);
-                if (currentHistoryFilter === 'dia') return dRef.toDateString() === hojeBR.toDateString();
-                if (currentHistoryFilter === 'semana') return (hojeBR - dRef) / (1000 * 60 * 60 * 24) <= 7;
-                if (currentHistoryFilter === 'mes') return dRef.getMonth() === hojeBR.getMonth() && dRef.getFullYear() === hojeBR.getFullYear();
-                return dRef.getFullYear() === hojeBR.getFullYear();
+            list.forEach(ref => {
+                container.innerHTML += `
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center">
+                        <div>
+                            <span class="font-bold block text-mini">${ref.momento} - ${ref.totalKcal} kcal</span>
+                            <span class="text-slate-500 text-mini">${ref.dia}/${ref.mes}/${ref.ano}</span>
+                        </div>
+                        <button onclick="deleteMeal(${ref.id})" class="text-red-500 font-bold p-1">Excluir</button>
+                    </div>`;
             });
-
-            if(filtrado.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-6">Nenhum registro.</p>';
-                return;
-            }
-
-            const grupos = {};
-            filtrado.forEach(ref => {
-                const k = `${ref.dia}/${ref.mes}/${ref.ano}`;
-                if(!grupos[k]) grupos[k] = [];
-                grupos[k].push(ref);
-            });
-
-            for(const data in grupos) {
-                let html = `<div class="w-full"><div class="flex items-center gap-2 mb-2"><span class="px-2.5 py-0.5 bg-slate-900 text-white rounded-full text-[10px] font-bold">${data}</span><div class="h-[1px] bg-slate-200 flex-1"></div></div><div class="space-y-2">`;
-                grupos[data].forEach(ref => {
-                    html += `
-                        <div class="bg-slate-50 border border-slate-200 p-3 rounded-xl flex justify-between items-center">
-                            <div class="space-y-0.5 max-w-[80%]">
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    <h4 class="font-bold text-xs text-slate-900">${ref.momento}</h4>
-                                    <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">${ref.totalKcal} kcal</span>
-                                    <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">${ref.totalProt}g P</span>
-                                </div>
-                                <p class="text-[11px] text-slate-500 truncate">${ref.itens.map(i => i.nome).join(', ')}</p>
-                            </div>
-                            <button onclick="deleteMeal(${ref.id})" class="text-slate-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                        </div>`;
-                });
-                container.innerHTML += html + `</div></div>`;
-            }
-            lucide.createIcons();
         }
 
         function deleteMeal(id) {
-            if(!confirm("Excluir esta refeição?")) return;
+            if(!confirm("Deseja realmente excluir esta refeição?")) return;
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(r => r.id !== id);
-            saveToLocalStorage();
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
             renderTimelineHistory();
         }
 
-        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
+        // --- ABA CONFIGURAÇÕES METAS ---
+        function loadConfigFields() {
+            document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
+            document.getElementById('cfg-target-kcal').value = appData[currentProfile].metaKcal;
+            document.getElementById('cfg-target-protein').value = appData[currentProfile].metaProtein;
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            switchTab('inicio');
+        function saveProfileSettings() {
+            const kcalVal = parseInt(document.getElementById('cfg-target-kcal').value);
+            const protVal = parseInt(document.getElementById('cfg-target-protein').value);
+            if(kcalVal > 0 && protVal > 0) {
+                appData[currentProfile].metaKcal = kcalVal;
+                appData[currentProfile].metaProtein = protVal;
+                localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+                alert("Metas salvas!");
+                switchTab('inicio');
+            }
+        }
+
+        // --- STREAMING_CHUNK:Processando lógica de progresso na aba Pesos e Medidas... ---
+        // --- ABA PESOS E MEDIDAS COM CORES INTELIGENTES ---
+        function renderWeightTab() {
+            const profile = appData[currentProfile];
+            
+            document.getElementById('weight-start').value = profile.pesoInicial || '';
+            document.getElementById('waist-initial').value = profile.cinturaInicial || '';
+            document.getElementById('weight-target').value = profile.pesoAlvo || '';
+            document.getElementById('weight-current').value = profile.pesoAtual || '';
+
+            const card = document.getElementById('card-status-peso');
+            const msg = document.getElementById('lbl-peso-status-msg');
+            const title = document.getElementById('lbl-peso-status-title');
+
+            const fillBar = document.getElementById('weight-bar-fill');
+            const percentText = document.getElementById('weight-progress-percent');
+            const remainingText = document.getElementById('weight-remaining-lbl');
+
+            const pInicial = parseFloat(profile.pesoInicial);
+            const pMeta = parseFloat(profile.pesoAlvo);
+            const pAtual = parseFloat(profile.pesoAtual);
+
+            // Reseta cores anteriores do card
+            card.className = "w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 ";
+
+            if (!pInicial || !pMeta || !pAtual) {
+                card.classList.add("bg-slate-100", "border-slate-300");
+                title.className = "text-micro font-black uppercase tracking-wider text-slate-500";
+                msg.className = "text-base font-black mt-0.5 text-slate-700";
+                msg.innerText = "Insira seus pesos para calcular!";
+                
+                fillBar.style.height = '0%';
+                percentText.innerText = '0%';
+                remainingText.innerText = 'Configure ao lado';
+                return;
+            }
+
+            // Descobre se o perfil deseja emagrecer ou ganhar massa
+            const objetivoEmagrecer = pMeta < pInicial;
+            let progresso = 0;
+
+            if (objetivoEmagrecer) {
+                const totalEspera = pInicial - pMeta;
+                const totalEliminado = pInicial - pAtual;
+                progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
+
+                if (pAtual <= pMeta) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = "Meta atingida! Você está no caminho certo! 🎉";
+                } else if (pAtual < pInicial) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = `Caminho certo! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg desde o início.`;
+                } else {
+                    card.classList.add("bg-amber-50", "border-amber-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
+                    msg.className = "text-base font-black mt-0.5 text-amber-800";
+                    msg.innerText = `Atenção! Você ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg acima do peso inicial.`;
+                }
+            } else {
+                const totalEspera = pMeta - pInicial;
+                const totalGanho = pAtual - pInicial;
+                progresso = totalEspera > 0 ? Math.round((totalGanho / totalEspera) * 100) : 0;
+
+                if (pAtual >= pMeta) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = "Meta atingida! Ótimo ganho de massa! 💪";
+                } else if (pAtual > pInicial) {
+                    card.classList.add("bg-emerald-50", "border-emerald-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
+                    msg.className = "text-base font-black mt-0.5 text-emerald-800";
+                    msg.innerText = `Caminho certo! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg em direção ao alvo.`;
+                } else {
+                    card.classList.add("bg-amber-50", "border-amber-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
+                    msg.className = "text-base font-black mt-0.5 text-amber-800";
+                    msg.innerText = `Atenção! Você perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg. Foco no superávit!`;
+                }
+            }
+
+            // Atualização da barra gráfica e placar numérico
+            progresso = Math.max(0, Math.min(progresso, 100));
+            setTimeout(() => {
+                fillBar.style.height = `${progresso}%`;
+                percentText.innerText = `${progresso}%`;
+            }, 150);
+
+            const faltaKg = (pAtual - pMeta).toFixed(1);
+            remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
+        }
+
+        function updateWeights() {
+            appData[currentProfile].pesoInicial = parseFloat(document.getElementById('weight-start').value) || 0;
+            appData[currentProfile].cinturaInicial = parseFloat(document.getElementById('waist-initial').value) || 0;
+            appData[currentProfile].pesoAlvo = parseFloat(document.getElementById('weight-target').value) || 0;
+            appData[currentProfile].pesoAtual = parseFloat(document.getElementById('weight-current').value) || 0;
+            
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            alert("Metas e peso atualizados!");
+            renderWeightTab();
+        }
+
+        // --- ENTRADA DO DOM ---
+        document.addEventListener('DOMContentLoaded', () => { 
+            lucide.createIcons(); 
+            switchTab('inicio'); 
         });
     </script>
 </body>
