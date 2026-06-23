@@ -7,9 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
-        body { font-family: 'Inter', sans-serif; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
+        h1, h2, h3, h4, .font-premium { 
+            font-family: 'Outfit', sans-serif; 
+        }
         .nav-btn { transition: all 0.2s ease; }
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
@@ -17,6 +22,19 @@
         
         .wheel-progress {
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+        }
+        .bar-progress {
+            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Efeito de brilho pulsar para o dia atual */
+        @keyframes pulse-brilho {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 12px 4px rgba(37, 99, 235, 0.4); }
+        }
+        .dia-atual-premium {
+            animation: pulse-brilho 2s infinite ease-in-out;
+            border: 2px solid #2563eb !important;
         }
     </style>
 </head>
@@ -29,14 +47,14 @@
                 <i data-lucide="heart-pulse" class="w-6 h-6"></i>
             </div>
             <div>
-                <h2 class="font-extrabold text-lg uppercase tracking-wider">Projeto Dieta</h2>
-                <p class="text-[10px] text-blue-400 font-bold uppercase tracking-widest">Premium Edition</p>
+                <h2 class="font-black text-xl uppercase tracking-wide">Projeto Dieta</h2>
+                <p class="text-[10px] text-blue-400 font-black uppercase tracking-widest">Premium Edition</p>
             </div>
         </div>
 
         <!-- SELETOR DE PERFIL -->
         <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
-            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+            <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
             <select id="profile-selector" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer">
                 <option value="Gabriel">Gabriel</option>
                 <option value="Raissa">Raíssa</option>
@@ -67,12 +85,12 @@
 
     <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
     <main class="flex-1 p-6 md:p-12 overflow-y-auto flex justify-center items-start">
-        <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
+        <div class="w-full max-w-2xl bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
             
             <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
-                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">Resumo Diário</h2>
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
+                <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
                 
                 <!-- Roda Gráfica SVG -->
                 <div class="relative flex items-center justify-center w-56 h-56 mx-auto mb-8">
@@ -83,24 +101,22 @@
                     </svg>
                     <div class="absolute flex flex-col items-center justify-center">
                         <span id="lbl-home-consumed" class="text-4xl font-black text-slate-900 tracking-tight">0</span>
-                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
                     </div>
                 </div>
 
-                <!-- CARDS COMPLEMENTARES INFERIORES (Padrão de Cor Fixo Premium) -->
+                <!-- CARDS COMPLEMENTARES INFERIORES -->
                 <div class="grid grid-cols-2 gap-4 w-full max-w-md mx-auto">
-                    <!-- Status de Calorias Faltantes/Excedidas (Padrão Azul) -->
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-2 rounded-lg text-white bg-blue-600 shadow-sm shadow-blue-600/20">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
                             <i data-lucide="zap" class="w-5 h-5"></i>
                         </div>
                         <span id="lbl-status-kcal-text" class="text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
                         <span id="lbl-status-kcal-value" class="text-lg font-black tracking-tight text-slate-800">0 kcal</span>
                     </div>
 
-                    <!-- Status de Proteínas Faltantes/Excedidas (Padrão Laranja/Bronze) -->
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-2 rounded-lg text-white bg-orange-500 shadow-sm shadow-orange-500/20">
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1">
+                        <div class="p-2 rounded-xl text-white bg-orange-500 shadow-sm shadow-orange-500/20">
                             <i data-lucide="flame" class="w-5 h-5"></i>
                         </div>
                         <span id="lbl-status-prot-text" class="text-xs font-bold uppercase tracking-wide mt-1 text-slate-400">Restante</span>
@@ -111,10 +127,10 @@
 
             <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content">
-                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Montar Refeição</h2>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight text-center mb-6">Montar Refeição</h2>
                 
                 <div class="w-full mb-6 relative">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
+                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
                     <div class="relative">
                         <input type="text" id="search-food" oninput="filterFood()" placeholder="Comece a digitar o alimento..." class="w-full p-4 pl-11 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
                         <i data-lucide="search" class="w-5 h-5 text-slate-400 absolute left-4 top-4"></i>
@@ -131,7 +147,7 @@
                 </div>
 
                 <div class="w-full mb-6">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
+                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
                     <div class="flex items-center justify-center gap-4 mb-4">
                         <button onclick="changeGrams(-10)" class="no-zoom w-14 h-14 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-xl flex items-center justify-center active:scale-95 shadow-sm">-</button>
                         <div class="text-center min-w-[120px]">
@@ -150,7 +166,7 @@
                 </div>
 
                 <div class="w-full mb-6">
-                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
+                    <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">3. Tipo de Refeição</label>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
                         <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-slate-50 border border-slate-200 rounded-xl flex flex-col items-center gap-1.5 font-bold text-xs text-slate-600">
                             <i data-lucide="coffee" class="w-5 h-5 text-amber-500"></i> Café
@@ -182,15 +198,59 @@
                 </div>
             </div>
 
-            <!-- ABA CALENDÁRIO -->
-            <div id="tab-calendario" class="tab-content text-center">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Calendário Interativo</h2>
-                <p class="text-slate-500">Visualize seus registros organizados temporalmente.</p>
+            <!-- ABA CALENDÁRIO INTERATIVO -->
+            <div id="tab-calendario" class="tab-content w-full">
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Calendário de Consistência</h2>
+                <p id="lbl-calendar-month" class="text-sm font-bold text-blue-600 text-center uppercase tracking-wide mb-6">Junho de 2026</p>
+                
+                <!-- Placar de contagem acumulada -->
+                <div class="grid grid-cols-4 gap-2 w-full mb-6 text-center">
+                    <div class="bg-emerald-50 border border-emerald-100 p-2 rounded-xl">
+                        <span id="count-ambos" class="block text-lg font-black text-emerald-700">0</span>
+                        <span class="text-[9px] font-black text-emerald-600 uppercase tracking-tighter">Dieta + Treino</span>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 p-2 rounded-xl">
+                        <span id="count-dieta" class="block text-lg font-black text-blue-700">0</span>
+                        <span class="text-[9px] font-black text-blue-600 uppercase tracking-tighter">Só Dieta</span>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-2 rounded-xl">
+                        <span id="count-treino" class="block text-lg font-black text-amber-700">0</span>
+                        <span class="text-[9px] font-black text-amber-600 uppercase tracking-tighter">Só Treino</span>
+                    </div>
+                    <div class="bg-rose-50 border border-rose-100 p-2 rounded-xl">
+                        <span id="count-nenhum" class="block text-lg font-black text-rose-700">0</span>
+                        <span class="text-[9px] font-black text-rose-600 uppercase tracking-tighter">Nenhum</span>
+                    </div>
+                </div>
+
+                <!-- Grid do Calendário -->
+                <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                    <div class="grid grid-cols-7 text-center text-xs font-black text-slate-400 uppercase tracking-wider mb-2">
+                        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                    </div>
+                    <div id="calendar-days-grid" class="grid grid-cols-7 gap-2"></div>
+                </div>
+
+                <!-- Modal Flutuante Simplificado de Ação do Calendário -->
+                <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-xl border border-slate-100">
+                        <h3 class="text-xl font-black text-slate-900 mb-1">Registrar Dia</h3>
+                        <p id="calendar-modal-date" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4"></p>
+                        
+                        <div class="space-y-2">
+                            <button onclick="setDayStatus('ambos')" class="w-full p-3 bg-emerald-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
+                            <button onclick="setDayStatus('dieta')" class="w-full p-3 bg-blue-600 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
+                            <button onclick="setDayStatus('treino')" class="w-full p-3 bg-amber-500 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
+                            <button onclick="setDayStatus('nenhum')" class="w-full p-3 bg-rose-500 text-white font-bold rounded-xl text-sm flex items-center justify-center gap-2 shadow-sm"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
+                        </div>
+                        <button onclick="closeCalendarModal()" class="w-full mt-4 py-2 text-xs font-bold text-slate-400 uppercase tracking-wider hover:text-slate-600">Cancelar</button>
+                    </div>
+                </div>
             </div>
 
             <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
-                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-4">Histórico de Consumo</h2>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico de Consumo</h2>
                 
                 <div class="w-full grid grid-cols-4 gap-2 mb-6 border-b border-slate-100 pb-4">
                     <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2 bg-blue-600 text-white font-bold rounded-xl text-xs tracking-wide shadow-sm">Dia</button>
@@ -202,24 +262,74 @@
                 <div id="history-container" class="w-full space-y-6"></div>
             </div>
 
-            <!-- ABA PESO -->
-            <div id="tab-peso" class="tab-content text-center">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Pesos e Medidas</h2>
-                <p class="text-slate-500">Acompanhamento e evolução corporal.</p>
+            <!-- ABA PESOS E MEDIDAS -->
+            <div id="tab-peso" class="tab-content w-full">
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Pesos e Medidas</h2>
+                <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest text-center mb-6">Acompanhamento Corporal</p>
+                
+                <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+                    <!-- Configurações e entradas de peso -->
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200/80 space-y-3">
+                            <h3 class="font-bold text-sm text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-2"><i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Peso Inicial (kg)</label>
+                                    <input type="number" step="0.1" id="weight-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Cintura Inicial (cm)</label>
+                                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-slate-400 mb-1">Peso Alvo / Desejado (kg)</label>
+                                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+                            <button onclick="saveWeightGoals()" class="w-full py-2.5 bg-slate-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all hover:bg-slate-900 shadow-sm">Salvar Parâmetros</button>
+                        </div>
+
+                        <div class="bg-blue-50/60 p-5 rounded-2xl border border-blue-100 space-y-3">
+                            <h3 class="font-bold text-sm text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-2"><i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização Semanal</h3>
+                            <div>
+                                <label class="block text-[10px] font-black uppercase text-blue-600 mb-1">Peso Atualizado (kg)</label>
+                                <div class="flex gap-2">
+                                    <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-3 bg-white border border-blue-200 rounded-xl font-bold text-base focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <button onclick="updateCurrentWeight()" class="px-5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-sm shadow-blue-600/20">Atualizar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Gráfico Vertical de Progresso Dinâmico -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 flex flex-col items-center justify-between text-center min-h-[280px]">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+                        
+                        <!-- Termômetro / Barra Vertical -->
+                        <div class="w-12 h-44 bg-slate-200 rounded-full relative overflow-hidden shadow-inner flex flex-col justify-end border border-slate-300/40 my-3">
+                            <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
+                        </div>
+
+                        <div>
+                            <span id="weight-progress-percent" class="text-2xl font-black text-slate-900 block">0%</span>
+                            <span id="weight-remaining-lbl" class="text-[10px] font-bold text-slate-400 block mt-0.5">Defina suas metas</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- ABA CONFIGURAÇÕES -->
             <div id="tab-config" class="tab-content w-full">
-                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-1">Configurações de Metas</h2>
-                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center mb-6">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
+                <h2 class="text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações de Metas</h2>
+                <p class="text-xs text-slate-400 font-extrabold uppercase tracking-widest text-center mb-6">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
                 
-                <div class="w-full max-w-sm mx-auto space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <div class="w-full max-w-sm mx-auto space-y-4 bg-slate-50 p-6 rounded-2xl border border-slate-200">
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Meta de Calorias Diárias (kcal)</label>
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Meta de Calorias Diárias (kcal)</label>
                         <input type="number" id="cfg-target-kcal" class="w-full p-3 border border-slate-200 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Meta de Proteínas Diárias (g)</label>
+                        <label class="block text-xs font-black uppercase tracking-wider text-slate-500 mb-2">Meta de Proteínas Diárias (g)</label>
                         <input type="number" id="cfg-target-protein" class="w-full p-3 border border-slate-200 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <button onclick="saveProfileSettings()" class="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl text-sm transition-all hover:bg-blue-700 shadow-md">Salvar Metas do Perfil</button>
@@ -244,19 +354,18 @@
             { nome: "Whey Protein 80%", kcal100g: 400, prot100g: 80 }
         ];
 
-        const proteinas = ["Frango", "Carne", "Peixe", "Ovo", "Suíno"];
-        const preparos = ["Grelhado", "Cozido", "Assado", "Frito"];
-        proteinas.forEach(prot => {
-            preparos.forEach(prep => {
-                alimentosBase.push({ nome: `${prot} ${prep} Premium`, kcal100g: Math.floor(Math.random() * 120) + 110, prot100g: Math.floor(Math.random() * 15) + 15 });
-                alimentosBase.push({ nome: `${prot} ${prep} Light`, kcal100g: Math.floor(Math.random() * 80) + 90, prot100g: Math.floor(Math.random() * 15) + 15 });
-            });
-        });
-
-        // --- ESTRUTURA MULTIPERFIL ---
+        // --- ESTRUTURA MULTIPERFIL EXPANDIDA COM PESOS E CALENDÁRIO ---
         let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
-            Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [] },
-            Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [] }
+            Gabriel: { 
+                metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [],
+                pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0,
+                calendarioStatus: {} 
+            },
+            Raissa: { 
+                metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [],
+                pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0,
+                calendarioStatus: {} 
+            }
         };
 
         let currentProfile = 'Gabriel';
@@ -265,6 +374,13 @@
         let currentSelectedMoment = '';
         let currentPlateItems = [];
         let currentHistoryFilter = 'dia';
+        let selectedCalendarDayKey = '';
+
+        // Obter data baseada estritamente no fuso de SP/Brasília
+        function getBrasiliaDate() {
+            const stringData = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
+            return new Date(stringData);
+        }
 
         function changeProfile(profileName) {
             currentProfile = profileName;
@@ -273,6 +389,8 @@
             loadConfigFields();
             refreshHomeWheel();
             renderTimelineHistory();
+            renderWeightTab();
+            renderCalendar();
         }
 
         function switchTab(tabId) {
@@ -292,19 +410,21 @@
             if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
             if(tabId === 'config') loadConfigFields();
+            if(tabId === 'peso') renderWeightTab();
+            if(tabId === 'calendario') renderCalendar();
 
             lucide.createIcons();
         }
 
-        // --- ATUALIZAÇÃO E INTELIGÊNCIA DO RESUMO DIÁRIO ---
+        // --- ATUALIZAÇÃO DO RESUMO DIÁRIO ---
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
-            
             const profile = appData[currentProfile];
-            const agora = new Date();
+            const hojeBR = getBrasiliaDate();
             
-            const refeicoesDeHoje = profile.historicoRefeicoes.filter(ref => {
-                return new Date(ref.timestamp).toDateString() === agora.toDateString();
+            const refeicoesDeHoje = (profile.historicoRefeicoes || []).filter(ref => {
+                const d = new Date(ref.timestamp);
+                return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
             });
 
             const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
@@ -313,58 +433,33 @@
             document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
             document.getElementById('lbl-home-target').innerText = profile.metaKcal;
 
-            // Ajuste e Animação da Roda SVG
             const circle = document.getElementById('wheel-progress-bar');
-            const maxPercent = 100;
             let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
             
             circle.style.strokeDashoffset = "263.89";
 
             setTimeout(() => {
-                let strokePercent = Math.min(percentual, maxPercent);
-                let offset = 263.89 - (263.89 * strokePercent) / 100;
-                circle.style.strokeDashoffset = offset;
-
-                if (percentual <= 100) {
-                    circle.setAttribute('stroke', '#10b981'); // Verde
-                } else if (percentual > 100 && percentual <= 120) {
-                    circle.setAttribute('stroke', '#fb923c'); // Laranja Suave Premium
-                } else {
-                    circle.setAttribute('stroke', '#ef4444'); // Vermelho
-                }
+                let strokePercent = Math.min(percentual, 100);
+                circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
+                if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
+                else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
+                else circle.setAttribute('stroke', '#ef4444');
             }, 100);
 
-            // LOGICA DOS NUMEROS DO CARD DE CALORIAS (Cor Padrão Fixa)
+            // Bloco de Calorias Fixo
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
-            const labelKcalTxt = document.getElementById('lbl-status-kcal-text');
-            const labelKcalVal = document.getElementById('lbl-status-kcal-value');
+            document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
+            document.getElementById('lbl-status-kcal-value').innerText = `${kcalFaltaOuPassa} kcal`;
 
-            if (kcalFaltaOuPassa >= 0) {
-                labelKcalTxt.innerText = "Faltam";
-                labelKcalVal.innerText = `${kcalFaltaOuPassa} kcal`;
-            } else {
-                labelKcalTxt.innerText = "Excedeu";
-                // Exibe o número negativo (ex: -250 kcal)
-                labelKcalVal.innerText = `${kcalFaltaOuPassa} kcal`;
-            }
-
-            // LOGICA DOS NUMEROS DO CARD DE PROTEINAS (Cor Padrão Fixa)
+            // Bloco de Proteínas Fixo
             const protFaltaOuPassa = profile.metaProtein - totalProtHoje;
-            const labelProtTxt = document.getElementById('lbl-status-prot-text');
-            const labelProtVal = document.getElementById('lbl-status-prot-value');
-
-            if (protFaltaOuPassa >= 0) {
-                labelProtTxt.innerText = "Faltam";
-                labelProtVal.innerText = `${protFaltaOuPassa}g`;
-            } else {
-                labelProtTxt.innerText = "Excedeu";
-                // Exibe o número negativo (ex: -15g)
-                labelProtVal.innerText = `${protFaltaOuPassa}g`;
-            }
+            document.getElementById('lbl-status-prot-text').innerText = protFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
+            document.getElementById('lbl-status-prot-value').innerText = `${protFaltaOuPassa}g`;
+            
             lucide.createIcons();
         }
 
-        // --- CONFIGURAÇÕES ---
+        // --- ABA CONFIGURAÇÕES ---
         function loadConfigFields() {
             document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
             document.getElementById('cfg-target-kcal').value = appData[currentProfile].metaKcal;
@@ -374,23 +469,170 @@
         function saveProfileSettings() {
             const kcal = parseInt(document.getElementById('cfg-target-kcal').value);
             const protein = parseInt(document.getElementById('cfg-target-protein').value);
-
-            if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Insira valores válidos!");
-
+            if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Valores inválidos!");
             appData[currentProfile].metaKcal = kcal;
             appData[currentProfile].metaProtein = protein;
-
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
-            alert(`Metas de ${currentProfile} atualizadas!`);
+            saveToLocalStorage();
+            alert("Metas atualizadas!");
             switchTab('inicio');
         }
 
-        // --- MÓDULO ADICIONAR ALIMENTO ---
+        // --- ABA PESOS E MEDIDAS ---
+        function renderWeightTab() {
+            const prof = appData[currentProfile];
+            document.getElementById('weight-initial').value = prof.pesoInicial || '';
+            document.getElementById('waist-initial').value = prof.cinturaInicial || '';
+            document.getElementById('weight-target').value = prof.pesoAlvo || '';
+            document.getElementById('weight-current').value = prof.pesoAtual || '';
+
+            const fillBar = document.getElementById('weight-bar-fill');
+            const percentText = document.getElementById('weight-progress-percent');
+            const remainingText = document.getElementById('weight-remaining-lbl');
+
+            if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
+                const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
+                const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
+                
+                let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
+                progresso = Math.max(0, Math.min(progresso, 100)); // Trava entre 0% e 100%
+
+                setTimeout(() => {
+                    fillBar.style.height = `${progresso}%`;
+                    percentText.innerText = `${progresso}%`;
+                }, 150);
+
+                const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
+                if (faltaKg > 0) {
+                    remainingText.innerText = `Faltam ${faltaKg} kg para o alvo`;
+                } else if (faltaKg == 0) {
+                    remainingText.innerText = `Meta atingida! Parabéns!`;
+                } else {
+                    remainingText.innerText = `Passou do alvo por ${Math.abs(faltaKg)} kg`;
+                }
+            } else {
+                fillBar.style.height = '0%';
+                percentText.innerText = '0%';
+                remainingText.innerText = 'Defina os parâmetros ao lado';
+            }
+        }
+
+        function saveWeightGoals() {
+            const pIni = parseFloat(document.getElementById('weight-initial').value);
+            const cIni = parseFloat(document.getElementById('waist-initial').value);
+            const pAlv = parseFloat(document.getElementById('weight-target').value);
+
+            if(!pIni || !pAlv) return alert("Por favor, digite pelo menos os pesos inicial e alvo!");
+
+            appData[currentProfile].pesoInicial = pIni;
+            appData[currentProfile].cinturaInicial = cIni || 0;
+            appData[currentProfile].pesoAlvo = pAlv;
+            
+            // Se não houver peso atual ainda, iguala ao inicial
+            if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
+
+            saveToLocalStorage();
+            renderWeightTab();
+            alert("Parâmetros corporais salvos!");
+        }
+
+        function updateCurrentWeight() {
+            const pAtu = parseFloat(document.getElementById('weight-current').value);
+            if(!pAtu || pAtu <= 0) return alert("Digite um peso atual válido!");
+
+            appData[currentProfile].pesoAtual = pAtu;
+            saveToLocalStorage();
+            renderWeightTab();
+            alert("Peso da semana atualizado com sucesso!");
+        }
+
+        // --- ABA CALENDÁRIO INTERATIVO ---
+        function renderCalendar() {
+            const hojeBR = getBrasiliaDate();
+            const anoAtual = hojeBR.getFullYear();
+            const mesAtual = hojeBR.getMonth(); // 0 = Jan, 5 = Jun...
+
+            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+            document.getElementById('lbl-calendar-month').innerText = `${nomesMeses[mesAtual]} de ${anoAtual}`;
+
+            const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
+            const totalDiasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+
+            const gridContainer = document.getElementById('calendar-days-grid');
+            gridContainer.innerHTML = '';
+
+            // Espaços em branco antes do primeiro dia
+            for (let i = 0; i < primeiroDiaMes; i++) {
+                gridContainer.innerHTML += `<div></div>`;
+            }
+
+            const statusDoPerfil = appData[currentProfile].calendarioStatus || {};
+            
+            // Contadores do placar
+            let cAmbos = 0, cDieta = 0, cTreino = 0, cNenhum = 0;
+
+            for (let dia = 1; dia <= totalDiasNoMes; dia++) {
+                const dayKey = `${dia.toString().padStart(2, '0')}-${(mesAtual + 1).toString().padStart(2, '0')}-${anoAtual}`;
+                const status = statusDoPerfil[dayKey] || '';
+
+                // Contabilidade
+                if(status === 'ambos') cAmbos++;
+                if(status === 'dieta') cDieta++;
+                if(status === 'treino') cTreino++;
+                if(status === 'nenhum') cNenhum++;
+
+                // Definição de cores baseadas no status do dia
+                let bgStyle = 'bg-white text-slate-700 hover:bg-slate-100';
+                let dotHtml = '';
+
+                if(status === 'ambos') { bgStyle = 'bg-emerald-600 text-white font-bold'; }
+                else if(status === 'dieta') { bgStyle = 'bg-blue-600 text-white font-bold'; }
+                else if(status === 'treino') { bgStyle = 'bg-amber-500 text-white font-bold'; }
+                else if(status === 'nenhum') { bgStyle = 'bg-rose-500 text-white font-bold'; }
+
+                // Identificar dia atual (Fuso de Brasília)
+                let classeDiaAtual = '';
+                if(dia === hojeBR.getDate() && mesAtual === hojeBR.getMonth() && anoAtual === hojeBR.getFullYear()) {
+                    classeDiaAtual = 'dia-atual-premium';
+                }
+
+                gridContainer.innerHTML += `
+                    <button onclick="openCalendarModal('${dayKey}')" class="${bgStyle} ${classeDiaAtual} p-3 rounded-xl border border-slate-200/60 text-xs font-semibold flex flex-col items-center justify-center transition-all h-11 relative">
+                        ${dia}
+                    </button>
+                `;
+            }
+
+            // Atualiza placar visual
+            document.getElementById('count-ambos').innerText = cAmbos;
+            document.getElementById('count-dieta').innerText = cDieta;
+            document.getElementById('count-treino').innerText = cTreino;
+            document.getElementById('count-nenhum').innerText = cNenhum;
+        }
+
+        function openCalendarModal(dayKey) {
+            selectedCalendarDayKey = dayKey;
+            document.getElementById('calendar-modal-date').innerText = `Dia selecionado: ${dayKey.replace(/-/g, '/')}`;
+            document.getElementById('calendar-modal').classList.remove('hidden');
+        }
+
+        function closeCalendarModal() {
+            document.getElementById('calendar-modal').classList.add('hidden');
+        }
+
+        function setDayStatus(status) {
+            if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
+            
+            appData[currentProfile].calendarioStatus[selectedCalendarDayKey] = status;
+            saveToLocalStorage();
+            closeCalendarModal();
+            renderCalendar();
+        }
+
+        // --- ENTRADA DE ALIMENTOS & MONTAGEM ---
         function filterFood() {
             const input = document.getElementById('search-food').value.toLowerCase();
             const resultsBox = document.getElementById('search-results');
             resultsBox.innerHTML = '';
-
             if(!input) { resultsBox.classList.add('hidden'); return; }
 
             const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
@@ -436,7 +678,7 @@
         }
 
         function addFoodToPlate() {
-            if(!currentSelectedFood) return alert("Selecione um alimento na lista primeiro!");
+            if(!currentSelectedFood) return alert("Selecione um alimento!");
             const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
             const calculatedProt = Math.round(((currentSelectedFood.prot100g || 0) * currentGrams) / 100);
             
@@ -470,7 +712,7 @@
 
             currentPlateItems.forEach((item, index) => {
                 container.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-xs font-semibold">
+                    <div class="flex justify-between items-center bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-semibold">
                         <span class="text-slate-700">${item.nome} (${item.gramas}g)</span>
                         <div class="flex items-center gap-3">
                             <span class="text-blue-600 font-bold">${item.kcal} kcal</span>
@@ -487,12 +729,10 @@
         }
 
         function saveFullMeal() {
-            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição antes de salvar!");
-            if(currentPlateItems.length === 0) return alert("O prato está vazio!");
-
+            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição!");
             const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
             const totalProt = currentPlateItems.reduce((acc, current) => acc + current.prot, 0);
-            const now = new Date();
+            const brTime = getBrasiliaDate();
             
             const novaRefeicao = {
                 id: Date.now(),
@@ -500,122 +740,91 @@
                 itens: [...currentPlateItems],
                 totalKcal: totalKcal,
                 totalProt: totalProt,
-                timestamp: now.getTime(),
-                dia: now.getDate().toString().padStart(2, '0'),
-                mes: (now.getMonth() + 1).toString().padStart(2, '0'),
-                ano: now.getFullYear()
+                timestamp: brTime.getTime(),
+                dia: brTime.getDate().toString().padStart(2, '0'),
+                mes: (brTime.getMonth() + 1).toString().padStart(2, '0'),
+                ano: brTime.getFullYear()
             };
 
             appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            saveToLocalStorage();
 
             currentPlateItems = [];
             currentSelectedMoment = '';
-            document.querySelectorAll('.moment-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
-            });
             renderPlateUI();
-
-            alert("Refeição cadastrada!");
-            switchTab('historico');
+            alert("Refeição salva com sucesso!");
+            switchTab('inicio');
         }
 
+        // --- FILTROS E HISTÓRICO ---
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
-            
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
                 btn.classList.add('bg-slate-100', 'text-slate-600');
             });
-
-            const activeBtn = document.getElementById(`filter-${filtro}`);
-            if(activeBtn) {
-                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
-                activeBtn.classList.remove('bg-slate-100', 'text-slate-600');
-            }
-
+            document.getElementById(`filter-${filtro}`).classList.add('bg-blue-600', 'text-white', 'shadow-sm');
             renderTimelineHistory();
         }
 
         function renderTimelineHistory() {
             const container = document.getElementById('history-container');
             container.innerHTML = '';
-
-            const agora = new Date();
-            const historicoDoPerfil = appData[currentProfile].historicoRefeicoes || [];
+            const hojeBR = getBrasiliaDate();
+            const historico = appData[currentProfile].historicoRefeicoes || [];
             
-            const refeicoesFiltradas = historicoDoPerfil.filter(ref => {
-                const dataRef = new Date(ref.timestamp);
-                
-                if (currentHistoryFilter === 'dia') {
-                    return dataRef.toDateString() === agora.toDateString();
-                } 
-                else if (currentHistoryFilter === 'semana') {
-                    const umaSemanaAtras = new Date();
-                    umaSemanaAtras.setDate(agora.getDate() - 7);
-                    return dataRef >= umaSemanaAtras;
-                } 
-                else if (currentHistoryFilter === 'mes') {
-                    return dataRef.getMonth() === agora.getMonth() && dataRef.getFullYear() === agora.getFullYear();
-                } 
-                else if (currentHistoryFilter === 'ano') {
-                    return dataRef.getFullYear() === agora.getFullYear();
+            const filtrado = historico.filter(ref => {
+                const dRef = new Date(ref.timestamp);
+                if (currentHistoryFilter === 'dia') return dRef.toDateString() === hojeBR.toDateString();
+                if (currentHistoryFilter === 'semana') {
+                    return (hojeBR - dRef) / (1000 * 60 * 60 * 24) <= 7;
                 }
-                return true;
+                if (currentHistoryFilter === 'mes') return dRef.getMonth() === hojeBR.getMonth() && dRef.getFullYear() === hojeBR.getFullYear();
+                return dRef.getFullYear() === hojeBR.getFullYear();
             });
 
-            if(refeicoesFiltradas.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-8 font-medium">Nenhum registro encontrado para este período.</p>';
+            if(filtrado.length === 0) {
+                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-8">Nenhum registro para este período.</p>';
                 return;
             }
 
-            const gruposPorData = {};
-            refeicoesFiltradas.forEach(ref => {
-                const dataKey = `${ref.dia}/${ref.mes}/${ref.ano}`;
-                if(!gruposPorData[dataKey]) gruposPorData[dataKey] = [];
-                gruposPorData[dataKey].push(ref);
+            const grupos = {};
+            filtrado.forEach(ref => {
+                const k = `${ref.dia}/${ref.mes}/${ref.ano}`;
+                if(!grupos[k]) grupos[k] = [];
+                grupos[k].push(ref);
             });
 
-            for(const data in gruposPorData) {
-                let sectionHtml = `
-                    <div class="w-full">
-                        <div class="flex items-center gap-2 mb-3">
-                            <span class="px-3 py-1 bg-slate-900 text-white rounded-full text-xs font-bold tracking-wider">${data}</span>
-                            <div class="h-[1px] bg-slate-200 flex-1"></div>
-                        </div>
-                        <div class="space-y-3">`;
-
-                gruposPorData[data].forEach(refeicao => {
-                    let itensList = refeicao.itens.map(i => `${i.nome} (${i.gramas}g)`).join(', ');
-                    
-                    sectionHtml += `
-                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center">
-                            <div class="space-y-1 pr-4 max-w-[80%]">
-                                <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-sm text-slate-900">${refeicao.momento}</h4>
-                                    <span class="text-[11px] font-bold text-blue-600 uppercase bg-blue-50 px-1.5 py-0.5 rounded">${refeicao.totalKcal} kcal</span>
-                                    <span class="text-[11px] font-bold text-emerald-600 uppercase bg-emerald-50 px-1.5 py-0.5 rounded">${refeicao.totalProt || 0}g prot</span>
+            for(const data in grupos) {
+                let html = `<div class="w-full"><div class="flex items-center gap-2 mb-3"><span class="px-3 py-1 bg-slate-900 text-white rounded-full text-xs font-bold">${data}</span><div class="h-[1px] bg-slate-200 flex-1"></div></div><div class="space-y-3">`;
+                grupos[data].forEach(ref => {
+                    html += `
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-2xl flex justify-between items-center">
+                            <div class="space-y-1 max-w-[80%]">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <h4 class="font-bold text-sm text-slate-900">${ref.momento}</h4>
+                                    <span class="text-[10px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-lg">${ref.totalKcal} kcal</span>
+                                    <span class="text-[10px] font-black text-emerald-600 uppercase bg-emerald-50 px-2 py-0.5 rounded-lg">${ref.totalProt}g prot</span>
                                 </div>
-                                <p class="text-xs text-slate-500 font-medium truncate">${itensList}</p>
+                                <p class="text-xs text-slate-500 font-medium truncate">${ref.itens.map(i => i.nome).join(', ')}</p>
                             </div>
-                            <button onclick="deleteMeal(${refeicao.id})" class="text-slate-400 hover:text-red-600 p-2">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                            <button onclick="deleteMeal(${ref.id})" class="text-slate-400 hover:text-red-600 p-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>`;
                 });
-
-                sectionHtml += `</div></div>`;
-                container.innerHTML += sectionHtml;
+                container.innerHTML += html + `</div></div>`;
             }
             lucide.createIcons();
         }
 
         function deleteMeal(id) {
-            if(!confirm("Deseja realmente excluir este bloco de refeição?")) return;
+            if(!confirm("Excluir esta refeição?")) return;
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(r => r.id !== id);
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            saveToLocalStorage();
             renderTimelineHistory();
+        }
+
+        function saveToLocalStorage() {
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
         }
 
         document.addEventListener('DOMContentLoaded', () => {
