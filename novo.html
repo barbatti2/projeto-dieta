@@ -1246,57 +1246,44 @@ function changeDiaryScope(scope) {
     // Removi 'refeicoes' desta lista, pois a seção correta é 'historico'
     const tabs = ['inicio', 'pessoas', 'adicionar', 'calendario', 'historico', 'peso', 'config'];
 
-    tabs.forEach(t => {
-        const tabElement = document.getElementById(`tab-${t}`);
-        const navElement = document.getElementById(`nav-${t}`);
+    // Função unificada para trocar abas
+    function switchTab(tabId) {
+        const tabs = ['inicio', 'pessoas', 'adicionar', 'calendario', 'historico', 'peso', 'config'];
         
-        // Verifica se existem antes de tentar alterar a classe
-        if (tabElement) tabElement.classList.add('hidden');
-        if (navElement) navElement.classList.remove('bg-slate-200', 'text-slate-900');
+        // 1. Esconde todas as abas e reseta botões
+        tabs.forEach(t => {
+            const tabElement = document.getElementById(`tab-${t}`);
+            const navElement = document.getElementById(`nav-${t}`);
+            const mobileBtn = document.getElementById(`m-nav-${t}`);
+            
+            if (tabElement) tabElement.classList.add('hidden');
+            if (navElement) navElement.classList.remove('bg-slate-200', 'text-slate-900');
+            if (mobileBtn) {
+                mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
+            }
+        });
 
-        const mobileBtn = document.getElementById(`m-nav-${t}`);
-        if(mobileBtn) {
-            mobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-slate-400";
-        }
-    });
-
-    // Ativa a aba clicada
-    const activeTab = document.getElementById(`tab-${tabId}`);
-    const activeNav = document.getElementById(`nav-${tabId}`);
-    
-    if (activeTab) activeTab.classList.remove('hidden');
-    if (activeNav) activeNav.classList.add('bg-slate-200', 'text-slate-900');
-    
-    // Atualiza ícones do Lucide se houver ícones na nova tela
-    if(typeof lucide !== 'undefined') lucide.createIcons();
-};
-
-        
-
-        document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-        document.getElementById(`nav-${tabId}`).classList.add('bg-slate-200', 'text-slate-900');
-
-        
-
+        // 2. Ativa a aba selecionada
+        const activeTab = document.getElementById(`tab-${tabId}`);
+        const activeNav = document.getElementById(`nav-${tabId}`);
         const activeMobileBtn = document.getElementById(`m-nav-${tabId}`);
-
-        if(activeMobileBtn) activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
-
         
+        if (activeTab) activeTab.classList.remove('hidden');
+        if (activeNav) activeNav.classList.add('bg-slate-200', 'text-slate-900');
+        if (activeMobileBtn) {
+            activeMobileBtn.className = "flex flex-col items-center gap-1 p-1 font-bold text-[10px] transition-all duration-200 text-center text-blue-500 scale-110";
+        }
 
+        // 3. Extras
         document.getElementById('main-content-scroll').scrollTop = 0;
-
         if(Object.keys(db).length > 0) refreshAppInterface();
-
+        if(typeof lucide !== 'undefined') lucide.createIcons();
+        if(tabId === 'historico' && typeof renderFullHistory === 'function') renderFullHistory();
     }
-        
+
     window.selectMealMomentCard = function(moment) {
-
         selectedMealMoment = moment;
-
         const maps = {'Café da Manhã': 'cafe-m', 'Almoço': 'almoco', 'Café da Tarde': 'cafe-t', 'Janta': 'janta'};
-
         Object.keys(maps).forEach(k => {
 
             const idSuffix = maps[k];
