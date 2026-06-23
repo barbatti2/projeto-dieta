@@ -1282,9 +1282,7 @@ function changeDiaryScope(scope) {
         if(Object.keys(db).length > 0) refreshAppInterface();
 
     }
-
-
-
+        
     window.selectMealMomentCard = function(moment) {
 
         selectedMealMoment = moment;
@@ -1906,13 +1904,15 @@ function changeDiaryScope(scope) {
 
     function excluirRefeicaoDoHistorico(idRefeicao) {
         if (!confirm("Tem certeza que deseja excluir?")) return;
+        
         if (db[globalProfile] && db[globalProfile].diario) {
             db[globalProfile].diario = db[globalProfile].diario.filter(ref => ref.id !== idRefeicao);
             saveDB();
             renderFullHistory();
         }
-    }
+    } // Esta chave fecha a função excluirRefeicaoDoHistorico
+    
     // --- FIM DO CÓDIGO DO HISTÓRICO ---
-    </script> 
+</script> 
 </body>
 </html>
