@@ -112,12 +112,17 @@
             </div>
             <span class="font-black tracking-wide text-sm uppercase">Projeto Dieta</span>
         </div>
-        <div class="w-28 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
-            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
-                <option value="Gabriel">Gabriel</option>
-                <option value="Raissa">Raíssa</option>
-            </select>
-        </div>
+        <div class="w-28 relative">
+    <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="hidden">
+        <option value="Gabriel">Gabriel</option>
+        <option value="Raissa">Raíssa</option>
+    </select>
+
+    <button onclick="toggleDropdown()" class="w-full flex justify-between items-center px-3 py-1.5 bg-slate-800 border border-slate-700/50 text-white rounded-xl text-xs font-bold focus:outline-none">
+        <span id="active-profile-name-mobile">Gabriel</span>
+        <svg class="w-3 h-3 text-slate-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+    </button>
+</div>
     </header>
 
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
@@ -427,6 +432,37 @@
             renderCalendar();
         }
 
+        // Esta função faz a mágica acontecer: ela muda o nome no botão e chama o seu sistema
+function selectProfile(name) {
+    // 1. Atualiza o texto visual do botão Desktop
+    const desktopBtn = document.getElementById('active-profile-name');
+    if (desktopBtn) desktopBtn.innerText = name;
+    
+    // 2. Atualiza o texto visual do botão Mobile
+    const mobileBtn = document.getElementById('active-profile-name-mobile');
+    if (mobileBtn) mobileBtn.innerText = name;
+    
+    // 3. Fecha o menu suspenso
+    const dropdown = document.getElementById('profile-dropdown');
+    if (dropdown) dropdown.classList.add('hidden');
+    
+    // 4. Chama a SUA função original que já faz todo o trabalho pesado
+    changeProfile(name);
+}
+
+// Esta função abre e fecha o menu
+function toggleDropdown() {
+    const dropdown = document.getElementById('profile-dropdown');
+    if (dropdown) dropdown.classList.toggle('hidden');
+}
+
+// Fecha o menu se clicar em qualquer lugar fora dele
+window.onclick = function(event) {
+    const dropdown = document.getElementById('profile-dropdown');
+    if (dropdown && !event.target.matches('button') && !event.target.closest('#profile-dropdown')) {
+        dropdown.classList.add('hidden');
+    }
+}
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
