@@ -295,6 +295,10 @@
                     </div>
                 </div>
                 <div>
+                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Atual (kg)</label>
+                    <input type="number" step="0.1" id="weight-current" class="w-full p-2.5 bg-white border-2 border-blue-200 rounded-xl font-bold text-sm focus:outline-none">
+                </div>
+                <div>
                     <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Alvo / Desejado (kg)</label>
                     <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
                 </div>
@@ -313,7 +317,16 @@
             </div>
         </div>
     </div> 
-</div> 
+</div> ```
+
+### Por que a aba de Configuração sumiu?
+Se a aba de configuração não aparecer após você colar esse código, verifique o seu menu (os botões que você clica para trocar de aba). **O ID do botão de configuração deve estar disparando a função correta.**
+
+1.  **O botão dispara a função?** No seu código do menu, certifique-se de que o botão de "Configurações" tenha algo como `onclick="switchTab('tab-config')"`.
+2.  **O ID está correto?** O ID da aba de configuração deve ser exatamente `id="tab-config"`.
+
+Se você ainda não consegue ver a aba, pode ser que o seu JavaScript que faz a troca de abas esteja procurando um nome de classe ou ID diferente. **Como é o código do seu menu?** Se puder colar o trecho dos botões de menu aqui, eu ajusto para você.
+
 
 <div id="tab-config" class="tab-content w-full hidden">
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
