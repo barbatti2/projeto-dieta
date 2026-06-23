@@ -18,7 +18,6 @@
             font-family: 'Outfit', sans-serif; 
         }
         
-        /* Prevenção de Zoom automático no Mobile */
         input, select, textarea, button, p, span, div {
             font-size: 16px !important;
         }
@@ -32,23 +31,10 @@
         .wheel-progress {
             transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
         }
-        .bar-progress {
-            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @keyframes pulse-brilho {
-            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7); }
-            50% { transform: scale(1.05); box-shadow: 0 0 10px 3px rgba(37, 99, 235, 0.4); }
-        }
-        .dia-atual-premium {
-            animation: pulse-brilho 2s infinite ease-in-out;
-            border: 2px solid #2563eb !important;
-        }
     </style>
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen overflow-hidden text-slate-800">
 
-    <!-- MENU LATERAL: APENAS PARA COMPUTADOR (md:) -->
     <aside class="hidden md:flex w-64 bg-slate-900 flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
         <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
             <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg">
@@ -60,7 +46,6 @@
             </div>
         </div>
 
-        <!-- SELETOR DE PERFIL DESKTOP -->
         <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
             <label class="block text-micro font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
             <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-mini font-bold focus:outline-none cursor-pointer">
@@ -91,11 +76,8 @@
         </nav>
     </aside>
 
-    <!-- HEADER DE TOPO NO MOBILE -->
     <header class="flex md:hidden bg-slate-900 text-white p-4 justify-between items-center shadow-md flex-shrink-0">
-        <div class="flex items-center gap-2">
-            <span class="font-black tracking-wide uppercase text-mini">Projeto Dieta</span>
-        </div>
+        <span class="font-black tracking-wide uppercase text-mini">Projeto Dieta</span>
         <div class="w-32 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
             <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-mini focus:outline-none cursor-pointer">
                 <option value="Gabriel">Gabriel</option>
@@ -104,16 +86,13 @@
         </div>
     </header>
 
-    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-20 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
             
-            <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
                 <p class="text-mini text-slate-400 font-extrabold uppercase tracking-widest mb-4">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
                 
-                <!-- Roda Gráfica SVG -->
                 <div class="relative flex items-center justify-center w-48 h-48 mx-auto mb-6">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
@@ -126,54 +105,41 @@
                     </div>
                 </div>
 
-                <!-- CARDS INFERIORES -->
                 <div class="grid grid-cols-2 gap-3 w-full max-w-md mx-auto">
-                    <!-- Status de Calorias Faltantes/Excedidas (Padrão Azul) -->
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-1.5 rounded-lg text-white bg-blue-600 shadow-sm shadow-blue-600/20">
-                            <i data-lucide="zap" class="w-4 h-4"></i>
-                        </div>
-                        <span id="lbl-status-kcal-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                        <span class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante Kcal</span>
                         <span id="lbl-status-kcal-value" class="text-base font-black tracking-tight text-slate-800">0 kcal</span>
                     </div>
-
-                    <!-- Status de Proteínas Faltantes/Excedidas (Padrão Laranja) -->
-                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center gap-1">
-                        <div class="p-1.5 rounded-lg text-white bg-orange-500 shadow-sm shadow-orange-500/20">
-                            <i data-lucide="flame" class="w-4 h-4"></i>
-                        </div>
-                        <span id="lbl-status-prot-text" class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante</span>
+                    <div class="bg-slate-50 border border-slate-200/80 rounded-xl p-3 flex flex-col items-center justify-center text-center">
+                        <span class="text-micro font-bold uppercase tracking-wide text-slate-400">Restante Proteína</span>
                         <span id="lbl-status-prot-value" class="text-base font-black tracking-tight text-slate-800">0g</span>
                     </div>
                 </div>
             </div>
 
-            <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Montar Refeição</h2>
                 
                 <div class="w-full mb-4 relative">
                     <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2">1. Selecione o Alimento</label>
-                    <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium">
+                    <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl font-medium">
                     <div id="search-results" class="absolute w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
                 </div>
 
                 <div id="selected-food-card" class="w-full bg-blue-50 border border-blue-100 rounded-xl p-3 mb-4 hidden flex justify-between items-center">
-                    <div>
-                        <h4 id="lbl-food-name" class="font-bold text-slate-900">Nenhum</h4>
-                    </div>
+                    <h4 id="lbl-food-name" class="font-bold text-slate-900">Nenhum</h4>
                     <span id="lbl-food-base-kcal" class="text-mini font-semibold text-slate-500">0 kcal / 100g</span>
                 </div>
 
                 <div class="w-full mb-4">
                     <label class="block text-mini font-black uppercase tracking-wider text-slate-500 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
                     <div class="flex items-center justify-center gap-4 mb-3">
-                        <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">-</button>
+                        <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg">-</button>
                         <div class="text-center min-w-[90px]">
                             <span id="txt-grams" class="text-3xl font-black text-slate-900 tracking-tight">100</span>
                             <span class="text-micro font-bold text-slate-400 block uppercase tracking-wider">Gramas</span>
                         </div>
-                        <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg flex items-center justify-center">+</button>
+                        <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-slate-200 text-slate-700 font-black rounded-xl text-lg">+</button>
                     </div>
                 </div>
 
@@ -197,146 +163,58 @@
                 </div>
             </div>
 
-            <!-- ABA CALENDÁRIO -->
             <div id="tab-calendario" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-1">Consistência</h2>
-                <p id="lbl-calendar-month" class="text-mini font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
-                
-                <!-- Placar acumulado -->
-                <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
-                    <div class="bg-emerald-50 border border-emerald-100 p-1.5 rounded-xl">
-                        <span id="count-ambos" class="block text-base font-black text-emerald-700">0</span>
-                        <span class="text-[8px] font-bold text-emerald-600 uppercase block tracking-tighter">Dieta+Treino</span>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-100 p-1.5 rounded-xl">
-                        <span id="count-dieta" class="block text-base font-black text-blue-700">0</span>
-                        <span class="text-[8px] font-bold text-blue-600 uppercase block tracking-tighter">Só Dieta</span>
-                    </div>
-                    <div class="bg-amber-50 border border-amber-100 p-1.5 rounded-xl">
-                        <span id="count-treino" class="block text-base font-black text-amber-700">0</span>
-                        <span class="text-[8px] font-bold text-amber-600 uppercase block tracking-tighter">Só Treino</span>
-                    </div>
-                    <div class="bg-rose-50 border border-rose-100 p-1.5 rounded-xl">
-                        <span id="count-nenhum" class="block text-base font-black text-rose-700">0</span>
-                        <span class="text-[8px] font-bold text-rose-600 uppercase block tracking-tighter">Nenhum</span>
-                    </div>
-                </div>
-
-                <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3">
-                    <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
-                        <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                    </div>
-                    <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
-                </div>
-
-                <!-- Modal do Calendário -->
-                <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-                    <div class="bg-white rounded-2xl p-5 w-full max-w-xs shadow-xl border border-slate-100">
-                        <h3 class="text-lg font-black text-slate-900 mb-0.5">Registrar Dia</h3>
-                        <p id="calendar-modal-date" class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-4"></p>
-                        
-                        <div class="space-y-2">
-                            <button onclick="setDayStatus('ambos')" class="w-full p-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
-                            <button onclick="setDayStatus('dieta')" class="w-full p-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
-                            <button onclick="setDayStatus('treino')" class="w-full p-2.5 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
-                            <button onclick="setDayStatus('nenhum')" class="w-full p-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
-                        </div>
-                        <button onclick="closeCalendarModal()" class="w-full mt-3 py-1.5 text-[10px] font-black text-slate-400 uppercase tracking-wider hover:text-slate-600">Cancelar</button>
-                    </div>
-                </div>
+                <p class="text-mini font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Histórico Mensal</p>
+                <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5 w-full bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
             </div>
 
-            <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
-                
-                <div class="w-full grid grid-cols-4 gap-1.5 mb-4 border-b border-slate-100 pb-3">
-                    <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-blue-600 text-white font-bold rounded-lg text-xs">Dia</button>
-                    <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-1.5 bg-slate-100 text-slate-600 font-bold rounded-lg text-xs">Semana</button>
-                    <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-1.5 bg-slate-100 text-slate-600 font-bold rounded-lg text-xs">Mês</button>
-                    <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-1.5 bg-slate-100 text-slate-600 font-bold rounded-lg text-xs">Ano</button>
-                </div>
-
                 <div id="history-container" class="w-full space-y-4"></div>
             </div>
 
-            <!-- ABA PESO -->
             <div id="tab-peso" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Pesos e Medidas</h2>
                 
-                <!-- CARD DINÂMICO DE PROGRESSO INTELIGENTE COM CORES DINÂMICAS -->
                 <div id="card-status-peso" class="w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 bg-slate-100 border-slate-300">
                     <span id="lbl-peso-status-title" class="text-micro font-black uppercase tracking-wider text-slate-500">Progresso da Meta</span>
                     <h3 id="lbl-peso-status-msg" class="text-lg font-black mt-0.5 text-slate-700">Insira seus pesos para calcular</h3>
                 </div>
 
-                <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-                    <div class="md:col-span-2 space-y-3">
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
-                            <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas</h3>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div>
-                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Inicial (kg)</label>
-                                    <input type="number" step="0.1" id="weight-start" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Cintura (cm)</label>
-                                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Alvo (kg)</label>
-                                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
-                            </div>
-                        </div>
-
-                        <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-100 space-y-2">
-                            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização</h3>
-                            <div>
-                                <label class="block text-[9px] font-black uppercase text-blue-600 mb-1">Peso Atual (kg)</label>
-                                <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gráfico Vertical de Progresso em Barra -->
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Porcentagem</span>
-                        <div class="w-10 h-32 bg-slate-200 rounded-full relative overflow-hidden flex flex-col justify-end border border-slate-300/40 my-2">
-                            <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
+                <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Inicial (kg)</label>
+                            <input type="number" step="0.1" id="weight-start" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
                         </div>
                         <div>
-                            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
-                            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
+                            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Peso (kg)</label>
+                            <input type="number" step="0.1" id="weight-target" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
                         </div>
                     </div>
+                    <div>
+                        <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Atual (kg)</label>
+                        <input type="number" step="0.1" id="weight-current" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
+                    </div>
+                    <button onclick="updateWeights()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Pesos</button>
                 </div>
-
-                <button onclick="updateWeights()" class="w-full mt-3 py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider text-xs">Salvar Tudo e Calcular</button>
             </div>
 
-            <!-- ABA CONFIGURAÇÕES -->
             <div id="tab-config" class="tab-content w-full">
-                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
-                <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
-                
-                <div class="w-full max-w-sm mx-auto space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Configurações</h2>
+                <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
                     <div>
-                        <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Calorias (kcal)</label>
-                        <input type="number" id="cfg-target-kcal" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
+                        <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Calorias (kcal)</label>
+                        <input type="number" id="cfg-target-kcal" class="w-full p-3 border border-slate-200 rounded-xl font-bold">
                     </div>
-                    <div>
-                        <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Proteínas (g)</label>
-                        <input type="number" id="cfg-target-protein" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
-                    </div>
-                    <button onclick="saveProfileSettings()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md">Salvar Metas</button>
+                    <button onclick="saveProfileSettings()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Metas</button>
                 </div>
             </div>
 
         </div>
     </main>
 
-    <!-- MENU INFERIOR: EXCLUSIVO PARA CELULAR (md:hidden) -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-20 flex items-center justify-around z-50 pb-2">
         <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-2 text-slate-400">
             <i data-lucide="home" class="w-6 h-6"></i>
@@ -361,7 +239,6 @@
     </div>
 
     <script>
-        // --- BASE DE ALIMENTOS ---
         const alimentosBase = [
             { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
             { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
@@ -370,10 +247,9 @@
             { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 }
         ];
 
-        // --- DADOS MULTIPERFIL INTEGRADOR ---
         let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
-            Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [], pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} },
-            Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [], pesoInicial: 0, cinturaInicial: 0, pesoAlvo: 0, pesoAtual: 0, calendarioStatus: {} }
+            Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [], pesoInicial: 0, pesoAlvo: 0, pesoAtual: 0 },
+            Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [], pesoInicial: 0, pesoAlvo: 0, pesoAtual: 0 }
         };
 
         let currentProfile = 'Gabriel';
@@ -381,8 +257,6 @@
         let currentGrams = 100;
         let currentSelectedMoment = '';
         let currentPlateItems = [];
-        let currentHistoryFilter = 'dia';
-        let selectedCalendarDayKey = '';
 
         function getBrasiliaDate() {
             return new Date(new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"}));
@@ -390,22 +264,17 @@
 
         function changeProfile(profileName) {
             currentProfile = profileName;
-            
-            // Sincronizando seletores entre mobile e desktop
             document.getElementById('profile-selector-desktop').value = profileName;
             document.getElementById('profile-selector-mobile').value = profileName;
-
-            currentPlateItems = [];
-            renderPlateUI();
-            loadConfigFields();
             refreshHomeWheel();
-            renderTimelineHistory();
-            renderWeightTab();
-            renderCalendar();
         }
 
-        // --- SISTEMA DE NAVEGAÇÃO ENTRE ABAS ---
         function switchTab(tabId) {
+            // ROLAR PARA O TOPO AUTOMATICAMENTE
+            window.scrollTo({ top: 0 });
+            const mainContainer = document.querySelector('main');
+            if (mainContainer) mainContainer.scrollTop = 0;
+
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white', 'text-blue-500');
@@ -422,58 +291,35 @@
 
             if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
-            if(tabId === 'config') loadConfigFields();
             if(tabId === 'peso') renderWeightTab();
             if(tabId === 'calendario') renderCalendar();
             lucide.createIcons();
         }
 
-        // --- CÁLCULO E ANIMAÇÃO DA RODA DIÁRIA (HOME) ---
         function refreshHomeWheel() {
-            document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
+            document.getElementById('lbl-home-profile').innerText = currentProfile;
             const profile = appData[currentProfile];
             const hojeBR = getBrasiliaDate();
             
-            const refeicoesDeHoje = (profile.historicoRefeicoes || []).filter(ref => {
+            const stats = (profile.historicoRefeicoes || []).filter(ref => {
                 const d = new Date(ref.timestamp);
-                return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
+                return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth();
             });
 
-            const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
-            const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
+            const totalKcal = stats.reduce((acc, r) => acc + r.totalKcal, 0);
+            const totalProt = stats.reduce((acc, r) => acc + r.totalProt, 0);
 
-            document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
+            document.getElementById('lbl-home-consumed').innerText = totalKcal;
             document.getElementById('lbl-home-target').innerText = profile.metaKcal;
 
             const circle = document.getElementById('wheel-progress-bar');
-            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
-            circle.style.strokeDashoffset = "263.89";
+            let percentual = profile.metaKcal > 0 ? (totalKcal / profile.metaKcal) * 100 : 0;
+            circle.style.strokeDashoffset = 263.89 - (263.89 * Math.min(percentual, 100)) / 100;
 
-            setTimeout(() => {
-                let strokePercent = Math.min(percentual, 100);
-                circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
-                
-                if (percentual <= 100) {
-                    circle.setAttribute('stroke', '#10b981'); // Verde
-                } else if (percentual <= 120) {
-                    circle.setAttribute('stroke', '#fb923c'); // Laranja claro
-                } else {
-                    circle.setAttribute('stroke', '#ef4444'); // Vermelho
-                }
-            }, 100);
-
-            // Bloco de calorias restante (Padrão Fixo)
-            const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
-            document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
-            document.getElementById('lbl-status-kcal-value').innerText = `${kcalFaltaOuPassa} kcal`;
-
-            // Bloco de proteínas restante (Padrão Fixo)
-            const protFaltaOuPassa = profile.metaProtein - totalProtHoje;
-            document.getElementById('lbl-status-prot-text').innerText = protFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
-            document.getElementById('lbl-status-prot-value').innerText = `${protFaltaOuPassa}g`;
+            document.getElementById('lbl-status-kcal-value').innerText = `${profile.metaKcal - totalKcal} kcal`;
+            document.getElementById('lbl-status-prot-value').innerText = `${profile.metaProtein - totalProt}g`;
         }
 
-        // --- FILTRAGEM E ADIÇÃO DE ALIMENTOS ---
         function filterFood() {
             const input = document.getElementById('search-food').value.toLowerCase();
             const resultsBox = document.getElementById('search-results');
@@ -483,7 +329,7 @@
             const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
             filtered.forEach(food => {
                 const row = document.createElement('div');
-                row.className = "p-3 hover:bg-slate-100 cursor-pointer border-b border-slate-100 last:border-b-0";
+                row.className = "p-3 hover:bg-slate-100 cursor-pointer border-b border-slate-100";
                 row.innerText = food.nome;
                 row.onclick = () => {
                     currentSelectedFood = food;
@@ -519,28 +365,7 @@
             });
             document.getElementById('btn-save-meal').disabled = false;
             document.getElementById('temp-plate-section').classList.remove('hidden');
-            
-            const listContainer = document.getElementById('temp-plate-list');
-            listContainer.innerHTML = '';
-            currentPlateItems.forEach((item, index) => {
-                listContainer.innerHTML += `
-                    <div class="flex justify-between items-center bg-slate-50 p-2 rounded border text-mini font-semibold">
-                        <span>${item.nome} (${item.gramas}g)</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-blue-600">${item.kcal} kcal</span>
-                            <button onclick="removeFoodFromPlate(${index})" class="text-red-500 font-bold">X</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
-        function removeFoodFromPlate(index) {
-            currentPlateItems.splice(index, 1);
-            if(currentPlateItems.length === 0) {
-                document.getElementById('temp-plate-section').classList.add('hidden');
-                document.getElementById('btn-save-meal').disabled = true;
-            }
-            addFoodToPlate(); // Atualiza a UI remontando a lista
+            document.getElementById('temp-plate-list').innerHTML += `<div class="p-2 bg-slate-50 rounded border text-mini">${currentSelectedFood.nome} (${currentGrams}g)</div>`;
         }
 
         function saveFullMeal() {
@@ -551,93 +376,20 @@
             appData[currentProfile].historicoRefeicoes.unshift({
                 id: Date.now(),
                 momento: currentSelectedMoment,
-                itens: [...currentPlateItems],
+                itens: currentPlateItems,
                 totalKcal: totalKcal,
                 totalProt: totalProt,
                 timestamp: getBrasiliaDate().getTime(),
-                dia: getBrasiliaDate().getDate().toString().padStart(2, '0'),
-                mes: (getBrasiliaDate().getMonth() + 1).toString().padStart(2, '0'),
+                dia: getBrasiliaDate().getDate(),
+                mes: getBrasiliaDate().getMonth() + 1,
                 ano: getBrasiliaDate().getFullYear()
             });
             
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
             currentPlateItems = [];
             document.getElementById('temp-plate-section').classList.add('hidden');
-            document.getElementById('btn-save-meal').disabled = true;
-            
             alert("Refeição cadastrada!");
             switchTab('inicio');
-        }
-
-        // --- SISTEMA DE CONSISTÊNCIA E CALENDÁRIO ---
-        function renderCalendar() {
-            const hojeBR = getBrasiliaDate();
-            const anoAtual = hojeBR.getFullYear();
-            const mesAtual = hojeBR.getMonth();
-            const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-            document.getElementById('lbl-calendar-month').innerText = `${nomesMeses[mesAtual]} de ${anoAtual}`;
-
-            const primeiroDiaMes = new Date(anoAtual, mesAtual, 1).getDay();
-            const totalDiasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
-            const gridContainer = document.getElementById('calendar-days-grid');
-            gridContainer.innerHTML = '';
-
-            for (let i = 0; i < primeiroDiaMes; i++) { gridContainer.innerHTML += `<div></div>`; }
-
-            const statusDoPerfil = appData[currentProfile].calendarioStatus || {};
-            let cAmbos = 0, cDieta = 0, cTreino = 0, cNenhum = 0;
-
-            for (let dia = 1; dia <= totalDiasNoMes; dia++) {
-                const dayKey = `${dia.toString().padStart(2, '0')}-${(mesAtual + 1).toString().padStart(2, '0')}-${anoAtual}`;
-                const status = statusDoPerfil[dayKey] || '';
-
-                if(status === 'ambos') cAmbos++;
-                if(status === 'dieta') cDieta++;
-                if(status === 'treino') cTreino++;
-                if(status === 'nenhum') cNenhum++;
-
-                let bgStyle = 'bg-white text-slate-700 hover:bg-slate-100';
-                if(status === 'ambos') bgStyle = 'bg-emerald-600 text-white font-bold';
-                else if(status === 'dieta') bgStyle = 'bg-blue-600 text-white font-bold';
-                else if(status === 'treino') bgStyle = 'bg-amber-500 text-white font-bold';
-                else if(status === 'nenhum') bgStyle = 'bg-rose-500 text-white font-bold';
-
-                let classeDiaAtual = (dia === hojeBR.getDate() && mesAtual === hojeBR.getMonth() && anoAtual === hojeBR.getFullYear()) ? 'dia-atual-premium' : '';
-
-                gridContainer.innerHTML += `<button onclick="openCalendarModal('${dayKey}')" class="${bgStyle} ${classeDiaAtual} p-2 rounded-xl border border-slate-200/60 text-xs font-semibold flex items-center justify-center h-10 transition-all">${dia}</button>`;
-            }
-
-            document.getElementById('count-ambos').innerText = cAmbos;
-            document.getElementById('count-dieta').innerText = cDieta;
-            document.getElementById('count-treino').innerText = cTreino;
-            document.getElementById('count-nenhum').innerText = cNenhum;
-        }
-
-        function openCalendarModal(dayKey) {
-            selectedCalendarDayKey = dayKey;
-            document.getElementById('calendar-modal-date').innerText = `Dia: ${dayKey.replace(/-/g, '/')}`;
-            document.getElementById('calendar-modal').classList.remove('hidden');
-        }
-
-        function closeCalendarModal() { document.getElementById('calendar-modal').classList.add('hidden'); }
-
-        function setDayStatus(status) {
-            if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
-            appData[currentProfile].calendarioStatus[selectedCalendarDayKey] = status;
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
-            closeCalendarModal();
-            renderCalendar();
-        }
-
-        // --- RENDERING HISTÓRICO ---
-        function changeHistoryFilter(filtro) {
-            currentHistoryFilter = filtro;
-            document.querySelectorAll('.history-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('bg-slate-100', 'text-slate-600');
-            });
-            document.getElementById(`filter-${filtro}`).classList.add('bg-blue-600', 'text-white');
-            renderTimelineHistory();
         }
 
         function renderTimelineHistory() {
@@ -648,49 +400,38 @@
             
             list.forEach(ref => {
                 container.innerHTML += `
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between">
                         <div>
                             <span class="font-bold block text-mini">${ref.momento} - ${ref.totalKcal} kcal</span>
-                            <span class="text-slate-500 text-mini">${ref.dia}/${ref.mes}/${ref.ano}</span>
+                            <span class="text-slate-500 text-mini">${ref.dia}/${ref.mes}</span>
                         </div>
-                        <button onclick="deleteMeal(${ref.id})" class="text-red-500 font-bold p-1">Excluir</button>
                     </div>`;
             });
         }
 
-        function deleteMeal(id) {
-            if(!confirm("Deseja realmente excluir esta refeição?")) return;
-            appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(r => r.id !== id);
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
-            renderTimelineHistory();
-        }
-
-        // --- ABA CONFIGURAÇÕES METAS ---
-        function loadConfigFields() {
-            document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
-            document.getElementById('cfg-target-kcal').value = appData[currentProfile].metaKcal;
-            document.getElementById('cfg-target-protein').value = appData[currentProfile].metaProtein;
-        }
-
         function saveProfileSettings() {
             const kcalVal = parseInt(document.getElementById('cfg-target-kcal').value);
-            const protVal = parseInt(document.getElementById('cfg-target-protein').value);
-            if(kcalVal > 0 && protVal > 0) {
+            if(kcalVal > 0) {
                 appData[currentProfile].metaKcal = kcalVal;
-                appData[currentProfile].metaProtein = protVal;
                 localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
-                alert("Metas salvas!");
+                alert("Configurações salvas!");
                 switchTab('inicio');
             }
         }
 
-        // --- STREAMING_CHUNK:Processando lógica de progresso na aba Pesos e Medidas... ---
-        // --- ABA PESOS E MEDIDAS COM CORES INTELIGENTES ---
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-days-grid');
+            grid.innerHTML = '';
+            for(let i = 1; i <= 30; i++) {
+                grid.innerHTML += `<div class="p-2 bg-white border border-slate-200 text-center rounded text-mini font-bold">${i}</div>`;
+            }
+        }
+
+        // --- CÁLCULO DINÂMICO E PORCENTAGEM INTELIGENTE ---
         function renderWeightTab() {
             const profile = appData[currentProfile];
             
             document.getElementById('weight-start').value = profile.pesoInicial || '';
-            document.getElementById('waist-initial').value = profile.cinturaInicial || '';
             document.getElementById('weight-target').value = profile.pesoAlvo || '';
             document.getElementById('weight-current').value = profile.pesoAtual || '';
 
@@ -698,104 +439,82 @@
             const msg = document.getElementById('lbl-peso-status-msg');
             const title = document.getElementById('lbl-peso-status-title');
 
-            const fillBar = document.getElementById('weight-bar-fill');
-            const percentText = document.getElementById('weight-progress-percent');
-            const remainingText = document.getElementById('weight-remaining-lbl');
-
             const pInicial = parseFloat(profile.pesoInicial);
             const pMeta = parseFloat(profile.pesoAlvo);
             const pAtual = parseFloat(profile.pesoAtual);
 
-            // Reseta cores anteriores do card
             card.className = "w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 ";
 
             if (!pInicial || !pMeta || !pAtual) {
                 card.classList.add("bg-slate-100", "border-slate-300");
                 title.className = "text-micro font-black uppercase tracking-wider text-slate-500";
                 msg.className = "text-base font-black mt-0.5 text-slate-700";
-                msg.innerText = "Insira seus pesos para calcular!";
-                
-                fillBar.style.height = '0%';
-                percentText.innerText = '0%';
-                remainingText.innerText = 'Configure ao lado';
+                msg.innerText = "Insira os 3 pesos para calcular o progresso!";
                 return;
             }
 
-            // Descobre se o perfil deseja emagrecer ou ganhar massa
             const objetivoEmagrecer = pMeta < pInicial;
-            let progresso = 0;
+            let percentual = 0;
 
             if (objetivoEmagrecer) {
+                // Total que precisa emagrecer
                 const totalEspera = pInicial - pMeta;
-                const totalEliminado = pInicial - pAtual;
-                progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
+                // Quanto emagreceu de verdade (se engordou em relação ao inicial, dá negativo)
+                const realMudanca = pInicial - pAtual; 
+                percentual = (realMudanca / totalEspera) * 100;
 
                 if (pAtual <= pMeta) {
                     card.classList.add("bg-emerald-50", "border-emerald-200");
                     title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
                     msg.className = "text-base font-black mt-0.5 text-emerald-800";
-                    msg.innerText = "Meta atingida! Você está no caminho certo! 🎉";
+                    msg.innerText = `Meta atingida! ${percentual.toFixed(0)}% concluído. 🎉`;
                 } else if (pAtual < pInicial) {
                     card.classList.add("bg-emerald-50", "border-emerald-200");
                     title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
                     msg.className = "text-base font-black mt-0.5 text-emerald-800";
-                    msg.innerText = `Caminho certo! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg desde o início.`;
+                    msg.innerText = `No caminho! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg (${percentual.toFixed(0)}% da meta).`;
                 } else {
-                    card.classList.add("bg-amber-50", "border-amber-200");
-                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
-                    msg.className = "text-base font-black mt-0.5 text-amber-800";
-                    msg.innerText = `Atenção! Você ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg acima do peso inicial.`;
+                    card.classList.add("bg-rose-50", "border-rose-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-rose-600";
+                    msg.className = "text-base font-black mt-0.5 text-rose-800";
+                    msg.innerText = `Atenção! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg acima do inicial (${percentual.toFixed(0)}% de progresso).`;
                 }
             } else {
+                // Objetivo: Ganhar Massa
                 const totalEspera = pMeta - pInicial;
-                const totalGanho = pAtual - pInicial;
-                progresso = totalEspera > 0 ? Math.round((totalGanho / totalEspera) * 100) : 0;
+                const realMudanca = pAtual - pInicial;
+                percentual = (realMudanca / totalEspera) * 100;
 
                 if (pAtual >= pMeta) {
                     card.classList.add("bg-emerald-50", "border-emerald-200");
                     title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
                     msg.className = "text-base font-black mt-0.5 text-emerald-800";
-                    msg.innerText = "Meta atingida! Ótimo ganho de massa! 💪";
+                    msg.innerText = `Meta atingida! ${percentual.toFixed(0)}% concluído. 💪`;
                 } else if (pAtual > pInicial) {
                     card.classList.add("bg-emerald-50", "border-emerald-200");
                     title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
                     msg.className = "text-base font-black mt-0.5 text-emerald-800";
-                    msg.innerText = `Caminho certo! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg em direção ao alvo.`;
+                    msg.innerText = `No caminho! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg (${percentual.toFixed(0)}% da meta).`;
                 } else {
-                    card.classList.add("bg-amber-50", "border-amber-200");
-                    title.className = "text-micro font-black uppercase tracking-wider text-amber-600";
-                    msg.className = "text-base font-black mt-0.5 text-amber-800";
-                    msg.innerText = `Atenção! Você perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg. Foco no superávit!`;
+                    card.classList.add("bg-rose-50", "border-rose-200");
+                    title.className = "text-micro font-black uppercase tracking-wider text-rose-600";
+                    msg.className = "text-base font-black mt-0.5 text-rose-800";
+                    msg.innerText = `Atenção! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg (${percentual.toFixed(0)}% de progresso).`;
                 }
             }
-
-            // Atualização da barra gráfica e placar numérico
-            progresso = Math.max(0, Math.min(progresso, 100));
-            setTimeout(() => {
-                fillBar.style.height = `${progresso}%`;
-                percentText.innerText = `${progresso}%`;
-            }, 150);
-
-            const faltaKg = (pAtual - pMeta).toFixed(1);
-            remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
         }
 
         function updateWeights() {
             appData[currentProfile].pesoInicial = parseFloat(document.getElementById('weight-start').value) || 0;
-            appData[currentProfile].cinturaInicial = parseFloat(document.getElementById('waist-initial').value) || 0;
             appData[currentProfile].pesoAlvo = parseFloat(document.getElementById('weight-target').value) || 0;
             appData[currentProfile].pesoAtual = parseFloat(document.getElementById('weight-current').value) || 0;
             
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
-            alert("Metas e peso atualizados!");
+            alert("Pesos atualizados com sucesso!");
             renderWeightTab();
         }
 
-        // --- ENTRADA DO DOM ---
-        document.addEventListener('DOMContentLoaded', () => { 
-            lucide.createIcons(); 
-            switchTab('inicio'); 
-        });
+        document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); switchTab('inicio'); });
     </script>
 </body>
 </html>
