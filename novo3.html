@@ -276,39 +276,38 @@
                 <div id="history-container" class="w-full space-y-4"></div>
             </div>
 
-            <!-- ABA PESO E MEDIDAS -->
-<div id="tab-peso" class="tab-content w-full">
-    <h2 class="text-2xl font-black text-slate-900 tracking-tight text-center mb-4">Pesos e Medidas</h2>
-    
-    <!-- CARD DE STATUS COM GRÁFICO HORIZONTAL -->
-    <div id="card-status-peso" class="w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 bg-slate-100 border-slate-300">
-        <span id="lbl-peso-status-title" class="text-micro font-black uppercase tracking-wider text-slate-500">Progresso da Meta</span>
-        <h3 id="lbl-peso-status-msg" class="text-lg font-black mt-0.5 text-slate-700 mb-3">Insira seus pesos para calcular</h3>
-        
-        <!-- CONTAINER DO GRÁFICO HORIZONTAL -->
-        <div id="peso-bar-container" class="w-full bg-slate-200 h-3 rounded-full overflow-hidden hidden relative">
-            <div id="peso-bar-progress" class="h-full bg-blue-600 transition-all duration-500" style="width: 0%;"></div>
-        </div>
-    </div>
+            <div id="tab-peso" class="tab-content w-full">
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Pesos e Medidas</h2>
+                <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-5">Evolução Corporal</p>
+                
+                <div class="w-full flex flex-col md:grid md:grid-cols-3 gap-4 items-stretch">
+                    <div class="md:col-span-2 space-y-3">
+                        <div class="bg-slate-50 p-4 rounded-xl md:rounded-2xl border border-slate-200/80 space-y-3">
+                            <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais</h3>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Inicial (kg)</label>
+                                    <input type="number" step="0.1" id="weight-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Cintura (cm)</label>
+                                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] font-black uppercase text-slate-400 mb-1">Peso Alvo / Desejado (kg)</label>
+                                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-slate-200 rounded-xl font-bold text-sm focus:outline-none">
+                            </div>
+                            <button onclick="saveWeightGoals()" class="w-full py-2 bg-slate-800 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider shadow-sm">Salvar Parâmetros</button>
+                        </div>
 
-    <div class="w-full space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-        <div class="grid grid-cols-2 gap-2">
-            <div>
-                <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Inicial (kg)</label>
-                <input type="number" step="0.1" id="weight-start" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
-            </div>
-            <div>
-                <label class="block text-mini font-black uppercase text-slate-500 mb-1">Meta de Peso (kg)</label>
-                <input type="number" step="0.1" id="weight-target" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
-            </div>
-        </div>
-        <div>
-            <label class="block text-mini font-black uppercase text-slate-500 mb-1">Peso Atual (kg)</label>
-            <input type="number" step="0.1" id="weight-current" class="w-full p-3 bg-white border border-slate-200 rounded-xl font-bold">
-        </div>
-        <button onclick="updateWeights()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl uppercase tracking-wider">Salvar Pesos</button>
-    </div>
-</div>
+                        <div class="bg-blue-50/60 p-4 rounded-xl md:rounded-2xl border border-blue-100 space-y-2">
+                            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5"><i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização Semanal</h3>
+                            <div class="flex gap-2">
+                                <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none">
+                                <button onclick="updateCurrentWeight()" class="px-4 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider">Atualizar</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
@@ -416,32 +415,7 @@
         }
 
         function switchTab(tabId) {
-    // 1. Esconde TODAS as abas
-    document.querySelectorAll('.tab-content').forEach(t => {
-        t.classList.remove('active');
-    });
-
-    // 2. Mostra apenas a que você clicou
-    document.getElementById(`tab-${tabId}`).classList.add('active');
-
-    // 3. Atualiza os botões do menu (Visual)
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-        btn.classList.add('text-slate-400');
-    });
-    
-    // Marca o botão clicado como ativo
-    const btnD = document.getElementById(`nav-desktop-${tabId}`);
-    if(btnD) { btnD.classList.add('bg-blue-600', 'text-white', 'shadow-md'); btnD.classList.remove('text-slate-400'); }
-    
-    const btnM = document.getElementById(`nav-mobile-${tabId}`);
-    if(btnM) { btnM.classList.add('text-blue-500'); btnM.classList.remove('text-slate-400'); }
-
-    // Rola para o topo
-    window.scrollTo({ top: 0 });
-    const main = document.querySelector('main');
-    if(main) main.scrollTop = 0;
-}
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
             // Limpa todos os botões (mobile e desktop)
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -530,26 +504,46 @@
         }
 
         function renderWeightTab() {
-            const prof = appData[currentProfile];
-            document.getElementById('weight-initial').value = prof.pesoInicial || '';
-            document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-            document.getElementById('weight-target').value = prof.pesoAlvo || '';
-            document.getElementById('weight-current').value = prof.pesoAtual || '';
+    const prof = appData[currentProfile];
+    document.getElementById('weight-initial').value = prof.pesoInicial || '';
+    document.getElementById('waist-initial').value = prof.cinturaInicial || '';
+    document.getElementById('weight-target').value = prof.pesoAlvo || '';
+    document.getElementById('weight-current').value = prof.pesoAtual || '';
 
-            const fillBar = document.getElementById('weight-bar-fill');
-            const percentText = document.getElementById('weight-progress-percent');
-            const remainingText = document.getElementById('weight-remaining-lbl');
+    const fillBar = document.getElementById('weight-bar-fill');
+    const percentText = document.getElementById('weight-progress-percent');
+    
+    // Convertendo para números para evitar erro de concatenação de string
+    const pIni = parseFloat(prof.pesoInicial || 0);
+    const pAlvo = parseFloat(prof.pesoAlvo || 0);
+    const pAtual = parseFloat(prof.pesoAtual || 0);
 
-            if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
-                const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
-                const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
-                let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
-                progresso = Math.max(0, Math.min(progresso, 100));
+    if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
+        // 1. Define se o objetivo é emagrecer (negativo) ou ganhar (positivo)
+        const objetivoEmagrecer = pAlvo < pIni;
+        
+        // 2. Cálculo da diferença total esperada (meta)
+        const totalMeta = Math.abs(pAlvo - pIni);
+        
+        // 3. Cálculo da diferença real atingida até agora
+        const totalReal = Math.abs(pAtual - pIni);
+        
+        // 4. Cálculo da porcentagem (regra de três)
+        let progresso = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+        
+        // 5. Lógica de correção (limita entre 0 e 100)
+        // Se você já passou da meta, ele fica em 100%. 
+        // Se o cálculo deu negativo por algum motivo, ele fica em 0%.
+        progresso = Math.max(0, Math.min(progresso, 100));
 
-                setTimeout(() => {
-                    fillBar.style.height = `${progresso}%`;
-                    percentText.innerText = `${progresso}%`;
-                }, 150);
+        // 6. Atualização visual
+        setTimeout(() => {
+            // Se o seu HTML usar 'height' ou 'width', ajuste aqui
+            fillBar.style.height = `${progresso}%`; 
+            percentText.innerText = `${Math.round(progresso)}%`;
+        }, 150);
+    }
+}
 
                 const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
                 remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
@@ -560,94 +554,28 @@
             }
         }
 
-        function renderWeightTab() {
-    const profile = appData[currentProfile];
-    
-    document.getElementById('weight-start').value = profile.pesoInicial || '';
-    document.getElementById('weight-target').value = profile.pesoAlvo || '';
-    document.getElementById('weight-current').value = profile.pesoAtual || '';
-
-    const card = document.getElementById('card-status-peso');
-    const msg = document.getElementById('lbl-peso-status-msg');
-    const title = document.getElementById('lbl-peso-status-title');
-    const barContainer = document.getElementById('peso-bar-container');
-    const barProgress = document.getElementById('peso-bar-progress');
-
-    const pInicial = parseFloat(profile.pesoInicial);
-    const pMeta = parseFloat(profile.pesoAlvo);
-    const pAtual = parseFloat(profile.pesoAtual);
-
-    card.className = "w-full p-4 rounded-xl border mb-4 text-center transition-all duration-300 ";
-    barContainer.classList.add('hidden');
-
-    if (!pInicial || !pMeta || !pAtual) {
-        card.classList.add("bg-slate-100", "border-slate-300");
-        title.className = "text-micro font-black uppercase tracking-wider text-slate-500";
-        msg.className = "text-base font-black mt-0.5 text-slate-700";
-        msg.innerText = "Insira os 3 pesos para calcular o progresso!";
-        return;
-    }
-
-    barContainer.classList.remove('hidden');
-    const objetivoEmagrecer = pMeta < pInicial;
-    let percentual = 0;
-
-    if (objetivoEmagrecer) {
-        const totalEspera = pInicial - pMeta;
-        const realMudanca = pInicial - pAtual; 
-        percentual = (realMudanca / totalEspera) * 100;
-
-        // Renderização visual com base na regra de emagrecimento
-        if (pAtual <= pMeta) {
-            card.classList.add("bg-emerald-50", "border-emerald-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
-            msg.className = "text-base font-black mt-0.5 text-emerald-800";
-            msg.innerText = `Meta atingida! ${percentual.toFixed(0)}% concluído. 🎉`;
-            barProgress.className = "h-full bg-emerald-500";
-        } else if (pAtual < pInicial) {
-            card.classList.add("bg-emerald-50", "border-emerald-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
-            msg.className = "text-base font-black mt-0.5 text-emerald-800";
-            msg.innerText = `No caminho! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg (${percentual.toFixed(0)}% da meta).`;
-            barProgress.className = "h-full bg-emerald-500";
-        } else {
-            card.classList.add("bg-rose-50", "border-rose-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-rose-600";
-            msg.className = "text-base font-black mt-0.5 text-rose-800";
-            msg.innerText = `Atenção! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg acima do inicial (${percentual.toFixed(0)}% de progresso).`;
-            barProgress.className = "h-full bg-rose-500";
+        function saveWeightGoals() {
+            const pIni = parseFloat(document.getElementById('weight-initial').value);
+            const cIni = parseFloat(document.getElementById('waist-initial').value);
+            const pAlv = parseFloat(document.getElementById('weight-target').value);
+            if(!pIni || !pAlv) return alert("Digite os pesos inicial e alvo!");
+            appData[currentProfile].pesoInicial = pIni;
+            appData[currentProfile].cinturaInicial = cIni || 0;
+            appData[currentProfile].pesoAlvo = pAlv;
+            if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
+            saveToLocalStorage();
+            renderWeightTab();
+            alert("Metas salvas!");
         }
-    } else {
-        // Objetivo: Ganhar Massa
-        const totalEspera = pMeta - pInicial;
-        const realMudanca = pAtual - pInicial;
-        percentual = (realMudanca / totalEspera) * 100;
 
-        if (pAtual >= pMeta) {
-            card.classList.add("bg-emerald-50", "border-emerald-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
-            msg.className = "text-base font-black mt-0.5 text-emerald-800";
-            msg.innerText = `Meta atingida! ${percentual.toFixed(0)}% concluído. 💪`;
-            barProgress.className = "h-full bg-emerald-500";
-        } else if (pAtual > pInicial) {
-            card.classList.add("bg-emerald-50", "border-emerald-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-emerald-600";
-            msg.className = "text-base font-black mt-0.5 text-emerald-800";
-            msg.innerText = `No caminho! Ganhou ${Math.abs(pAtual - pInicial).toFixed(1)}kg (${percentual.toFixed(0)}% da meta).`;
-            barProgress.className = "h-full bg-emerald-500";
-        } else {
-            card.classList.add("bg-rose-50", "border-rose-200");
-            title.className = "text-micro font-black uppercase tracking-wider text-rose-600";
-            msg.className = "text-base font-black mt-0.5 text-rose-800";
-            msg.innerText = `Atenção! Perdeu ${Math.abs(pInicial - pAtual).toFixed(1)}kg (${percentual.toFixed(0)}% de progresso).`;
-            barProgress.className = "h-full bg-rose-500";
+        function updateCurrentWeight() {
+            const pAtu = parseFloat(document.getElementById('weight-current').value);
+            if(!pAtu || pAtu <= 0) return alert("Digite um peso válido!");
+            appData[currentProfile].pesoAtual = pAtu;
+            saveToLocalStorage();
+            renderWeightTab();
+            alert("Peso atualizado!");
         }
-    }
-
-    // Ajusta o tamanho da barra na tela (garante que valores negativos fiquem zerados na largura visual ou não estourem 100%)
-    let larguraBarra = Math.max(0, Math.min(percentual, 100));
-    barProgress.style.width = `${larguraBarra}%`;
-}
 
         function renderCalendar() {
             const hojeBR = getBrasiliaDate();
@@ -748,15 +676,13 @@
 
         function selectMoment(moment, element) {
             currentSelectedMoment = moment;
-    // Remove o fundo azul e o texto branco de todos os botões, resetando para o padrão
             document.querySelectorAll('.moment-btn').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white');
-            btn.classList.add('bg-slate-50', 'text-slate-600');
-    });
-    // Aplica o fundo azul e garante que o texto fique legível (ou use text-slate-900 caso prefira sem fundo escuro)
-            element.classList.remove('bg-slate-50', 'text-slate-600');
-            element.classList.add('bg-blue-600', 'text-white');
-}
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
+                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+            });
+            element.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
+            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        }
 
         function addFoodToPlate() {
             if(!currentSelectedFood) return alert("Selecione um alimento!");
@@ -896,34 +822,10 @@
             renderTimelineHistory();
         }
 
-        function saveToLocalStorage() { 
-            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
-        }
+        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
 
-        // SUBSTITUA O BLOCO ANTIGO POR ESTE AQUI:
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Esconde todas as abas e reseta botões
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-                btn.classList.add('text-slate-400');
-            });
-
-            // 2. Ativa especificamente a aba de início
-            document.getElementById('tab-inicio').classList.add('active');
-            
-            // 3. Destaca o botão de início (Desktop e Mobile)
-            const navD = document.getElementById('nav-desktop-inicio');
-            if(navD) {
-                navD.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                navD.classList.remove('text-slate-400');
-            }
-            const navM = document.getElementById('nav-mobile-inicio');
-            if(navM) navM.classList.add('text-blue-500');
-
-            // 4. Inicializa ícones e carrega dados
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-            refreshHomeWheel();
+            switchTab('inicio');
         });
     </script>
 </body>
