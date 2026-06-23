@@ -274,9 +274,9 @@
                 </div>
 
                 <div id="history-container" class="w-full space-y-4"></div>
-            </div>
+            </div> 
 
-            <div id="tab-peso" class="tab-content w-full">
+<div id="tab-peso" class="tab-content w-full">
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Pesos e Medidas</h2>
     <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-5">Evolução Corporal</p>
     
@@ -312,27 +312,10 @@
                 <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5"></span>
             </div>
         </div>
-    </div> </div> ```
-
-### O que eu corrigi para você:
-1.  **Fechamento:** Coloquei os fechamentos de `</div>` na ordem exata para separar a coluna dos inputs da coluna da barra.
-2.  **Limpeza:** Removi qualquer bloco extra que pudesse estar criando o "0%" fantasma em todas as abas.
-3.  **Segurança:** Agora que o `tab-peso` está fechado corretamente, a próxima `<div>` no seu código será a `tab-config` (Configurações), e ela **vai aparecer** porque não está mais "presa" dentro da aba de pesos.
-
-**Tente substituir exatamente por esse bloco.** Se a aba de configuração ainda não aparecer, verifique se no seu HTML, logo abaixo desse código, você tem o `id="tab-config"` com a classe `hidden` ou similar. Se tiver `hidden`, o JavaScript precisa disparar o `switchTab` para ela aparecer.
-
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-center text-center">
-            <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-3">Progresso da Meta</span>
-            <div class="w-full h-6 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
-                <div id="weight-bar-fill" class="h-full w-0 transition-all duration-1000" style="width: 0%;"></div>
-            </div>
-            <div class="mt-2">
-                <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block"></span>
-                <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5"></span>
-            </div>
-        </div>
     </div> 
-</div> <div id="tab-config" class="tab-content w-full hidden">
+</div> 
+
+<div id="tab-config" class="tab-content w-full hidden">
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
     <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
     
@@ -348,7 +331,8 @@
         <button onclick="saveProfileSettings()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md">Salvar Metas</button>
     </div>
 </div>
-    </main>
+</main>
+
 
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-16 flex items-center justify-around z-50 px-2">
         <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
