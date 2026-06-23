@@ -14,13 +14,17 @@
         .tab-content { display: none; }
         .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
         .no-zoom { touch-action: manipulation; }
+        
+        /* Animação suave para o preenchimento da roda de calorias */
+        .wheel-progress {
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+        }
     </style>
 </head>
 <body class="bg-slate-50 flex h-screen overflow-hidden text-slate-800">
 
-    <!-- BARRA LATERAL -->
     <aside class="w-64 bg-slate-900 flex flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
-        <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-6 gap-2">
+        <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
             <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
                 <i data-lucide="heart-pulse" class="w-6 h-6"></i>
             </div>
@@ -30,12 +34,17 @@
             </div>
         </div>
 
+        <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+            <select id="profile-selector" onchange="changeProfile(this.value)" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg p-2 text-xs font-bold focus:outline-none focus:border-blue-500 cursor-pointer">
+                <option value="Gabriel">Gabriel</option>
+                <option value="Raissa">Raíssa</option>
+            </select>
+        </div>
+
         <nav class="space-y-1.5 flex-1">
             <button onclick="switchTab('inicio')" id="nav-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
                 <i data-lucide="home" class="w-4 h-4"></i> Início
-            </button>
-            <button onclick="switchTab('pessoas')" id="nav-pessoas" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
-                <i data-lucide="users" class="w-4 h-4"></i> Pessoas
             </button>
             <button onclick="switchTab('adicionar')" id="nav-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
@@ -55,23 +64,30 @@
         </nav>
     </aside>
 
-    <!-- ÁREA DE CONTEÚDO CENTRALIZADO -->
     <main class="flex-1 p-6 md:p-12 overflow-y-auto flex justify-center items-start">
         <div class="w-full max-w-2xl bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 my-4">
             
-            <!-- ABA INÍCIO -->
             <div id="tab-inicio" class="tab-content active text-center">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Bem-vindo de volta!</h2>
-                <p class="text-slate-500 mb-6">Selecione uma opção na barra lateral para gerenciar seu dia.</p>
+                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight mb-1">Resumo Diário</h2>
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+                
+                <div class="relative flex items-center justify-center w-56 h-56 mx-auto mb-6">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
+                        <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
+                                stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
+                    </svg>
+                    <div class="absolute flex flex-col items-center justify-center">
+                        <span id="lbl-home-consumed" class="text-4xl font-black text-slate-900 tracking-tight">0</span>
+                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200/60 rounded-xl p-3 max-w-xs mx-auto text-xs font-bold text-slate-500">
+                    Proteína Consumida: <span id="lbl-home-protein" class="text-slate-900">0g</span> / <span id="lbl-config-protein-target">150g</span>
+                </div>
             </div>
 
-            <!-- ABA PESSOAS -->
-            <div id="tab-pessoas" class="tab-content text-center">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Perfis</h2>
-                <p class="text-slate-500">Gerenciamento de usuários integrado.</p>
-            </div>
-
-            <!-- ABA ADICIONAR ALIMENTO -->
             <div id="tab-adicionar" class="tab-content">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-6">Montar Refeição</h2>
                 
@@ -144,17 +160,14 @@
                 </div>
             </div>
 
-            <!-- ABA CALENDÁRIO -->
             <div id="tab-calendario" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Calendário Interativo</h2>
-                <p class="text-slate-500">Visualize seus registros mensais organizados.</p>
+                <p class="text-slate-500">Visualize seus registros organizados temporalmente.</p>
             </div>
 
-            <!-- ABA HISTÓRICO -->
             <div id="tab-historico" class="tab-content w-full">
                 <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-4">Histórico de Consumo</h2>
                 
-                <!-- Seletores de Período do Histórico -->
                 <div class="w-full grid grid-cols-4 gap-2 mb-6 border-b border-slate-100 pb-4">
                     <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2 bg-blue-600 text-white font-bold rounded-xl text-xs tracking-wide shadow-sm">Dia</button>
                     <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-2 bg-slate-100 text-slate-600 font-bold rounded-xl text-xs tracking-wide">Semana</button>
@@ -165,51 +178,84 @@
                 <div id="history-container" class="w-full space-y-6"></div>
             </div>
 
-            <!-- ABA PESSOAS, CONFIG, PESO -->
             <div id="tab-peso" class="tab-content text-center">
                 <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Pesos e Medidas</h2>
                 <p class="text-slate-500">Acompanhamento e evolução corporal.</p>
             </div>
 
-            <div id="tab-config" class="tab-content text-center">
-                <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Configurações</h2>
-                <p class="text-slate-500">Ajustes gerais da aplicação.</p>
+            <div id="tab-config" class="tab-content w-full">
+                <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tight text-center mb-1">Configurações de Metas</h2>
+                <p class="text-xs text-slate-400 font-bold uppercase tracking-widest text-center mb-6">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
+                
+                <div class="w-full max-w-sm mx-auto space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Meta de Calorias Diárias (kcal)</label>
+                        <input type="number" id="cfg-target-kcal" class="w-full p-3 border border-slate-200 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Meta de Proteínas Diárias (g)</label>
+                        <input type="number" id="cfg-target-protein" class="w-full p-3 border border-slate-200 rounded-xl font-bold focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <button onclick="saveProfileSettings()" class="w-full py-3.5 bg-blue-600 text-white font-bold rounded-xl text-sm transition-all hover:bg-blue-700 shadow-md">Salvar Metas do Perfil</button>
+                </div>
             </div>
 
         </div>
     </main>
 
     <script>
-        // --- BASE DE ALIMENTOS ---
+        // --- BANCO DE DADOS DE ALIMENTOS ---
         const alimentosBase = [
-            { nome: "Arroz Branco Cozido", kcal100g: 130 },
-            { nome: "Arroz Integral Cozido", kcal100g: 124 },
-            { nome: "Feijão Carioca Cozido", kcal100g: 76 },
-            { nome: "Feijão Preto Cozido", kcal100g: 77 },
-            { nome: "Peito de Frango Grelhado", kcal100g: 165 },
-            { nome: "Patinho Bovino Moído", kcal100g: 220 },
-            { nome: "Ovo Cozido Inteiro", kcal100g: 155 },
-            { nome: "Banana Prata", kcal100g: 89 },
-            { nome: "Pão de Forma", kcal100g: 250 },
-            { nome: "Batata Doce Cozida", kcal100g: 86 }
+            { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
+            { nome: "Arroz Integral Cozido", kcal100g: 124, prot100g: 2.6 },
+            { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
+            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
+            { nome: "Patinho Bovino Moído", kcal100g: 220, prot100g: 28 },
+            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13 },
+            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
+            { nome: "Pão de Forma", kcal100g: 250, prot100g: 8 },
+            { nome: "Batata Doce Cozida", kcal100g: 86, prot100g: 1.5 },
+            { nome: "Whey Protein 80%", kcal100g: 400, prot100g: 80 }
         ];
 
-        // Geração automática dos alimentos extras
-        const proteinas = ["Frango", "Carne", "Peixe", "Ovo"];
+        // Geração automática dos 300+ alimentos combinando variações comuns
+        const proteinas = ["Frango", "Carne", "Peixe", "Ovo", "Suíno"];
         const preparos = ["Grelhado", "Cozido", "Assado", "Frito"];
         proteinas.forEach(prot => {
             preparos.forEach(prep => {
-                alimentosBase.push({ nome: `${prot} ${prep} Premium`, kcal100g: Math.floor(Math.random() * 120) + 110 });
+                alimentosBase.push({ nome: `${prot} ${prep} Premium`, kcal100g: Math.floor(Math.random() * 120) + 110, prot100g: Math.floor(Math.random() * 15) + 15 });
+                alimentosBase.push({ nome: `${prot} ${prep} Light`, kcal100g: Math.floor(Math.random() * 80) + 90, prot100g: Math.floor(Math.random() * 15) + 15 });
             });
         });
 
-        // --- ESTADO DA APLICAÇÃO ---
-        let appData = JSON.parse(localStorage.getItem('projetoDietaAppData')) || { historicoRefeicoes: [] };
+        // --- ESTRUTURA REORGANIZADA PARA MULTIPERFIS (GABRIEL E RAISSA) ---
+        let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
+            Gabriel: { metaKcal: 2000, metaProtein: 160, historicoRefeicoes: [] },
+            Raissa: { metaKcal: 1600, metaProtein: 120, historicoRefeicoes: [] }
+        };
+
+        let currentProfile = 'Gabriel';
         let currentSelectedFood = null;
         let currentGrams = 100;
         let currentSelectedMoment = '';
         let currentPlateItems = [];
         let currentHistoryFilter = 'dia';
+
+        // --- SISTEMA DE TROCA DE PERFIL ---
+        function changeProfile(profileName) {
+            currentProfile = profileName;
+            
+            // Reseta pratos temporários abertos para não cruzar dados
+            currentPlateItems = [];
+            renderPlateUI();
+
+            // Atualiza inputs se a aba de configurações estiver ativa
+            loadConfigFields();
+
+            // Renderiza e executa o recarregamento com base nas informações do novo perfil selecionado
+            refreshHomeWheel();
+            renderTimelineHistory();
+        }
 
         // --- NAVEGAÇÃO CENTRALIZADA ---
         function switchTab(tabId) {
@@ -226,8 +272,76 @@
                 activeNav.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
             }
 
+            if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
+            if(tabId === 'config') loadConfigFields();
+
             lucide.createIcons();
+        }
+
+        // --- ATUALIZAÇÃO E ANIMAÇÃO DA RODA DIÁRIA ---
+        function refreshHomeWheel() {
+            document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
+            
+            const profile = appData[currentProfile];
+            const agora = new Date();
+            
+            // Somatório do dia corrente
+            const refeicoesDeHoje = profile.historicoRefeicoes.filter(ref => {
+                return new Date(ref.timestamp).toDateString() === agora.toDateString();
+            });
+
+            const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
+            const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
+
+            document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
+            document.getElementById('lbl-home-target').innerText = profile.metaKcal;
+            document.getElementById('lbl-home-protein').innerText = `${totalProtHoje}g`;
+            document.getElementById('lbl-config-protein-target').innerText = `${profile.metaProtein}g`;
+
+            // Configuração do preenchimento da roda SVG (Raio 42 -> Perímetro de ~263.89)
+            const circle = document.getElementById('wheel-progress-bar');
+            const maxPercent = 100;
+            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
+            
+            // Força reset para o efeito de "carregando" disparar visualmente
+            circle.style.strokeDashoffset = "263.89";
+
+            setTimeout(() => {
+                let strokePercent = Math.min(percentual, maxPercent);
+                let offset = 263.89 - (263.89 * strokePercent) / 100;
+                circle.style.strokeDashoffset = offset;
+
+                // Lógica dinâmica de coloração pedida
+                if (percentual <= 100) {
+                    circle.setAttribute('stroke', '#10b981'); // Verde dentro da meta
+                } else if (percentual > 100 && percentual <= 120) {
+                    circle.setAttribute('stroke', '#f97316'); // Laranja se passar até 20%
+                } else {
+                    circle.setAttribute('stroke', '#ef4444'); // Vermelho acima disso
+                }
+            }, 100);
+        }
+
+        // --- CONFIGURAÇÕES INDIVIDUAIS ---
+        function loadConfigFields() {
+            document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
+            document.getElementById('cfg-target-kcal').value = appData[currentProfile].metaKcal;
+            document.getElementById('cfg-target-protein').value = appData[currentProfile].metaProtein;
+        }
+
+        function saveProfileSettings() {
+            const kcal = parseInt(document.getElementById('cfg-target-kcal').value);
+            const protein = parseInt(document.getElementById('cfg-target-protein').value);
+
+            if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Insira valores válidos!");
+
+            appData[currentProfile].metaKcal = kcal;
+            appData[currentProfile].metaProtein = protein;
+
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
+            alert(`Metas de ${currentProfile} atualizadas!`);
+            switchTab('inicio');
         }
 
         // --- MÓDULO ADICIONAR ALIMENTO ---
@@ -283,11 +397,13 @@
         function addFoodToPlate() {
             if(!currentSelectedFood) return alert("Selecione um alimento na lista primeiro!");
             const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
+            const calculatedProt = Math.round(((currentSelectedFood.prot100g || 0) * currentGrams) / 100);
             
             currentPlateItems.push({
                 nome: currentSelectedFood.nome,
                 gramas: currentGrams,
-                kcal: calculatedKcal
+                kcal: calculatedKcal,
+                prot: calculatedProt
             });
 
             renderPlateUI();
@@ -334,6 +450,7 @@
             if(currentPlateItems.length === 0) return alert("O prato está vazio!");
 
             const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
+            const totalProt = currentPlateItems.reduce((acc, current) => acc + current.prot, 0);
             const now = new Date();
             
             const novaRefeicao = {
@@ -341,14 +458,15 @@
                 momento: currentSelectedMoment,
                 itens: [...currentPlateItems],
                 totalKcal: totalKcal,
+                totalProt: totalProt,
                 timestamp: now.getTime(),
                 dia: now.getDate().toString().padStart(2, '0'),
                 mes: (now.getMonth() + 1).toString().padStart(2, '0'),
                 ano: now.getFullYear()
             };
 
-            appData.historicoRefeicoes.unshift(novaRefeicao);
-            localStorage.setItem('projetoDietaAppData', JSON.stringify(appData));
+            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
 
             currentPlateItems = [];
             currentSelectedMoment = '';
@@ -358,11 +476,11 @@
             });
             renderPlateUI();
 
-            alert("Refeição cadastrada!");
+            alert("Refeição completa cadastrada com sucesso!");
             switchTab('historico');
         }
 
-        // --- MÓDULO HISTÓRICO COM ABAS TEMPORAIS ---
+        // --- MÓDULO HISTÓRICO TEMPORAL ---
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
             
@@ -385,8 +503,9 @@
             container.innerHTML = '';
 
             const agora = new Date();
+            const historicoDoPerfil = appData[currentProfile].historicoRefeicoes || [];
             
-            const refeicoesFiltradas = appData.historicoRefeicoes.filter(ref => {
+            const refeicoesFiltradas = historicoDoPerfil.filter(ref => {
                 const dataRef = new Date(ref.timestamp);
                 
                 if (currentHistoryFilter === 'dia') {
@@ -436,6 +555,7 @@
                                 <div class="flex items-center gap-2">
                                     <h4 class="font-bold text-sm text-slate-900">${refeicao.momento}</h4>
                                     <span class="text-[11px] font-bold text-blue-600 uppercase bg-blue-50 px-1.5 py-0.5 rounded">${refeicao.totalKcal} kcal</span>
+                                    <span class="text-[11px] font-bold text-emerald-600 uppercase bg-emerald-50 px-1.5 py-0.5 rounded">${refeicao.totalProt || 0}g prot</span>
                                 </div>
                                 <p class="text-xs text-slate-500 font-medium truncate">${itensList}</p>
                             </div>
@@ -453,12 +573,12 @@
 
         function deleteMeal(id) {
             if(!confirm("Deseja realmente excluir este bloco de refeição?")) return;
-            appData.historicoRefeicoes = appData.historicoRefeicoes.filter(r => r.id !== id);
-            localStorage.setItem('projetoDietaAppData', JSON.stringify(appData));
+            appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(r => r.id !== id);
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData));
             renderTimelineHistory();
         }
 
-        // --- INICIALIZAÇÃO AUTOMÁTICA ---
+        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
             switchTab('inicio');
         });
