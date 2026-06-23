@@ -527,29 +527,29 @@
     const pAtual = parseFloat(prof.pesoAtual || 0);
 
     if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
-        // Define se o objetivo é emagrecer (meta < inicial) ou ganhar (meta > inicial)
-        const metaEmagrecer = pAlvo < pIni;
-        const totalMeta = pAlvo - pIni; // Ex: 65 - 70 = -5 (meta de perda de 5kg)
-        const realAtingido = pAtual - pIni; // Ex: 72 - 70 = +2 (ganhou 2kg)
-
-        // Calcula a % em relação à meta
-        // Se a meta é emagrecer e você ganhou peso, a % será negativa
+        const totalMeta = pAlvo - pIni;
+        const realAtingido = pAtual - pIni;
         let progresso = totalMeta !== 0 ? (realAtingido / totalMeta) * 100 : 0;
         
-        // Se a meta é ganhar peso e você emagreceu, a % será negativa
-        if (!metaEmagrecer && realAtingido < 0) progresso = (realAtingido / totalMeta) * 100;
+        // Define as cores
+        let cor;
+        if (progresso < 0) {
+            cor = '#ef4444'; // Vermelho (engordou ou foi na direção oposta)
+        } else if (progresso >= 100) {
+            cor = '#10b981'; // Verde (Meta atingida ou superada)
+        } else {
+            cor = '#2563eb'; // Azul (Em progresso)
+        }
 
-        // Limita a exibição visual para a barra entre 0% e 100%
-        // Mas o texto mostrará o valor real (ex: -40%)
         const progressoVisual = Math.max(0, Math.min(progresso, 100));
 
         setTimeout(() => {
-            fillBar.style.width = `${progressoVisual}%`; 
-            // Mostra o valor calculado, permitindo valores negativos
+            fillBar.style.width = `${progressoVisual}%`;
+            fillBar.style.backgroundColor = cor; // Altera a cor da barra
             percentText.innerText = `${Math.round(progresso)}%`;
+            percentText.style.color = cor; // Altera a cor do texto
         }, 150);
 
-        // Texto informativo
         const falta = pAtual - pAlvo;
         if (Math.abs(falta) < 0.1) {
             remainingText.innerText = "Meta atingida!";
@@ -560,6 +560,7 @@
         }
     } else {
         fillBar.style.width = '0%';
+        fillBar.style.backgroundColor = '#2563eb';
         percentText.innerText = '0%';
         remainingText.innerText = 'Configure ao lado';
     }
