@@ -76,7 +76,7 @@
             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </button>
         
-        <div id="profile-dropdown" class="hidden absolute top-full mt-2 w-full bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-[100] p-1">
+        <div id="profile-dropdown" class="hidden absolute top-full mt-2 w-full bg-slate-900 border border-slate-700 rounded-lg shadow-xl z-[999] p-1 cursor-pointer">
             <div onclick="selectProfile('Gabriel')" class="p-2.5 hover:bg-slate-800 cursor-pointer rounded text-xs font-bold text-white">Gabriel</div>
             <div onclick="selectProfile('Raissa')" class="p-2.5 hover:bg-slate-800 cursor-pointer rounded text-xs font-bold text-white">Raíssa</div>
         </div>
@@ -434,19 +434,20 @@
 
         // Esta função faz a mágica acontecer: ela muda o nome no botão e chama o seu sistema
 function selectProfile(name) {
-    // 1. Atualiza o texto visual do botão Desktop
+    // 1. Atualiza o texto visual
     const desktopBtn = document.getElementById('active-profile-name');
-    if (desktopBtn) desktopBtn.innerText = name;
-    
-    // 2. Atualiza o texto visual do botão Mobile
     const mobileBtn = document.getElementById('active-profile-name-mobile');
+    
+    if (desktopBtn) desktopBtn.innerText = name;
     if (mobileBtn) mobileBtn.innerText = name;
     
-    // 3. Fecha o menu suspenso
-    const dropdown = document.getElementById('profile-dropdown');
-    if (dropdown) dropdown.classList.add('hidden');
+    // 2. Fecha o menu com delay para garantir que o clique processou
+    setTimeout(() => {
+        const dropdown = document.getElementById('profile-dropdown');
+        if (dropdown) dropdown.classList.add('hidden');
+    }, 100);
     
-    // 4. Chama a SUA função original que já faz todo o trabalho pesado
+    // 3. Chama a função principal
     changeProfile(name);
 }
 
