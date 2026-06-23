@@ -503,47 +503,47 @@
             switchTab('inicio');
         }
 
-        function renderWeightTab() {
-    const prof = appData[currentProfile];
-    document.getElementById('weight-initial').value = prof.pesoInicial || '';
-    document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-    document.getElementById('weight-target').value = prof.pesoAlvo || '';
-    document.getElementById('weight-current').value = prof.pesoAtual || '';
-
-    const fillBar = document.getElementById('weight-bar-fill');
-    const percentText = document.getElementById('weight-progress-percent');
-    
-    // Convertendo para números para evitar erro de concatenação de string
-    const pIni = parseFloat(prof.pesoInicial || 0);
-    const pAlvo = parseFloat(prof.pesoAlvo || 0);
-    const pAtual = parseFloat(prof.pesoAtual || 0);
-
-    if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
-        // 1. Define se o objetivo é emagrecer (negativo) ou ganhar (positivo)
-        const objetivoEmagrecer = pAlvo < pIni;
+         function renderWeightTab() {
+                const prof = appData[currentProfile];
+                document.getElementById('weight-initial').value = prof.pesoInicial || '';
+                document.getElementById('waist-initial').value = prof.cinturaInicial || '';
+                document.getElementById('weight-target').value = prof.pesoAlvo || '';
+                document.getElementById('weight-current').value = prof.pesoAtual || '';
         
-        // 2. Cálculo da diferença total esperada (meta)
-        const totalMeta = Math.abs(pAlvo - pIni);
+                const fillBar = document.getElementById('weight-bar-fill');
+                const percentText = document.getElementById('weight-progress-percent');
+            
+            // Convertendo para números para evitar erro de concatenação de string
+                const pIni = parseFloat(prof.pesoInicial || 0);
+                const pAlvo = parseFloat(prof.pesoAlvo || 0);
+                const pAtual = parseFloat(prof.pesoAtual || 0);
         
-        // 3. Cálculo da diferença real atingida até agora
-        const totalReal = Math.abs(pAtual - pIni);
+            if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
+                // 1. Define se o objetivo é emagrecer (negativo) ou ganhar (positivo)
+                const objetivoEmagrecer = pAlvo < pIni;
+                
+                // 2. Cálculo da diferença total esperada (meta)
+                const totalMeta = Math.abs(pAlvo - pIni);
+                
+                // 3. Cálculo da diferença real atingida até agora
+                const totalReal = Math.abs(pAtual - pIni);
+                
+                // 4. Cálculo da porcentagem (regra de três)
+                let progresso = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
+                
+                // 5. Lógica de correção (limita entre 0 e 100)
+                // Se você já passou da meta, ele fica em 100%. 
+                // Se o cálculo deu negativo por algum motivo, ele fica em 0%.
+                progresso = Math.max(0, Math.min(progresso, 100));
         
-        // 4. Cálculo da porcentagem (regra de três)
-        let progresso = totalMeta > 0 ? (totalReal / totalMeta) * 100 : 0;
-        
-        // 5. Lógica de correção (limita entre 0 e 100)
-        // Se você já passou da meta, ele fica em 100%. 
-        // Se o cálculo deu negativo por algum motivo, ele fica em 0%.
-        progresso = Math.max(0, Math.min(progresso, 100));
-
-        // 6. Atualização visual
-        setTimeout(() => {
-            // Se o seu HTML usar 'height' ou 'width', ajuste aqui
-            fillBar.style.height = `${progresso}%`; 
-            percentText.innerText = `${Math.round(progresso)}%`;
-        }, 150);
-    }
-}
+                // 6. Atualização visual
+                setTimeout(() => {
+                    // Se o seu HTML usar 'height' ou 'width', ajuste aqui
+                    fillBar.style.height = `${progresso}%`; 
+                    percentText.innerText = `${Math.round(progresso)}%`;
+                }, 150);
+            }
+        }
 
                 const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
                 remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
