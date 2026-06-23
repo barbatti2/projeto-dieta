@@ -593,11 +593,14 @@
                     activeMobileBtn.classList.add('text-blue-500', 'scale-110');
                 }
                 
-                // DISPARADOR: Se abrir o Histórico, carrega a lista nova com as lixeiras
+                // DISPARADOR: Se abrir o Histórico, carrega a lista nova
                 if (tabId === 'historico') {
-                    renderFullHistory();
-                }
-            }
+                if (typeof renderFullHistory === 'function') {
+                renderFullHistory();
+            } else {
+        console.warn("A função renderFullHistory ainda não foi carregada!");
+    }
+}
             
             // Mantém suas correções de scroll e interface originais
             const scrollContainer = document.getElementById('main-content-scroll');
