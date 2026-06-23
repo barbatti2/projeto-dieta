@@ -416,10 +416,32 @@
         }
 
         function switchTab(tabId) {
-    // ADICIONE APENAS ESTAS TRÊS LINHAS NO INÍCIO DA SUA FUNÇÃO ORIGINAL:
-        window.scrollTo({ top: 0 });
-        const mainContainer = document.querySelector('main');
-        if (mainContainer) mainContainer.scrollTop = 0;
+    // 1. Esconde TODAS as abas
+    document.querySelectorAll('.tab-content').forEach(t => {
+        t.classList.remove('active');
+    });
+
+    // 2. Mostra apenas a que você clicou
+    document.getElementById(`tab-${tabId}`).classList.add('active');
+
+    // 3. Atualiza os botões do menu (Visual)
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+        btn.classList.add('text-slate-400');
+    });
+    
+    // Marca o botão clicado como ativo
+    const btnD = document.getElementById(`nav-desktop-${tabId}`);
+    if(btnD) { btnD.classList.add('bg-blue-600', 'text-white', 'shadow-md'); btnD.classList.remove('text-slate-400'); }
+    
+    const btnM = document.getElementById(`nav-mobile-${tabId}`);
+    if(btnM) { btnM.classList.add('text-blue-500'); btnM.classList.remove('text-slate-400'); }
+
+    // Rola para o topo
+    window.scrollTo({ top: 0 });
+    const main = document.querySelector('main');
+    if(main) main.scrollTop = 0;
+}
             
             // Limpa todos os botões (mobile e desktop)
             document.querySelectorAll('.nav-btn').forEach(btn => {
