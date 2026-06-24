@@ -427,46 +427,39 @@
         }
 
         function switchTab(tabId) {
-    try {
-        console.log("A tentar mudar para:", tabId); // Isto ajuda a ver se o clique chega aqui
+    // 1. Esconde TODAS as abas .tab-content
+    document.querySelectorAll('.tab-content').forEach(t => {
+        t.classList.add('hidden');
+        t.classList.remove('active');
+    });
+    
+    // 2. Mostra apenas a aba alvo (se existir)
+    const targetTab = document.getElementById('tab-' + tabId);
+    if (targetTab) {
+        targetTab.classList.remove('hidden');
+        targetTab.classList.add('active');
+    } else {
+        console.warn("Aba não encontrada: tab-" + tabId);
+    }
+    
+    // 3. Limpa todos os botões (mobile e desktop)
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+        btn.classList.add('text-slate-400');
+    });
 
-        // 1. Esconde TODAS as abas e remove o active
-        document.querySelectorAll('.tab-content').forEach(t => {
-            t.classList.add('hidden');
-            t.classList.remove('active');
-        });
-        
-        // 2. Mostra a aba clicada
-        const targetTab = document.getElementById('tab-' + tabId);
-        if (targetTab) {
-            targetTab.classList.remove('hidden');
-            targetTab.classList.add('active');
-        } else {
-            console.error("Aba não encontrada: tab-" + tabId);
-        }
-        
-        // 3. Limpa todos os botões (mobile e desktop)
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-            btn.classList.add('text-slate-400');
-        });
+    // 4. Ativa menu desktop (só se existir)
+    const activeDesktopNav = document.getElementById('nav-desktop-' + tabId);
+    if (activeDesktopNav) {
+        activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
+        activeDesktopNav.classList.remove('text-slate-400');
+    }
 
-        // 4. Ativa menu desktop
-        const activeDesktopNav = document.getElementById('nav-desktop-' + tabId);
-        if(activeDesktopNav) {
-            activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-            activeDesktopNav.classList.remove('text-slate-400');
-        }
-
-        // 5. Ativa menu mobile
-        const activeMobileNav = document.getElementById('nav-mobile-' + tabId);
-        if(activeMobileNav) {
-            activeMobileNav.classList.add('text-blue-500');
-            activeMobileNav.classList.remove('text-slate-400');
-        }
-        
-    } catch (error) {
-        console.error("Erro na função switchTab:", error);
+    // 5. Ativa menu mobile (só se existir)
+    const activeMobileNav = document.getElementById('nav-mobile-' + tabId);
+    if (activeMobileNav) {
+        activeMobileNav.classList.add('text-blue-500');
+        activeMobileNav.classList.remove('text-slate-400');
     }
 }
 
