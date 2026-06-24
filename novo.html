@@ -111,25 +111,29 @@
         <i data-lucide="refresh-cw" class="w-3 h-3 text-blue-400"></i>
     </button>
 </header>
-    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
-        <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
+    <main class="mt-16 flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
+    <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
+        
+        <div id="tab-inicio" class="tab-content active text-center">
+            <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
+            <p class="text-[10px] md:text-xs text-slate-400 font-extrabold uppercase tracking-widest mb-4 md:mb-6">
+                Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span>
+            </p>
             
-            <div id="tab-inicio" class="tab-content active text-center">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
-                <p class="text-[10px] md:text-xs text-slate-400 font-extrabold uppercase tracking-widest mb-4 md:mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
-                
-                <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
-                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
-                        <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
-                                stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
-                    </svg>
-                    <div class="absolute flex flex-col items-center justify-center">
-                        <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
-                        <span class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
-                    </div>
+            <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
+                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
+                    <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
+                            stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
+                </svg>
+                <div class="absolute flex flex-col items-center justify-center">
+                    <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
+                    <span class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
                 </div>
-
+            </div>
+        </div>
+        </div>
+</main>
                 <div class="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-md mx-auto">
                     <div class="bg-slate-50 border border-slate-200/80 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1">
                         <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
