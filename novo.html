@@ -92,7 +92,7 @@
         </nav>
     </aside>
 
-    <header class="flex md:hidden w-full bg-slate-900 text-white p-4 justify-between items-center shadow-md flex-shrink-0">
+    <header class="flex md:hidden w-full bg-slate-900 text-white p-4 justify-between items-center shadow-md border-b border-slate-800">
     <div class="flex items-center gap-2">
         <div class="p-1.5 bg-blue-600 rounded-lg text-white">
             <i data-lucide="heart-pulse" class="w-4 h-4"></i>
@@ -100,16 +100,17 @@
         <div>
             <span class="block font-black tracking-wide text-xs uppercase">Dieta Pro</span>
             <p class="text-[9px] text-slate-400 font-bold uppercase">
-    Perfil: <span id="current-profile-label">Gabriel</span>
+                Perfil: <span id="current-profile-label" class="text-blue-400">Gabriel</span>
             </p>
         </div>
     </div>
 
     <button onclick="toggleProfile()" 
-        class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-500 rounded-full transition-all active:scale-95 shadow-md">
-    <span class="text-xs font-black text-white uppercase tracking-wider">Trocar</span>
-    <i data-lucide="refresh-cw" class="w-4 h-4 text-white"></i>
+            class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-500 rounded-full transition-all active:scale-95 shadow-md">
+        <span class="text-xs font-black text-white uppercase tracking-wider">Trocar</span>
+        <i data-lucide="refresh-cw" class="w-4 h-4 text-white"></i>
     </button>
+    </header>
 
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
