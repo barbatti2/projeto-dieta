@@ -551,32 +551,28 @@
             document.getElementById('waist-initial').value = prof.cinturaInicial || '';
             document.getElementById('weight-target').value = prof.pesoAlvo || '';
             document.getElementById('weight-current').value = prof.pesoAtual || '';
-
+        
             const fillBar = document.getElementById('weight-bar-fill');
             const percentText = document.getElementById('weight-progress-percent');
             const remainingText = document.getElementById('weight-remaining-lbl');
-
+        
             if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
                 const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
                 const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
                 
-                // 1. Removi o Math.min(..., 100) para permitir que a barra passe de 100%
                 let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
                 progresso = Math.max(0, progresso); 
-
+        
                 setTimeout(() => {
-                    // 2. Mudei .style.height para .style.width
                     fillBar.style.width = `${progresso}%`; 
                     percentText.innerText = `${progresso}%`;
-                    
-                    // 3. Atualize o texto de aviso (opcional, mas bom para UX)
-                    remainingText.innerText = progresso >= 100 ? "Meta atingida!" : "Progresso atual";
                 }, 150);
-
+        
                 const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
                 remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
             } else {
-                fillBar.style.height = '0%';
+                // CORREÇÃO: Mudei de height para width aqui também
+                fillBar.style.width = '0%'; 
                 percentText.innerText = '0%';
                 remainingText.innerText = 'Configure ao lado';
             }
@@ -595,7 +591,7 @@
             renderWeightTab();
             alert("Metas salvas!");
         }
-
+        
         function updateCurrentWeight() {
             const pAtu = parseFloat(document.getElementById('weight-current').value);
             if(!pAtu || pAtu <= 0) return alert("Digite um peso válido!");
