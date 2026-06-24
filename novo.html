@@ -92,25 +92,20 @@
         </nav>
     </aside>
 
-    <header class="flex md:hidden bg-slate-900 border-b border-slate-800 p-4 justify-between items-center shadow-lg flex-shrink-0">
-    <div class="flex items-center gap-2">
-        <div class="p-1.5 bg-blue-600 rounded-lg text-white">
-            <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+    <header class="flex md:hidden bg-slate-900 text-white p-4 justify-between items-center shadow-md flex-shrink-0">
+        <div class="flex items-center gap-2">
+            <div class="p-1.5 bg-blue-600 rounded-lg text-white">
+                <i data-lucide="heart-pulse" class="w-4 h-4"></i>
+            </div>
+            <span class="font-black tracking-wide text-sm uppercase">Projeto Dieta</span>
         </div>
-        <div>
-            <span class="block font-black tracking-wide text-xs uppercase">Dieta Pro</span>
-            <p class="text-[9px] text-slate-400 font-bold uppercase">
-                Perfil: <span class="text-blue-400" id="current-profile-label">Gabriel</span>
-            </p>
+        <div class="w-28 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
+            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                <option value="Gabriel">Gabriel</option>
+                <option value="Raissa">Raíssa</option>
+            </select>
         </div>
-    </div>
-
-    <button onclick="toggleProfile()" 
-            class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-full transition-all active:scale-95">
-        <span class="text-[10px] font-bold text-white">Trocar</span>
-        <i data-lucide="refresh-cw" class="w-3 h-3 text-blue-400"></i>
-    </button>
-</header>
+    </header>
 
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
@@ -405,21 +400,6 @@
         function getBrasiliaDate() {
             const stringData = new Date().toLocaleString("en-US", {timeZone: "America/Sao_Paulo"});
             return new Date(stringData);
-        }
-
-        function toggleProfile() {
-    // 1. Identifica o label que mostra o nome no header
-            const labelSpan = document.getElementById('current-profile-label');
-    
-            // 2. Descobre qual é o nome atual e define o próximo
-            const currentName = labelSpan.innerText;
-            const nextName = (currentName === 'Gabriel') ? 'Raissa' : 'Gabriel';
-            
-            // 3. Atualiza o texto visualmente na tela
-            labelSpan.innerText = nextName;
-            
-            // 4. Chama a função que você já tem para carregar os dados da dieta
-            changeProfile(nextName);
         }
 
         function changeProfile(profileName) {
