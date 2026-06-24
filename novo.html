@@ -576,15 +576,21 @@
             const pIni = parseFloat(document.getElementById('weight-initial').value);
             const cIni = parseFloat(document.getElementById('waist-initial').value);
             const pAlv = parseFloat(document.getElementById('weight-target').value);
+        
+            // Se o peso inicial ou alvo estiver vazio, ele para aqui
             if(!pIni || !pAlv) return alert("Digite os pesos inicial e alvo!");
+        
             appData[currentProfile].pesoInicial = pIni;
             appData[currentProfile].cinturaInicial = cIni || 0;
             appData[currentProfile].pesoAlvo = pAlv;
+        
+            // Garante que o peso atual exista
             if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
-            saveToLocalStorage();
-            renderWeightTab();
+        
+            saveToLocalStorage(); // Salva no banco de dados
+            renderWeightTab();    // Atualiza a tela
             alert("Metas salvas!");
-        }
+}
         
         function updateCurrentWeight() {
             const pAtu = parseFloat(document.getElementById('weight-current').value);
