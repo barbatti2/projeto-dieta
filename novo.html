@@ -51,6 +51,22 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
+    <header class="flex md:hidden w-full bg-slate-900 text-white p-4 justify-between items-center shadow-md border-b border-slate-800">
+        <div class="flex flex-col justify-center">
+            <span class="text-xs font-black tracking-[0.2em] text-blue-500 uppercase">Dieta Pro</span>
+            <div class="flex items-center gap-1 mt-0.5">
+                <span class="text-[10px] uppercase font-bold text-slate-400">Ativo:</span>
+                <span id="current-profile-label" class="text-sm font-bold text-white tracking-wide">Gabriel</span>
+            </div>
+        </div>
+
+        <button onclick="toggleProfile()" 
+                class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 border border-blue-500 rounded-full transition-all active:scale-95 shadow-md">
+            <span class="text-xs font-black text-white uppercase tracking-wider">Trocar</span>
+            <i data-lucide="refresh-cw" class="w-4 h-4 text-white"></i>
+        </button>
+    </header>
+
     <aside class="hidden md:flex w-64 bg-slate-900 flex-col p-5 text-white flex-shrink-0 z-10 shadow-xl">
         <div class="flex flex-col items-center text-center py-5 border-b border-slate-800 mb-4 gap-2">
             <div class="p-3 bg-blue-600 text-white rounded-xl shadow-lg shadow-blue-600/30">
