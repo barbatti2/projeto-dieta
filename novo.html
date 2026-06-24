@@ -62,33 +62,14 @@
             </div>
         </div>
 
-        <div class="mb-6">
+        <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
     <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
-    
-    <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="hidden">
-        <option value="Gabriel">Gabriel</option>
-        <option value="Raissa">Raíssa</option>
-    </select>
-
-    <div class="relative inline-block w-full">
-       <button onclick="document.getElementById('profile-dropdown').classList.toggle('hidden')" 
-        class="w-full flex justify-between items-center px-3 py-1.5 bg-slate-800 border border-slate-700/50 text-white rounded-xl text-xs font-bold">
-    <span id="active-profile-name-mobile">Gabriel</span>
-    </button>
-        
-        <div id="profile-dropdown" class="hidden absolute top-full left-0 mt-2 w-full bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-[9999] p-1">
-    
-    <div onclick="selectProfile('Gabriel')" ontouchend="selectProfile('Gabriel')" 
-         class="p-2.5 hover:bg-slate-800 cursor-pointer rounded text-xs font-bold text-white">
-         Gabriel
-    </div>
-
-    <div onclick="selectProfile('Raissa')" ontouchend="selectProfile('Raissa')" 
-         class="p-2.5 hover:bg-slate-800 cursor-pointer rounded text-xs font-bold text-white">
-         Raíssa
-    </div>
-    
-</div>
+            <button id="profile-btn" onclick="toggleProfile()" 
+            class="w-full flex items-center justify-between p-2 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-bold hover:border-blue-500 transition-all">
+        <span id="active-profile-name">Gabriel</span>
+        <span class="text-[10px]">🔄</span>
+            </button>
+        </div>
 
         <nav class="space-y-1.5 flex-1">
             <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
@@ -119,23 +100,12 @@
             </div>
             <span class="font-black tracking-wide text-sm uppercase">Projeto Dieta</span>
         </div>
-        <div class="w-28 relative">
-    <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="hidden">
-        <option value="Gabriel">Gabriel</option>
-        <option value="Raissa">Raíssa</option>
-    </select>
-
-    <div class="relative w-full">
-   <button onclick="document.getElementById('profile-dropdown').classList.toggle('hidden')" 
-        class="w-full flex justify-between items-center px-3 py-1.5 bg-slate-800 border border-slate-700/50 text-white rounded-xl text-xs font-bold">
-    <span id="active-profile-name-mobile">Gabriel</span>
-</button>
-
-    <div id="profile-dropdown" class="hidden absolute top-full left-0 mt-2 w-full bg-slate-800 border border-slate-700 rounded-xl shadow-2xl z-[9999] p-1">
-        <div onclick="selectProfile('Gabriel')" class="p-3 hover:bg-slate-700 cursor-pointer text-white text-xs font-bold rounded-lg">Gabriel</div>
-        <div onclick="selectProfile('Raissa')" class="p-3 hover:bg-slate-700 cursor-pointer text-white text-xs font-bold rounded-lg">Raíssa</div>
-    </div>
-</div>
+        <div class="w-28 bg-slate-800 rounded-xl px-2 py-1 border border-slate-700/50">
+            <select id="profile-selector-mobile" onchange="changeProfile(this.value)" class="w-full bg-transparent text-white font-bold text-xs focus:outline-none cursor-pointer">
+                <option value="Gabriel">Gabriel</option>
+                <option value="Raissa">Raíssa</option>
+            </select>
+        </div>
     </header>
 
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
@@ -430,11 +400,14 @@
         }
 
         function changeProfile(profileName) {
-            currentProfile = profileName;
-            
-            // Sincronizar seletores mobile e desktop simultaneamente
-            document.getElementById('profile-selector-desktop').value = profileName;
-            document.getElementById('profile-selector-mobile').value = profileName;
+    currentProfile = profileName;
+    
+    // Adicionamos um "if" para checar se o elemento existe antes de tentar mudar o valor
+        const desktopSelector = document.getElementById('profile-selector-desktop');
+        if (desktopSelector) desktopSelector.value = profileName;
+
+        const mobileSelector = document.getElementById('profile-selector-mobile');
+        if (mobileSelector) mobileSelector.value = profileName;
 
             currentPlateItems = [];
             renderPlateUI();
@@ -443,40 +416,18 @@
             renderTimelineHistory();
             renderWeightTab();
             renderCalendar();
+}
+
+        // 2. Cole aqui a nova função de trocar perfil que criamos:
+        function toggleProfile() {
+            const nameElement = document.getElementById('active-profile-name');
+            const currentName = nameElement.innerText;
+            const nextName = (currentName === 'Gabriel') ? 'Raissa' : 'Gabriel';
+            
+            nameElement.innerText = nextName;
+            changeProfile(nextName);
         }
 
-        // Esta função faz a mágica acontecer: ela muda o nome no botão e chama o seu sistema
-function selectProfile(name) {
-    // 1. Atualiza o texto visual
-    const desktopBtn = document.getElementById('active-profile-name');
-    const mobileBtn = document.getElementById('active-profile-name-mobile');
-    
-    if (desktopBtn) desktopBtn.innerText = name;
-    if (mobileBtn) mobileBtn.innerText = name;
-    
-    // 2. Fecha o menu com delay para garantir que o clique processou
-    setTimeout(() => {
-        const dropdown = document.getElementById('profile-dropdown');
-        if (dropdown) dropdown.classList.add('hidden');
-    }, 100);
-    
-    // 3. Chama a função principal
-    changeProfile(name);
-}
-
-// Esta função abre e fecha o menu
-function toggleDropdown() {
-    const dropdown = document.getElementById('profile-dropdown');
-    if (dropdown) dropdown.classList.toggle('hidden');
-}
-
-// Fecha o menu se clicar em qualquer lugar fora dele
-window.onclick = function(event) {
-    const dropdown = document.getElementById('profile-dropdown');
-    if (dropdown && !event.target.matches('button') && !event.target.closest('#profile-dropdown')) {
-        dropdown.classList.add('hidden');
-    }
-}
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
