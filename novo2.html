@@ -115,11 +115,29 @@
                 <p class="text-[10px] md:text-xs text-slate-400 font-extrabold uppercase tracking-widest mb-4 md:mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
                 
                 <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
-                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
-                        <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#10b981" stroke-width="8" fill="transparent" 
-                                stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
-                    </svg>
+                    <svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">
+    <defs>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+
+    <circle cx="50" cy="50" r="42" stroke="#f1f5f9" stroke-width="8" fill="transparent" />
+    
+    <circle id="wheel-progress-bar" 
+            cx="50" 
+            cy="50" 
+            r="42" 
+            stroke="#10b981" 
+            stroke-width="8" 
+            fill="transparent" 
+            stroke-dasharray="263.89" 
+            stroke-dashoffset="263.89" 
+            stroke-linecap="round" 
+            class="wheel-progress transition-all duration-1000 ease-out" 
+            filter="url(#glow)" />
+</svg>
                     <div class="absolute flex flex-col items-center justify-center">
                         <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
                         <span class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
@@ -310,12 +328,26 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
-                        <div class="w-10 h-32 bg-slate-200 rounded-full relative overflow-hidden flex flex-col justify-end border border-slate-300/40 my-2">
-                            <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
-                        </div>
-                        <div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[150px] w-full">
+    
+    <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-2">Progresso da Meta</span>
+    
+    <div class="flex flex-row md:flex-col items-center justify-center gap-4 w-full">
+        
+        <div class="w-full h-6 md:w-6 md:h-40 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
+            <div id="weight-bar-fill" 
+                 class="h-full w-full bg-blue-600 bar-progress rounded-full transition-all duration-[1500ms] ease-out" 
+                 style="width: 0%; height: 100%;">
+            </div>
+        </div>
+
+        <div class="flex flex-col items-center">
+            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
+            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
+        </div>
+    </div>
+</div>
+
                             <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
                             <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
                         </div>
@@ -504,35 +536,62 @@
         }
 
         function renderWeightTab() {
-            const prof = appData[currentProfile];
-            document.getElementById('weight-initial').value = prof.pesoInicial || '';
-            document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-            document.getElementById('weight-target').value = prof.pesoAlvo || '';
-            document.getElementById('weight-current').value = prof.pesoAtual || '';
+    const prof = appData[currentProfile];
+    document.getElementById('weight-initial').value = prof.pesoInicial || '';
+    document.getElementById('waist-initial').value = prof.cinturaInicial || '';
+    document.getElementById('weight-target').value = prof.pesoAlvo || '';
+    document.getElementById('weight-current').value = prof.pesoAtual || '';
 
-            const fillBar = document.getElementById('weight-bar-fill');
-            const percentText = document.getElementById('weight-progress-percent');
-            const remainingText = document.getElementById('weight-remaining-lbl');
+    const fillBar = document.getElementById('weight-bar-fill');
+    const percentText = document.getElementById('weight-progress-percent');
+    const remainingText = document.getElementById('weight-remaining-lbl');
 
-            if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
-                const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
-                const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
-                let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
-                progresso = Math.max(0, Math.min(progresso, 100));
+    const pIni = parseFloat(prof.pesoInicial || 0);
+    const pAlvo = parseFloat(prof.pesoAlvo || 0);
+    const pAtual = parseFloat(prof.pesoAtual || 0);
 
-                setTimeout(() => {
-                    fillBar.style.height = `${progresso}%`;
-                    percentText.innerText = `${progresso}%`;
-                }, 150);
-
-                const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
-                remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
-            } else {
-                fillBar.style.height = '0%';
-                percentText.innerText = '0%';
-                remainingText.innerText = 'Configure ao lado';
-            }
+    if(pIni > 0 && pAlvo > 0 && pAtual > 0) {
+        const totalMeta = pAlvo - pIni;
+        const realAtingido = pAtual - pIni;
+        let progresso = totalMeta !== 0 ? (realAtingido / totalMeta) * 100 : 0;
+        
+        // Define as cores baseadas no progresso
+        let cor;
+        if (progresso < 0) {
+            cor = '#ef4444'; // Vermelho (Regrediu/Negativo)[span_0](start_span)[span_0](end_span)
+        } else if (progresso >= 100) {
+            cor = '#10b981'; // Verde (Atingiu ou passou de 100%)[span_1](start_span)[span_1](end_span)
+        } else {
+            cor = '#2563eb'; // Azul (Progresso normal)[span_2](start_span)[span_2](end_span)
         }
+
+        const progressoVisual = Math.max(0, Math.min(progresso, 100));
+
+        setTimeout(() => {
+            // Animação e aplicação das cores
+            fillBar.style.width = `${progressoVisual}%`; 
+            fillBar.style.backgroundColor = cor; // Aplica a cor na barra[span_3](start_span)[span_3](end_span)
+            percentText.innerText = `${Math.round(progresso)}%`;
+            percentText.style.color = cor; // Aplica a cor no texto[span_4](start_span)[span_4](end_span)
+        }, 150);
+
+        // Lógica de texto
+        const falta = pAtual - pAlvo;
+        if (Math.abs(falta) < 0.1) {
+            remainingText.innerText = "Meta atingida!";
+        } else {
+            remainingText.innerText = falta > 0 
+                ? `Passou da meta em ${falta.toFixed(1)} kg` 
+                : `Faltam ${Math.abs(falta).toFixed(1)} kg`;
+        }
+    } else {
+        fillBar.style.width = '0%';
+        fillBar.style.backgroundColor = '#2563eb'; // Cor padrão[span_5](start_span)[span_5](end_span)
+        percentText.innerText = '';
+        remainingText.innerText = '';
+    }
+}
+
 
         function saveWeightGoals() {
             const pIni = parseFloat(document.getElementById('weight-initial').value);
