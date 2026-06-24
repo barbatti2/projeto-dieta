@@ -64,12 +64,13 @@
 
         <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
     <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
-            <button id="profile-btn" onclick="toggleProfile()" 
-            class="w-full flex items-center justify-between p-2 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-bold hover:border-blue-500 transition-all">
+    
+    <button id="toggle-profile-btn" onclick="toggleProfile()" 
+            class="w-full flex items-center justify-between p-3 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-bold active:bg-slate-800 transition-all">
         <span id="active-profile-name">Gabriel</span>
-        <span class="text-[10px]">🔄</span>
-            </button>
-        </div>
+        <span class="text-xs">🔄</span>
+    </button>
+</div>
 
         <nav class="space-y-1.5 flex-1">
             <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white text-left">
@@ -424,13 +425,21 @@
 
         // 2. Cole aqui a nova função de trocar perfil que criamos:
         function toggleProfile() {
-            const nameElement = document.getElementById('active-profile-name');
-            const currentName = nameElement.innerText;
+            const nameSpan = document.getElementById('active-profile-name');
+    if (!nameSpan) {
+        console.error("Erro: ID 'active-profile-name' não encontrado!");
+        return;
+    }
+
+            const currentName = nameSpan.innerText.trim();
             const nextName = (currentName === 'Gabriel') ? 'Raissa' : 'Gabriel';
+    
+            // Atualiza o texto na tela
+            nameSpan.innerText = nextName;
             
-            nameElement.innerText = nextName;
+            // Chama a troca de dados
             changeProfile(nextName);
-        }
+    }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
