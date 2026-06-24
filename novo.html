@@ -321,16 +321,18 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[220px]">
-                        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
-                        <div class="w-10 h-32 bg-slate-200 rounded-full relative overflow-hidden flex flex-col justify-end border border-slate-300/40 my-2">
-                            <div id="weight-bar-fill" class="w-full bg-gradient-to-t from-blue-600 to-indigo-500 bar-progress rounded-b-full" style="height: 0%;"></div>
-                        </div>
-                        <div>
-                            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
-                            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
-                        </div>
-                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col gap-3">
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+                    <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
+                </div>
+                
+                <div class="w-full h-5 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
+                    <div id="weight-bar-fill" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 bar-progress rounded-full transition-all duration-500" style="width: 0%;"></div>
+                </div>
+                
+                <div class="text-center">
+                    <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400">Defina as metas</span>
                 </div>
             </div>
 
