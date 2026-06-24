@@ -329,36 +329,31 @@
                     </div>
 
                     <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col gap-2">
-            <div class="flex justify-between items-center">
-                <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
-                <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
-            </div>
-            <div class="w-full h-4 bg-slate-200 rounded-full overflow-hidden border border-slate-300/40">
-                <div id="weight-bar-fill" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
-            </div>
-            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400">Defina as metas</span>
+    <div class="flex justify-between items-center">
+        <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+        <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
+    </div>
+    <div class="w-full h-4 bg-slate-200 rounded-full overflow-hidden border border-slate-300/40">
+        <div id="weight-bar-fill" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+    </div>
+    <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400">Defina as metas</span>
+</div> </div> <div id="tab-config" class="tab-content w-full">
+    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
+    <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
+    
+    <div class="w-full max-w-sm mx-auto space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div>
+            <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Calorias (kcal)</label>
+            <input type="number" id="cfg-target-kcal" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
         </div>
-
-            <div id="tab-config" class="tab-content w-full">
-                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
-                <p class="text-[10px] text-slate-400 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
-                
-                <div class="w-full max-w-sm mx-auto space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                    <div>
-                        <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Calorias (kcal)</label>
-                        <input type="number" id="cfg-target-kcal" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Proteínas (g)</label>
-                        <input type="number" id="cfg-target-protein" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
-                    </div>
-                    <button onclick="saveProfileSettings()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md">Salvar Metas</button>
-                </div>
-            </div>
-
+        <div>
+            <label class="block text-xs font-black uppercase text-slate-500 mb-1">Meta de Proteínas (g)</label>
+            <input type="number" id="cfg-target-protein" class="w-full p-2.5 border border-slate-200 rounded-xl font-bold focus:outline-none">
         </div>
-    </main>
-
+        <button onclick="saveProfileSettings()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md">Salvar Metas</button>
+    </div>
+</div>
+</main>
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-800 text-white h-16 flex items-center justify-around z-50 px-2">
         <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-400">
             <i data-lucide="home" class="w-5 h-5"></i>
