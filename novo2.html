@@ -328,25 +328,16 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col items-center justify-between text-center min-h-[150px] w-full">
-    
-    <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider mb-2">Progresso da Meta</span>
-    
-    <div class="flex flex-row md:flex-col items-center justify-center gap-4 w-full">
-        
-        <div class="w-full h-6 md:w-6 md:h-40 bg-slate-200 rounded-full relative overflow-hidden border border-slate-300/40">
-            <div id="weight-bar-fill" 
-                 class="h-full w-full bg-blue-600 bar-progress rounded-full transition-all duration-[1500ms] ease-out" 
-                 style="width: 0%; height: 100%;">
+                    <<div class="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-4 flex flex-col gap-2">
+            <div class="flex justify-between items-center">
+                <span class="text-[9px] font-black text-slate-400 uppercase tracking-wider">Progresso da Meta</span>
+                <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
             </div>
+            <div class="w-full h-4 bg-slate-200 rounded-full overflow-hidden border border-slate-300/40">
+                <div id="weight-bar-fill" class="h-full bg-gradient-to-r from-blue-600 to-indigo-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+            </div>
+            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400">Defina as metas</span>
         </div>
-
-        <div class="flex flex-col items-center">
-            <span id="weight-progress-percent" class="text-xl font-black text-slate-900 block">0%</span>
-            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-400 block mt-0.5">Defina as metas</span>
-        </div>
-    </div>
-</div>
 
             <div id="tab-config" class="tab-content w-full">
                 <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
