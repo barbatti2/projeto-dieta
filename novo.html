@@ -427,38 +427,37 @@
         }
 
         function switchTab(tabId) {
-    // 1. Esconde TODAS as abas adicionando 'hidden' e removendo 'active'
+    // 1. Esconde TODAS as abas adicionando 'hidden'
     document.querySelectorAll('.tab-content').forEach(t => {
+        t.classList.add('hidden');
         t.classList.remove('active');
-        t.classList.add('hidden'); 
     });
     
-    // 2. Limpa todos os botões (mobile e desktop)
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-        btn.classList.add('text-slate-400');
-    });
-
-    // 3. Mostra a aba clicada (remove o hidden e adiciona active)
+    // 2. Remove o 'hidden' apenas da aba escolhida
     const targetTab = document.getElementById(`tab-${tabId}`);
     if (targetTab) {
         targetTab.classList.remove('hidden');
         targetTab.classList.add('active');
     }
     
-    // 4. Ativa no menu desktop se visível
+    // ... (o restante da sua lógica dos botões continua igual) ...
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+        btn.classList.add('text-slate-400');
+    });
+
     const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
     if(activeDesktopNav) {
         activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
         activeDesktopNav.classList.remove('text-slate-400');
     }
 
-    // 5. Ativa no menu mobile se visível
     const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
     if(activeMobileNav) {
         activeMobileNav.classList.add('text-blue-500');
         activeMobileNav.classList.remove('text-slate-400');
     }
+}
 
             if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
