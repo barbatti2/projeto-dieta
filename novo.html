@@ -427,33 +427,24 @@
         }
 
         function toggleProfile() {
-    try {
-        const labelSpan = document.getElementById('current-profile-label');
+            const labelSpan = document.getElementById('current-profile-label');
+            if (!labelSpan) return;
         
-        if (!labelSpan) {
-            console.error("Erro: O elemento com ID 'current-profile-label' não foi encontrado!");
-            alert("Erro: ID 'current-profile-label' não encontrado.");
-            return;
+            // Pegamos o texto e transformamos tudo para minúsculo para comparar
+            const currentName = labelSpan.innerText.trim().toLowerCase();
+            console.log("Nome atual (formatado):", currentName);
+        
+            // Se o atual for 'gabriel', muda para 'raissa', caso contrário, volta para 'gabriel'
+            const nextName = (currentName === 'gabriel') ? 'Raissa' : 'Gabriel';
+            
+            labelSpan.innerText = nextName;
+            console.log("Nome trocado para:", nextName);
+            
+            // Chama a função original com o nome correto
+            if (typeof changeProfile === 'function') {
+                changeProfile(nextName);
+            }
         }
-        
-        const currentName = labelSpan.innerText.trim();
-        console.log("Nome atual:", currentName);
-
-        const nextName = (currentName === 'Gabriel') ? 'Raissa' : 'Gabriel';
-        
-        labelSpan.innerText = nextName;
-        console.log("Nome trocado para:", nextName);
-        
-        // Chama a função original que carrega os dados
-        if (typeof changeProfile === 'function') {
-            changeProfile(nextName);
-        } else {
-            console.error("A função changeProfile não foi encontrada!");
-        }
-    } catch (e) {
-        console.error("Erro na função toggleProfile:", e);
-    }
-}
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
