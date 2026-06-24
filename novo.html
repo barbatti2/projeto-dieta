@@ -6,7 +6,19 @@
     <title>Projeto Dieta Premium</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
+        <style>
+    /* Isso garante que o botão não tenha aquele estilo "quadrado de sistema" */
+    #toggle-profile-btn {
+        outline: none;
+        appearance: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Isso garante que o clique no celular seja fluido */
+    #toggle-profile-btn:active {
+        background-color: #0f172a; /* Cor do slate-900 mais escura */
+    }
+</style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
         body { 
@@ -62,13 +74,13 @@
             </div>
         </div>
 
-        <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
-    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+        <div class="mb-6 bg-slate-800 p-3 rounded-2xl border border-slate-700/50 shadow-lg">
+    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 pl-1">Perfil Ativo</label>
     
     <button id="toggle-profile-btn" onclick="toggleProfile()" 
-            class="w-full flex items-center justify-between p-3 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-bold active:bg-slate-800 transition-all">
+            class="w-full flex items-center justify-between px-4 py-3 bg-slate-900 border border-slate-700 hover:border-blue-500 text-white rounded-xl text-sm font-bold transition-all duration-300 active:scale-[0.98]">
         <span id="active-profile-name">Gabriel</span>
-        <span class="text-xs">🔄</span>
+        <span class="text-xs opacity-70">🔄 Trocar</span>
     </button>
 </div>
 
@@ -101,13 +113,13 @@
             </div>
             <span class="font-black tracking-wide text-sm uppercase">Projeto Dieta</span>
         </div>
-        <div class="mb-6 bg-slate-800 p-2.5 rounded-xl border border-slate-700/50">
-    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1.5 pl-1">Perfil Ativo</label>
+        <div class="mb-6 bg-slate-800 p-3 rounded-2xl border border-slate-700/50 shadow-lg">
+    <label class="block text-[10px] font-black uppercase tracking-wider text-slate-400 mb-2 pl-1">Perfil Ativo</label>
     
     <button id="toggle-profile-btn" onclick="toggleProfile()" 
-            class="w-full flex items-center justify-between p-2.5 bg-slate-900 border border-slate-700 text-white rounded-lg text-xs font-bold hover:border-blue-500 transition-all">
+            class="w-full flex items-center justify-between px-4 py-3 bg-slate-900 border border-slate-700 hover:border-blue-500 text-white rounded-xl text-sm font-bold transition-all duration-300 active:scale-[0.98]">
         <span id="active-profile-name">Gabriel</span>
-        <span class="text-[10px]">🔄</span>
+        <span class="text-xs opacity-70">🔄 Trocar</span>
     </button>
 </div>
         </div>
@@ -424,12 +436,20 @@
 }
 
         // 2. Cole aqui a nova função de trocar perfil que criamos:
-        function toggleProfile() {
-            const nameSpan = document.getElementById('active-profile-name');
-    if (!nameSpan) {
-        console.error("Erro: ID 'active-profile-name' não encontrado!");
-        return;
+       <script>
+    function toggleProfile() {
+        const nameSpan = document.getElementById('active-profile-name');
+        
+        // Determina o próximo nome
+        const novoNome = (nameSpan.innerText === 'Gabriel') ? 'Raissa' : 'Gabriel';
+        
+        // 1. Atualiza o texto visualmente
+        nameSpan.innerText = novoNome;
+        
+        // 2. Chama a lógica da dieta
+        changeProfile(novoNome);
     }
+    </script>
 
             const currentName = nameSpan.innerText.trim();
             const nextName = (currentName === 'Gabriel') ? 'Raissa' : 'Gabriel';
