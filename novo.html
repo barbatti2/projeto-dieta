@@ -23,12 +23,13 @@
         }
 
         @keyframes pulsar {
-            0% { transform: scale(0.95); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.5; }
-            100% { transform: scale(0.95); opacity: 1; }
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
         }
         
         .bolinha-piscando {
+            background-color: #10b981; /* Verde mais forte (emerald-500) */
             animation: pulsar 2s infinite;
         }
 
@@ -72,7 +73,7 @@
             <div class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 bolinha-piscando mr-1"></span>
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Ativo: <span id="current-profile-label" class="text-blue-600">Gabriel</span>
+                    Ativo: <span id="selected-profile" class="text-blue-600">Gabriel</span>
                 </p>
             </div>
         </div>
@@ -455,9 +456,11 @@
         function changeProfile(profileName) {
             currentProfile = profileName;
             
-            // Atualiza o texto visual do menu customizado
-            const displaySpan = document.getElementById('selected-profile');
-            if (displaySpan) displaySpan.innerText = profileName;
+            // Atualiza o texto visual de TODOS os elementos que possuem id="selected-profile"
+            const displaySpans = document.querySelectorAll('#selected-profile');
+            displaySpans.forEach(span => {
+                span.innerText = profileName;
+            });
         
             // Sincronizar seletores antigos (caso ainda existam no seu HTML)
             const desktopSelect = document.getElementById('profile-selector-desktop');
