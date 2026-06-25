@@ -726,18 +726,18 @@
         function selectMoment(moment, element) {
             currentSelectedMoment = moment;
             
-            // 1. Limpa todos os botões
+            // 1. Reseta todos os botões para data-active="false"
+            // Isso faz com que o Tailwind remova automaticamente os estilos de "ativo"
             document.querySelectorAll('.moment-btn').forEach(btn => {
-                // Remove tudo que for de estado ativo
-                btn.classList.remove('bg-blue-600', '!text-white', 'border-blue-600', 'shadow-md');
-                // Força o retorno ao estado de repouso (fundo branco, texto cinza escuro)
-                btn.classList.add('bg-white', 'text-slate-700', 'border-blue-200');
+                btn.setAttribute('data-active', 'false');
             });
         
-            // 2. Aplica o estado ativo APENAS no clicado
-            // O uso do "!" na classe !text-white força a cor branca mesmo se houver outra regra CSS conflitando
-            element.classList.remove('bg-white', 'text-slate-700', 'border-blue-200');
-            element.classList.add('bg-blue-600', '!text-white', 'border-blue-600', 'shadow-md');
+            // 2. Define o atributo 'data-active' como "true" apenas para o botão clicado
+            // O Tailwind aplicará as classes 'data-[active=true]:...' automaticamente
+            element.setAttribute('data-active', 'true');
+            
+            // 3. Recarrega os ícones caso algum tenha mudado
+            lucide.createIcons();
         }
         
         function addFoodToPlate() {
