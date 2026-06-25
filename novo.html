@@ -720,14 +720,19 @@
 
         function selectMoment(moment, element) {
             currentSelectedMoment = moment;
+            
+            // 1. Limpa todos os botões
             document.querySelectorAll('.moment-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600');
-                btn.classList.add('bg-slate-50', 'text-slate-600', 'border-slate-200');
+                // Remove as classes de selecionado
+                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+                // Adiciona as classes de "não selecionado" (Fundo branco, texto cinza escuro)
+                btn.classList.add('bg-white', 'text-slate-700', 'border-blue-200');
             });
-            element.classList.remove('bg-slate-50', 'text-slate-600', 'border-slate-200');
-            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600');
+        
+            // 2. Aplica o estilo no selecionado
+            element.classList.remove('bg-white', 'text-slate-700', 'border-blue-200');
+            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
         }
-
         function addFoodToPlate() {
             if(!currentSelectedFood) return alert("Selecione um alimento!");
             const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
