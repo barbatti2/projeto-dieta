@@ -89,17 +89,25 @@
         <div class="w-full mb-6">
             <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Perfil Ativo</label>
             
-            <div class="relative w-full" id="custom-select">
-                <button onclick="toggleDropdown()" class="w-full flex justify-between items-center bg-white border border-slate-200 text-slate-800 font-bold text-sm px-4 py-3 rounded-xl shadow-sm">
-                    <span id="selected-profile">Gabriel</span>
-                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
-                </button>
-                
-                <div id="dropdown-menu" class="hidden absolute top-full mt-2 w-full bg-white border border-slate-100 rounded-xl shadow-xl z-50 overflow-hidden">
-                    <div onclick="selectProfile('Gabriel')" class="px-4 py-3 hover:bg-blue-50 text-slate-700 font-bold cursor-pointer transition-colors">Gabriel</div>
-                    <div onclick="selectProfile('Raissa')" class="px-4 py-3 hover:bg-blue-50 text-slate-700 font-bold cursor-pointer transition-colors">Raíssa</div>
-                </div>
-            </div>
+            <div class="relative w-full">
+    <button onclick="toggleDropdown()" class="w-full flex justify-between items-center bg-white border border-slate-200 text-slate-800 font-bold text-sm px-4 py-3 rounded-xl shadow-sm hover:border-blue-500 transition-all">
+        <span id="selected-profile">Gabriel</span>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+    </button>
+
+    <div id="dropdown-menu" class="hidden absolute top-full mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
+        
+        <div onclick="selectProfile('Gabriel')" 
+             class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-100">
+             Gabriel
+        </div>
+        <div onclick="selectProfile('Raissa')" 
+             class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors">
+             Raíssa
+        </div>
+        
+    </div>
+</div>
 
     <nav class="mt-4 space-y-1.5 flex-1">
     <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
