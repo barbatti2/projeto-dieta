@@ -723,16 +723,18 @@
             
             // 1. Limpa todos os botões
             document.querySelectorAll('.moment-btn').forEach(btn => {
-                // Remove as classes de selecionado
-                btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
-                // Adiciona as classes de "não selecionado" (Fundo branco, texto cinza escuro)
+                // Remove tudo que for de estado ativo
+                btn.classList.remove('bg-blue-600', '!text-white', 'border-blue-600', 'shadow-md');
+                // Força o retorno ao estado de repouso (fundo branco, texto cinza escuro)
                 btn.classList.add('bg-white', 'text-slate-700', 'border-blue-200');
             });
         
-            // 2. Aplica o estilo no selecionado
+            // 2. Aplica o estado ativo APENAS no clicado
+            // O uso do "!" na classe !text-white força a cor branca mesmo se houver outra regra CSS conflitando
             element.classList.remove('bg-white', 'text-slate-700', 'border-blue-200');
-            element.classList.add('bg-blue-600', 'text-white', 'border-blue-600', 'shadow-md');
+            element.classList.add('bg-blue-600', '!text-white', 'border-blue-600', 'shadow-md');
         }
+        
         function addFoodToPlate() {
             if(!currentSelectedFood) return alert("Selecione um alimento!");
             const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
