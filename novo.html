@@ -91,15 +91,17 @@
         <div class="w-full mb-6">
             <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-1">Perfil Ativo</label>
             
-            <div class="relative">
-                <select id="profile-selector-desktop" onchange="changeProfile(this.value)" class="w-full appearance-none bg-white border border-slate-200 text-slate-800 font-bold text-sm px-4 py-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer shadow-sm">
-                    <option value="Gabriel">Gabriel</option>
-                    <option value="Raissa">Raíssa</option>
-                </select>
-                <!-- Ícone de seta -->
-                <i data-lucide="chevron-down" class="absolute right-4 top-3.5 w-4 h-4 text-slate-400 pointer-events-none"></i>
-        </div>
-    </div>
+            <div class="relative w-full" id="custom-select">
+                <button onclick="toggleDropdown()" class="w-full flex justify-between items-center bg-white border border-slate-200 text-slate-800 font-bold text-sm px-4 py-3 rounded-xl shadow-sm">
+                    <span id="selected-profile">Gabriel</span>
+                    <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                </button>
+                
+                <div id="dropdown-menu" class="hidden absolute top-full mt-2 w-full bg-white border border-slate-100 rounded-xl shadow-xl z-50 overflow-hidden">
+                    <div onclick="selectProfile('Gabriel')" class="px-4 py-3 hover:bg-blue-50 text-slate-700 font-bold cursor-pointer transition-colors">Gabriel</div>
+                    <div onclick="selectProfile('Raissa')" class="px-4 py-3 hover:bg-blue-50 text-slate-700 font-bold cursor-pointer transition-colors">Raíssa</div>
+                </div>
+            </div>
 
     <nav class="space-y-1.5 flex-1">
     <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
@@ -436,13 +438,18 @@
         function changeProfile(profileName) {
             currentProfile = profileName;
             
-            // Sincronizar seletores (adicionamos um "if" para checar se eles existem)
+            // Atualiza o texto visual do nosso novo menu customizado
+            const displaySpan = document.getElementById('selected-profile');
+            if (displaySpan) displaySpan.innerText = profileName;
+        
+            // Sincronizar seletores antigos (caso ainda existam no seu HTML)
             const desktopSelect = document.getElementById('profile-selector-desktop');
             const mobileSelect = document.getElementById('profile-selector-mobile');
             
             if (desktopSelect) desktopSelect.value = profileName;
             if (mobileSelect) mobileSelect.value = profileName;
         
+            // Lógica que você já possui
             currentPlateItems = [];
             renderPlateUI();
             loadConfigFields();
@@ -450,26 +457,22 @@
             renderTimelineHistory();
             renderWeightTab();
             renderCalendar();
+            
+            // Atualiza ícones caso tenha mudado algo visual
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
-        function toggleProfile() {
-            const labelSpan = document.getElementById('current-profile-label');
-            if (!labelSpan) return;
         
-            // Pegamos o texto e transformamos tudo para minúsculo para comparar
-            const currentName = labelSpan.innerText.trim().toLowerCase();
-            console.log("Nome atual (formatado):", currentName);
+        // Essa função agora controla o menu customizado
+        function toggleDropdown() {
+            document.getElementById('dropdown-menu').classList.toggle('hidden');
+        }
         
-            // Se o atual for 'gabriel', muda para 'raissa', caso contrário, volta para 'gabriel'
-            const nextName = (currentName === 'gabriel') ? 'Raissa' : 'Gabriel';
-            
-            labelSpan.innerText = nextName;
-            console.log("Nome trocado para:", nextName);
-            
-            // Chama a função original com o nome correto
-            if (typeof changeProfile === 'function') {
-                changeProfile(nextName);
-            }
+        // Essa função é chamada quando você clica em um nome no menu
+        function selectProfile(name) {
+            // Fecha o menu
+            document.getElementById('dropdown-menu').classList.add('hidden');
+            // Chama a função principal de troca
+            changeProfile(name);
         }
 
         function switchTab(tabId) {
