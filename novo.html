@@ -491,6 +491,19 @@
             changeProfile(name);
         }
 
+        // Adicione isto no final do seu arquivo JavaScript
+            document.addEventListener('click', function(event) {
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            const toggleButton = document.querySelector('[onclick="toggleDropdown()"]');
+        
+            // Se o menu estiver aberto e o clique foi fora dele e fora do botão, ele fecha
+            if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
+                if (!dropdownMenu.contains(event.target) && (!toggleButton || !toggleButton.contains(event.target))) {
+                    dropdownMenu.classList.add('hidden');
+                }
+            }
+        });
+
         function switchTab(tabId) {
             // 1. Esconde todo conteúdo
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
