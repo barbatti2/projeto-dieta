@@ -811,11 +811,22 @@
 
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
+            
+            // 1. Limpa todos os botões de filtro
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
-                btn.classList.add('bg-slate-100', 'text-slate-600');
+                // Remove as classes de "ativo"
+                btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm');
+                // Garante que as classes de "inativo" estejam lá
+                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
             });
-            document.getElementById(`filter-${filtro}`).classList.add('bg-blue-600', 'text-white');
+        
+            // 2. Ativa o botão clicado
+            const selectedBtn = document.getElementById(`filter-${filtro}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-blue-200');
+                selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm');
+            }
+            
             renderTimelineHistory();
         }
 
