@@ -97,25 +97,25 @@
     </div>
 
     <nav class="space-y-1.5 flex-1">
-        <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="home" class="w-4 h-4"></i> Início
-        </button>
-        <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
-        </button>
-        <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="calendar" class="w-4 h-4"></i> Calendário
-        </button>
-        <button onclick="switchTab('historico')" id="nav-desktop-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="list" class="w-4 h-4"></i> Histórico
-        </button>
-        <button onclick="switchTab('peso')" id="nav-desktop-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="scale" class="w-4 h-4"></i> Pesos e Medidas
-        </button>
-        <button onclick="switchTab('config')" id="nav-desktop-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 text-left transition-all">
-            <i data-lucide="settings" class="w-4 h-4"></i> Configurações
-        </button>
-    </nav>
+    <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+        <i data-lucide="home" class="w-4 h-4"></i> Início
+            </button>
+            <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+                <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
+            </button>
+            <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+                <i data-lucide="calendar" class="w-4 h-4"></i> Calendário
+            </button>
+            <button onclick="switchTab('historico')" id="nav-desktop-historico" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+                <i data-lucide="list" class="w-4 h-4"></i> Histórico
+            </button>
+            <button onclick="switchTab('peso')" id="nav-desktop-peso" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+                <i data-lucide="scale" class="w-4 h-4"></i> Pesos e Medidas
+            </button>
+            <button onclick="switchTab('config')" id="nav-desktop-config" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+                <i data-lucide="settings" class="w-4 h-4"></i> Configurações
+            </button>
+</nav>
 </aside>
 
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
@@ -463,36 +463,44 @@
         }
 
         function switchTab(tabId) {
+            // 1. Esconde todo conteúdo
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
-            // Limpa todos os botões (mobile e desktop)
+            // 2. Limpa TUDO o que for de estilo nos botões
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-                btn.classList.add('text-slate-400');
+                // Remove as classes de estado ativo (antigas e novas)
+                btn.classList.remove('!bg-blue-600', '!text-white', 'bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
+                // Garante que as cores de repouso voltem
+                btn.classList.add('text-slate-600'); 
+                // Remove a classe .active que usamos no CSS
+                btn.classList.remove('active'); 
             });
-
+        
+            // 3. Ativa o conteúdo correto
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
-            // Ativa no menu desktop se visível
+            // 4. Aplica no Desktop
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if(activeDesktopNav) {
-                activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                activeDesktopNav.classList.remove('text-slate-400');
+                // Adiciona a classe que ativa o estilo !blue-600 que definimos no HTML
+                activeDesktopNav.classList.add('active', '!bg-blue-600', '!text-white', 'shadow-md');
+                activeDesktopNav.classList.remove('text-slate-600');
             }
-
-            // Ativa no menu mobile se visível
+        
+            // 5. Aplica no Mobile
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
             if(activeMobileNav) {
-                activeMobileNav.classList.add('text-blue-500');
+                activeMobileNav.classList.add('text-blue-600');
                 activeMobileNav.classList.remove('text-slate-400');
             }
-
+        
+            // Chamadas extras...
             if(tabId === 'inicio') refreshHomeWheel();
             if(tabId === 'historico') renderTimelineHistory();
             if(tabId === 'config') loadConfigFields();
             if(tabId === 'peso') renderWeightTab();
             if(tabId === 'calendario') renderCalendar();
-
+        
             lucide.createIcons();
         }
 
