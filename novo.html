@@ -812,17 +812,18 @@
         function changeHistoryFilter(filtro) {
             currentHistoryFilter = filtro;
             
-            // 1. Limpa todos os botões de filtro
+            // 1. Limpa TODOS os botões, garantindo que o texto volte a ser cinza
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
-                // Remove as classes de "ativo"
+                // Remove as classes de ativo
                 btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm');
-                // Garante que as classes de "inativo" estejam lá
+                // Força a volta das classes de inativo
                 btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
             });
         
-            // 2. Ativa o botão clicado
+            // 2. Ativa APENAS o botão clicado
             const selectedBtn = document.getElementById(`filter-${filtro}`);
             if (selectedBtn) {
+                // Remove as classes de inativo e aplica as de ativo
                 selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-blue-200');
                 selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm');
             }
