@@ -281,11 +281,11 @@
 <div id="tab-historico" class="tab-content w-full">
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
     
-    <div class="w-full grid grid-cols-4 gap-1.5 mb-4 border-b border-blue-100 pb-3">
-        <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-blue-600 text-white font-bold rounded-lg text-xs shadow-sm">Dia</button>
-        <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Semana</button>
-        <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Mês</button>
-        <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Ano</button>
+        <div class="w-full grid grid-cols-4 gap-1.5 mb-4 border-b border-blue-100 pb-3">
+            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs shadow-sm">Dia</button>
+            <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Semana</button>
+            <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Mês</button>
+            <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Ano</button>
     </div>
 
     <div id="history-container" class="w-full space-y-4"></div>
@@ -810,26 +810,30 @@
         }
 
         function changeHistoryFilter(filtro) {
-            currentHistoryFilter = filtro;
-            
-            // 1. Limpa TODOS os botões, garantindo que o texto volte a ser cinza
-            document.querySelectorAll('.history-filter-btn').forEach(btn => {
-                // Remove as classes de ativo
-                btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm');
-                // Força a volta das classes de inativo
-                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
-            });
-        
-            // 2. Ativa APENAS o botão clicado
-            const selectedBtn = document.getElementById(`filter-${filtro}`);
-            if (selectedBtn) {
-                // Remove as classes de inativo e aplica as de ativo
-                selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-blue-200');
-                selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm');
-            }
-            
-            renderTimelineHistory();
-        }
+    currentHistoryFilter = filtro;
+    
+    // 1. Limpa TODOS os botões, resetando para o estado original (fundo branco, texto cinza)
+    document.querySelectorAll('.history-filter-btn').forEach(btn => {
+        // Remove classes de ativo e garante as classes de inativo
+        btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
+    });
+
+    // 2. Ativa APENAS o botão clicado
+    const selectedBtn = document.getElementById(`filter-${filtro}`);
+    if (selectedBtn) {
+        // Remove as classes de inativo e aplica as de ativo
+        selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
+        selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+    }
+    
+    renderTimelineHistory();
+}
+
+// 3. Garante que o botão 'dia' comece selecionado ao abrir a página
+document.addEventListener('DOMContentLoaded', () => {
+    changeHistoryFilter('dia');
+});
 
         function renderTimelineHistory() {
             const container = document.getElementById('history-container');
