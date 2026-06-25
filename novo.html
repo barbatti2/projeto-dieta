@@ -435,10 +435,11 @@
             return new Date(stringData);
         }
 
+        // 1. Função principal que executa as trocas e atualiza a interface
         function changeProfile(profileName) {
             currentProfile = profileName;
             
-            // Atualiza o texto visual do nosso novo menu customizado
+            // Atualiza o texto visual do menu customizado
             const displaySpan = document.getElementById('selected-profile');
             if (displaySpan) displaySpan.innerText = profileName;
         
@@ -449,7 +450,7 @@
             if (desktopSelect) desktopSelect.value = profileName;
             if (mobileSelect) mobileSelect.value = profileName;
         
-            // Lógica que você já possui
+            // Lógica de atualização do sistema
             currentPlateItems = [];
             renderPlateUI();
             loadConfigFields();
@@ -462,16 +463,25 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
         
-        // Essa função agora controla o menu customizado
+        // 2. Função para o seu botão "Trocar" (Mobile) - Troca direto sem menu
+        function toggleProfile() {
+            const displaySpan = document.getElementById('selected-profile');
+            if (!displaySpan) return;
+        
+            const currentName = displaySpan.innerText.trim().toLowerCase();
+            const nextName = (currentName === 'gabriel') ? 'Raissa' : 'Gabriel';
+            
+            changeProfile(nextName);
+        }
+        
+        // 3. Função para o Desktop - Abre e fecha o dropdown
         function toggleDropdown() {
             document.getElementById('dropdown-menu').classList.toggle('hidden');
         }
         
-        // Essa função é chamada quando você clica em um nome no menu
+        // 4. Função chamada quando você clica em um nome DENTRO do menu
         function selectProfile(name) {
-            // Fecha o menu
             document.getElementById('dropdown-menu').classList.add('hidden');
-            // Chama a função principal de troca
             changeProfile(name);
         }
 
