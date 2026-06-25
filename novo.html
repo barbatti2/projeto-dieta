@@ -474,10 +474,12 @@
             document.getElementById(`tab-${tabId}`).classList.add('active');
             
             // Ativa no menu desktop se visível
+            // Ativa no menu desktop se visível
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if(activeDesktopNav) {
-                activeDesktopNav.classList.add('bg-blue-600', 'text-white', 'shadow-md');
-                activeDesktopNav.classList.remove('text-slate-400');
+                // Adicionei o ! na frente para forçar a prioridade
+                activeDesktopNav.classList.add('!bg-blue-600', '!text-white', 'shadow-md');
+                activeDesktopNav.classList.remove('text-slate-600', 'hover:bg-blue-50', 'hover:text-blue-700');
             }
 
             // Ativa no menu mobile se visível
