@@ -33,13 +33,11 @@
             animation: pulsar 2s infinite;
         }
 
-        /* Cole o CSS aqui */
-        #wheel-progress {
-            stroke-dasharray: 100;
-            stroke-dashoffset: 100;
+        #wheel-progress-bar {
+            stroke-dasharray: 263.89;
+            stroke-dashoffset: 263.89;
             transition: stroke-dashoffset 1.5s ease-in-out;
         }
-
         /* Hack essencial: Fontes de inputs no mobile precisam ter no mínimo 16px para evitar o zoom automático do iOS/Android */
         @media (max-width: 768px) {
             input, select, textarea {
@@ -566,46 +564,65 @@
             const totalCalorias = refeicoesDeHoje.reduce((acc, curr) => acc + (parseInt(curr.calorias) || 0), 0);
             const metaDiaria = profile.metaCalorias || 2000;
             const porcentagem = Math.min((totalCalorias / metaDiaria) * 100, 100);
-        
-            const rodaElemento = document.getElementById('wheel-progress');
+            
+            // VALOR CORRETO PARA O SEU CÍRCULO COM RAIO 42
+            const valorTotal = 263.89; 
+            
+            const rodaElemento = document.getElementById('wheel-progress-bar'); // ID IGUAL AO SEU HTML
             if (rodaElemento) {
                 rodaElemento.style.transition = 'none';
-                rodaElemento.style.strokeDashoffset = '100'; 
+                rodaElemento.style.strokeDashoffset = valorTotal; 
+                
                 setTimeout(() => {
                     rodaElemento.style.transition = 'stroke-dashoffset 1.5s ease-in-out';
-                    const offset = 100 - porcentagem;
+                    // Calcula quanto deve ser mostrado
+                    const offset = valorTotal - (valorTotal * (porcentagem / 100));
                     rodaElemento.style.strokeDashoffset = offset;
                 }, 50);
             }
-        } // FECHA O refreshHomeWheel
 
-            const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
-            const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
+            // ... (dentro da função refreshHomeWheel)
 
-            document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
-            document.getElementById('lbl-home-target').innerText = profile.metaKcal;
-
-            const circle = document.getElementById('wheel-progress-bar');
-            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
-            circle.style.strokeDashoffset = "263.89";
-
+        const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + (parseFloat(r.totalKcal) || 0), 0);
+        const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + (parseFloat(r.totalProt) || 0), 0);
+        
+        // Atualizações básicas com segurança
+        const elKcalConsumed = document.getElementById('lbl-home-consumed');
+        const elKcalTarget = document.getElementById('lbl-home-target');
+        if (elKcalConsumed) elKcalConsumed.innerText = totalKcalHoje;
+        if (elKcalTarget) elKcalTarget.innerText = profile.metaKcal || 0;
+        
+        // Animação da Roda
+        const circle = document.getElementById('wheel-progress-bar');
+        if (circle) {
+            let percentual = (profile.metaKcal > 0) ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
+            circle.style.strokeDashoffset = "263.89"; // Reseta o estado
+        
             setTimeout(() => {
                 let strokePercent = Math.min(percentual, 100);
                 circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
+                
                 if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
                 else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
                 else circle.setAttribute('stroke', '#ef4444');
             }, 100);
-
-            const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
-            document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
-            document.getElementById('lbl-status-kcal-value').innerText = `${kcalFaltaOuPassa} kcal`;
-
-            const protFaltaOuPassa = profile.metaProtein - totalProtHoje;
-            document.getElementById('lbl-status-prot-text').innerText = protFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
-            document.getElementById('lbl-status-prot-value').innerText = `${protFaltaOuPassa}g`;
-            lucide.createIcons();
         }
+        
+        // Cálculo de Faltam/Excedeu (Corrigido para usar valores absolutos)
+        const kcalDiferenca = profile.metaKcal - totalKcalHoje;
+        const protDiferenca = profile.metaProtein - totalProtHoje;
+        
+        const elKcalText = document.getElementById('lbl-status-kcal-text');
+        const elKcalVal = document.getElementById('lbl-status-kcal-value');
+        if (elKcalText) elKcalText.innerText = kcalDiferenca >= 0 ? "Faltam" : "Excedeu";
+        if (elKcalVal) elKcalVal.innerText = `${Math.abs(kcalDiferenca)} kcal`;
+        
+        const elProtText = document.getElementById('lbl-status-prot-text');
+        const elProtVal = document.getElementById('lbl-status-prot-value');
+        if (elProtText) elProtText.innerText = protDiferenca >= 0 ? "Faltam" : "Excedeu";
+        if (elProtVal) elProtVal.innerText = `${Math.abs(protDiferenca)}g`;
+        
+        if (typeof lucide !== 'undefined') lucide.createIcons();
 
         function loadConfigFields() {
             document.getElementById('lbl-config-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
