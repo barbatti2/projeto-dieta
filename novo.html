@@ -147,27 +147,10 @@
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
             
-            <div id="tab-inicio" class="tab-content active">
-    <!-- BANNER AZUL COM ONDINHA -->
-    <div class="relative w-full bg-blue-600 h-40 rounded-b-[40px] flex flex-col items-center justify-center text-white shadow-lg mb-6">
-        <div class="flex items-center gap-3">
-            <i data-lucide="clipboard-list" class="w-8 h-8"></i>
-            <h1 class="text-2xl font-bold">Resumo Diário</h1>
-        </div>
-    </div>
-
-    <!-- NOME DO PERFIL (fora do banner) -->
-    <div class="text-center mb-6">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
-            Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span>
-        </p>
-    </div>
-
-    <!-- O RESTANTE DO CONTEÚDO (seus gráficos, kcal, etc) vem logo abaixo aqui -->
-</div>
-
-    <!-- O RESTANTE DO CONTEÚDO (seus gráficos, kcal, etc) vem logo abaixo aqui -->
-</div>
+            <div id="tab-inicio" class="tab-content active text-center">
+    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
+    <p class="text-[10px] md:text-xs text-slate-600 font-extrabold uppercase tracking-widest mb-4 md:mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+    
     <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
         <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
             <!-- Círculo de fundo (cinza mais visível) -->
@@ -203,19 +186,13 @@
 </div>
 
             <div id="tab-adicionar" class="tab-content w-full">
-
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-6">Montar Refeição</h2>
-
+    
     <div class="w-full mb-6 relative">
-
         <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">1. Selecione o Alimento</label>
-
         <div class="relative">
-
             <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
-
             <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
-
         </div>
         <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
     </div>
