@@ -596,34 +596,47 @@
 
         function renderWeightTab() {
             const prof = appData[currentProfile];
-            document.getElementById('weight-initial').value = prof.pesoInicial || '';
-            document.getElementById('waist-initial').value = prof.cinturaInicial || '';
-            document.getElementById('weight-target').value = prof.pesoAlvo || '';
-            document.getElementById('weight-current').value = prof.pesoAtual || '';
+            
+            // Verificação de segurança: checa se os elementos existem antes de tentar acessar o .value
+            const weightInitial = document.getElementById('weight-initial');
+            const waistInitial = document.getElementById('waist-initial');
+            const weightTarget = document.getElementById('weight-target');
+            const weightCurrent = document.getElementById('weight-current');
+        
+            if (weightInitial) weightInitial.value = prof.pesoInicial || '';
+            if (waistInitial) waistInitial.value = prof.cinturaInicial || '';
+            if (weightTarget) weightTarget.value = prof.pesoAlvo || '';
+            if (weightCurrent) weightCurrent.value = prof.pesoAtual || '';
         
             const fillBar = document.getElementById('weight-bar-fill');
             const percentText = document.getElementById('weight-progress-percent');
             const remainingText = document.getElementById('weight-remaining-lbl');
         
-            if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
-                const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
-                const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
-                
-                let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
-                progresso = Math.max(0, progresso); 
+            if (fillBar && percentText && remainingText) {
+                if(prof.pesoInicial && prof.pesoAlvo && prof.pesoAtual) {
+                    const totalEspera = Math.abs(prof.pesoInicial - prof.pesoAlvo);
+                    const totalEliminado = Math.abs(prof.pesoInicial - prof.pesoAtual);
+                    
+                    let progresso = totalEspera > 0 ? Math.round((totalEliminado / totalEspera) * 100) : 0;
+                    progresso = Math.max(0, progresso); 
         
-                setTimeout(() => {
-                    fillBar.style.width = `${progresso}%`; 
-                    percentText.innerText = `${progresso}%`;
-                }, 150);
+                    setTimeout(() => {
+                        fillBar.style.width = `${progresso}%`; 
+                        percentText.innerText = `${progresso}%`;
+                    }, 150);
         
-                const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
-                remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
-            } else {
-                // CORREÇÃO: Mudei de height para width aqui também
-                fillBar.style.width = '0%'; 
-                percentText.innerText = '0%';
-                remainingText.innerText = 'Configure ao lado';
+                    const faltaKg = (prof.pesoAtual - prof.pesoAlvo).toFixed(1);
+                    remainingText.innerText = faltaKg > 0 ? `Faltam ${faltaKg} kg` : faltaKg == 0 ? `Meta atingida!` : `Passou do alvo por ${Math.abs(faltaKg)} kg`;
+                } else {
+                    fillBar.style.width = '0%'; 
+                    percentText.innerText = '0%';
+                    remainingText.innerText = 'Configure ao lado';
+                }
+            }
+        
+            // FORÇA O LUCIDE A RE-PROCESSAR OS ÍCONES nesta aba
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
         }
 
