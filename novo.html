@@ -917,22 +917,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             for(const data in grupos) {
-                let html = `<div class="w-full"><div class="flex items-center gap-2 mb-2"><span class="px-2.5 py-0.5 bg-slate-900 text-white rounded-full text-[10px] font-bold">${data}</span><div class="h-[1px] bg-slate-200 flex-1"></div></div><div class="space-y-2">`;
-                grupos[data].forEach(ref => {
+                // Título do dia
+                let html = `<div class="w-full mb-6"><div class="flex items-center gap-2 mb-3"><span class="px-2.5 py-0.5 bg-slate-900 text-white rounded-full text-[10px] font-bold">${data}</span><div class="h-[1px] bg-slate-200 flex-1"></div></div>`;
+                
+                // --- NOVO: Agrupamento por momento (refeição) dentro do dia ---
+                const refeicoesDoDia = grupos[data];
+                
+                // Cria o HTML para cada refeição separada
+                refeicoesDoDia.forEach(ref => {
                     html += `
-                        <div class="bg-white border border-blue-100 p-3 rounded-xl flex justify-between items-center">
+                        <div class="bg-white border border-blue-100 p-3 rounded-xl flex justify-between items-center mb-2 shadow-sm">
                             <div class="space-y-0.5 max-w-[80%]">
                                 <div class="flex items-center gap-1.5 flex-wrap">
-                                    <h4 class="font-bold text-xs text-slate-900">${ref.momento}</h4>
-                                    <span class="text-[9px] font-black text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">${ref.totalKcal} kcal</span>
+                                    <h4 class="font-bold text-xs text-blue-600 uppercase">${ref.momento}</h4>
+                                    <span class="text-[9px] font-black text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">${ref.totalKcal} kcal</span>
                                     <span class="text-[9px] font-black text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">${ref.totalProt}g P</span>
                                 </div>
-                                <p class="text-[11px] text-slate-500 truncate">${ref.itens.map(i => i.nome).join(', ')}</p>
+                                <p class="text-[11px] text-slate-500 truncate italic">${ref.itens.map(i => i.nome).join(', ')}</p>
                             </div>
                             <button onclick="deleteMeal(${ref.id})" class="text-slate-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>`;
                 });
-                container.innerHTML += html + `</div></div>`;
+                
+                container.innerHTML += html + `</div>`;
             }
             lucide.createIcons();
         }
