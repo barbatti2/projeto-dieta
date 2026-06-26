@@ -193,36 +193,25 @@
     </div>
 </div>
 
-            <div id="tab-adicionar" class="tab-content hidden w-full">
-    
-    <!-- BANNER PADRONIZADO -->
-    <div class="w-full bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="plus-circle" class="w-7 h-7"></i>
-            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Montar Refeição</h1>
+            <div id="tab-adicionar" class="tab-content w-full">
+    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-6">Montar Refeição</h2>
+    <div class="w-full mb-6 relative">
+        <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">1. Selecione o Alimento</label>
+        <div class="relative">
+            <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
+            <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
         </div>
+        <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
     </div>
 
-    <!-- CONTEÚDO DA ABA (Sem o H2 antigo, pois o título já está no banner) -->
-    <div class="px-4 pb-4">
-        <div class="w-full mb-6 relative">
-            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">1. Selecione o Alimento</label>
-            <div class="relative">
-                <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
-                <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
-            </div>
-            <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
+    <div id="selected-food-card" class="w-full bg-white border border-blue-200 rounded-xl p-4 mb-6 hidden flex justify-between items-center shadow-sm">
+        <div>
+            <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
+            <h4 id="lbl-food-name" class="font-bold text-slate-900 text-sm md:text-base">Nenhum</h4>
         </div>
+        <span id="lbl-food-base-kcal" class="text-xs font-semibold text-slate-600">0 kcal / 100g</span>
 
-        <div id="selected-food-card" class="w-full bg-white border border-blue-200 rounded-xl p-4 mb-6 hidden flex justify-between items-center shadow-sm">
-            <div>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
-                <h4 id="lbl-food-name" class="font-bold text-slate-900 text-sm md:text-base">Nenhum</h4>
-            </div>
-            <span id="lbl-food-base-kcal" class="text-xs font-semibold text-slate-600">0 kcal / 100g</span>
-        </div>
-    </div>
-</div>
+    </div> 
 
     <div class="w-full mb-6">
         <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
