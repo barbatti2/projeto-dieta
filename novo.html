@@ -539,14 +539,12 @@
             if(tabId === 'config') loadConfigFields();
             if(tabId === 'peso') renderWeightTab();
             if(tabId === 'calendario') renderCalendar();
-            
-            if (typeof lucide !== 'undefined') lucide.createIcons();
-
-            // FORÇA O LUCIDE A RE-PROCESSAR OS ÍCONES
+                    
+            // Força o Lucide a re-processar os ícones
             if (typeof lucide !== 'undefined') {
                 lucide.createIcons();
             }
-        }
+        } // <--- ESTE É O FECHAMENTO DA FUNÇÃO switchTab
         
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
