@@ -147,12 +147,24 @@
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
             
-            <div id="tab-inicio" class="tab-content active text-center">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight mb-1">Resumo Diário</h2>
-    <p class="text-[10px] md:text-xs text-slate-600 font-extrabold uppercase tracking-widest mb-4 md:mb-6">Perfil: <span id="lbl-home-profile" class="text-blue-600">Gabriel</span></p>
+            <<div id="tab-inicio" class="tab-content active text-center">
     
+    <div class="bg-blue-600 rounded-2xl p-6 mb-8 text-white shadow-lg flex flex-col items-center justify-center">
+        <div class="flex items-center gap-3">
+            <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Resumo Diário</h1>
+        </div>
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">
+            Perfil: <span id="lbl-home-profile" class="text-white underline decoration-white/30">Gabriel</span>
+        </p>
+    </div>
+
     <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
         <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            </svg>
+    </div>
+    
+</div>
             <!-- Círculo de fundo (cinza mais visível) -->
             <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
             
