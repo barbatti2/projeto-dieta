@@ -901,7 +901,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
         
-            // 1. Mapa de prioridade para a ordem das refeições
             const ordemRefeicoes = {
                 'CAFÉ DA MANHÃ': 1,
                 'ALMOÇO': 2,
@@ -909,7 +908,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 'JANTAR': 4
             };
         
-            // 2. Agrupar por data
             const porData = historico.reduce((acc, ref) => {
                 const dataKey = `${ref.dia}/${ref.mes}/${ref.ano}`;
                 if(!acc[dataKey]) acc[dataKey] = [];
@@ -923,7 +921,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return new Date(a2, m2-1, d2) - new Date(a1, m1-1, d1);
             });
         
-            // 3. Renderizar
             datasOrdenadas.forEach(data => {
                 let htmlDia = `
                     <div class="w-full mb-8">
@@ -933,52 +930,50 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                         <div class="space-y-4">`;
         
-                // Agrupa por momento
                 const refeicoesDoDia = porData[data].reduce((acc, ref) => {
                     if(!acc[ref.momento]) acc[ref.momento] = [];
                     acc[ref.momento].push(ref);
                     return acc;
                 }, {});
         
-                // ORDENA OS MOMENTOS COM BASE NO PESO DEFINIDO
                 const momentosOrdenados = Object.keys(refeicoesDoDia).sort((a, b) => {
                     return (ordemRefeicoes[a.toUpperCase()] || 99) - (ordemRefeicoes[b.toUpperCase()] || 99);
                 });
         
                 momentosOrdenados.forEach(momento => {
-                // ... dentro do loop das refeições (momentosOrdenados.forEach)
-                const itens = refeicoesDoDia[momento];
-                const totalKcal = itens.reduce((sum, i) => sum + i.totalKcal, 0);
-                const totalProt = itens.reduce((sum, i) => sum + i.totalProt, 0);
-                
-                // Pegamos o ID da primeira refeição desse grupo para servir de referência para exclusão
-                const idExclusao = itens[0].id; 
-                
-                htmlDia += `
-                    <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
-                        <div class="flex justify-between items-center mb-3">
-                            <div>
-                                <h4 class="font-bold text-xs text-blue-600 uppercase tracking-widest">${momento}</h4>
-                                <div class="flex gap-2 mt-0.5">
-                                    <span class="text-[9px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full">${totalKcal} kcal</span>
-                                    <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">${totalProt}g P</span>
+                    const itens = refeicoesDoDia[momento];
+                    const totalKcal = itens.reduce((sum, i) => sum + i.totalKcal, 0);
+                    const totalProt = itens.reduce((sum, i) => sum + i.totalProt, 0);
+                    const idExclusao = itens[0].id; 
+                    
+                    htmlDia += `
+                        <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <div>
+                                    <h4 class="font-bold text-xs text-blue-600 uppercase tracking-widest">${momento}</h4>
+                                    <div class="flex gap-2 mt-0.5">
+                                        <span class="text-[9px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full">${totalKcal} kcal</span>
+                                        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">${totalProt}g P</span>
+                                    </div>
                                 </div>
+                                <button onclick="deleteMeal('${idExclusao}')" class="text-slate-300 hover:text-red-500 transition-colors p-2">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
                             </div>
-                            
-                            <button onclick="deleteMeal('${idExclusao}')" class="text-slate-300 hover:text-red-500 transition-colors p-2">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="space-y-1">
-                            ${itens.map(ref => ref.itens.map(item => `
-                                <div class="flex justify-between text-sm text-slate-600">
-                                    <span>${item.nome}</span>
-                                    <span class="text-slate-400 text-xs">${item.kcal} kcal</span>
-                                </div>
-                            `).join('')).join('')}
-                        </div>
-                    </div>`;
+                            <div class="space-y-1">
+                                ${itens.map(ref => ref.itens.map(item => `
+                                    <div class="flex justify-between text-sm text-slate-600">
+                                        <span>${item.nome}</span>
+                                        <span class="text-slate-400 text-xs">${item.kcal} kcal</span>
+                                    </div>
+                                `).join('')).join('')}
+                            </div>
+                        </div>`;
+                });
+        
+                htmlDia += `</div></div>`;
+                container.innerHTML += htmlDia;
+            });
         
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
