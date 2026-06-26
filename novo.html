@@ -1020,48 +1020,40 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function saveToLocalStorage() { 
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
-        } // <--- FECHA saveToLocalStorage
+        }
 
-        // Início do bloco final (NÃO COLOQUE NADA ABERTO AQUI)
+        // Bloco único de inicialização
         document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa ícones
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            
+            // Define a aba inicial
             switchTab('inicio');
-
-            document.addEventListener('click', function(e) {
-                const navBtn = e.target.closest('.nav-btn') || e.target.closest('a[onclick^="switchTab"]');
-                if (navBtn) {
-                    console.log("Menu clicado via delegação!");
-                }
-            });
-        }); // <--- FECHA o DOMContentLoaded (ESTA É A LINHA MAIS IMPORTANTE)
-    </script>
-    
-    <script>
-        // Esse comando procura todos os ícones da página e desenha eles
-        lucide.createIcons();
+            
+            // Inicializa filtros
+            changeHistoryFilter('dia');
+        });
     </script>
 
     <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white border border-slate-100 rounded-full p-4 shadow-lg shadow-slate-200/50 flex justify-around items-center z-50 pointer-events-auto">
-    
-    <a href="javascript:void(0)" onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn text-blue-600 hover:text-blue-600 transition-colors">
-        <i data-lucide="home" class="w-6 h-6"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="plus-circle" class="w-6 h-6"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="calendar" class="w-6 h-6"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="list" class="w-6 h-6"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="scale" class="w-6 h-6"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="settings" class="w-6 h-6"></i>
-    </a>
-    
-</nav>
-    
+        <a href="javascript:void(0)" onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn text-blue-600 hover:text-blue-600 transition-colors">
+            <i data-lucide="home" class="w-6 h-6"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
+            <i data-lucide="calendar" class="w-6 h-6"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
+            <i data-lucide="list" class="w-6 h-6"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
+            <i data-lucide="scale" class="w-6 h-6"></i>
+        </a>
+        <a href="javascript:void(0)" onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
+            <i data-lucide="settings" class="w-6 h-6"></i>
+        </a>
+    </nav>
 </body>
 </html>
