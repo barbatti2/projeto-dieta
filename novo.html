@@ -531,15 +531,16 @@
             }
         
             // 5. Chamadas extras com segurança
-            if(tabId === 'inicio') refreshHomeWheel();
-            if(tabId === 'historico' && typeof renderTimelineHistory === 'function') renderTimelineHistory();
-            if(tabId === 'config' && typeof loadConfigFields === 'function') loadConfigFields();
-            if(tabId === 'peso' && typeof renderWeightTab === 'function') renderWeightTab();
-            if(tabId === 'calendario' && typeof renderCalendar === 'function') renderCalendar();
+            if (tabId === 'inicio') refreshHomeWheel();
+            if (tabId === 'historico' && typeof renderTimelineHistory === 'function') renderTimelineHistory();
+            if (tabId === 'config' && typeof loadConfigFields === 'function') loadConfigFields();
+            if (tabId === 'peso' && typeof renderWeightTab === 'function') renderWeightTab();
+            if (tabId === 'calendario' && typeof renderCalendar === 'function') renderCalendar();
                     
+            // 6. Atualiza ícones e scroll
             if (typeof lucide !== 'undefined') lucide.createIcons();
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
+        } // FIM DA FUNÇÃO switchTab
         
             // 7. Força o scroll
             window.scrollTo({ top: 0, behavior: 'smooth' });
