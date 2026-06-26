@@ -532,6 +532,11 @@
             if(tabId === 'calendario') renderCalendar();
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
+
+            // FORÇA O LUCIDE A RE-PROCESSAR OS ÍCONES
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
         }
         
         function refreshHomeWheel() {
@@ -955,8 +960,6 @@ document.addEventListener('DOMContentLoaded', () => {
         function deleteMeal(id) {
             if (!confirm("Excluir esta refeição?")) return;
         
-            // Convertemos o ID que vem do botão e o ID da refeição para String 
-            // para garantir que a comparação de igualdade funcione sempre.
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
                 r => String(r.id) !== String(id)
             );
@@ -964,11 +967,24 @@ document.addEventListener('DOMContentLoaded', () => {
             saveToLocalStorage();
             renderTimelineHistory();
         }
-
-        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
-
+        
+        function saveToLocalStorage() { 
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
+        }
+        
+        // Unificamos tudo dentro de um único DOMContentLoaded para ficar limpo
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Inicia na aba correta
             switchTab('inicio');
+        
+            // 2. Configura o ouvinte global de cliques (delegação)
+            document.addEventListener('click', function(e) {
+                const navBtn = e.target.closest('.nav-btn') || e.target.closest('a[onclick^="switchTab"]');
+                
+                if (navBtn) {
+                    console.log("Menu clicado via delegação!");
+                }
+            });
         });
     </script>
     <script>
