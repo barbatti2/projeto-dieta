@@ -148,10 +148,10 @@
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
             
             <div id="tab-inicio" class="tab-content active">
-        <div class="relative w-full bg-blue-600 h-24 rounded-b-[30px] flex items-center justify-center text-white shadow-md mb-6">
+        <div class="relative w-full bg-blue-600 h-20 rounded-[30px] flex items-center justify-center text-white shadow-md mb-6">
         <div class="flex items-center gap-2">
             <i data-lucide="clipboard-list" class="w-6 h-6"></i>
-            <h1 class="text-lg font-bold">Resumo Diário</h1>
+            <h1 class="text-2xl font-bold">Resumo Diário</h1>
         </div>
     </div>
 
@@ -198,7 +198,7 @@
     </div>
 </div>
 
-            <div id="tab-adicionar" class="tab-content w-full">
+            <div id="tab-adicionar" class="tab-content hidden w-full p-4 pb-24">
     <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-6">Montar Refeição</h2>
     
     <div class="w-full mb-6 relative">
@@ -207,6 +207,7 @@
             <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
             <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
         </div>
+    </div>
         <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
     </div>
 
@@ -1017,22 +1018,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white border border-slate-100 rounded-full shadow-xl shadow-slate-200/50 flex justify-around items-center z-[9999] h-16 pointer-events-auto overflow-hidden">
     <a href="javascript:void(0)" onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn text-blue-600 hover:text-blue-600 transition-colors">
-        <i data-lucide="home" class="w-8 h-8"></i>
+        <i data-lucide="home" class="w-7 h-7"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="plus-circle" class="w-8 h-8"></i>
+        <i data-lucide="plus-circle" class="w-7 h-7"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="calendar" class="w-8 h-8"></i>
+        <i data-lucide="calendar" class="w-7 h-7"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="list" class="w-8 h-8"></i>
+        <i data-lucide="list" class="w-7 h-7"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="scale" class="w-8 h-8"></i>
+        <i data-lucide="scale" class="w-7 h-7"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="settings" class="w-8 h-8"></i>
+        <i data-lucide="settings" class="w-7 h-7"></i>
     </a>
 </nav>
     
