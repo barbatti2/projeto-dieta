@@ -518,33 +518,32 @@
         });
 
         function switchTab(tabId) {
-            // 1. Esconde todo conteúdo
+            // 1. Esconde todo conteúdo (Adicionamos um teste de existência para segurança)
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
-            // 2. Limpa TUDO o que for de estilo nos botões
+            // 2. Limpa estilo de TODOS os botões de navegação (Desktop e Mobile)
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                // Remove as classes de estado ativo (antigas e novas)
-                btn.classList.remove('!bg-blue-600', '!text-white', 'bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500');
-                // Garante que as cores de repouso voltem
-                btn.classList.add('text-slate-600'); 
-                // Remove a classe .active que usamos no CSS
-                btn.classList.remove('active'); 
+                btn.classList.remove('!bg-blue-600', '!text-white', 'bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500', 'text-blue-600');
+                btn.classList.add('text-slate-600');
+                btn.classList.remove('active');
             });
         
             // 3. Ativa o conteúdo correto
-            document.getElementById(`tab-${tabId}`).classList.add('active');
+            const tabContent = document.getElementById(`tab-${tabId}`);
+            if (tabContent) {
+                tabContent.classList.add('active');
+            }
             
-            // 4. Aplica no Desktop
+            // 4. Aplica no Desktop (Com verificação de existência)
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
-            if(activeDesktopNav) {
-                // Adiciona a classe que ativa o estilo !blue-600 que definimos no HTML
+            if (activeDesktopNav) {
                 activeDesktopNav.classList.add('active', '!bg-blue-600', '!text-white', 'shadow-md');
                 activeDesktopNav.classList.remove('text-slate-600');
             }
         
-            // 5. Aplica no Mobile
+            // 5. Aplica no Mobile (Com verificação de existência)
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
-            if(activeMobileNav) {
+            if (activeMobileNav) {
                 activeMobileNav.classList.add('text-blue-600');
                 activeMobileNav.classList.remove('text-slate-400');
             }
@@ -555,8 +554,8 @@
             if(tabId === 'config') loadConfigFields();
             if(tabId === 'peso') renderWeightTab();
             if(tabId === 'calendario') renderCalendar();
-        
-            lucide.createIcons();
+            
+            if (typeof lucide !== 'undefined') lucide.createIcons();
         }
 
         function refreshHomeWheel() {
