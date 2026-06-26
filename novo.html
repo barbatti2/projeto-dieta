@@ -33,6 +33,13 @@
             animation: pulsar 2s infinite;
         }
 
+        /* Cole o CSS aqui */
+        #wheel-progress {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            transition: stroke-dashoffset 1.5s ease-in-out;
+        }
+
         /* Hack essencial: Fontes de inputs no mobile precisam ter no mínimo 16px para evitar o zoom automático do iOS/Android */
         @media (max-width: 768px) {
             input, select, textarea {
