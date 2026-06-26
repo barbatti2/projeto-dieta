@@ -504,10 +504,11 @@
             // 2. Limpa o destaque de todos os botões (limpeza geral)
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('!bg-blue-600', '!text-white', 'shadow-md', 'text-blue-600');
-                btn.classList.add('text-slate-600');
+                btn.classList.add('text-slate-400'); // Corrigido para garantir que volte à cor padrão
+                btn.classList.remove('text-slate-600');
             });
         
-            // 3. Adiciona 'active' no elemento alvo (o CSS fará o trabalho de mostrar)
+            // 3. Adiciona 'active' no elemento alvo
             const target = document.getElementById(`tab-${tabId}`);
             if (target) {
                 target.classList.add('active');
@@ -527,24 +528,22 @@
                 activeMobileNav.classList.add('text-blue-600');
                 activeMobileNav.classList.remove('text-slate-400');
             }
-
-            // Força o scroll para o topo sempre que trocar de aba
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                
+        
+            // 5. Chamadas extras
+            if(tabId === 'inicio') refreshHomeWheel();
+            if(tabId === 'historico') renderTimelineHistory();
+            if(tabId === 'config') loadConfigFields();
+            if(tabId === 'peso') renderWeightTab();
+            if(tabId === 'calendario') renderCalendar();
+                    
+            // 6. Força o Lucide a re-processar os ícones
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
             }
         
-                // 2. Agora, aqui dentro, o tabId existe e funciona perfeitamente:
-                if(tabId === 'inicio') refreshHomeWheel();
-                if(tabId === 'historico') renderTimelineHistory();
-                if(tabId === 'config') loadConfigFields();
-                if(tabId === 'peso') renderWeightTab();
-                if(tabId === 'calendario') renderCalendar();
-                        
-                // Força o Lucide a re-processar os ícones
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons();
-                }
-            } // <--- A função termina aqui
+            // 7. Força o scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } // <--- A função termina aqui perfeitamente
         
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
