@@ -541,10 +541,11 @@
                 lucide.createIcons();
             }
         
-            // 7. Força o scroll para o topo
+            // 7. Força o scroll
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        } // <--- A função termina aqui perfeitamente
+        } // FECHA O switchTab
         
+        // A função abaixo TEM QUE FICAR FORA DA switchTab
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
             const profile = appData[currentProfile];
@@ -555,27 +556,21 @@
                 return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
             });
         
-            // --- LÓGICA DE ANIMAÇÃO DA RODA ---
             const totalCalorias = refeicoesDeHoje.reduce((acc, curr) => acc + (parseInt(curr.calorias) || 0), 0);
             const metaDiaria = profile.metaCalorias || 2000;
             const porcentagem = Math.min((totalCalorias / metaDiaria) * 100, 100);
         
-            const rodaElemento = document.getElementById('wheel-progress'); // Ajuste o ID se o seu for diferente
-            
+            const rodaElemento = document.getElementById('wheel-progress');
             if (rodaElemento) {
-                // 1. Reseta a transição e o valor para zero imediatamente
                 rodaElemento.style.transition = 'none';
-                rodaElemento.style.strokeDashoffset = '100'; // Define o estado "vazio"
-        
-                // 2. Pequeno delay (setTimeout) para o navegador reconhecer o reset
-                // Isso força a animação a começar do zero novamente
+                rodaElemento.style.strokeDashoffset = '100'; 
                 setTimeout(() => {
                     rodaElemento.style.transition = 'stroke-dashoffset 1.5s ease-in-out';
-                    const offset = 100 - porcentagem; // Calcula a posição final
+                    const offset = 100 - porcentagem;
                     rodaElemento.style.strokeDashoffset = offset;
                 }, 50);
             }
-        }
+        } // FECHA O refreshHomeWheel
 
             const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
             const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
