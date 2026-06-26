@@ -33,11 +33,13 @@
             animation: pulsar 2s infinite;
         }
 
+        /* O ID aqui deve ser exatamente igual ao do HTML */
         #wheel-progress-bar {
             stroke-dasharray: 263.89;
             stroke-dashoffset: 263.89;
             transition: stroke-dashoffset 1.5s ease-in-out;
         }
+        
         /* Hack essencial: Fontes de inputs no mobile precisam ter no mínimo 16px para evitar o zoom automático do iOS/Android */
         @media (max-width: 768px) {
             input, select, textarea {
@@ -503,29 +505,23 @@
         });
 
         function switchTab(tabId) {
-            // 1. Remove a classe 'active' de todos os conteúdos
+            // 1. Remove 'active' de todos os conteúdos
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             
-            // 2. Limpa o destaque de todos os botões (limpeza geral)
+            // 2. Limpa destaque dos botões
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('!bg-blue-600', '!text-white', 'shadow-md', 'text-blue-600');
-                btn.classList.add('text-slate-400'); // Corrigido para garantir que volte à cor padrão
-                btn.classList.remove('text-slate-600');
+                btn.classList.add('text-slate-400');
             });
         
-            // 3. Adiciona 'active' no elemento alvo
+            // 3. Ativa o conteúdo
             const target = document.getElementById(`tab-${tabId}`);
-            if (target) {
-                target.classList.add('active');
-            } else {
-                console.error("Erro: A div com id='tab-" + tabId + "' não foi encontrada.");
-            }
+            if (target) target.classList.add('active');
         
-            // 4. Lógica de botões
+            // 4. Ativa botões (desktop e mobile)
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if (activeDesktopNav) {
-                activeDesktopNav.classList.add('active', '!bg-blue-600', '!text-white', 'shadow-md');
-                activeDesktopNav.classList.remove('text-slate-600');
+                activeDesktopNav.classList.add('!bg-blue-600', '!text-white', 'shadow-md');
             }
         
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
@@ -534,17 +530,16 @@
                 activeMobileNav.classList.remove('text-slate-400');
             }
         
-            // 5. Chamadas extras
+            // 5. Chamadas extras com segurança
             if(tabId === 'inicio') refreshHomeWheel();
-            if(tabId === 'historico') renderTimelineHistory();
-            if(tabId === 'config') loadConfigFields();
-            if(tabId === 'peso') renderWeightTab();
-            if(tabId === 'calendario') renderCalendar();
+            if(tabId === 'historico' && typeof renderTimelineHistory === 'function') renderTimelineHistory();
+            if(tabId === 'config' && typeof loadConfigFields === 'function') loadConfigFields();
+            if(tabId === 'peso' && typeof renderWeightTab === 'function') renderWeightTab();
+            if(tabId === 'calendario' && typeof renderCalendar === 'function') renderCalendar();
                     
-            // 6. Força o Lucide a re-processar os ícones
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         
             // 7. Força o scroll
             window.scrollTo({ top: 0, behavior: 'smooth' });
