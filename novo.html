@@ -554,6 +554,28 @@
                 const d = new Date(ref.timestamp);
                 return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
             });
+        
+            // --- LÓGICA DE ANIMAÇÃO DA RODA ---
+            const totalCalorias = refeicoesDeHoje.reduce((acc, curr) => acc + (parseInt(curr.calorias) || 0), 0);
+            const metaDiaria = profile.metaCalorias || 2000;
+            const porcentagem = Math.min((totalCalorias / metaDiaria) * 100, 100);
+        
+            const rodaElemento = document.getElementById('wheel-progress'); // Ajuste o ID se o seu for diferente
+            
+            if (rodaElemento) {
+                // 1. Reseta a transição e o valor para zero imediatamente
+                rodaElemento.style.transition = 'none';
+                rodaElemento.style.strokeDashoffset = '100'; // Define o estado "vazio"
+        
+                // 2. Pequeno delay (setTimeout) para o navegador reconhecer o reset
+                // Isso força a animação a começar do zero novamente
+                setTimeout(() => {
+                    rodaElemento.style.transition = 'stroke-dashoffset 1.5s ease-in-out';
+                    const offset = 100 - porcentagem; // Calcula a posição final
+                    rodaElemento.style.strokeDashoffset = offset;
+                }, 50);
+            }
+        }
 
             const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
             const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
