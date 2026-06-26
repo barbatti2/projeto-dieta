@@ -533,17 +533,18 @@
                 
             }
         
-            // Chamadas extras
-            if(tabId === 'inicio') refreshHomeWheel();
-            if(tabId === 'historico') renderTimelineHistory();
-            if(tabId === 'config') loadConfigFields();
-            if(tabId === 'peso') renderWeightTab();
-            if(tabId === 'calendario') renderCalendar();
-                    
-            // Força o Lucide a re-processar os ícones
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
+                // 2. Agora, aqui dentro, o tabId existe e funciona perfeitamente:
+                if(tabId === 'inicio') refreshHomeWheel();
+                if(tabId === 'historico') renderTimelineHistory();
+                if(tabId === 'config') loadConfigFields();
+                if(tabId === 'peso') renderWeightTab();
+                if(tabId === 'calendario') renderCalendar();
+                        
+                // Força o Lucide a re-processar os ícones
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } // <--- A função termina aqui
         
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
