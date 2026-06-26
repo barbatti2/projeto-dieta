@@ -144,11 +144,14 @@
 </nav>
 </aside>
 
-    <div id="tab-inicio" class="tab-content active">
+    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
+        <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-4 md:p-8 my-2">
+            
+            <div id="tab-inicio" class="tab-content active">
     
-    <div class="bg-blue-600 -mt-4 -mx-4 md:-mt-8 md:-mx-8 rounded-b-[40px] md:rounded-b-[60px] p-6 md:p-8 mb-8 text-white shadow-lg shadow-blue-500/20 text-center">
+    <div class="-mt-4 -mx-4 md:-mt-8 md:-mx-8 bg-blue-600 rounded-b-[40px] p-6 mb-8 text-white text-center shadow-lg">
         <div class="flex items-center justify-center gap-3">
-            <i data-lucide="clipboard-list" class="w-7 h-7 md:w-9 md:h-9"></i>
+            <i data-lucide="clipboard-list" class="w-7 h-7"></i>
             <h1 class="text-2xl md:text-3xl font-black tracking-tight">Resumo Diário</h1>
         </div>
         <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">
@@ -158,18 +161,7 @@
 
     <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
         <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            ```
-
-### Por que isso funciona e não buga:
-1.  **`-mt-4` e `-mx-4`**: Essas classes fazem o banner "subir" e "alargar" para encostar nas bordas do seu container branco (`rounded-2xl`). Isso cria aquele visual de banner elegante que você viu nos apps.
-2.  **`mb-8`**: Garante que o gráfico abaixo tenha espaço suficiente.
-3.  **Remoção do `text-center` na div principal**: O `text-center` agora foi movido apenas para o banner, mantendo o seu gráfico centralizado pelo `mx-auto` que você já tinha.
-4.  **Responsividade total**: O banner se ajusta automaticamente ao tamanho da tela (`p-6` no mobile, `p-8` no desktop), sem quebrar o layout da sua página.
-
-**Dica:** Se você quiser que o banner tenha um arredondamento no topo também para seguir o design do container branco, mude a classe `rounded-b-[40px]` para `rounded-t-xl rounded-b-[40px]`.
-
-Tente substituir por esse bloco e veja se o encaixe no Desktop fica perfeito! Ficou melhor assim?
-
+            <!-- Círculo de fundo (cinza mais visível) -->
             <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
             
             <!-- Círculo de progresso (azul mantido com nova espessura) -->
@@ -1020,22 +1012,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white border border-slate-100 rounded-full shadow-xl shadow-slate-200/50 flex justify-around items-center z-[9999] h-16 pointer-events-auto overflow-hidden">
     <a href="javascript:void(0)" onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn text-blue-600 hover:text-blue-600 transition-colors">
-        <i data-lucide="home" class="w-7 h-7"></i>
+        <i data-lucide="home" class="w-8 h-8"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="plus-circle" class="w-7 h-7"></i>
+        <i data-lucide="plus-circle" class="w-8 h-8"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="calendar" class="w-7 h-7"></i>
+        <i data-lucide="calendar" class="w-8 h-8"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="list" class="w-7 h-7"></i>
+        <i data-lucide="list" class="w-8 h-8"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="scale" class="w-7 h-7"></i>
+        <i data-lucide="scale" class="w-8 h-8"></i>
     </a>
     <a href="javascript:void(0)" onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="settings" class="w-7 h-7"></i>
+        <i data-lucide="settings" class="w-8 h-8"></i>
     </a>
 </nav>
     
