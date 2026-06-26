@@ -1011,33 +1011,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function deleteMeal(id) {
             if (!confirm("Excluir esta refeição?")) return;
-        
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
                 r => String(r.id) !== String(id)
             );
-        
             saveToLocalStorage();
             renderTimelineHistory();
-        }
-        
+        } // <--- FECHA deleteMeal
+
         function saveToLocalStorage() { 
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
-        }
-        
-        // Unificamos tudo dentro de um único DOMContentLoaded para ficar limpo
+        } // <--- FECHA saveToLocalStorage
+
+        // Início do bloco final (NÃO COLOQUE NADA ABERTO AQUI)
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Inicia na aba correta
             switchTab('inicio');
-        
-            // 2. Configura o ouvinte global de cliques (delegação)
+
             document.addEventListener('click', function(e) {
                 const navBtn = e.target.closest('.nav-btn') || e.target.closest('a[onclick^="switchTab"]');
-                
                 if (navBtn) {
                     console.log("Menu clicado via delegação!");
                 }
             });
-        }); 
+        }); // <--- FECHA o DOMContentLoaded (ESTA É A LINHA MAIS IMPORTANTE)
     </script>
     
     <script>
