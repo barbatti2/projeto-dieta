@@ -40,14 +40,15 @@
             }
         }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        
-        .wheel-progress {
-            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+        /* Adicione esta regra para garantir que o container pai não esconda o conteúdo */
+        .tab-content { 
+            display: none; 
+            width: 100%;
         }
-        .bar-progress {
-            transition: height 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        .tab-content.active { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
         }
         
         @keyframes pulse-brilho {
@@ -518,30 +519,34 @@
         });
 
         function switchTab(tabId) {
-            // 1. Esconde todo conteúdo (Adicionamos um teste de existência para segurança)
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // 1. Esconde todo conteúdo de forma agressiva
+            document.querySelectorAll('.tab-content').forEach(t => {
+                t.style.display = 'none';
+                t.classList.remove('active');
+            });
             
-            // 2. Limpa estilo de TODOS os botões de navegação (Desktop e Mobile)
+            // 2. Limpa estilo de TODOS os botões de navegação
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('!bg-blue-600', '!text-white', 'bg-blue-600', 'text-white', 'shadow-md', 'text-blue-500', 'text-blue-600');
                 btn.classList.add('text-slate-600');
                 btn.classList.remove('active');
             });
         
-            // 3. Ativa o conteúdo correto
+            // 3. Ativa o conteúdo correto com exibição forçada
             const tabContent = document.getElementById(`tab-${tabId}`);
             if (tabContent) {
+                tabContent.style.display = 'flex'; // Força o display flex
                 tabContent.classList.add('active');
             }
             
-            // 4. Aplica no Desktop (Com verificação de existência)
+            // 4. Aplica no Desktop
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if (activeDesktopNav) {
                 activeDesktopNav.classList.add('active', '!bg-blue-600', '!text-white', 'shadow-md');
                 activeDesktopNav.classList.remove('text-slate-600');
             }
         
-            // 5. Aplica no Mobile (Com verificação de existência)
+            // 5. Aplica no Mobile
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
             if (activeMobileNav) {
                 activeMobileNav.classList.add('text-blue-600');
@@ -557,7 +562,6 @@
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
             const profile = appData[currentProfile];
@@ -938,17 +942,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalProt = itens.reduce((sum, i) => sum + i.totalProt, 0);
             const nomes = itens.map(i => i.itens.map(it => it.nome).join(', ')).join(', ');
 
-            htmlDia += `
-                <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
-                    <div class="flex justify-between items-center mb-2">
-                        <h4 class="font-bold text-xs text-blue-600 uppercase tracking-widest">${momento}</h4>
-                        <div class="flex gap-2">
-                            <span class="text-[9px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full">${totalKcal} kcal</span>
-                            <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">${totalProt}g P</span>
-                        </div>
+            // ... dentro do loop das refeições (refeicoesDoDia.forEach)
+        htmlDia += `
+            <div class="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
+                <div class="flex justify-between items-center mb-3">
+                    <h4 class="font-bold text-xs text-blue-600 uppercase tracking-widest">${momento}</h4>
+                    <div class="flex gap-2">
+                        <span class="text-[9px] font-bold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-full">${totalKcal} kcal</span>
+                        <span class="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">${totalProt}g P</span>
                     </div>
-                    <p class="text-sm text-slate-600 font-medium">${nomes}</p>
-                </div>`;
+                </div>
+                
+                <div class="space-y-1">
+                    ${itens.map(ref => ref.itens.map(item => `
+                        <div class="flex justify-between text-sm text-slate-600">
+                            <span>${item.nome}</span>
+                            <span class="text-slate-400 text-xs">${item.kcal} kcal</span>
+                        </div>
+                    `).join('')).join('')}
+                </div>
+            </div>`;
+        // ...
         });
 
         htmlDia += `</div></div>`;
