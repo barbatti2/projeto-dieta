@@ -274,43 +274,34 @@
     </div>
 </div>
 
-            <div id="tab-calendario" class="tab-content hidden w-full">
+            <div id="tab-calendario" class="tab-content w-full">
+    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Calendário de Consistência</h2>
+    <p id="lbl-calendar-month" class="text-xs font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
     
-        <!-- BANNER EXPANDIDO (Largura total do card) -->
-        <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-            <div class="flex items-center justify-center gap-3">
-                <i data-lucide="calendar" class="w-8 h-8"></i>
-                <h1 class="text-3xl md:text-4xl font-black tracking-tight">Histórico</h1>
+    <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
+        <div class="bg-white border border-emerald-200 p-1.5 rounded-xl shadow-sm">
+            <span id="count-ambos" class="block text-base font-black text-emerald-600">0</span>
+            <span class="text-[10px] font-bold text-slate-600 uppercase block">Dieta+Treino</span>
+        </div>
+        <div class="bg-white border border-blue-200 p-1.5 rounded-xl shadow-sm">
+            <span id="count-dieta" class="block text-base font-black text-blue-600">0</span>
+            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Dieta</span>
+        </div>
+        <div class="bg-white border border-amber-200 p-1.5 rounded-xl shadow-sm">
+            <span id="count-treino" class="block text-base font-black text-amber-600">0</span>
+            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Treino</span>
+        </div>
+        <div class="bg-white border border-rose-200 p-1.5 rounded-xl shadow-sm">
+            <span id="count-nenhum" class="block text-base font-black text-rose-600">0</span>
+            <span class="text-[10px] font-bold text-slate-600 uppercase block">Nenhum</span>
         </div>
     </div>
 
-    <div class="px-4 md:px-12 py-8 w-full">
-        
-        <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
-            <div class="bg-white border border-emerald-200 p-1.5 rounded-xl shadow-sm">
-                <span id="count-ambos" class="block text-base font-black text-emerald-600">0</span>
-                <span class="text-[10px] font-bold text-slate-600 uppercase block">Dieta+Treino</span>
-            </div>
-            <div class="bg-white border border-blue-200 p-1.5 rounded-xl shadow-sm">
-                <span id="count-dieta" class="block text-base font-black text-blue-600">0</span>
-                <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Dieta</span>
-            </div>
-            <div class="bg-white border border-amber-200 p-1.5 rounded-xl shadow-sm">
-                <span id="count-treino" class="block text-base font-black text-amber-600">0</span>
-                <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Treino</span>
-            </div>
-            <div class="bg-white border border-rose-200 p-1.5 rounded-xl shadow-sm">
-                <span id="count-nenhum" class="block text-base font-black text-rose-600">0</span>
-                <span class="text-[10px] font-bold text-slate-600 uppercase block">Nenhum</span>
-            </div>
+    <div class="w-full bg-white border border-blue-100 rounded-2xl p-3 shadow-sm">
+        <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">
+            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
         </div>
-
-        <div class="w-full bg-white border border-blue-100 rounded-2xl p-3 shadow-sm">
-            <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">
-                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-            <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
-        </div>
+        <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
     </div>
 
     <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
