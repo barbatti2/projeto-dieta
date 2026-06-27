@@ -147,9 +147,9 @@
     <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
         <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 overflow-hidden ...">
             
-            <div id="tab-inicio" class="tab-content active">
+            <div id="tab-inicio" class="tab-content active w-full">
     
-    <div class="-mt-4 -mx-4 md:-mt-8 md:-mx-8 bg-blue-600 rounded-t-2xl rounded-b-[40px] p-6 mb-8 text-white text-center shadow-lg">
+    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
         <div class="flex items-center justify-center gap-3">
             <i data-lucide="clipboard-list" class="w-7 h-7"></i>
             <h1 class="text-2xl md:text-3xl font-black tracking-tight">Resumo Diário</h1>
@@ -159,37 +159,39 @@
         </p>
     </div>
 
-    <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
-        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-            <!-- Círculo de fundo (cinza mais visível) -->
-            <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
-            
-            <!-- Círculo de progresso (azul mantido com nova espessura) -->
-            <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#2563eb" stroke-width="9" fill="transparent" 
-                    stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
-        </svg>
-        <div class="absolute flex flex-col items-center justify-center">
-            <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
-            <span class="text-[9px] md:text-[10px] font-black text-slate-600 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-md mx-auto">
-        <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
-            <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
-                <i data-="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
+    <div class="px-4 md:px-8 pb-8">
+        
+        <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
+                
+                <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#2563eb" stroke-width="9" fill="transparent" 
+                        stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
+            </svg>
+            <div class="absolute flex flex-col items-center justify-center">
+                <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
+                <span class="text-[9px] md:text-[10px] font-black text-slate-600 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
             </div>
-            <span id="lbl-status-kcal-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
-            <span id="lbl-status-kcal-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0 kcal</span>
         </div>
 
-        <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
-            <div class="p-2 rounded-xl text-white bg-orange-500 shadow-sm shadow-orange-500/20">
-                <i data-lucide="flame" class="w-4 h-4 md:w-5 md:h-5"></i>
+        <div class="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-md mx-auto">
+            <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
+                <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
+                    <i data-lucide="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
+                </div>
+                <span id="lbl-status-kcal-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
+                <span id="lbl-status-kcal-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0 kcal</span>
             </div>
-            <span id="lbl-status-prot-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
-            <span id="lbl-status-prot-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0g</span>
+
+            <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
+                <div class="p-2 rounded-xl text-white bg-orange-500 shadow-sm shadow-orange-500/20">
+                    <i data-lucide="flame" class="w-4 h-4 md:w-5 md:h-5"></i>
+                </div>
+                <span id="lbl-status-prot-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
+                <span id="lbl-status-prot-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0g</span>
+            </div>
         </div>
+        
     </div>
 </div>
 
@@ -328,89 +330,118 @@
 </div>
 
             <!-- TAB HISTÓRICO -->
-<div id="tab-historico" class="tab-content w-full">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-4">Histórico</h2>
+<div id="tab-historico" class="tab-content hidden w-full">
     
-        <div class="w-full grid grid-cols-4 gap-1.5 mb-4 border-b border-blue-100 pb-3">
+    <!-- BANNER PADRONIZADO -->
+    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="list" class="w-7 h-7"></i>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Histórico</h1>
+        </div>
+    </div>
+
+    <!-- CONTEÚDO DA PÁGINA -->
+    <div class="px-4 md:px-8 pb-8">
+        
+        <div class="w-full grid grid-cols-4 gap-1.5 mb-6 border-b border-blue-100 pb-3">
             <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs shadow-sm">Dia</button>
             <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Semana</button>
             <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Mês</button>
             <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Ano</button>
-    </div>
+        </div>
 
-    <div id="history-container" class="w-full space-y-4"></div>
+        <div id="history-container" class="w-full space-y-4"></div>
+        
+    </div>
 </div>
 
 <!-- TAB PESOS E MEDIDAS -->
-<div id="tab-peso" class="tab-content w-full max-w-xl mx-auto">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Pesos e Medidas</h2>
-    <p class="text-[10px] text-slate-600 font-extrabold uppercase tracking-widest text-center mb-6">Evolução Corporal</p>
+<div id="tab-peso" class="tab-content hidden w-full">
     
-    <div class="flex flex-col gap-4">
-        
-        <!-- Metas Iniciais -->
-        <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-3 shadow-sm">
-            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais
-            </h3>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Inicial (kg)</label>
-                    <input type="number" step="0.1" id="weight-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="scale" class="w-7 h-7"></i>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Pesos e Medidas</h1>
+        </div>
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">Evolução Corporal</p>
+    </div>
+
+    <div class="px-4 md:px-8 pb-8">
+        <div class="flex flex-col gap-4">
+            
+            <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-3 shadow-sm">
+                <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais
+                </h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Inicial (kg)</label>
+                        <input type="number" step="0.1" id="weight-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Cintura (cm)</label>
+                        <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Cintura (cm)</label>
-                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Alvo / Desejado (kg)</label>
+                    <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+                <button onclick="saveWeightGoals()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider transition-colors hover:bg-blue-700">
+                    Salvar Parâmetros
+                </button>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-2 shadow-sm">
+                <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização Semanal
+                </h3>
+                <div class="flex gap-2">
+                    <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <button onclick="updateCurrentWeight()" class="px-4 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider hover:bg-blue-700 transition-colors">Atualizar</button>
                 </div>
             </div>
-            <div>
-                <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Alvo / Desejado (kg)</label>
-                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            </div>
-            <button onclick="saveWeightGoals()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider transition-colors hover:bg-blue-700">
-                Salvar Parâmetros
-            </button>
-        </div>
 
-        <!-- Atualização Semanal -->
-        <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-2 shadow-sm">
-            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização Semanal
-            </h3>
-            <div class="flex gap-2">
-                <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                <button onclick="updateCurrentWeight()" class="px-4 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider hover:bg-blue-700 transition-colors">Atualizar</button>
+            <div class="bg-white border border-blue-100 rounded-xl md:rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+                <div class="flex justify-between items-center">
+                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider">Progresso da Meta</span>
+                    <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
+                </div>
+                <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                    <div id="weight-bar-fill" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                </div>
+                <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-600">Defina as metas</span>
             </div>
-        </div>
-
-        <!-- Progresso -->
-        <div class="bg-white border border-blue-100 rounded-xl md:rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
-            <div class="flex justify-between items-center">
-                <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider">Progresso da Meta</span>
-                <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
-            </div>
-            <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
-                <div id="weight-bar-fill" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 0%;"></div>
-            </div>
-            <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-600">Defina as metas</span>
         </div>
     </div>
 </div>
             
-    <div id="tab-config" class="tab-content w-full">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Configurações</h2>
-    <p class="text-[10px] text-slate-600 font-extrabold uppercase tracking-widest text-center mb-4">Metas de: <span id="lbl-config-profile" class="text-blue-600">Gabriel</span></p>
+    <div id="tab-config" class="tab-content hidden w-full">
     
-    <div class="w-full max-w-sm mx-auto space-y-3 bg-white p-4 rounded-xl border border-blue-200 shadow-sm">
-        <div>
-            <label class="block text-xs font-black uppercase text-slate-600 mb-1">Meta de Calorias (kcal)</label>
-            <input type="number" id="cfg-target-kcal" class="w-full p-2.5 border border-blue-200 rounded-xl font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900">
+    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="settings" class="w-7 h-7"></i>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Configurações</h1>
         </div>
-        <div>
-            <label class="block text-xs font-black uppercase text-slate-600 mb-1">Meta de Proteínas (g)</label>
-            <input type="number" id="cfg-target-protein" class="w-full p-2.5 border border-blue-200 rounded-xl font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900">
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">
+            Metas de: <span id="lbl-config-profile" class="text-white underline decoration-white/30">Gabriel</span>
+        </p>
+    </div>
+
+    <div class="px-4 md:px-8 pb-8">
+        <div class="w-full max-w-sm mx-auto space-y-4 bg-white p-5 rounded-2xl border border-blue-200 shadow-sm">
+            <div>
+                <label class="block text-xs font-black uppercase text-slate-600 mb-1">Meta de Calorias (kcal)</label>
+                <input type="number" id="cfg-target-kcal" class="w-full p-3 border border-blue-200 rounded-xl font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 text-sm">
+            </div>
+            <div>
+                <label class="block text-xs font-black uppercase text-slate-600 mb-1">Meta de Proteínas (g)</label>
+                <input type="number" id="cfg-target-protein" class="w-full p-3 border border-blue-200 rounded-xl font-bold focus:outline-none focus:ring-1 focus:ring-blue-500 text-slate-900 text-sm">
+            </div>
+            <button onclick="saveProfileSettings()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md hover:bg-blue-700 transition-colors">
+                Salvar Metas
+            </button>
         </div>
-        <button onclick="saveProfileSettings()" class="w-full py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md hover:bg-blue-700 transition-colors">Salvar Metas</button>
     </div>
 </div>
 </main>
