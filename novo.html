@@ -149,7 +149,7 @@
             
             <div id="tab-inicio" class="tab-content active">
     
-    <div class="w-full max-w-2xl bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 overflow-hidden ...">
+    <div class="-mt-4 -mx-4 md:-mt-8 md:-mx-8 bg-blue-600 rounded-b-[40px] p-6 mb-8 text-white text-center shadow-lg">
         <div class="flex items-center justify-center gap-3">
             <i data-lucide="clipboard-list" class="w-7 h-7"></i>
             <h1 class="text-2xl md:text-3xl font-black tracking-tight">Resumo Diário</h1>
@@ -272,34 +272,43 @@
     </div>
 </div>
 
-            <div id="tab-calendario" class="tab-content w-full">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Calendário de Consistência</h2>
-    <p id="lbl-calendar-month" class="text-xs font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
+            <div id="tab-calendario" class="tab-content hidden w-full">
     
-    <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
-        <div class="bg-white border border-emerald-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-ambos" class="block text-base font-black text-emerald-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Dieta+Treino</span>
+    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="calendar" class="w-7 h-7"></i>
+            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Calendário</h1>
         </div>
-        <div class="bg-white border border-blue-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-dieta" class="block text-base font-black text-blue-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Dieta</span>
-        </div>
-        <div class="bg-white border border-amber-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-treino" class="block text-base font-black text-amber-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Treino</span>
-        </div>
-        <div class="bg-white border border-rose-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-nenhum" class="block text-base font-black text-rose-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Nenhum</span>
-        </div>
+        <p id="lbl-calendar-month" class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">Junho de 2026</p>
     </div>
 
-    <div class="w-full bg-white border border-blue-100 rounded-2xl p-3 shadow-sm">
-        <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">
-            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+    <div class="px-4 md:px-8 pb-8">
+        
+        <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
+            <div class="bg-white border border-emerald-200 p-1.5 rounded-xl shadow-sm">
+                <span id="count-ambos" class="block text-base font-black text-emerald-600">0</span>
+                <span class="text-[10px] font-bold text-slate-600 uppercase block">Dieta+Treino</span>
+            </div>
+            <div class="bg-white border border-blue-200 p-1.5 rounded-xl shadow-sm">
+                <span id="count-dieta" class="block text-base font-black text-blue-600">0</span>
+                <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Dieta</span>
+            </div>
+            <div class="bg-white border border-amber-200 p-1.5 rounded-xl shadow-sm">
+                <span id="count-treino" class="block text-base font-black text-amber-600">0</span>
+                <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Treino</span>
+            </div>
+            <div class="bg-white border border-rose-200 p-1.5 rounded-xl shadow-sm">
+                <span id="count-nenhum" class="block text-base font-black text-rose-600">0</span>
+                <span class="text-[10px] font-bold text-slate-600 uppercase block">Nenhum</span>
+            </div>
         </div>
-        <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
+
+        <div class="w-full bg-white border border-blue-100 rounded-2xl p-3 shadow-sm">
+            <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
+        </div>
     </div>
 
     <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
