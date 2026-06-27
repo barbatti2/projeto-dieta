@@ -332,22 +332,22 @@
             <!-- TAB HISTÓRICO -->
 <div id="tab-historico" class="tab-content hidden w-full">
     
-    <!-- BANNER PADRONIZADO -->
-    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+    <!-- BANNER EXPANDIDO (Largura total do card) -->
+    <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
         <div class="flex items-center justify-center gap-3">
-            <i data-lucide="list" class="w-7 h-7"></i>
-            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Histórico</h1>
+            <i data-lucide="list" class="w-8 h-8"></i>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Histórico</h1>
         </div>
     </div>
 
-    <!-- CONTEÚDO DA PÁGINA -->
-    <div class="px-4 md:px-8 pb-8">
+    <!-- CONTEÚDO DA PÁGINA (Padding lateral maior para Desktop) -->
+    <div class="px-4 md:px-12 py-8 w-full">
         
-        <div class="w-full grid grid-cols-4 gap-1.5 mb-6 border-b border-blue-100 pb-3">
-            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs shadow-sm">Dia</button>
-            <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Semana</button>
-            <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Mês</button>
-            <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-1.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-lg text-xs">Ano</button>
+        <div class="w-full grid grid-cols-4 gap-3 mb-8 border-b border-blue-100 pb-6">
+            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm shadow-sm transition-all hover:border-blue-400">Dia</button>
+            <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Semana</button>
+            <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Mês</button>
+            <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Ano</button>
         </div>
 
         <div id="history-container" class="w-full space-y-4"></div>
