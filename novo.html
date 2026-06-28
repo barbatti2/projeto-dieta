@@ -149,173 +149,188 @@
 
             <div id="tab-inicio" class="tab-content active w-full">
     
-    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+    <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
         <div class="flex items-center justify-center gap-3">
-            <i data-lucide="clipboard-list" class="w-7 h-7"></i>
-            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Resumo Diário</h1>
+            <i data-lucide="clipboard-list" class="w-8 h-8"></i>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Resumo Diário</h1>
         </div>
-        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-2 opacity-90">
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">
             Perfil: <span id="lbl-home-profile" class="text-white underline decoration-white/30">Gabriel</span>
         </p>
     </div>
 
-    <div class="px-4 md:px-8 pb-8">
+    <div class="px-4 md:px-12 py-8 w-full flex flex-col items-center">
         
-        <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mx-auto mb-6 md:mb-8">
+        <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mb-8">
             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
-                
                 <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#2563eb" stroke-width="9" fill="transparent" 
                         stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
             </svg>
             <div class="absolute flex flex-col items-center justify-center">
-                <span id="lbl-home-consumed" class="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">0</span>
-                <span class="text-[9px] md:text-[10px] font-black text-slate-600 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
+                <span id="lbl-home-consumed" class="text-4xl font-black text-slate-900 tracking-tight">0</span>
+                <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 md:gap-4 w-full max-w-md mx-auto">
-            <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
+        <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
+            <div class="bg-white border border-blue-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
                 <div class="p-2 rounded-xl text-white bg-blue-600 shadow-sm shadow-blue-600/20">
-                    <i data-lucide="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    <i data-lucide="zap" class="w-5 h-5"></i>
                 </div>
-                <span id="lbl-status-kcal-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
-                <span id="lbl-status-kcal-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0 kcal</span>
+                <span id="lbl-status-kcal-text" class="text-[10px] font-black uppercase tracking-wide mt-1 text-slate-600">Restante</span>
+                <span id="lbl-status-kcal-value" class="text-lg font-black tracking-tight text-slate-900">0 kcal</span>
             </div>
 
-            <div class="bg-white border border-blue-200 rounded-xl md:rounded-2xl p-3 md:p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
+            <div class="bg-white border border-blue-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
                 <div class="p-2 rounded-xl text-white bg-orange-500 shadow-sm shadow-orange-500/20">
-                    <i data-lucide="flame" class="w-4 h-4 md:w-5 md:h-5"></i>
+                    <i data-lucide="flame" class="w-5 h-5"></i>
                 </div>
-                <span id="lbl-status-prot-text" class="text-[10px] md:text-xs font-bold uppercase tracking-wide mt-1 text-slate-600">Restante</span>
-                <span id="lbl-status-prot-value" class="text-base md:text-lg font-black tracking-tight text-slate-900">0g</span>
+                <span id="lbl-status-prot-text" class="text-[10px] font-black uppercase tracking-wide mt-1 text-slate-600">Restante</span>
+                <span id="lbl-status-prot-value" class="text-lg font-black tracking-tight text-slate-900">0g</span>
             </div>
         </div>
         
     </div>
 </div>
 
-            <div id="tab-adicionar" class="tab-content hidden w-full">
-    
-    <div class="bg-blue-600 rounded-b-[40px] rounded-t-2xl p-6 mb-8 text-white text-center shadow-lg">
+            <!-- TAB ADICIONAR ALIMENTO -->
+<div id="tab-adicionar" class="tab-content hidden w-full">
+
+    <!-- BANNER EXPANDIDO -->
+    <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
         <div class="flex items-center justify-center gap-3">
-            <i data-lucide="plus-circle" class="w-7 h-7"></i>
-            <h1 class="text-2xl md:text-3xl font-black tracking-tight">Montar Refeição</h1>
+            <i data-lucide="plus-circle" class="w-8 h-8"></i>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Montar Refeição</h1>
         </div>
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Adicione novos itens ao seu prato</p>
     </div>
 
-    <div class="px-4 md:px-8 pb-8">
-        <div class="w-full mb-6 relative">
-            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">1. Selecione o Alimento</label>
+    <!-- CONTEÚDO CENTRALIZADO -->
+    <div class="px-4 md:px-12 py-8 w-full flex justify-center">
+        <div class="w-full max-w-lg space-y-6">
+            
+            <!-- 1. Busca -->
             <div class="relative">
-                <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
-                <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
-            </div>
-            <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
-        </div>
-
-        <div id="selected-food-card" class="w-full bg-white border border-blue-200 rounded-xl p-4 mb-6 hidden flex justify-between items-center shadow-sm">
-            <div>
-                <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
-                <h4 id="lbl-food-name" class="font-bold text-slate-900 text-sm md:text-base">Nenhum</h4>
-            </div>
-            <span id="lbl-food-base-kcal" class="text-xs font-semibold text-slate-600">0 kcal / 100g</span>
-        </div>
-
-        <div class="w-full mb-6">
-            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2 text-center">2. Ajustar Porção (Gramas)</label>
-            <div class="flex items-center justify-center gap-4 mb-4">
-                <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border-2 border-blue-200 text-blue-600 font-black rounded-xl text-lg flex items-center justify-center active:scale-95 shadow-sm">-</button>
-                <div class="text-center min-w-[90px]">
-                    <span id="txt-grams" class="text-3xl font-black text-slate-900 tracking-tight">100</span>
-                    <span class="text-[10px] font-bold text-slate-600 block uppercase tracking-wider">Gramas</span>
+                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-2">1. Selecione o Alimento</label>
+                <div class="relative">
+                    <input type="text" id="search-food" oninput="filterFood()" placeholder="Digitar o alimento..." class="w-full p-3.5 pl-10 bg-white border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-slate-900 placeholder:text-slate-400">
+                    <i data-lucide="search" class="w-4 h-4 text-blue-500 absolute left-3.5 top-4"></i>
                 </div>
-                <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border-2 border-blue-200 text-blue-600 font-black rounded-xl text-lg flex items-center justify-center active:scale-95 shadow-sm">+</button>
+                <div id="search-results" class="absolute w-full mt-1 bg-white border border-blue-200 rounded-xl shadow-lg max-h-48 overflow-y-auto hidden z-20"></div>
             </div>
-            <div class="grid grid-cols-4 gap-2">
-                <button onclick="setGrams(50)" class="py-2 bg-white border border-blue-200 text-slate-700 font-bold rounded-lg text-xs hover:border-blue-400">50g</button>
-                <button onclick="setGrams(100)" class="py-2 bg-white border border-blue-200 text-slate-700 font-bold rounded-lg text-xs hover:border-blue-400">100g</button>
-                <button onclick="setGrams(150)" class="py-2 bg-white border border-blue-200 text-slate-700 font-bold rounded-lg text-xs hover:border-blue-400">150g</button>
-                <button onclick="setGrams(200)" class="py-2 bg-white border border-blue-200 text-slate-700 font-bold rounded-lg text-xs hover:border-blue-400">200g</button>
+
+            <!-- Card Seleção -->
+            <div id="selected-food-card" class="bg-white border border-blue-200 rounded-xl p-4 hidden flex justify-between items-center shadow-sm">
+                <div>
+                    <p class="text-[9px] font-bold text-blue-600 uppercase tracking-wider">Item Selecionado</p>
+                    <h4 id="lbl-food-name" class="font-bold text-slate-900 text-sm">Nenhum</h4>
+                </div>
+                <span id="lbl-food-base-kcal" class="text-[11px] font-semibold text-slate-600">0 kcal / 100g</span>
             </div>
-        </div>
 
-        <div class="w-full mb-6">
-            <label class="block text-xs font-black uppercase tracking-wider text-slate-600 mb-2">3. Tipo de Refeição</label>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
-                <button onclick="selectMoment('Café da Manhã', this)" data-active="false" class="moment-btn group p-3 bg-white border border-blue-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-700 transition-all data-[active=true]:!bg-blue-600 data-[active=true]:!text-white data-[active=true]:border-blue-600">
-                    <i data-lucide="coffee" class="w-4 h-4 text-amber-500 group-data-[active=true]:!text-white"></i> Café
-                </button>
-                <button onclick="selectMoment('Almoço', this)" data-active="false" class="moment-btn group p-3 bg-white border border-blue-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-700 transition-all data-[active=true]:!bg-blue-600 data-[active=true]:!text-white data-[active=true]:border-blue-600">
-                    <i data-lucide="utensils" class="w-4 h-4 text-emerald-500 group-data-[active=true]:!text-white"></i> Almoço
-                </button>
-                <button onclick="selectMoment('Café da Tarde', this)" data-active="false" class="moment-btn group p-3 bg-white border border-blue-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-700 transition-all data-[active=true]:!bg-blue-600 data-[active=true]:!text-white data-[active=true]:border-blue-600">
-                    <i data-lucide="cookie" class="w-4 h-4 text-orange-500 group-data-[active=true]:!text-white"></i> Tarde
-                </button>
-                <button onclick="selectMoment('Jantar', this)" data-active="false" class="moment-btn group p-3 bg-white border border-blue-200 rounded-xl flex flex-col items-center gap-1 font-bold text-xs text-slate-700 transition-all data-[active=true]:!bg-blue-600 data-[active=true]:!text-white data-[active=true]:border-blue-600">
-                    <i data-lucide="moon" class="w-4 h-4 text-indigo-500 group-data-[active=true]:!text-white"></i> Jantar
-                </button>
+            <!-- 2. Porção -->
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-3 text-center">2. Ajustar Porção (Gramas)</label>
+                <div class="flex items-center justify-center gap-4 mb-4">
+                    <button onclick="changeGrams(-10)" class="w-12 h-12 bg-white border border-blue-200 text-blue-600 font-black rounded-xl text-lg hover:bg-slate-50 transition-colors">-</button>
+                    <div class="text-center min-w-[80px]">
+                        <span id="txt-grams" class="text-3xl font-black text-slate-900">100</span>
+                        <span class="text-[9px] font-bold text-slate-600 block uppercase">Gramas</span>
+                    </div>
+                    <button onclick="changeGrams(10)" class="w-12 h-12 bg-white border border-blue-200 text-blue-600 font-black rounded-xl text-lg hover:bg-slate-50 transition-colors">+</button>
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="setGrams(50)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">50g</button>
+                    <button onclick="setGrams(100)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">100g</button>
+                    <button onclick="setGrams(150)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">150g</button>
+                    <button onclick="setGrams(200)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">200g</button>
+                </div>
             </div>
-        </div>
 
-        <div id="temp-plate-section" class="w-full border-t border-slate-200 pt-4 mt-3 hidden">
-            <h4 class="font-bold text-xs text-slate-700 mb-2 uppercase tracking-wider">Itens no Prato Atual:</h4>
-            <div id="temp-plate-list" class="space-y-1.5 mb-3"></div>
-        </div>
+            <!-- 3. Momento -->
+            <div>
+                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-2">3. Tipo de Refeição</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
+                    <!-- Botões Momento -->
+                    <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Café</button>
+                    <button onclick="selectMoment('Almoço', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Almoço</button>
+                    <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Tarde</button>
+                    <button onclick="selectMoment('Jantar', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Jantar</button>
+                </div>
+            </div>
 
-        <div class="w-full grid grid-cols-2 gap-3 mt-4">
-            <button onclick="addFoodToPlate()" class="w-full p-3.5 bg-blue-600 text-white rounded-xl font-bold text-xs uppercase tracking-wide shadow-md hover:bg-blue-700 flex items-center justify-center gap-1.5">
-                <i data-lucide="plus" class="w-4 h-4"></i> Incluir Item
-            </button>
-            <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="w-full p-3.5 bg-emerald-600 text-white rounded-xl font-bold text-xs uppercase tracking-wide shadow-md disabled:opacity-40 flex items-center justify-center gap-1.5">
-                <i data-lucide="check-circle" class="w-4 h-4"></i> Salvar Tudo
-            </button>
+            <!-- Prato Atual -->
+            <div id="temp-plate-section" class="border-t border-slate-200 pt-4 hidden">
+                <h4 class="font-bold text-[10px] text-slate-700 mb-2 uppercase tracking-wider">Itens no Prato:</h4>
+                <div id="temp-plate-list" class="space-y-1.5"></div>
+            </div>
+
+            <!-- Ações -->
+            <div class="grid grid-cols-2 gap-3 pt-2">
+                <button onclick="addFoodToPlate()" class="p-3.5 bg-blue-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wide hover:bg-blue-700">Incluir Item</button>
+                <button id="btn-save-meal" onclick="saveFullMeal()" disabled class="p-3.5 bg-emerald-600 text-white rounded-xl font-bold text-[10px] uppercase tracking-wide disabled:opacity-40 hover:bg-emerald-700">Salvar Tudo</button>
+            </div>
         </div>
     </div>
 </div>
-
-            <div id="tab-calendario" class="tab-content w-full">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Calendário de Consistência</h2>
-    <p id="lbl-calendar-month" class="text-xs font-bold text-blue-600 text-center uppercase tracking-wide mb-4">Junho de 2026</p>
+            <!-- TAB CALENDÁRIO -->
+<div id="tab-calendario" class="tab-content hidden w-full">
     
-    <div class="grid grid-cols-4 gap-1.5 w-full mb-4 text-center">
-        <div class="bg-white border border-emerald-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-ambos" class="block text-base font-black text-emerald-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Dieta+Treino</span>
+    <!-- BANNER EXPANDIDO -->
+    <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="calendar" class="w-8 h-8"></i>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Calendário</h1>
         </div>
-        <div class="bg-white border border-blue-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-dieta" class="block text-base font-black text-blue-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Dieta</span>
+        <p id="lbl-calendar-month" class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Junho de 2026</p>
+    </div>
+
+    <!-- CONTEÚDO DA PÁGINA -->
+    <div class="px-4 md:px-12 py-8 w-full flex flex-col items-center">
+        
+        <!-- Cards de Resumo -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl mb-8">
+            <div class="bg-white border border-emerald-200 p-3 rounded-2xl shadow-sm text-center">
+                <span id="count-ambos" class="block text-xl font-black text-emerald-600">0</span>
+                <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider block">Dieta+Treino</span>
+            </div>
+            <div class="bg-white border border-blue-200 p-3 rounded-2xl shadow-sm text-center">
+                <span id="count-dieta" class="block text-xl font-black text-blue-600">0</span>
+                <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider block">Só Dieta</span>
+            </div>
+            <div class="bg-white border border-amber-200 p-3 rounded-2xl shadow-sm text-center">
+                <span id="count-treino" class="block text-xl font-black text-amber-600">0</span>
+                <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider block">Só Treino</span>
+            </div>
+            <div class="bg-white border border-rose-200 p-3 rounded-2xl shadow-sm text-center">
+                <span id="count-nenhum" class="block text-xl font-black text-rose-600">0</span>
+                <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider block">Nenhum</span>
+            </div>
         </div>
-        <div class="bg-white border border-amber-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-treino" class="block text-base font-black text-amber-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Só Treino</span>
-        </div>
-        <div class="bg-white border border-rose-200 p-1.5 rounded-xl shadow-sm">
-            <span id="count-nenhum" class="block text-base font-black text-rose-600">0</span>
-            <span class="text-[10px] font-bold text-slate-600 uppercase block">Nenhum</span>
+
+        <!-- Grade do Calendário -->
+        <div class="w-full max-w-2xl bg-white border border-blue-100 rounded-2xl p-4 shadow-sm">
+            <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-3">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div id="calendar-days-grid" class="grid grid-cols-7 gap-2"></div>
         </div>
     </div>
 
-    <div class="w-full bg-white border border-blue-100 rounded-2xl p-3 shadow-sm">
-        <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">
-            <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-        </div>
-        <div id="calendar-days-grid" class="grid grid-cols-7 gap-1.5"></div>
-    </div>
-
+    <!-- MODAL (Fica fora do fluxo principal) -->
     <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-5 w-full max-w-xs shadow-2xl border border-blue-100">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-blue-100">
             <h3 class="text-lg font-black text-slate-900 mb-0.5">Registrar Dia</h3>
             <p id="calendar-modal-date" class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4"></p>
             
             <div class="space-y-2">
-                <button onclick="setDayStatus('ambos')" class="w-full p-2.5 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm hover:bg-emerald-700"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
-                <button onclick="setDayStatus('dieta')" class="w-full p-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm hover:bg-blue-700"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
-                <button onclick="setDayStatus('treino')" class="w-full p-2.5 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm hover:bg-amber-600"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
-                <button onclick="setDayStatus('nenhum')" class="w-full p-2.5 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm hover:bg-rose-600"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
+                <button onclick="setDayStatus('ambos')" class="w-full p-3 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
+                <button onclick="setDayStatus('dieta')" class="w-full p-3 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
+                <button onclick="setDayStatus('treino')" class="w-full p-3 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
+                <button onclick="setDayStatus('nenhum')" class="w-full p-3 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
             </div>
-            <button onclick="closeCalendarModal()" class="w-full mt-3 py-1.5 text-[10px] font-black text-slate-500 uppercase tracking-wider hover:text-slate-700">Cancelar</button>
+            <button onclick="closeCalendarModal()" class="w-full mt-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-wider hover:text-slate-700 transition-colors">Cancelar</button>
         </div>
     </div>
 </div>
@@ -347,55 +362,66 @@
 </div>
 
 <!-- TAB PESOS E MEDIDAS -->
-<div id="tab-peso" class="tab-content w-full max-w-xl mx-auto">
-    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight text-center mb-1">Pesos e Medidas</h2>
-    <p class="text-[10px] text-slate-600 font-extrabold uppercase tracking-widest text-center mb-6">Evolução Corporal</p>
+<div id="tab-peso" class="tab-content hidden w-full">
     
-    <div class="flex flex-col gap-4">
-        
-        <!-- Metas Iniciais -->
-        <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-3 shadow-sm">
-            <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                <i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais
-            </h3>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Inicial (kg)</label>
-                    <input type="number" step="0.1" id="weight-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                </div>
-                <div>
-                    <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Cintura (cm)</label>
-                    <input type="number" step="0.1" id="waist-initial" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                </div>
-            </div>
-            <div>
-                <label class="block text-[9px] font-black uppercase text-slate-600 mb-1">Peso Alvo / Desejado (kg)</label>
-                <input type="number" step="0.1" id="weight-target" class="w-full p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-            </div>
-            <button onclick="saveWeightGoals()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider transition-colors hover:bg-blue-700">
-                Salvar Parâmetros
-            </button>
+    <!-- BANNER EXPANDIDO -->
+    <div class="w-full bg-blue-600 p-8 md:p-10 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
+        <div class="flex items-center justify-center gap-3">
+            <i data-lucide="scale" class="w-8 h-8"></i>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Pesos e Medidas</h1>
         </div>
+        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Evolução Corporal</p>
+    </div>
 
-            <div class="bg-white p-4 rounded-xl md:rounded-2xl border border-blue-200 space-y-2 shadow-sm">
+    <!-- CONTEÚDO DA PÁGINA -->
+    <div class="px-4 md:px-12 py-8 w-full flex justify-center">
+        <div class="w-full max-w-lg space-y-4">
+            
+            <!-- Metas Iniciais -->
+            <div class="bg-white p-6 rounded-2xl border border-blue-200 space-y-4 shadow-sm">
+                <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <i data-lucide="target" class="w-4 h-4 text-blue-600"></i> Metas Iniciais
+                </h3>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Peso Inicial (kg)</label>
+                        <input type="number" step="0.1" id="weight-initial" class="w-full p-3 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Cintura (cm)</label>
+                        <input type="number" step="0.1" id="waist-initial" class="w-full p-3 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black uppercase text-slate-600 mb-1">Peso Alvo / Desejado (kg)</label>
+                    <input type="number" step="0.1" id="weight-target" class="w-full p-3 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                </div>
+                <button onclick="saveWeightGoals()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-colors hover:bg-blue-700">
+                    Salvar Parâmetros
+                </button>
+            </div>
+
+            <!-- Atualização Semanal -->
+            <div class="bg-white p-6 rounded-2xl border border-blue-200 space-y-3 shadow-sm">
                 <h3 class="font-bold text-xs text-blue-900 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <i data-lucide="calendar-plus" class="w-4 h-4 text-blue-600"></i> Atualização Semanal
                 </h3>
                 <div class="flex gap-2">
-                    <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-2.5 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    <button onclick="updateCurrentWeight()" class="px-4 bg-blue-600 text-white font-bold rounded-xl text-[10px] uppercase tracking-wider hover:bg-blue-700 transition-colors">Atualizar</button>
+                    <input type="number" step="0.1" id="weight-current" placeholder="Ex: 78.4" class="flex-1 p-3 bg-white border border-blue-200 rounded-xl font-bold text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <button onclick="updateCurrentWeight()" class="px-6 bg-blue-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider hover:bg-blue-700 transition-colors">Atualizar</button>
                 </div>
             </div>
 
-            <div class="bg-white border border-blue-100 rounded-xl md:rounded-2xl p-4 flex flex-col gap-2 shadow-sm">
+            <!-- Progresso -->
+            <div class="bg-white border border-blue-100 rounded-2xl p-6 flex flex-col gap-3 shadow-sm">
                 <div class="flex justify-between items-center">
-                    <span class="text-[9px] font-black text-slate-600 uppercase tracking-wider">Progresso da Meta</span>
-                    <span id="weight-progress-percent" class="text-xl font-black text-slate-900">0%</span>
+                    <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider">Progresso da Meta</span>
+                    <span id="weight-progress-percent" class="text-2xl font-black text-slate-900">0%</span>
                 </div>
                 <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
                     <div id="weight-bar-fill" class="h-full bg-blue-600 rounded-full transition-all duration-500" style="width: 0%;"></div>
                 </div>
-                <span id="weight-remaining-lbl" class="text-[9px] font-bold text-slate-600">Defina as metas</span>
+                <span id="weight-remaining-lbl" class="text-[10px] font-bold text-slate-600">Defina as metas</span>
             </div>
         </div>
     </div>
