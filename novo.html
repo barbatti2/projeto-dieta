@@ -584,27 +584,32 @@
         });
 
         function switchTab(tabId) {
-            // 1. Remove a classe 'active' de todos os conteúdos
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            // 1. Esconde TODOS os conteúdos (adiciona hidden, remove active)
+            document.querySelectorAll('.tab-content').forEach(t => {
+                t.classList.add('hidden');
+                t.classList.remove('active');
+            });
             
-            // 2. Limpa o destaque de todos os botões (limpeza geral)
+            // 2. Limpa o destaque de todos os botões
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('!bg-blue-600', '!text-white', 'shadow-md', 'text-blue-600');
                 btn.classList.add('text-slate-600');
             });
         
-            // 3. Adiciona 'active' no elemento alvo (o CSS fará o trabalho de mostrar)
+            // 3. Mostra o elemento alvo (remove hidden, adiciona active)
+            // Se o seu ID no HTML já é 'tab-config', passe apenas o nome 'config' para a função
             const target = document.getElementById(`tab-${tabId}`);
             if (target) {
+                target.classList.remove('hidden'); // ADICIONEI ISSO
                 target.classList.add('active');
             } else {
                 console.error("Erro: A div com id='tab-" + tabId + "' não foi encontrada.");
             }
         
-            // 4. Lógica de botões
+            // 4. Lógica de botões (mantenha como estava, parece correta)
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if (activeDesktopNav) {
-                activeDesktopNav.classList.add('active', '!bg-blue-600', '!text-white', 'shadow-md');
+                activeDesktopNav.classList.add('!bg-blue-600', '!text-white', 'shadow-md');
                 activeDesktopNav.classList.remove('text-slate-600');
             }
         
