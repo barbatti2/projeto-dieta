@@ -632,16 +632,26 @@
             document.getElementById('lbl-home-target').innerText = profile.metaKcal;
 
             const circle = document.getElementById('wheel-progress-bar');
-            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
-            circle.style.strokeDashoffset = "263.89";
 
+            // 1. Adicionamos a transição aqui para animar o movimento
+            circle.style.transition = "stroke-dashoffset 1.5s ease-out";
+            
+            // 2. Garantimos que ele comece do zero (vazio) antes de preencher
+            circle.style.strokeDashoffset = "263.89";
+            
+            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
+            
+            // 3. Usamos o setTimeout apenas para dar um pequeno respiro ao navegador 
+            // e aplicar o valor final, fazendo a animação "subir" suavemente
             setTimeout(() => {
                 let strokePercent = Math.min(percentual, 100);
                 circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
+            
+                // Define a cor
                 if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
                 else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
                 else circle.setAttribute('stroke', '#ef4444');
-            }, 100);
+            }, 50);
 
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
             document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
