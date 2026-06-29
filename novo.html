@@ -161,18 +161,19 @@
     </div>
 
     <div class="px-4 md:px-12 py-8 w-full flex flex-col items-center">
-        
         <div class="relative flex items-center justify-center w-48 h-48 md:w-56 md:h-56 mb-8">
             <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" stroke="#e2e8f0" stroke-width="9" fill="transparent" />
                 <circle id="wheel-progress-bar" cx="50" cy="50" r="42" stroke="#2563eb" stroke-width="9" fill="transparent" 
-                        stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" />
+                        stroke-dasharray="263.89" stroke-dashoffset="263.89" stroke-linecap="round" class="wheel-progress" 
+                        style="transition: stroke-dashoffset 1.5s ease-out;" />
             </svg>
             <div class="absolute flex flex-col items-center justify-center">
                 <span id="lbl-home-consumed" class="text-4xl font-black text-slate-900 tracking-tight">0</span>
                 <span class="text-[10px] font-black text-slate-600 uppercase tracking-wider">de <span id="lbl-home-target">2000</span> kcal</span>
             </div>
         </div>
+    </div>
 
         <div class="grid grid-cols-2 gap-4 w-full max-w-sm">
             <div class="bg-white border border-blue-200 rounded-2xl p-4 flex flex-col items-center justify-center text-center gap-1 shadow-sm">
@@ -619,17 +620,25 @@
             const profile = appData[currentProfile];
             const circle = document.getElementById('wheel-progress-bar');
             
-            // Se a roda não existir na tela, a função para aqui para não travar os menus
+            // Proteção: se o elemento não existir, para a função para não travar os menus
             if (!circle) return; 
         
-            // ... [resto do seu código de cálculos] ...
+            // Calcula os valores
+            const hojeBR = getBrasiliaDate();
+            const refeicoesDeHoje = (profile.historicoRefeicoes || []).filter(ref => {
+                const d = new Date(ref.timestamp);
+                return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
+            });
+        
             const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
-            
-            // Calcula o offset
+            document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
+            document.getElementById('lbl-home-target').innerText = profile.metaKcal;
+        
+            // Lógica do progresso
             let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
             let strokePercent = Math.min(percentual, 100);
             
-            // Apenas muda o valor, a transição já está cuidando da animação no HTML!
+            // Aplica o offset (a transição do HTML fará o movimento suave)
             circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
         
             // Define a cor
