@@ -616,32 +616,34 @@
         }
         
         function refreshHomeWheel() {
+            // ... (mantenha os cálculos que você já tem no topo)
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
             const profile = appData[currentProfile];
             const hojeBR = getBrasiliaDate();
-            
             const refeicoesDeHoje = (profile.historicoRefeicoes || []).filter(ref => {
                 const d = new Date(ref.timestamp);
                 return d.getDate() === hojeBR.getDate() && d.getMonth() === hojeBR.getMonth() && d.getFullYear() === hojeBR.getFullYear();
             });
-
+        
             const totalKcalHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalKcal, 0);
-            const totalProtHoje = refeicoesDeHoje.reduce((acc, r) => acc + r.totalProt, 0);
-
             document.getElementById('lbl-home-consumed').innerText = totalKcalHoje;
             document.getElementById('lbl-home-target').innerText = profile.metaKcal;
-
+        
+            // Lógica da roda
             const circle = document.getElementById('wheel-progress-bar');
             let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
-            circle.style.strokeDashoffset = "263.89";
-
-            setTimeout(() => {
-                let strokePercent = Math.min(percentual, 100);
-                circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
-                if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
-                else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
-                else circle.setAttribute('stroke', '#ef4444');
-            }, 100);
+            let strokePercent = Math.min(percentual, 100);
+            let offset = 263.89 - (263.89 * strokePercent) / 100;
+        
+            // Adiciona a transição via código para não precisar mexer no CSS se não quiser
+            circle.style.transition = "stroke-dashoffset 1.5s ease-out"; 
+            circle.style.strokeDashoffset = offset;
+        
+            // Define a cor
+            if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
+            else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
+            else circle.setAttribute('stroke', '#ef4444');
+        }
 
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
             document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
