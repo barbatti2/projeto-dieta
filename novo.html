@@ -1323,33 +1323,7 @@
                   }, 100);
               });
         }
-                  
-                  // 🔥 LIMPEZA COMPLETA MESMO EM CASO DE ERRO NA NUVEM
-                  currentPlateItems = [];
-                  if (typeof renderPlateUI === 'function') renderPlateUI();
         
-                  const campoBusca = document.getElementById('search-food');
-                  if (campoBusca) campoBusca.value = '';
-        
-                  const campoGramas = document.getElementById('txt-grams');
-                  if (campoGramas) campoGramas.innerText = '100';
-        
-                  // 🎯 DESELECIONA TODOS OS BOTÕES DE MOMENTO
-                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
-                      btn.setAttribute('data-active', 'false');
-                      btn.classList.remove('active');
-                  });
-                  if (typeof currentMoment !== 'undefined') currentMoment = null;
-        
-                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
-                  
-                  setTimeout(() => {
-                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
-                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                      switchTab('inicio');
-                  }, 100);
-              });
-        }
         // ==========================================
         // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
         // ==========================================
