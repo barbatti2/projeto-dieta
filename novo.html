@@ -588,53 +588,57 @@
         });
 
         function switchTab(tabId) {
-            // 1. Esconde TODOS os conteúdos (adiciona hidden, remove active)
+            console.log("Tentando abrir a aba:", tabId); // 🔎 Ajuda você a ver o que está acontecendo no Console
+        
+            // 1. Esconde TODOS os conteúdos das abas
             document.querySelectorAll('.tab-content').forEach(t => {
                 t.classList.add('hidden');
                 t.classList.remove('active');
             });
             
-            // 2. Limpa o destaque de todos os botões
+            // 2. Limpa o destaque de todos os botões (computador e celular)
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('!bg-blue-600', '!text-white', 'shadow-md', 'text-blue-600');
-                btn.classList.add('text-slate-600');
+                btn.classList.add('text-slate-500'); 
+                btn.classList.remove('text-slate-600'); // Remove o cinza escuro para não dar conflito
             });
         
-            // 3. Mostra o elemento alvo (remove hidden, adiciona active)
-            // Se o seu ID no HTML já é 'tab-config', passe apenas o nome 'config' para a função
+            // 3. Mostra a tela correspondente ao botão clicado
             const target = document.getElementById(`tab-${tabId}`);
             if (target) {
-                target.classList.remove('hidden'); // ADICIONEI ISSO
+                target.classList.remove('hidden');
                 target.classList.add('active');
             } else {
-                console.error("Erro: A div com id='tab-" + tabId + "' não foi encontrada.");
-            }
-
-            // ADICIONE ESTAS TRÊS LINHAS 👇
-            const mainContainer = document.querySelector('main');
-            if (mainContainer) {
-                mainContainer.scrollTop = 0; // Joga a rolagem instantaneamente para o topo
+                // Se o ID estiver errado no HTML, este aviso vai te dizer o nome exato do erro:
+                console.error(`Erro: A tela com id="tab-${tabId}" não foi encontrada no HTML.`);
             }
         
-            // 4. Lógica de botões (mantenha como estava, parece correta)
+            // 4. Reseta a rolagem do container para o topo
+            const mainContainer = document.querySelector('main');
+            if (mainContainer) {
+                mainContainer.scrollTop = 0;
+            }
+        
+            // 5. Aplica o destaque visual no menu do Computador (Desktop)
             const activeDesktopNav = document.getElementById(`nav-desktop-${tabId}`);
             if (activeDesktopNav) {
                 activeDesktopNav.classList.add('!bg-blue-600', '!text-white', 'shadow-md');
-                activeDesktopNav.classList.remove('text-slate-600');
+                activeDesktopNav.classList.remove('text-slate-500', 'text-slate-600');
             }
         
+            // 6. Aplica o destaque visual no menu do Celular (Mobile)
             const activeMobileNav = document.getElementById(`nav-mobile-${tabId}`);
             if (activeMobileNav) {
                 activeMobileNav.classList.add('text-blue-600');
-                activeMobileNav.classList.remove('text-slate-400');
+                activeMobileNav.classList.remove('text-slate-400', 'text-slate-500', 'text-slate-600');
             }
         
-            // Chamadas extras
-            if(tabId === 'inicio') refreshHomeWheel();
-            if(tabId === 'historico') renderTimelineHistory();
-            if(tabId === 'config') loadConfigFields();
-            if(tabId === 'peso') renderWeightTab();
-            if(tabId === 'calendario') renderCalendar();
+            // 7. Chamadas de funções extras (com proteção para não travar o app se não existirem)
+            if (tabId === 'inicio' && typeof refreshHomeWheel === 'function') refreshHomeWheel();
+            if (tabId === 'historico' && typeof renderTimelineHistory === 'function') renderTimelineHistory();
+            if (tabId === 'config' && typeof loadConfigFields === 'function') loadConfigFields();
+            if (tabId === 'peso' && typeof renderWeightTab === 'function') renderWeightTab();
+            if (tabId === 'calendario' && typeof renderCalendar === 'function') renderCalendar();
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
