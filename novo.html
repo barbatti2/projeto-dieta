@@ -708,10 +708,28 @@
             const kcal = parseInt(document.getElementById('cfg-target-kcal').value);
             const protein = parseInt(document.getElementById('cfg-target-protein').value);
             if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Valores inválidos!");
+            
             appData[currentProfile].metaKcal = kcal;
             appData[currentProfile].metaProtein = protein;
             saveToLocalStorage();
-            alert("Metas atualizadas!");
+        
+            // 🔥 NOVIDADE: Envia as novas metas de calorias e proteínas direto para o Firestore
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("configuracoes")
+              .doc("metas")
+              .set({
+                  metaKcal: kcal,
+                  metaProtein: protein
+              }, { merge: true })
+              .then(() => {
+                  console.log("Metas de dieta atualizadas com sucesso no Firestore!");
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar metas no Firestore: ", error);
+              });
+        
+            alert("Metas updated!");
             switchTab('inicio');
         }
 
@@ -763,16 +781,46 @@
             // Garante que o peso atual exista
             if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
         
-            saveToLocalStorage(); // Salva no banco de dados
+            saveToLocalStorage(); // Salva localmente por segurança
+        
+            // 🔥 NOVIDADE: Salva as metas de peso na nuvem (Firestore)
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .set({
+                  pesoInicial: appData[currentProfile].pesoInicial,
+                  cinturaInicial: appData[currentProfile].cinturaInicial,
+                  pesoAlvo: appData[currentProfile].pesoAlvo,
+                  pesoAtual: appData[currentProfile].pesoAtual,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true }) // Garante que as informações se unam sem se ssubstituírem totalmente
+              .then(() => console.log("Metas de peso salvas no Firestore!"))
+              .catch((error) => console.error("Erro ao salvar metas: ", error));
+        
             renderWeightTab();    // Atualiza a tela
             alert("Metas salvas!");
-}
+        }
         
         function updateCurrentWeight() {
             const pAtu = parseFloat(document.getElementById('weight-current').value);
             if(!pAtu || pAtu <= 0) return alert("Digite um peso válido!");
+            
             appData[currentProfile].pesoAtual = pAtu;
             saveToLocalStorage();
+        
+            // 🔥 NOVIDADE: Atualiza apenas o peso atual na nuvem
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .set({
+                  pesoAtual: pAtu,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true }) // Atualiza apenas o peso atual e preserva o peso inicial e o alvo!
+              .then(() => console.log("Peso atual atualizado no Firestore!"))
+              .catch((error) => console.error("Erro ao atualizar peso: ", error));
+        
             renderWeightTab();
             alert("Peso atualizado!");
         }
@@ -826,12 +874,34 @@
             document.getElementById('calendar-modal').classList.remove('hidden');
         }
 
-        function closeCalendarModal() { document.getElementById('calendar-modal').classList.add('hidden'); }
+        function closeCalendarModal() { 
+    document.getElementById('calendar-modal').classList.add('hidden'); 
+        }
 
         function setDayStatus(status) {
             if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
+            
+            // Mantém a sua lógica local para atualizar a tela na hora
             appData[currentProfile].calendarioStatus[selectedCalendarDayKey] = status;
             saveToLocalStorage();
+        
+            // 🔥 NOVIDADE: Salva o seu dia importante direto no Firestore!
+            // Ele cria uma pasta com o nome do perfil (Gabriel) e salva o dia exato dentro
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .doc(selectedCalendarDayKey)
+              .set({
+                  status: status,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              })
+              .then(() => {
+                  console.log(`Sucesso! Dia ${selectedCalendarDayKey} salvo no Firestore como: ${status}`);
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar o dia no Firestore: ", error);
+              });
+        
             closeCalendarModal();
             renderCalendar();
         }
@@ -970,63 +1040,33 @@
             renderPlateUI();
         }
 
-        // Modificado para redirecionar para a Home (Início) após salvar
-        function saveFullMeal() {
-            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição!");
-            const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
-            const totalProt = currentPlateItems.reduce((acc, current) => acc + current.prot, 0);
-            const brTime = getBrasiliaDate();
-            
-            const novaRefeicao = {
-                id: Date.now(),
-                momento: currentSelectedMoment,
-                itens: [...currentPlateItems],
-                totalKcal: totalKcal,
-                totalProt: totalProt,
-                timestamp: brTime.getTime(),
-                dia: brTime.getDate().toString().padStart(2, '0'),
-                mes: (brTime.getMonth() + 1).toString().padStart(2, '0'),
-                ano: brTime.getFullYear()
-            };
-
-            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
-            saveToLocalStorage();
-
-            currentPlateItems = [];
-            currentSelectedMoment = '';
-            renderPlateUI();
-            alert("Refeição salva com sucesso!");
-            switchTab('inicio'); // Direciona para a tela inicial atualizada
-        }
-
         function changeHistoryFilter(filtro) {
-    currentHistoryFilter = filtro;
-    
-    // 1. Limpa TODOS os botões, resetando para o estado original (fundo branco, texto cinza)
-    document.querySelectorAll('.history-filter-btn').forEach(btn => {
-        // Remove classes de ativo e garante as classes de inativo
-        btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
-        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
-    });
-
-    // 2. Ativa APENAS o botão clicado
-    const selectedBtn = document.getElementById(`filter-${filtro}`);
-    if (selectedBtn) {
-        // Remove as classes de inativo e aplica as de ativo
-        selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
-        selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
-    }
-    
-    renderTimelineHistory();
-}
-
-// 3. Garante que o botão 'dia' comece selecionado ao abrir a página
-document.addEventListener('DOMContentLoaded', () => {
-    changeHistoryFilter('dia');
-});
-
+            currentHistoryFilter = filtro;
+            
+            // 1. Limpa TODOS os botões, resetando para o estado original (fundo branco, texto cinza)
+            document.querySelectorAll('.history-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
+            });
+        
+            // 2. Ativa APENAS o botão clicado
+            const selectedBtn = document.getElementById(`filter-${filtro}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
+                selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+            }
+            
+            renderTimelineHistory();
+        }
+        
+        // 3. Garante que o botão 'dia' comece selecionado ao abrir a página
+        document.addEventListener('DOMContentLoaded', () => {
+            changeHistoryFilter('dia');
+        });
+        
         function renderTimelineHistory() {
             const container = document.getElementById('history-container');
+            if (!container) return; // Segurança caso o elemento não exista na aba atual
             container.innerHTML = '';
             
             const historico = appData[currentProfile].historicoRefeicoes || [];
@@ -1111,48 +1151,144 @@ document.addEventListener('DOMContentLoaded', () => {
         
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
+        
+        // 🔥 MODIFICADA: Agora apaga localmente E na nuvem (Firestore)!
         function deleteMeal(id) {
             if (!confirm("Excluir esta refeição?")) return;
         
-            // Convertemos o ID que vem do botão e o ID da refeição para String 
-            // para garantir que a comparação de igualdade funcione sempre.
+            // Remove do array local
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
                 r => String(r.id) !== String(id)
             );
         
             saveToLocalStorage();
-            renderTimelineHistory();
+            renderTimelineHistory(); // Atualiza o visual da tela imediatamente
+        
+            // 🔥 NOVIDADE: Remove o documento definitivo do Firestore
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("historicoRefeicoes")
+              .doc(String(id))
+              .delete()
+              .then(() => {
+                  console.log("Refeição deletada com sucesso do Firestore!");
+              })
+              .catch((error) => {
+                  console.error("Erro ao deletar refeição do Firestore: ", error);
+              });
         }
-
-        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
-
+        
+        function saveToLocalStorage() { 
+            localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
+        }
+        
+        // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
+        function carregarPesosDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .get()
+              .then((doc) => {
+                  if (doc.exists) {
+                      const dados = doc.data();
+                      // Atualiza a memória local com os pesos da nuvem
+                      appData[currentProfile].pesoInicial = dados.pesoInicial;
+                      appData[currentProfile].cinturaInicial = dados.cinturaInicial;
+                      appData[currentProfile].pesoAlvo = dados.pesoAlvo;
+                      appData[currentProfile].pesoAtual = dados.pesoAtual;
+                      
+                      saveToLocalStorage();
+                      if (typeof renderWeightTab === 'function') renderWeightTab(); // Atualiza a aba de pesos na tela
+                      console.log("Pesos sincronizados com o Firestore!");
+                  }
+              })
+              .catch((error) => console.error("Erro ao carregar pesos: ", error));
+        }
+        
+        // 2. BUSCA O HISTÓRICO DE REFEIÇÕES E CALORIAS DA NUVEM
+        function carregarHistoricoRefeicoesDoBanco() {
+            const usuarioAtivo = currentProfile;
+        
+            db.collection("usuarios")
+              .doc(usuarioAtivo)
+              .collection("historicoRefeicoes")
+              .get()
+              .then((querySnapshot) => {
+                  const historicoVindoDoBanco = [];
+                  querySnapshot.forEach((doc) => { historicoVindoDoBanco.push(doc.data()); });
+        
+                  // Ordena deixando os mais recentes no topo
+                  historicoVindoDoBanco.sort((a, b) => b.timestamp - a.timestamp);
+                  appData[usuarioAtivo].historicoRefeicoes = historicoVindoDoBanco;
+                  saveToLocalStorage();
+        
+                  // Atualiza a aba de histórico (linha do tempo)
+                  renderTimelineHistory(); 
+        
+                  // 🔥 AGORA SIM! Atualiza o círculo e os totais de calorias da tela inicial
+                  refreshHomeWheel();
+                  
+                  console.log("Histórico e calorias sincronizados com sucesso!");
+              })
+              .catch((error) => console.error("Erro ao buscar histórico: ", error));
+        }
+        
+        // 3. BUSCA OS DIAS MARCADOS DO CALENDÁRIO DA NUVEM
+        function carregarCalendarioDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .get()
+              .then((querySnapshot) => {
+                  if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
+                  
+                  querySnapshot.forEach((doc) => {
+                      appData[currentProfile].calendarioStatus[doc.id] = doc.data().status;
+                  });
+                  
+                  saveToLocalStorage();
+                  if (typeof renderCalendar === 'function') renderCalendar(); // Atualiza o visual do calendário
+                  console.log("Calendário sincronizado com o Firestore!");
+              })
+              .catch((error) => console.error("Erro ao carregar calendário: ", error));
+        }
+                
+        // O disparador de início que joga tudo na tela assim que o app abre
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('inicio');
+            switchTab('inicio'); // Abre a tela na aba início
+            
+            // 🔥 Puxa TUDO da nuvem automaticamente de uma vez só:
+            carregarPesosDoBanco();
+            carregarHistoricoRefeicoesDoBanco();
+            carregarCalendarioDoBanco();
+            carregarConfiguracoesDoBanco();
         });
-    </script>
-    <script>
-        // Esse comando procura todos os ícones da página e desenha eles
-        lucide.createIcons();
-    </script>
-
-    <script>
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-      apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
-      authDomain: "projetodietanovo.firebaseapp.com",
-      projectId: "projetodietanovo",
-      storageBucket: "projetodietanovo.firebasestorage.app",
-      messagingSenderId: "1082882912098",
-      appId: "1:1082882912098:web:fbb5f2874b672c5f80863b",
-      measurementId: "G-3JEM06T0C0"
-    };
-    
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    </script>
-    
-</body>
-</html>
+        </script>
+        
+        <script>
+            // Esse comando procura todos os ícones da página e desenha eles
+            lucide.createIcons();
+        </script>
+        
+        <script>
+        // Configuração do seu Firebase (Versão tradicional compatível com db.collection)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
+            authDomain: "projetodietanovo.firebaseapp.com",
+            projectId: "projetodietanovo",
+            storageBucket: "projetodietanovo.firebasestorage.app",
+            messagingSenderId: "1082882912098",
+            appId: "1:1082882912098:web:fbb5f2874b672c5f80863b",
+            measurementId: "G-3JEM06T0C0"
+        };
+        
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // 🔥 Ativa a variável db para que todas as funções funcionem perfeitamente!
+        const db = firebase.firestore();
+        </script>
+        
+        </body>
+        </html>
