@@ -1181,31 +1181,127 @@
         function saveToLocalStorage() { 
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
         }
+
+        // FUNÇÃO PARA SALVAR A REFEIÇÃO COMPLETA (LOCAL E NA NUVEM)
+        function saveFullMeal() {
+            // 1. Descobre qual tipo de refeição está selecionado (Café, Almoço, Jantar...)
+            let momentoSelecionado = "Refeição";
+            const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
+                               document.querySelector('.moment-btn[data-active="true"]');
+            
+            if (botaoAtivo) {
+                momentoSelecionado = botaoAtivo.innerText.trim();
+            } else if (typeof currentMoment !== 'undefined' && currentMoment) {
+                momentoSelecionado = currentMoment;
+            }
+        
+            // 2. Pega a lista de alimentos do prato (testa os nomes de variáveis mais comuns)
+            let listaAlimentos = [];
+            if (typeof tempPlate !== 'undefined') {
+                listaAlimentos = tempPlate;
+            } else if (typeof itensPrato !== 'undefined') {
+                listaAlimentos = itensPrato;
+            } else if (typeof pratoAtual !== 'undefined') {
+                listaAlimentos = pratoAtual;
+            }
+        
+            if (listaAlimentos.length === 0) {
+                return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
+            }
+        
+            // Somadores para consolidar a refeição
+            let totalKcal = 0;
+            let totalProt = 0;
+            let nomesAlimentos = [];
+        
+            listaAlimentos.forEach(item => {
+                totalKcal += item.kcal || item.totalKcal || 0;
+                totalProt += item.prot || item.totalProt || 0;
+                nomesAlimentos.push(`${item.nome} (${item.gramas || item.quantidade || 100}g)`);
+            });
+        
+            // Monta o objeto final que vai para o histórico
+            const novaRefeicao = {
+                nome: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+                totalKcal: Math.round(totalKcal),
+                totalProt: Math.round(totalProt),
+                timestamp: Date.now()
+            };
+        
+            // 3. Salva na memória local (LocalStorage)
+            if (!appData[currentProfile].historicoRefeicoes) {
+                appData[currentProfile].historicoRefeicoes = [];
+            }
+            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
+            saveToLocalStorage();
+        
+            // 4. Salva na nuvem (Firestore)
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("historicoRefeicoes")
+              .add(novaRefeicao)
+              .then(() => {
+                  console.log("Refeição completa salva com sucesso no Firestore!");
+        
+                  // 5. Limpa a memória do prato temporário
+                  if (typeof tempPlate !== 'undefined') tempPlate = [];
+                  if (typeof itensPrato !== 'undefined') itensPrato = [];
+                  
+                  // 6. Reseta e limpa os elementos visuais do HTML
+                  const listaDoPratoNoHTML = document.getElementById('temp-plate-list');
+                  if (listaDoPratoNoHTML) listaDoPratoNoHTML.innerHTML = '';
+                  
+                  const secaoDoPratoNoHTML = document.getElementById('temp-plate-section');
+                  if (secaoDoPratoNoHTML) secaoDoPratoNoHTML.classList.add('hidden');
+                  
+                  const botaoSalvar = document.getElementById('btn-save-meal');
+                  if (botaoSalvar) botaoSalvar.disabled = true;
+        
+                  // Limpa a barra de pesquisa de alimentos
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+        
+                  // Reseta o contador de gramas para o padrão (100)
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+        
+                  // 7. Atualiza os gráficos, históricos e muda de tela
+                  renderTimelineHistory();
+                  refreshHomeWheel();
+        
+                  alert("Refeição salva com sucesso!");
+                  switchTab('inicio'); 
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar refeição no Firestore: ", error);
+                  alert("Erro ao salvar na nuvem, mas foi guardado localmente.");
+              });
+        }
         
         // ==========================================
-// 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
-// ==========================================
-function carregarPesosDoBanco() {
-    db.collection("usuarios")
-      .doc(currentProfile)
-      .collection("medidas")
-      .doc("peso")
-      .get()
-      .then((doc) => {
-          if (doc.exists) {
-              const dados = doc.data();
-              appData[currentProfile].pesoInicial = dados.pesoInicial;
-              appData[currentProfile].cinturaInicial = dados.cinturaInicial;
-              appData[currentProfile].pesoAlvo = dados.pesoAlvo;
-              appData[currentProfile].pesoAtual = dados.pesoAtual;
-              
-              saveToLocalStorage();
-              if (typeof renderWeightTab === 'function') renderWeightTab();
-              console.log("Pesos sincronizados com o Firestore!");
-          }
-      })
-      .catch((error) => console.error("Erro ao carregar pesos: ", error));
-}
+        // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
+        // ==========================================
+        function carregarPesosDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .get()
+              .then((doc) => {
+                  if (doc.exists) {
+                      const dados = doc.data();
+                      appData[currentProfile].pesoInicial = dados.pesoInicial;
+                      appData[currentProfile].cinturaInicial = dados.cinturaInicial;
+                      appData[currentProfile].pesoAlvo = dados.pesoAlvo;
+                      appData[currentProfile].pesoAtual = dados.pesoAtual;
+                      
+                      saveToLocalStorage();
+                      if (typeof renderWeightTab === 'function') renderWeightTab();
+                      console.log("Pesos sincronizados com o Firestore!");
+                  }
+              })
+              .catch((error) => console.error("Erro ao carregar pesos: ", error));
+        }
 
         // ==========================================
         // 2. BUSCA O HISTÓRICO DE REFEIÇÕES DA NUVEM
