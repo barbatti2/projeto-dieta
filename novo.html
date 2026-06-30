@@ -1184,6 +1184,7 @@
 
         // FUNÇÃO PARA SALVAR A REFEIÇÃO COMPLETA (LOCAL E NA NUVEM)
         function saveFullMeal() {
+            // 1. Descobre qual tipo de refeição está selecionado
             let momentoSelecionado = "Refeição";
             const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
                                document.querySelector('.moment-btn[data-active="true"]');
@@ -1194,34 +1195,64 @@
                 momentoSelecionado = currentMoment;
             }
         
+            // 2. Valida se o prato está vazio
             if (!currentPlateItems || currentPlateItems.length === 0) {
                 return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
             }
         
+            // Somadores para calcular os totais
             let totalKcal = 0;
             let totalProt = 0;
+            let nomesAlimentos = [];
         
             currentPlateItems.forEach(item => {
                 totalKcal += item.kcal || 0;
                 totalProt += item.prot || 0;
+                nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
             });
         
+            // Desmembra a data atual para preencher o histórico perfeitamente
+            const agora = new Date();
+            const diaObtido = String(agora.getDate()).padStart(2, '0');
+            const mesObtido = String(agora.getMonth() + 1).padStart(2, '0'); 
+            const anoObtido = agora.getFullYear();
+            const dataFormatada = `${diaObtido}/${mesObtido}/${anoObtido}`;
+        
+            // 🎯 OBJETO CORINGA: Entrega todas as variáveis possíveis para blindar o histórico contra 'undefined'
             const novaRefeicao = {
+                // Opções de Título/Momento
                 nome: momentoSelecionado,
-                itens: [...currentPlateItems], // Garante a estrutura correta para os novos
+                refeicao: momentoSelecionado,
+                tipo: momentoSelecionado,
+                momento: momentoSelecionado,
+                titulo: momentoSelecionado,
+                texto: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+        
+                // Opções de Data (Adeus undefined/undefined/undefined!)
+                timestamp: Date.now(),
+                data: dataFormatada,
+                date: dataFormatada,
+                dia: diaObtido,
+                mes: mesObtido,
+                ano: anoObtido,
+        
+                // Itens e Macros
+                itens: [...currentPlateItems],
+                alimentos: [...currentPlateItems],
                 totalKcal: Math.round(totalKcal),
                 totalProt: Math.round(totalProt),
-                timestamp: Date.now()
+                kcal: Math.round(totalKcal),
+                prot: Math.round(totalProt)
             };
         
-            // Salva localmente
+            // 3. Salva na memória local (LocalStorage)
             if (!appData[currentProfile].historicoRefeicoes) {
                 appData[currentProfile].historicoRefeicoes = [];
             }
             appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
             saveToLocalStorage();
         
-            // Salva no Firestore
+            // 4. Salva na nuvem (Firestore)
             db.collection("usuarios")
               .doc(currentProfile)
               .collection("historicoRefeicoes")
@@ -1229,7 +1260,7 @@
               .then(() => {
                   console.log("Salvo no Firestore com sucesso!");
         
-                  // Limpa a tela imediatamente
+                  // Limpa a tela de inserção
                   currentPlateItems = [];
                   if (typeof renderPlateUI === 'function') renderPlateUI();
         
@@ -1239,19 +1270,30 @@
                   const campoGramas = document.getElementById('txt-grams');
                   if (campoGramas) campoGramas.innerText = '100';
         
-                  // 🔥 O TRUQUE: Joga a atualização para fora da corrente do Firebase.
-                  // Isso impede que erros de renderização finjam ser erros de banco de dados.
+                  // Atualiza as telas
                   setTimeout(() => {
                       if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
                       if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
                       
                       alert("Refeição salva com sucesso!");
                       switchTab('inicio'); 
-                  }, 50);
+                  }, 100);
               })
               .catch((error) => {
-                  console.error("Erro real do Firebase: ", error);
-                  alert("Erro crítico no banco: " + error.message);
+                  console.error("Erro ao salvar no Firestore: ", error);
+                  
+                  // Se der erro na nuvem, limpa o prato do mesmo jeito (já que salvou local)
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+        
+                  // 🔥 NOVIDADE: Alerta amigável mostrando o erro real detectado
+                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
+                  
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      switchTab('inicio');
+                  }, 100);
               });
         }
         // ==========================================
