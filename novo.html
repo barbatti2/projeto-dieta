@@ -1195,17 +1195,8 @@
                 momentoSelecionado = currentMoment;
             }
         
-            // 2. Pega a lista de alimentos do prato (testa os nomes de variáveis mais comuns)
-            let listaAlimentos = [];
-            if (typeof tempPlate !== 'undefined') {
-                listaAlimentos = tempPlate;
-            } else if (typeof itensPrato !== 'undefined') {
-                listaAlimentos = itensPrato;
-            } else if (typeof pratoAtual !== 'undefined') {
-                listaAlimentos = pratoAtual;
-            }
-        
-            if (listaAlimentos.length === 0) {
+            // 2. 🔥 CORREÇÃO: Usa o nome exato do seu prato (currentPlateItems)
+            if (!currentPlateItems || currentPlateItems.length === 0) {
                 return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
             }
         
@@ -1214,10 +1205,11 @@
             let totalProt = 0;
             let nomesAlimentos = [];
         
-            listaAlimentos.forEach(item => {
-                totalKcal += item.kcal || item.totalKcal || 0;
-                totalProt += item.prot || item.totalProt || 0;
-                nomesAlimentos.push(`${item.nome} (${item.gramas || item.quantidade || 100}g)`);
+            // Percorre os itens usando a sua estrutura exata
+            currentPlateItems.forEach(item => {
+                totalKcal += item.kcal || 0;
+                totalProt += item.prot || 0;
+                nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
             });
         
             // Monta o objeto final que vai para o histórico
@@ -1243,19 +1235,9 @@
               .then(() => {
                   console.log("Refeição completa salva com sucesso no Firestore!");
         
-                  // 5. Limpa a memória do prato temporário
-                  if (typeof tempPlate !== 'undefined') tempPlate = [];
-                  if (typeof itensPrato !== 'undefined') itensPrato = [];
-                  
-                  // 6. Reseta e limpa os elementos visuais do HTML
-                  const listaDoPratoNoHTML = document.getElementById('temp-plate-list');
-                  if (listaDoPratoNoHTML) listaDoPratoNoHTML.innerHTML = '';
-                  
-                  const secaoDoPratoNoHTML = document.getElementById('temp-plate-section');
-                  if (secaoDoPratoNoHTML) secaoDoPratoNoHTML.classList.add('hidden');
-                  
-                  const botaoSalvar = document.getElementById('btn-save-meal');
-                  if (botaoSalvar) botaoSalvar.disabled = true;
+                  // 5. 🔥 LIMPEZA INTELIGENTE: Esvazia o prato e usa o seu próprio renderPlateUI para atualizar a tela
+                  currentPlateItems = [];
+                  renderPlateUI();
         
                   // Limpa a barra de pesquisa de alimentos
                   const campoBusca = document.getElementById('search-food');
@@ -1265,9 +1247,9 @@
                   const campoGramas = document.getElementById('txt-grams');
                   if (campoGramas) campoGramas.innerText = '100';
         
-                  // 7. Atualiza os gráficos, históricos e muda de tela
-                  renderTimelineHistory();
-                  refreshHomeWheel();
+                  // 6. Atualiza os gráficos e histórico da página inicial
+                  if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                  if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
         
                   alert("Refeição salva com sucesso!");
                   switchTab('inicio'); 
