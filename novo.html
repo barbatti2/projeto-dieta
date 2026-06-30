@@ -1075,11 +1075,15 @@
                 return;
             }
         
+            // 🔥 CORREÇÃO DA ORDEM: Adicionado 'CAFÉ' e 'TARDE' para bater exatamente com o texto dos seus botões!
             const ordemRefeicoes = {
+                'CAFÉ': 1,
                 'CAFÉ DA MANHÃ': 1,
                 'ALMOÇO': 2,
+                'TARDE': 3,
                 'CAFÉ DA TARDE': 3,
-                'JANTAR': 4
+                'JANTAR': 4,
+                'JANTA': 4
             };
         
             const porData = historico.reduce((acc, ref) => {
@@ -1105,13 +1109,14 @@
                         <div class="space-y-4">`;
         
                 const refeicoesDoDia = porData[data].reduce((acc, ref) => {
-                    if(!acc[ref.momento]) acc[ref.momento] = [];
-                    acc[ref.momento].push(ref);
+                    const momentoKey = ref.momento || ref.refeicao || ref.nome || "Refeição";
+                    if(!acc[momentoKey]) acc[momentoKey] = [];
+                    acc[momentoKey].push(ref);
                     return acc;
                 }, {});
         
                 const momentosOrdenados = Object.keys(refeicoesDoDia).sort((a, b) => {
-                    return (ordemRefeicoes[a.toUpperCase()] || 99) - (ordemRefeicoes[b.toUpperCase()] || 99);
+                    return (ordemRefeicoes[a.toUpperCase().trim()] || 99) - (ordemRefeicoes[b.toUpperCase().trim()] || 99);
                 });
         
                 momentosOrdenados.forEach(momento => {
@@ -1134,11 +1139,11 @@
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            <div class="space-y-1">
+                            <div class="space-y-1.5">
                                ${itens.map(ref => (ref.itens || []).map(item => `
-                                    <div class="flex justify-between text-sm text-slate-600">
-                                        <span>${item.nome}</span>
-                                        <span class="text-slate-400 text-xs">${item.kcal} kcal</span>
+                                    <div class="flex justify-between items-center text-xs text-slate-600 py-0.5 border-b border-dashed border-slate-50 last:border-0">
+                                        <span class="font-medium">${item.nome} <span class="text-slate-400 font-normal">(${item.gramas || 100}g)</span></span>
+                                        <span class="text-slate-900 font-semibold">${item.kcal || 0} kcal</span>
                                     </div>
                                 `).join('')).join('')}
                             </div>
@@ -1211,32 +1216,26 @@
                 nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
             });
         
-            // Desmembra a data atual para preencher o histórico perfeitamente
+            // Desmembra a data atual
             const agora = new Date();
             const diaObtido = String(agora.getDate()).padStart(2, '0');
             const mesObtido = String(agora.getMonth() + 1).padStart(2, '0'); 
             const anoObtido = agora.getFullYear();
             const dataFormatada = `${diaObtido}/${mesObtido}/${anoObtido}`;
         
-            // 🎯 OBJETO CORINGA: Entrega todas as variáveis possíveis para blindar o histórico contra 'undefined'
             const novaRefeicao = {
-                // Opções de Título/Momento
                 nome: momentoSelecionado,
                 refeicao: momentoSelecionado,
                 tipo: momentoSelecionado,
                 momento: momentoSelecionado,
                 titulo: momentoSelecionado,
                 texto: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
-        
-                // Opções de Data (Adeus undefined/undefined/undefined!)
                 timestamp: Date.now(),
                 data: dataFormatada,
                 date: dataFormatada,
                 dia: diaObtido,
                 mes: mesObtido,
                 ano: anoObtido,
-        
-                // Itens e Macros
                 itens: [...currentPlateItems],
                 alimentos: [...currentPlateItems],
                 totalKcal: Math.round(totalKcal),
@@ -1260,7 +1259,7 @@
               .then(() => {
                   console.log("Salvo no Firestore com sucesso!");
         
-                  // Limpa a tela de inserção
+                  // 🔥 LIMPEZA COMPLETA DOS CAMPOS E SELEÇÕES
                   currentPlateItems = [];
                   if (typeof renderPlateUI === 'function') renderPlateUI();
         
@@ -1269,6 +1268,13 @@
         
                   const campoGramas = document.getElementById('txt-grams');
                   if (campoGramas) campoGramas.innerText = '100';
+        
+                  // 🎯 DESELECIONA TODOS OS BOTÕES DE MOMENTO (Café, Almoço...)
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active'); // Remove classe ativa caso seu CSS use
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
         
                   // Atualiza as telas
                   setTimeout(() => {
@@ -1279,6 +1285,35 @@
                       switchTab('inicio'); 
                   }, 100);
               })
+              .catch((error) => {
+                  console.error("Erro ao salvar no Firestore: ", error);
+                  
+                  // 🔥 LIMPEZA COMPLETA MESMO EM CASO DE ERRO NA NUVEM
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+        
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+        
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+        
+                  // 🎯 DESELECIONA TODOS OS BOTÕES DE MOMENTO
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+        
+                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
+                  
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      switchTab('inicio');
+                  }, 100);
+              });
+        }
               .catch((error) => {
                   console.error("Erro ao salvar no Firestore: ", error);
                   
