@@ -1157,29 +1157,48 @@
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
         
-        // 🔥 MODIFICADA: Agora apaga localmente E na nuvem (Firestore)!
+        // 🔥 VERSÃO CORRIGIDA: Apaga cirurgicamente no celular e busca pelo ID interno correto na nuvem!
         function deleteMeal(id) {
+            // 🛡️ SEGURANÇA PARA ITENS ANTIGOS: Impede apagar tudo se o ID vier em branco/undefined
+            if (!id || id === 'undefined') {
+                if (confirm("Esta é uma refeição antiga de teste sem ID. Deseja remover apenas os testes antigos do seu celular?")) {
+                    appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
+                        r => r.id && String(r.id) !== 'undefined'
+                    );
+                    saveToLocalStorage();
+                    renderTimelineHistory();
+                    if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                }
+                return;
+            }
+        
+            // Confirmação que você já utilizava
             if (!confirm("Excluir esta refeição?")) return;
         
-            // Remove do array local
+            // 1. Remove do array local (Celular) garantindo que só mexe no ID clicado
             appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
                 r => String(r.id) !== String(id)
             );
-        
+            
             saveToLocalStorage();
             renderTimelineHistory(); // Atualiza o visual da tela imediatamente
+            if (typeof refreshHomeWheel === 'function') refreshHomeWheel(); // Atualiza a roleta de macros da home
         
-            // 🔥 NOVIDADE: Remove o documento definitivo do Firestore
+            // 2. 🔥 CORREÇÃO DA NUVEM: Como usamos .add(), precisamos buscar pelo campo "id" usando .where()
             db.collection("usuarios")
               .doc(currentProfile)
               .collection("historicoRefeicoes")
-              .doc(String(id))
-              .delete()
-              .then(() => {
-                  console.log("Refeição deletada com sucesso do Firestore!");
+              .where("id", "==", String(id)) 
+              .get()
+              .then((querySnapshot) => {
+                  querySnapshot.forEach((doc) => {
+                      doc.ref.delete().then(() => {
+                          console.log("Refeição deletada com sucesso do Firestore!");
+                      }).catch(err => console.error("Erro ao deletar documento no Firestore:", err));
+                  });
               })
               .catch((error) => {
-                  console.error("Erro ao deletar refeição do Firestore: ", error);
+                  console.error("Erro ao buscar refeição para deletar no Firestore: ", error);
               });
         }
         
@@ -1189,7 +1208,6 @@
 
         // FUNÇÃO PARA SALVAR A REFEIÇÃO COMPLETA (LOCAL E NA NUVEM)
         function saveFullMeal() {
-            // 1. Descobre qual tipo de refeição está selecionado
             let momentoSelecionado = "Refeição";
             const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
                                document.querySelector('.moment-btn[data-active="true"]');
@@ -1200,12 +1218,10 @@
                 momentoSelecionado = currentMoment;
             }
         
-            // 2. Valida se o prato está vazio
             if (!currentPlateItems || currentPlateItems.length === 0) {
                 return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
             }
         
-            // Somadores para calcular os totais
             let totalKcal = 0;
             let totalProt = 0;
             let nomesAlimentos = [];
@@ -1216,7 +1232,6 @@
                 nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
             });
         
-            // Desmembra a data atual
             const agora = new Date();
             const diaObtido = String(agora.getDate()).padStart(2, '0');
             const mesObtido = String(agora.getMonth() + 1).padStart(2, '0'); 
@@ -1224,6 +1239,8 @@
             const dataFormatada = `${diaObtido}/${mesObtido}/${anoObtido}`;
         
             const novaRefeicao = {
+                // 🔥 IDENTITY GUARANTEED: Gera um ID único para cada salvamento
+                id: "refeicao_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
                 nome: momentoSelecionado,
                 refeicao: momentoSelecionado,
                 tipo: momentoSelecionado,
@@ -1244,14 +1261,12 @@
                 prot: Math.round(totalProt)
             };
         
-            // 3. Salva na memória local (LocalStorage)
             if (!appData[currentProfile].historicoRefeicoes) {
                 appData[currentProfile].historicoRefeicoes = [];
             }
             appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
             saveToLocalStorage();
         
-            // 4. Salva na nuvem (Firestore)
             db.collection("usuarios")
               .doc(currentProfile)
               .collection("historicoRefeicoes")
@@ -1259,7 +1274,6 @@
               .then(() => {
                   console.log("Salvo no Firestore com sucesso!");
         
-                  // 🔥 LIMPEZA COMPLETA DOS CAMPOS E SELEÇÕES
                   currentPlateItems = [];
                   if (typeof renderPlateUI === 'function') renderPlateUI();
         
@@ -1269,24 +1283,46 @@
                   const campoGramas = document.getElementById('txt-grams');
                   if (campoGramas) campoGramas.innerText = '100';
         
-                  // 🎯 DESELECIONA TODOS OS BOTÕES DE MOMENTO (Café, Almoço...)
                   document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
                       btn.setAttribute('data-active', 'false');
-                      btn.classList.remove('active'); // Remove classe ativa caso seu CSS use
+                      btn.classList.remove('active');
                   });
                   if (typeof currentMoment !== 'undefined') currentMoment = null;
         
-                  // Atualiza as telas
                   setTimeout(() => {
                       if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
                       if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                      
                       alert("Refeição salva com sucesso!");
                       switchTab('inicio'); 
                   }, 100);
               })
               .catch((error) => {
                   console.error("Erro ao salvar no Firestore: ", error);
+                  
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+        
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+        
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+        
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+        
+                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
+                  
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      switchTab('inicio');
+                  }, 100);
+              });
+        }
                   
                   // 🔥 LIMPEZA COMPLETA MESMO EM CASO DE ERRO NA NUVEM
                   currentPlateItems = [];
