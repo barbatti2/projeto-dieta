@@ -1269,10 +1269,14 @@
         <script>
             // Esse comando procura todos os ícones da página e desenha eles
             lucide.createIcons();
-        </script>
+         </script>
+        
+        <!-- 🔥 LINKS DO FIREBASE (CRUCIAIS PARA NÃO DAR O ERRO DE INDEFINIDO) -->
+        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         
         <script>
-        // Configuração do seu Firebase (Versão tradicional compatível com db.collection)
+        // Configuração do seu Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
             authDomain: "projetodietanovo.firebaseapp.com",
@@ -1283,10 +1287,10 @@
             measurementId: "G-3JEM06T0C0"
         };
         
-        // Inicializa o Firebase
+        // Inicializa o Firebase usando o padrão compatível
         firebase.initializeApp(firebaseConfig);
         
-        // 🔥 Ativa a variável db para que todas as funções funcionem perfeitamente!
+        // Ativa o banco de dados (db) para o resto do seu código usar
         const db = firebase.firestore();
         </script>
         
