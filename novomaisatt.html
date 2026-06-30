@@ -144,21 +144,23 @@
 </nav>
 </aside>
 
-    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start mb-16 md:mb-0">
+    <main class="flex-1 p-4 md:p-12 overflow-y-auto flex justify-center items-start pb-24 md:pb-12">
         <div class="w-full max-w-4xl bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden pb-24">
              
 
             <div id="tab-inicio" class="tab-content active w-full">
     
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="clipboard-list" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Resumo Diário</h1>
+       <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+    
+            <div class="flex items-center justify-center gap-2.5">
+                <i data-lucide="clipboard-list" class="w-6 h-6 opacity-90"></i>
+                <h1 class="text-2xl font-extrabold tracking-tight">Resumo Diário</h1>
+            </div>
+            
+            <p class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+                Perfil: <span id="lbl-home-profile" class="text-white font-black">Gabriel</span>
+            </p>
         </div>
-        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">
-            Perfil: <span id="lbl-home-profile" class="text-white underline decoration-white/30">Gabriel</span>
-        </p>
-    </div>
 
     <div class="px-4 md:px-12 py-8 w-full flex flex-col items-center">
         
@@ -198,13 +200,16 @@
             <!-- TAB ADICIONAR ALIMENTO -->
 <div id="tab-adicionar" class="tab-content hidden w-full">
 
-    <!-- BANNER EXPANDIDO -->
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="plus-circle" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Montar Refeição</h1>
+        <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+        
+        <div class="flex items-center justify-center gap-2.5">
+            <i data-lucide="plus-circle" class="w-6 h-6 opacity-90"></i>
+            <h1 class="text-2xl font-extrabold tracking-tight">Montar Refeição</h1>
         </div>
-        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Adicione novos itens ao seu prato</p>
+        
+        <p class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+            Adicione novos itens ao seu prato
+        </p>
     </div>
 
     <!-- CONTEÚDO CENTRALIZADO -->
@@ -278,14 +283,17 @@
             <!-- TAB CALENDÁRIO -->
 <div id="tab-calendario" class="tab-content hidden w-full">
     
-    <!-- BANNER EXPANDIDO -->
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="calendar" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Calendário</h1>
-        </div>
-        <p id="lbl-calendar-month" class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Junho de 2026</p>
+    <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+    
+    <div class="flex items-center justify-center gap-2.5">
+        <i data-lucide="calendar" class="w-6 h-6 opacity-90"></i>
+        <h1 class="text-2xl font-extrabold tracking-tight">Calendário</h1>
     </div>
+    
+    <p id="lbl-calendar-month" class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+        Junho de 2026
+    </p>
+</div>
 
     <!-- CONTEÚDO DA PÁGINA -->
     <div class="px-4 md:px-12 py-8 w-full flex flex-col items-center">
@@ -337,15 +345,15 @@
 </div>
 
             <!-- TAB HISTÓRICO -->
-<div id="tab-historico" class="tab-content hidden w-full">
+    <div id="tab-historico" class="tab-content hidden w-full">
+        
+        <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
     
-    <!-- BANNER EXPANDIDO (Largura total do card) -->
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="list" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Histórico</h1>
+            <div class="flex items-center justify-center gap-2.5">
+                <i data-lucide="list" class="w-6 h-6 opacity-90"></i>
+                <h1 class="text-2xl font-extrabold tracking-tight">Histórico</h1>
+            </div>
         </div>
-    </div>
 
     <!-- CONTEÚDO DA PÁGINA (Padding lateral maior para Desktop) -->
     <div class="px-4 md:px-12 py-8 w-full">
@@ -363,13 +371,17 @@
 </div>
 
 <div id="tab-peso" class="tab-content hidden w-full">
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="scale" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Pesos e Medidas</h1>
-        </div>
-        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">Evolução Corporal</p>
+    <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+    
+    <div class="flex items-center justify-center gap-2.5">
+        <i data-lucide="scale" class="w-6 h-6 opacity-90"></i>
+        <h1 class="text-2xl font-extrabold tracking-tight">Pesos e Medidas</h1>
     </div>
+    
+    <p class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+        Evolução Corporal
+    </p>
+</div>
 
     <div class="px-4 md:px-12 py-8 w-full flex justify-center">
         <div class="w-full max-w-lg space-y-4">
@@ -418,13 +430,18 @@
             
     <div id="tab-config" class="tab-content hidden w-full">
     
-    <div class="w-full bg-blue-600 p-5 md:p-5 text-white text-center shadow-lg rounded-t-3xl rounded-b-[40px] md:rounded-b-[60px]">
-        <div class="flex items-center justify-center gap-3">
-            <i data-lucide="settings" class="w-8 h-8"></i>
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight">Configurações</h1>
+    <!-- BANNER CENTRALIZADO GRADIENTE - CONFIGURAÇÕES -->
+    <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+        
+        <!-- Alinhamento do Ícone ao lado do Título -->
+        <div class="flex items-center justify-center gap-2.5">
+            <i data-lucide="settings" class="w-6 h-6 opacity-90"></i>
+            <h1 class="text-2xl font-extrabold tracking-tight">Configurações</h1>
         </div>
-        <p class="text-[10px] md:text-xs font-extrabold uppercase tracking-widest mt-3 opacity-90">
-            Metas de: <span id="lbl-config-profile" class="text-white underline decoration-white/30">Gabriel</span>
+        
+        <!-- Tag de perfil em vidro (Mantendo o ID para o JavaScript) -->
+        <p class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+            Metas de: <span id="lbl-config-profile" class="text-white font-black">Gabriel</span>
         </p>
     </div>
 
@@ -446,32 +463,33 @@
 </div>
 </main>
 
-<nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white border border-slate-100 rounded-full shadow-lg shadow-slate-200/50 flex justify-around items-center z-[9999] h-16 pointer-events-auto">
-    <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="home" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Início</span>
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 flex justify-around items-center z-[9999] h-16 shadow-[0_-4px_20px_-4px_rgba(0,0,0,0.05)] pointer-events-auto">
+    
+    <button onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="home" class="w-6 h-6"></i>
     </button>
-    <button onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="plus-circle" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Refeição</span>
+    
+    <button onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="plus-circle" class="w-6 h-6"></i>
     </button>
-    <button onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="calendar" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Calendário</span>
+    
+    <button onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="calendar" class="w-6 h-6"></i>
     </button>
-    <button onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="list" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Histórico</span>
+    
+    <button onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="list" class="w-6 h-6"></i>
     </button>
-    <button onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="scale" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Corpo</span>
+    
+    <button onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="scale" class="w-6 h-6"></i>
     </button>
-    <button onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn flex flex-col items-center justify-center flex-1 py-1 text-slate-500 hover:text-blue-600">
-        <i data-lucide="settings" class="w-5 h-5"></i>
-        <span class="text-[9px] font-bold mt-1">Config</span>
+    
+    <button onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-blue-600 transition-colors">
+        <i data-lucide="settings" class="w-6 h-6"></i>
     </button>
-</div>
+
+</nav>
     <script>
         const alimentosBase = [
             { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
@@ -632,16 +650,26 @@
             document.getElementById('lbl-home-target').innerText = profile.metaKcal;
 
             const circle = document.getElementById('wheel-progress-bar');
-            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
-            circle.style.strokeDashoffset = "263.89";
 
+            // 1. Adicionamos a transição aqui para animar o movimento
+            circle.style.transition = "stroke-dashoffset 1.5s ease-out";
+            
+            // 2. Garantimos que ele comece do zero (vazio) antes de preencher
+            circle.style.strokeDashoffset = "263.89";
+            
+            let percentual = profile.metaKcal > 0 ? (totalKcalHoje / profile.metaKcal) * 100 : 0;
+            
+            // 3. Usamos o setTimeout apenas para dar um pequeno respiro ao navegador 
+            // e aplicar o valor final, fazendo a animação "subir" suavemente
             setTimeout(() => {
                 let strokePercent = Math.min(percentual, 100);
                 circle.style.strokeDashoffset = 263.89 - (263.89 * strokePercent) / 100;
+            
+                // Define a cor
                 if (percentual <= 100) circle.setAttribute('stroke', '#10b981');
                 else if (percentual <= 120) circle.setAttribute('stroke', '#fb923c');
                 else circle.setAttribute('stroke', '#ef4444');
-            }, 100);
+            }, 50);
 
             const kcalFaltaOuPassa = profile.metaKcal - totalKcalHoje;
             document.getElementById('lbl-status-kcal-text').innerText = kcalFaltaOuPassa >= 0 ? "Faltam" : "Excedeu";
@@ -1056,27 +1084,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Esse comando procura todos os ícones da página e desenha eles
         lucide.createIcons();
     </script>
-    
-    <nav class="md:hidden fixed bottom-4 left-4 right-4 bg-white border border-slate-100 rounded-full shadow-xl shadow-slate-200/50 flex justify-around items-center z-[9999] h-16 pointer-events-auto overflow-hidden">
-    <a href="javascript:void(0)" onclick="switchTab('inicio')" id="nav-mobile-inicio" class="nav-btn text-blue-600 hover:text-blue-600 transition-colors">
-        <i data-lucide="home" class="w-7 h-7"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('adicionar')" id="nav-mobile-adicionar" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="plus-circle" class="w-7 h-7"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('calendario')" id="nav-mobile-calendario" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="calendar" class="w-7 h-7"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('historico')" id="nav-mobile-historico" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="list" class="w-7 h-7"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('peso')" id="nav-mobile-peso" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="scale" class="w-7 h-7"></i>
-    </a>
-    <a href="javascript:void(0)" onclick="switchTab('config')" id="nav-mobile-config" class="nav-btn text-slate-400 hover:text-blue-600 transition-colors">
-        <i data-lucide="settings" class="w-7 h-7"></i>
-    </a>
-</nav>
     
 </body>
 </html>
