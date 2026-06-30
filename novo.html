@@ -1314,23 +1314,6 @@
                   }, 100);
               });
         }
-              .catch((error) => {
-                  console.error("Erro ao salvar no Firestore: ", error);
-                  
-                  // Se der erro na nuvem, limpa o prato do mesmo jeito (já que salvou local)
-                  currentPlateItems = [];
-                  if (typeof renderPlateUI === 'function') renderPlateUI();
-        
-                  // 🔥 NOVIDADE: Alerta amigável mostrando o erro real detectado
-                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
-                  
-                  setTimeout(() => {
-                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
-                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                      switchTab('inicio');
-                  }, 100);
-              });
-        }
         // ==========================================
         // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
         // ==========================================
