@@ -285,66 +285,71 @@
         </div>
     </div>
 </div>
-            <!-- TAB CALENDÁRIO -->
-<div id="tab-calendario" class="tab-content hidden w-full max-w-md mx-auto space-y-5 px-4 pb-24">
+            <div id="tab-calendario" class="tab-content hidden w-full">
     
-    <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
-        <div class="bg-blue-600 text-white p-5 text-center flex flex-col items-center justify-center gap-1">
-            <div class="flex items-center gap-2 font-bold text-lg">
-                <i data-lucide="calendar" class="w-5 h-5"></i>
-                <span>Calendário</span>
-            </div>
-            <span class="text-xs font-semibold uppercase tracking-widest text-blue-100 bg-blue-700/50 px-3 py-0.5 rounded-full">
-                Junho de 2026
-            </span>
+    <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
+        <div class="flex items-center justify-center gap-2.5">
+            <i data-lucide="calendar" class="w-6 h-6 opacity-90"></i>
+            <h1 class="text-2xl font-extrabold tracking-tight">Calendário</h1>
         </div>
-
-        <div class="p-5">
-            <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-400 pb-3 border-b border-slate-100">
-                <div>DOM</div>
-                <div>SEG</div>
-                <div>TER</div>
-                <div>QUA</div>
-                <div>QUI</div>
-                <div>SEX</div>
-                <div>SÁB</div>
-            </div>
-            
-            <div id="calendar-days" class="grid grid-cols-7 gap-y-3 text-center text-sm mt-3 font-medium">
-                </div>
-        </div>
+        <p id="lbl-calendar-month" class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
+            Junho de 2026
+        </p>
     </div>
 
-    <div class="space-y-3">
-        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">Resumo do Mês</h3>
+    <div class="px-4 md:px-12 py-8 pb-24 w-full flex flex-col items-center">
         
-        <div class="grid grid-cols-2 gap-3">
-            
-            <div class="bg-emerald-50/60 border border-emerald-100/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02] active:scale-[0.98]">
-                <span id="count-dieta-treino" class="text-3xl font-black text-emerald-600 leading-none">0</span>
-                <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider mt-2">Dieta + Treino</span>
+        <div class="w-full max-w-2xl bg-white border border-blue-100 rounded-3xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.02)] mb-8">
+            <div class="grid grid-cols-7 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider mb-4 border-b border-slate-50 pb-2">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
             </div>
-            
-            <div class="bg-blue-50/60 border border-blue-100/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02] active:scale-[0.98]">
-                <span id="count-so-dieta" class="text-3xl font-black text-blue-600 leading-none">0</span>
-                <span class="text-[11px] font-bold text-blue-700 uppercase tracking-wider mt-2">Só Dieta</span>
-            </div>
-            
-            <div class="bg-amber-50/60 border border-amber-100/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02] active:scale-[0.98]">
-                <span id="count-so-treino" class="text-3xl font-black text-amber-600 leading-none">0</span>
-                <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider mt-2">Só Treino</span>
-            </div>
-            
-            <div class="bg-rose-50/60 border border-rose-100/50 rounded-2xl p-4 flex flex-col items-center justify-center text-center transition-all hover:scale-[1.02] active:scale-[0.98]">
-                <span id="count-nenhum" class="text-3xl font-black text-rose-600 leading-none">0</span>
-                <span class="text-[11px] font-bold text-rose-700 uppercase tracking-wider mt-2">Nenhum</span>
-            </div>
+            <div id="calendar-days-grid" class="grid grid-cols-7 gap-2"></div>
+        </div>
 
+        <div class="w-full max-w-2xl mb-3 px-1">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Resumo do Mês</h3>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl">
+            
+            <div class="bg-emerald-50/60 border border-emerald-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+                <span id="count-ambos" class="block text-3xl font-black text-emerald-600 leading-none">0</span>
+                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mt-2">Dieta+Treino</span>
+            </div>
+            
+            <div class="bg-blue-50/60 border border-blue-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+                <span id="count-dieta" class="block text-3xl font-black text-blue-600 leading-none">0</span>
+                <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mt-2">Só Dieta</span>
+            </div>
+            
+            <div class="bg-amber-50/60 border border-amber-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+                <span id="count-treino" class="block text-3xl font-black text-amber-600 leading-none">0</span>
+                <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider block mt-2">Só Treino</span>
+            </div>
+            
+            <div class="bg-rose-50/60 border border-rose-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+                <span id="count-nenhum" class="block text-3xl font-black text-rose-600 leading-none">0</span>
+                <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider block mt-2">Nenhum</span>
+            </div>
+            
         </div>
     </div>
 
+    <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-blue-100">
+            <h3 class="text-lg font-black text-slate-900 mb-0.5">Registrar Dia</h3>
+            <p id="calendar-modal-date" class="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-4"></p>
+            
+            <div class="space-y-2">
+                <button onclick="setDayStatus('ambos')" class="w-full p-3 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
+                <button onclick="setDayStatus('dieta')" class="w-full p-3 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
+                <button onclick="setDayStatus('treino')" class="w-full p-3 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
+                <button onclick="setDayStatus('nenhum')" class="w-full p-3 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
+            </div>
+            <button onclick="closeCalendarModal()" class="w-full mt-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-wider hover:text-slate-700 transition-colors">Cancelar</button>
+        </div>
+    </div>
 </div>
-
 
             <!-- TAB HISTÓRICO -->
     <div id="tab-historico" class="tab-content hidden w-full">
