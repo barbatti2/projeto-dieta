@@ -1184,7 +1184,7 @@
 
         // FUNÇÃO PARA SALVAR A REFEIÇÃO COMPLETA (LOCAL E NA NUVEM)
         function saveFullMeal() {
-    // 1. Descobre qual tipo de refeição está selecionado
+    // 1. Descobre qual tipo de refeição está selecionado (Café, Almoço...)
     let momentoSelecionado = "Refeição";
     const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
                        document.querySelector('.moment-btn[data-active="true"]');
@@ -1195,30 +1195,30 @@
         momentoSelecionado = currentMoment;
     }
 
-    // 2. Usa o nome do seu prato
+    // 2. Valida se o prato está vazio
     if (!currentPlateItems || currentPlateItems.length === 0) {
         return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
     }
 
-    // Somadores para consolidar a refeição
+    // Somadores para consolidar os totais da refeição
     let totalKcal = 0;
     let totalProt = 0;
-    let nomesAlimentos = [];
 
     currentPlateItems.forEach(item => {
         totalKcal += item.kcal || 0;
         totalProt += item.prot || 0;
-        nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
     });
 
+    // 🔥 CORREÇÃO: Monta o objeto com a propriedade 'itens' que a sua Timeline exige!
     const novaRefeicao = {
-        nome: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+        nome: momentoSelecionado,        // Ex: "Almoço"
+        itens: [...currentPlateItems],   // 👈 Envia a lista de alimentos pro .map() da tela
         totalKcal: Math.round(totalKcal),
         totalProt: Math.round(totalProt),
         timestamp: Date.now()
     };
 
-    // 3. Salva localmente
+    // 3. Salva na memória local (LocalStorage)
     if (!appData[currentProfile].historicoRefeicoes) {
         appData[currentProfile].historicoRefeicoes = [];
     }
@@ -1233,6 +1233,7 @@
       .then(() => {
           console.log("Refeição completa salva com sucesso no Firestore!");
 
+          // 5. Limpa o prato e os campos de busca
           currentPlateItems = [];
           renderPlateUI();
 
@@ -1242,6 +1243,7 @@
           const campoGramas = document.getElementById('txt-grams');
           if (campoGramas) campoGramas.innerText = '100';
 
+          // 6. Atualiza a tela (Agora vai rodar liso!)
           if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
           if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
 
@@ -1250,10 +1252,10 @@
       })
       .catch((error) => {
           console.error("Erro ao salvar refeição no Firestore: ", error);
-          // 🔥 ALTERAÇÃO AQUI: Mostra o erro real do Firebase na tela do celular
-          alert("Erro no Firebase: " + error.message + " | Código: " + error.code);
+          alert("Erro no Firebase: " + error.message);
       });
 }
+
 
     
         // ==========================================
