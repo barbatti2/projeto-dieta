@@ -286,7 +286,7 @@
     </div>
 </div>
             <!-- TAB CALENDÁRIO -->
-<div id="tab-calendario" class="tab-content hidden w-full max-w-md mx-auto space-y-5">
+<div id="tab-calendario" class="tab-content hidden w-full max-w-md mx-auto space-y-5 px-4 pb-24">
     
     <div class="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
         <div class="bg-blue-600 text-white p-5 text-center flex flex-col items-center justify-center gap-1">
@@ -300,15 +300,17 @@
         </div>
 
         <div class="p-5">
-            <div class="grid grid-cols-7 gap-y-3 text-center text-sm">
-                <div class="text-slate-400 font-bold text-xs pb-2">DOM</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">SEG</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">TER</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">QUA</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">QUI</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">SEX</div>
-                <div class="text-slate-400 font-bold text-xs pb-2">SÁB</div>
-                
+            <div class="grid grid-cols-7 text-center text-xs font-bold text-slate-400 pb-3 border-b border-slate-100">
+                <div>DOM</div>
+                <div>SEG</div>
+                <div>TER</div>
+                <div>QUA</div>
+                <div>QUI</div>
+                <div>SEX</div>
+                <div>SÁB</div>
+            </div>
+            
+            <div id="calendar-days" class="grid grid-cols-7 gap-y-3 text-center text-sm mt-3 font-medium">
                 </div>
         </div>
     </div>
@@ -342,6 +344,7 @@
     </div>
 
 </div>
+
 
             <!-- TAB HISTÓRICO -->
     <div id="tab-historico" class="tab-content hidden w-full">
