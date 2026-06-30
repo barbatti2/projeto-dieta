@@ -1184,82 +1184,78 @@
 
         // FUNÇÃO PARA SALVAR A REFEIÇÃO COMPLETA (LOCAL E NA NUVEM)
         function saveFullMeal() {
-            // 1. Descobre qual tipo de refeição está selecionado (Café, Almoço, Jantar...)
-            let momentoSelecionado = "Refeição";
-            const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
-                               document.querySelector('.moment-btn[data-active="true"]');
-            
-            if (botaoAtivo) {
-                momentoSelecionado = botaoAtivo.innerText.trim();
-            } else if (typeof currentMoment !== 'undefined' && currentMoment) {
-                momentoSelecionado = currentMoment;
-            }
-        
-            // 2. 🔥 CORREÇÃO: Usa o nome exato do seu prato (currentPlateItems)
-            if (!currentPlateItems || currentPlateItems.length === 0) {
-                return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
-            }
-        
-            // Somadores para consolidar a refeição
-            let totalKcal = 0;
-            let totalProt = 0;
-            let nomesAlimentos = [];
-        
-            // Percorre os itens usando a sua estrutura exata
-            currentPlateItems.forEach(item => {
-                totalKcal += item.kcal || 0;
-                totalProt += item.prot || 0;
-                nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
-            });
-        
-            // Monta o objeto final que vai para o histórico
-            const novaRefeicao = {
-                nome: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
-                totalKcal: Math.round(totalKcal),
-                totalProt: Math.round(totalProt),
-                timestamp: Date.now()
-            };
-        
-            // 3. Salva na memória local (LocalStorage)
-            if (!appData[currentProfile].historicoRefeicoes) {
-                appData[currentProfile].historicoRefeicoes = [];
-            }
-            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
-            saveToLocalStorage();
-        
-            // 4. Salva na nuvem (Firestore)
-            db.collection("usuarios")
-              .doc(currentProfile)
-              .collection("historicoRefeicoes")
-              .add(novaRefeicao)
-              .then(() => {
-                  console.log("Refeição completa salva com sucesso no Firestore!");
-        
-                  // 5. 🔥 LIMPEZA INTELIGENTE: Esvazia o prato e usa o seu próprio renderPlateUI para atualizar a tela
-                  currentPlateItems = [];
-                  renderPlateUI();
-        
-                  // Limpa a barra de pesquisa de alimentos
-                  const campoBusca = document.getElementById('search-food');
-                  if (campoBusca) campoBusca.value = '';
-        
-                  // Reseta o contador de gramas para o padrão (100)
-                  const campoGramas = document.getElementById('txt-grams');
-                  if (campoGramas) campoGramas.innerText = '100';
-        
-                  // 6. Atualiza os gráficos e histórico da página inicial
-                  if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
-                  if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-        
-                  alert("Refeição salva com sucesso!");
-                  switchTab('inicio'); 
-              })
-              .catch((error) => {
-                  console.error("Erro ao salvar refeição no Firestore: ", error);
-                  alert("Erro ao salvar na nuvem, mas foi guardado localmente.");
-              });
-        }
-        
+    // 1. Descobre qual tipo de refeição está selecionado
+    let momentoSelecionado = "Refeição";
+    const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
+                       document.querySelector('.moment-btn[data-active="true"]');
+    
+    if (botaoAtivo) {
+        momentoSelecionado = botaoAtivo.innerText.trim();
+    } else if (typeof currentMoment !== 'undefined' && currentMoment) {
+        momentoSelecionado = currentMoment;
+    }
+
+    // 2. Usa o nome do seu prato
+    if (!currentPlateItems || currentPlateItems.length === 0) {
+        return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
+    }
+
+    // Somadores para consolidar a refeição
+    let totalKcal = 0;
+    let totalProt = 0;
+    let nomesAlimentos = [];
+
+    currentPlateItems.forEach(item => {
+        totalKcal += item.kcal || 0;
+        totalProt += item.prot || 0;
+        nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
+    });
+
+    const novaRefeicao = {
+        nome: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+        totalKcal: Math.round(totalKcal),
+        totalProt: Math.round(totalProt),
+        timestamp: Date.now()
+    };
+
+    // 3. Salva localmente
+    if (!appData[currentProfile].historicoRefeicoes) {
+        appData[currentProfile].historicoRefeicoes = [];
+    }
+    appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
+    saveToLocalStorage();
+
+    // 4. Salva na nuvem (Firestore)
+    db.collection("usuarios")
+      .doc(currentProfile)
+      .collection("historicoRefeicoes")
+      .add(novaRefeicao)
+      .then(() => {
+          console.log("Refeição completa salva com sucesso no Firestore!");
+
+          currentPlateItems = [];
+          renderPlateUI();
+
+          const campoBusca = document.getElementById('search-food');
+          if (campoBusca) campoBusca.value = '';
+
+          const campoGramas = document.getElementById('txt-grams');
+          if (campoGramas) campoGramas.innerText = '100';
+
+          if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+          if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+
+          alert("Refeição salva com sucesso!");
+          switchTab('inicio'); 
+      })
+      .catch((error) => {
+          console.error("Erro ao salvar refeição no Firestore: ", error);
+          // 🔥 ALTERAÇÃO AQUI: Mostra o erro real do Firebase na tela do celular
+          alert("Erro no Firebase: " + error.message + " | Código: " + error.code);
+      });
+}
+
+    
         // ==========================================
         // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
         // ==========================================
