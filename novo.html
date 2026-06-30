@@ -123,10 +123,10 @@
 </div>
 
     <nav class="hidden md:block mt-4 space-y-1.5 flex-1">
-    <button onclick="switchTab('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+    <button onclick="('inicio')" id="nav-desktop-inicio" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
         <i data-lucide="home" class="w-4 h-4"></i> Início
             </button>
-            <button onclick="switchTab('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
+            <button onclick="('adicionar')" id="nav-desktop-adicionar" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
                 <i data-lucide="plus-circle" class="w-4 h-4"></i> Adicionar Alimento
             </button>
             <button onclick="switchTab('calendario')" id="nav-desktop-calendario" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white data-[active=true]:hover:bg-blue-600 text-left transition-all">
@@ -608,6 +608,12 @@
                 target.classList.add('active');
             } else {
                 console.error("Erro: A div com id='tab-" + tabId + "' não foi encontrada.");
+            }
+
+            // ADICIONE ESTAS TRÊS LINHAS 👇
+            const mainContainer = document.querySelector('main');
+            if (mainContainer) {
+                mainContainer.scrollTop = 0; // Joga a rolagem instantaneamente para o topo
             }
         
             // 4. Lógica de botões (mantenha como estava, parece correta)
