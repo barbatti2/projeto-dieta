@@ -1182,31 +1182,34 @@
             localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); 
         }
         
-        // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
-        function carregarPesosDoBanco() {
-            db.collection("usuarios")
-              .doc(currentProfile)
-              .collection("medidas")
-              .doc("peso")
-              .get()
-              .then((doc) => {
-                  if (doc.exists) {
-                      const dados = doc.data();
-                      // Atualiza a memória local com os pesos da nuvem
-                      appData[currentProfile].pesoInicial = dados.pesoInicial;
-                      appData[currentProfile].cinturaInicial = dados.cinturaInicial;
-                      appData[currentProfile].pesoAlvo = dados.pesoAlvo;
-                      appData[currentProfile].pesoAtual = dados.pesoAtual;
-                      
-                      saveToLocalStorage();
-                      if (typeof renderWeightTab === 'function') renderWeightTab(); // Atualiza a aba de pesos na tela
-                      console.log("Pesos sincronizados com o Firestore!");
-                  }
-              })
-              .catch((error) => console.error("Erro ao carregar pesos: ", error));
-        }
-        
-        // 2. BUSCA O HISTÓRICO DE REFEIÇÕES E CALORIAS DA NUVEM
+        // ==========================================
+// 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
+// ==========================================
+function carregarPesosDoBanco() {
+    db.collection("usuarios")
+      .doc(currentProfile)
+      .collection("medidas")
+      .doc("peso")
+      .get()
+      .then((doc) => {
+          if (doc.exists) {
+              const dados = doc.data();
+              appData[currentProfile].pesoInicial = dados.pesoInicial;
+              appData[currentProfile].cinturaInicial = dados.cinturaInicial;
+              appData[currentProfile].pesoAlvo = dados.pesoAlvo;
+              appData[currentProfile].pesoAtual = dados.pesoAtual;
+              
+              saveToLocalStorage();
+              if (typeof renderWeightTab === 'function') renderWeightTab();
+              console.log("Pesos sincronizados com o Firestore!");
+          }
+      })
+      .catch((error) => console.error("Erro ao carregar pesos: ", error));
+}
+
+        // ==========================================
+        // 2. BUSCA O HISTÓRICO DE REFEIÇÕES DA NUVEM
+        // ==========================================
         function carregarHistoricoRefeicoesDoBanco() {
             const usuarioAtivo = currentProfile;
         
@@ -1218,23 +1221,21 @@
                   const historicoVindoDoBanco = [];
                   querySnapshot.forEach((doc) => { historicoVindoDoBanco.push(doc.data()); });
         
-                  // Ordena deixando os mais recentes no topo
                   historicoVindoDoBanco.sort((a, b) => b.timestamp - a.timestamp);
                   appData[usuarioAtivo].historicoRefeicoes = historicoVindoDoBanco;
                   saveToLocalStorage();
         
-                  // Atualiza a aba de histórico (linha do tempo)
                   renderTimelineHistory(); 
-        
-                  // 🔥 AGORA SIM! Atualiza o círculo e os totais de calorias da tela inicial
-                  refreshHomeWheel();
+                  if (typeof refreshHomeWheel === 'function') refreshHomeWheel(); // 🔥 Atualiza a rodinha!
                   
                   console.log("Histórico e calorias sincronizados com sucesso!");
               })
               .catch((error) => console.error("Erro ao buscar histórico: ", error));
         }
         
-        // 3. BUSCA OS DIAS MARCADOS DO CALENDÁRIO DA NUVEM
+        // ==========================================
+        // 3. BUSCA OS DIAS MARCADOS DO CALENDÁRIO
+        // ==========================================
         function carregarCalendarioDoBanco() {
             db.collection("usuarios")
               .doc(currentProfile)
@@ -1248,21 +1249,49 @@
                   });
                   
                   saveToLocalStorage();
-                  if (typeof renderCalendar === 'function') renderCalendar(); // Atualiza o visual do calendário
+                  if (typeof renderCalendar === 'function') renderCalendar();
                   console.log("Calendário sincronizado com o Firestore!");
               })
               .catch((error) => console.error("Erro ao carregar calendário: ", error));
         }
+        
+        // ==========================================
+        // 4. BUSCA AS METAS DE CALORIAS E PROTEÍNAS
+        // ==========================================
+        function carregarConfiguracoesDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("configuracoes")
+              .doc("metas")
+              .get()
+              .then((doc) => {
+                  if (doc.exists) {
+                      const dados = doc.data();
+                      appData[currentProfile].metaKcal = dados.metaKcal;
+                      appData[currentProfile].metaProtein = dados.metaProtein;
+                      
+                      saveToLocalStorage();
+                      
+                      if (typeof loadConfigFields === 'function') loadConfigFields();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel(); // 🔥 Atualiza as metas na rodinha!
+                      
+                      console.log("Metas de dieta carregadas do Firestore!");
+                  }
+              })
+              .catch((error) => console.error("Erro ao carregar configurações: ", error));
+        }
                 
-        // O disparador de início que joga tudo na tela assim que o app abre
+        // ==========================================
+        // DISPARADOR DE INÍCIO (CHAMA AS 4 FUNÇÕES)
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
             switchTab('inicio'); // Abre a tela na aba início
             
-            // 🔥 Puxa TUDO da nuvem automaticamente de uma vez só:
+            // 🔥 Puxa tudo da nuvem em segundo plano assim que a página abre
             carregarPesosDoBanco();
             carregarHistoricoRefeicoesDoBanco();
             carregarCalendarioDoBanco();
-            carregarConfiguracoesDoBanco();
+            carregarConfiguracoesDoBanco(); 
         });
         </script>
         
