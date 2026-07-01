@@ -128,7 +128,7 @@
     </div>
 </header>
 
-<aside class="hidden md:flex w-64 bg-white border-r border-blue-100 flex-col p-5 flex-shrink-0 z-10 shadow-sm">
+<aside class="hidden md:flex w-64 bg-white border-r border-blue-100 flex-col p-5 flex-shrink-0 z-10 shadow-sm h-screen sticky top-0">
     
     <div class="flex flex-col items-center text-center py-5 border-b border-blue-50 mb-4 gap-2">
         <div class="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-600/20">
@@ -160,13 +160,41 @@
         </div>
     </div>
 
-    <div class="flex flex-col gap-1 w-full">
-        </div>
+    <div class="flex flex-col gap-1 w-full text-sm font-bold mb-auto">
+        <button class="w-full flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-xl shadow-md shadow-blue-500/10 transition-all text-left">
+            <i data-lucide="home" class="w-4 h-4"></i>
+            <span>Início</span>
+        </button>
 
+        <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all text-left">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>Adicionar Alimento</span>
+        </button>
 
-    <div class="mt-auto pt-4 border-t border-slate-100">
+        <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all text-left">
+            <i data-lucide="calendar" class="w-4 h-4"></i>
+            <span>Calendário</span>
+        </button>
+
+        <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all text-left">
+            <i data-lucide="list" class="w-4 h-4"></i>
+            <span>Histórico</span>
+        </button>
+
+        <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all text-left">
+            <i data-lucide="scale" class="w-4 h-4"></i>
+            <span>Pesos e Medidas</span>
+        </button>
+
+        <button class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-xl transition-all text-left">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+            <span>Configurações</span>
+        </button>
+    </div>
+
+    <div class="pt-4 border-t border-slate-100 mt-auto">
         <button onclick="logout()" 
-                class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 rounded-xl transition-all font-bold text-sm active:scale-[0.98]">
+                class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:text-rose-600 hover:bg-rose-50/60 rounded-xl transition-all font-bold text-sm active:scale-[0.98] text-left">
             <i data-lucide="log-out" class="w-4 h-4"></i>
             <span>Sair do Painel</span>
         </button>
