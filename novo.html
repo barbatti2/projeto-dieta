@@ -1409,10 +1409,10 @@
          </script>
         
         <!-- 🔥 LINKS DO FIREBASE (CRUCIAIS PARA NÃO DAR O ERRO DE INDEFINIDO) -->
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+        </script> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
         
-        <script>
+<script>
         // Configuração do seu Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
@@ -1423,13 +1423,117 @@
             appId: "1:1082882912098:web:fbb5f2874b672c5f80863b",
             measurementId: "G-3JEM06T0C0"
         };
-        
-        // Inicializa o Firebase usando o padrão compatível
+                
+        // Inicializa o Firebase
         firebase.initializeApp(firebaseConfig);
-        
-        // Ativa o banco de dados (db) para o resto do seu código usar
         const db = firebase.firestore();
-        </script>
         
+        // Sua função de salvar reativada e colorida!
+        function saveFullMeal() {
+            let momentoSelecionado = "Refeição";
+            const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
+                               document.querySelector('.moment-btn[data-active="true"]');
+            
+            if (botaoAtivo) {
+                momentoSelecionado = botaoAtivo.innerText.trim();
+            } else if (typeof currentMoment !== 'undefined' && currentMoment) {
+                momentoSelecionado = currentMoment;
+            }
+        
+            if (!currentPlateItems || currentPlateItems.length === 0) {
+                return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
+            }
+        
+            let totalKcal = 0;
+            let totalProt = 0;
+            let nomesAlimentos = [];
+        
+            currentPlateItems.forEach(item => {
+                totalKcal += item.kcal || 0;
+                totalProt += item.prot || 0;
+                nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
+            });
+        
+            const agora = new Date();
+            const diaObtido = String(agora.getDate()).padStart(2, '0');
+            const mesObtido = String(agora.getMonth() + 1).padStart(2, '0'); 
+            const anoObtido = agora.getFullYear();
+            const dataFormatada = `${diaObtido}/${mesObtido}/${anoObtido}`;
+        
+            const novaRefeicao = {
+                id: "refeicao_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+                nome: momentoSelecionado,
+                refeicao: momentoSelecionado,
+                tipo: momentoSelecionado,
+                momento: momentoSelecionado,
+                titulo: momentoSelecionado,
+                texto: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+                timestamp: Date.now(),
+                data: dataFormatada,
+                date: dataFormatada,
+                dia: diaObtido,
+                mes: mesObtido,
+                ano: anoObtido,
+                itens: [...currentPlateItems],
+                alimentos: [...currentPlateItems],
+                totalKcal: Math.round(totalKcal),
+                totalProt: Math.round(totalProt),
+                kcal: Math.round(totalKcal),
+                prot: Math.round(totalProt)
+            };
+        
+            if (!appData[currentProfile].historicoRefeicoes) {
+                appData[currentProfile].historicoRefeicoes = [];
+            }
+            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
+            saveToLocalStorage();
+        
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("historicoRefeicoes")
+              .add(novaRefeicao)
+              .then(() => {
+                  console.log("Salvo no Firestore com sucesso!");
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      alert("Refeição salva com sucesso!");
+                      switchTab('inicio'); 
+                  }, 100);
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar no Firestore: ", error);
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      switchTab('inicio');
+                  }, 100);
+              });
+        }
+        </script>
+                
         </body>
         </html>
