@@ -306,34 +306,36 @@
             <div id="calendar-days-grid" class="grid grid-cols-7 gap-2"></div>
         </div>
 
-        <div class="w-full max-w-2xl mb-3 px-1">
-            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Resumo do Mês</h3>
-        </div>
+        <div class="w-full max-w-2xl mb-4 px-1">
+    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider text-center sm:text-left">Resumo do Mês</h3>
+</div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl">
-            
-            <div class="bg-emerald-50/60 border border-emerald-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
-                <span id="count-ambos" class="block text-3xl font-black text-emerald-600 leading-none">0</span>
-                <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mt-2">Dieta+Treino</span>
-            </div>
-            
-            <div class="bg-blue-50/60 border border-blue-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
-                <span id="count-dieta" class="block text-3xl font-black text-blue-600 leading-none">0</span>
-                <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mt-2">Só Dieta</span>
-            </div>
-            
-            <div class="bg-amber-50/60 border border-amber-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
-                <span id="count-treino" class="block text-3xl font-black text-amber-600 leading-none">0</span>
-                <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider block mt-2">Só Treino</span>
-            </div>
-            
-            <div class="bg-rose-50/60 border border-rose-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
-                <span id="count-nenhum" class="block text-3xl font-black text-rose-600 leading-none">0</span>
-                <span class="text-[10px] font-bold text-rose-700 uppercase tracking-wider block mt-2">Nenhum</span>
-            </div>
-            
-        </div>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-3 w-full max-w-2xl mx-auto">
+    
+    <div class="w-full sm:flex-1 bg-emerald-50/60 border border-emerald-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+        <span id="count-ambos" class="block text-3xl font-black text-emerald-600 leading-none">0</span>
+        <span class="text-[10px] font-bold text-emerald-700 uppercase tracking-wider block mt-2 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Dieta + Treino
+        </span>
     </div>
+    
+    <div class="w-full sm:flex-1 bg-blue-50/60 border border-blue-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+        <span id="count-dieta" class="block text-3xl font-black text-blue-600 leading-none">0</span>
+        <span class="text-[10px] font-bold text-blue-700 uppercase tracking-wider block mt-2 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Só Dieta
+        </span>
+    </div>
+    
+    <div class="w-full sm:flex-1 bg-amber-50/60 border border-amber-100/70 p-4 rounded-2xl text-center transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm flex flex-col items-center justify-center">
+        <span id="count-treino" class="block text-3xl font-black text-amber-600 leading-none">0</span>
+        <span class="text-[10px] font-bold text-amber-700 uppercase tracking-wider block mt-2 flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Só Treino
+        </span>
+    </div>
+    
+</div>
+</div>
+
 
     <div id="calendar-modal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl p-6 w-full max-w-xs shadow-2xl border border-blue-100">
@@ -344,7 +346,9 @@
                 <button onclick="setDayStatus('ambos')" class="w-full p-3 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
                 <button onclick="setDayStatus('dieta')" class="w-full p-3 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
                 <button onclick="setDayStatus('treino')" class="w-full p-3 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
-                <button onclick="setDayStatus('nenhum')" class="w-full p-3 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
+                <button onclick="clearCalendarDay()" class="w-full py-3 rounded-2xl font-semibold flex items-center justify-center gap-2 border border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all duration-200">
+                <span class="text-lg">🗑️</span> Remover Marcação
+            </button>
             </div>
             <button onclick="closeCalendarModal()" class="w-full mt-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-wider hover:text-slate-700 transition-colors">Cancelar</button>
         </div>
@@ -366,11 +370,12 @@
     <div class="px-4 md:px-12 py-8 w-full">
         
         <div class="w-full grid grid-cols-4 gap-3 mb-8 border-b border-blue-100 pb-6">
-            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm shadow-sm transition-all hover:border-blue-400">Dia</button>
+            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs md:text-sm shadow-sm transition-all hover:border-blue-400">Dia</button>
             <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Semana</button>
             <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Mês</button>
             <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Ano</button>
         </div>
+                
 
         <div id="history-container" class="w-full space-y-4"></div>
         
@@ -499,16 +504,198 @@
 </nav>
     <script>
         const alimentosBase = [
+            // ==========================================
+            // 🌾 GRÃOS, CEREAIS E TUBÉRCULOS
+            // ==========================================
             { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
             { nome: "Arroz Integral Cozido", kcal100g: 124, prot100g: 2.6 },
             { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
-            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
-            { nome: "Patinho Bovino Moído", kcal100g: 220, prot100g: 28 },
-            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13 },
-            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
-            { nome: "Pão de Forma", kcal100g: 250, prot100g: 8 },
+            { nome: "Feijão Preto Cozido", kcal100g: 77, prot100g: 4.5 },
+            { nome: "Feijão Branco Cozido", kcal100g: 82, prot100g: 6.0 },
+            { nome: "Aveia em Flocos", kcal100g: 394, prot100g: 13.9 },
+            { nome: "Farelo de Aveia", kcal100g: 350, prot100g: 15.0 },
+            { nome: "Farinha de Aveia", kcal100g: 370, prot100g: 12.0 },
             { nome: "Batata Doce Cozida", kcal100g: 86, prot100g: 1.5 },
-            { nome: "Whey Protein 80%", kcal100g: 400, prot100g: 80 }
+            { nome: "Batata Inglesa Cozida/Assada", kcal100g: 52, prot100g: 1.2 },
+            { nome: "Batata Inglesa Frita", kcal100g: 270, prot100g: 5.0 },
+            { nome: "Mandioca/Aipim Cozido", kcal100g: 125, prot100g: 0.6 },
+            { nome: "Mandioquinha/Batata Baroa Cozida", kcal100g: 80, prot100g: 0.9 },
+            { nome: "Cuscuz de Milho Cozido", kcal100g: 112, prot100g: 2.2 },
+            { nome: "Tapioca (Goma Pronta)", kcal100g: 240, prot100g: 0.0 },
+            { nome: "Granola Tradicional", kcal100g: 420, prot100g: 10.0 },
+            { nome: "Granola Diet/Zero Açúcar", kcal100g: 370, prot100g: 11.0 },
+            { nome: "Macarrão de Sêmola Cozido", kcal100g: 131, prot100g: 4.5 },
+            { nome: "Macarrão Integral Cozido", kcal100g: 124, prot100g: 5.3 },
+            { nome: "Quinoa Cozida", kcal100g: 120, prot100g: 4.4 },
+        
+            // ==========================================
+            // 🍞 PÃES, TORRADAS E BISCOITOS
+            // ==========================================
+            { nome: "Torrada Magic Toast Original (Marilan)", kcal100g: 392, prot100g: 12.0 },
+            { nome: "Torrada Magic Toast Integral (Marilan)", kcal100g: 380, prot100g: 13.0 },
+            { nome: "Torrada Magic Toast Multigrãos (Marilan)", kcal100g: 385, prot100g: 12.5 },
+            { nome: "Pão de Forma Tradicional", kcal100g: 250, prot100g: 8.0 },
+            { nome: "Pão de Forma Integral", kcal100g: 230, prot100g: 9.5 },
+            { nome: "Pão de Forma 100% Integral", kcal100g: 210, prot100g: 11.0 },
+            { nome: "Pão Francês (1 unidade = 50g)", kcal100g: 300, prot100g: 4.7 },
+            { nome: "Pão de Queijo Assado", kcal100g: 360, prot100g: 5.1 },
+            { nome: "Pão Sírio Integral", kcal100g: 260, prot100g: 9.0 },
+            { nome: "Rap10 Tradicional (Pulp)", kcal100g: 310, prot100g: 8.3 },
+            { nome: "Rap10 Integral (Fit)", kcal100g: 275, prot100g: 9.0 },
+            { nome: "Torrada Bauducco Tradicional", kcal100g: 406, prot100g: 12.0 },
+            { nome: "Torrada Bauducco Integral", kcal100g: 393, prot100g: 13.0 },
+            { nome: "Biscoito de Arroz Integral Tradicional", kcal100g: 380, prot100g: 8.0 },
+            { nome: "Biscoito de Polvilho", kcal100g: 430, prot100g: 1.5 },
+            { nome: "Biscoito Água e Sal", kcal100g: 435, prot100g: 9.0 },
+            { nome: "Biscoito Maizena", kcal100g: 440, prot100g: 7.5 },
+        
+            // ==========================================
+            // 🐔 PROTEÍNAS: FRANGOS E AVES
+            // ==========================================
+            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
+            { nome: "Peito de Frango Cozido/Desfiado", kcal100g: 150, prot100g: 29.0 },
+            { nome: "Peito de Frango Cru", kcal100g: 120, prot100g: 23.0 },
+            { nome: "Coxa de Frango Assada (Sem Pele)", kcal100g: 167, prot100g: 25.0 },
+            { nome: "Sobrecoxa de Frango Assada (Sem Pele)", kcal100g: 233, prot100g: 22.0 },
+            { nome: "Coração de Frango Grelhado", kcal100g: 207, prot100g: 26.0 },
+            { nome: "Moela de Frango Cozida", kcal100g: 154, prot100g: 30.0 },
+        
+            // ==========================================
+            // 🥩 PROTEÍNAS: CARNES BOVINAS E SUÍNAS
+            // ==========================================
+            { nome: "Patinho Bovino Moído/Grelhado", kcal100g: 220, prot100g: 28.0 },
+            { nome: "Músculo Bovino Cozido", kcal100g: 194, prot100g: 31.2 },
+            { nome: "Alcatra Grelhada (Sem Gordura)", kcal100g: 241, prot100g: 31.9 },
+            { nome: "Filé Mignon Grelhado", kcal100g: 220, prot100g: 32.8 },
+            { nome: "Coxão Mole Grelhado", kcal100g: 219, prot100g: 32.4 },
+            { nome: "Contrafilé Grelhado (Sem Gordura)", kcal100g: 250, prot100g: 29.0 },
+            { nome: "Picanha Grelhada (Sem Gordura)", kcal100g: 238, prot100g: 28.6 },
+            { nome: "Acém Moído/Cozido", kcal100g: 215, prot100g: 26.7 },
+            { nome: "Cupim Assado", kcal100g: 330, prot100g: 22.0 },
+            { nome: "Filet Suíno (Lombo) Grelhado", kcal100g: 210, prot100g: 31.0 },
+            { nome: "Bacon Frito", kcal100g: 540, prot100g: 37.0 },
+        
+            // ==========================================
+            // 🐟 PROTEÍNAS: PEIXES E FRUTOS DO MAR
+            // ==========================================
+            { nome: "Filé de Tilápia / Grelhado", kcal100g: 128, prot100g: 26.0 },
+            { nome: "Salmão Grelhado / Assado", kcal100g: 206, prot100g: 22.0 },
+            { nome: "Atum Fresco Grelhado", kcal100g: 140, prot100g: 28.0 },
+            { nome: "Sardinha Fresca Assada", kcal100g: 164, prot100g: 25.0 },
+            { nome: "File de Pescada Branco Cozido", kcal100g: 110, prot100g: 19.0 },
+            { nome: "Bacalhau Cozido e Desfiado", kcal100g: 140, prot100g: 29.0 },
+            { nome: "Camarão Cozido", kcal100g: 99, prot100g: 24.0 },
+        
+            // ==========================================
+            // 🥫 PRODUTOS ENLATADOS E EM CONSERVA
+            // ==========================================
+            { nome: "Atum em Pedaços em Água (Enlatado)", kcal100g: 90, prot100g: 21.0 },
+            { nome: "Atum Soltinho em Óleo (Drenado)", kcal100g: 160, prot100g: 24.0 },
+            { nome: "Sardinha em Óleo (Drenada)", kcal100g: 250, prot100g: 22.0 },
+            { nome: "Sardinha em Molho de Tomate", kcal100g: 170, prot100g: 18.0 },
+            { nome: "Milho Verde em Conserva", kcal100g: 98, prot100g: 3.1 },
+            { nome: "Ervilha em Conserva", kcal100g: 72, prot100g: 4.8 },
+            { nome: "Seleta de Legumes (Lata)", kcal100g: 65, prot100g: 3.0 },
+            { nome: "Palmito em Conserva", kcal100g: 25, prot100g: 1.8 },
+            { nome: "Azeitona Verde (Sem Caroço)", kcal100g: 140, prot100g: 1.0 },
+            { nome: "Champignon / Cogumelo em Conserva", kcal100g: 22, prot100g: 2.3 },
+            { nome: "Extrato de Tomate", kcal100g: 60, prot100g: 2.0 },
+        
+            // ==========================================
+            // 🧀 LATICÍNIOS: REQUEIJÃO LIGHT (POR MARCA)
+            // ==========================================
+            { nome: "Requeijão Light Nestlé", kcal100g: 173, prot100g: 9.3 },
+            { nome: "Requeijão Light Poços de Caldas", kcal100g: 153, prot100g: 10.0 },
+            { nome: "Requeijão Light Vigor", kcal100g: 160, prot100g: 9.5 },
+            { nome: "Requeijão Light Itambé", kcal100g: 166, prot100g: 9.3 },
+            { nome: "Requeijão Light Tirolez", kcal100g: 147, prot100g: 12.0 },
+            { nome: "Requeijão Light Danone", kcal100g: 155, prot100g: 9.0 },
+            { nome: "Requeijão Light Elegê", kcal100g: 170, prot100g: 8.5 },
+            { nome: "Requeijão Tradicional Integral (Média marcas)", kcal100g: 260, prot100g: 8.0 },
+        
+            // ==========================================
+            // 🥚 OVOS E OUTROS LATICÍNIOS
+            // ==========================================
+            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13.0 },
+            { nome: "Ovo Frito (Sem Óleo / Antiaderente)", kcal100g: 160, prot100g: 13.0 },
+            { nome: "Clara de Ovo Cozida", kcal100g: 52, prot100g: 11.0 },
+            { nome: "Gema de Ovo Cozida", kcal100g: 322, prot100g: 16.0 },
+            { nome: "Queijo Cottage", kcal100g: 98, prot100g: 11.0 },
+            { nome: "Queijo Minas Frescal Light", kcal100g: 160, prot100g: 14.0 },
+            { nome: "Queijo Minas Frescal Tradicional", kcal100g: 240, prot100g: 16.0 },
+            { nome: "Queijo Ricota", kcal100g: 140, prot100g: 12.0 },
+            { nome: "Queijo Muçarela", kcal100g: 330, prot100g: 24.0 },
+            { nome: "Queijo Prato", kcal100g: 350, prot100g: 23.0 },
+            { nome: "Queijo Parmesão Ralado", kcal100g: 430, prot100g: 35.0 },
+            { nome: "Iogurte Natural Desnatado", kcal100g: 41, prot100g: 3.8 },
+            { nome: "Iogurte Natural Integral", kcal100g: 61, prot100g: 3.4 },
+            { nome: "Iogurte Grego Tradicional", kcal100g: 115, prot100g: 4.5 },
+            { nome: "Iogurte Grego Light / Zero", kcal100g: 65, prot100g: 6.0 },
+            { nome: "Leite Desnatado (Líquido)", kcal100g: 35, prot100g: 3.3 },
+            { nome: "Leite Integral (Líquido)", kcal100g: 60, prot100g: 3.2 },
+            { nome: "Leite em Pó Desnatado", kcal100g: 355, prot100g: 35.0 },
+            { nome: "Leite em Pó Integral", kcal100g: 490, prot100g: 26.0 },
+            { nome: "Manteiga com Sal", kcal100g: 720, prot100g: 0.8 },
+            { nome: "Margarina Cremosa Light", kcal100g: 360, prot100g: 0.0 },
+        
+            // ==========================================
+            // 🍏 FRUTAS FRESCAS
+            // ==========================================
+            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
+            { nome: "Banana Nanica", kcal100g: 92, prot100g: 1.4 },
+            { nome: "Maçã Fuji / Gala com casca", kcal100g: 52, prot100g: 0.3 },
+            { nome: "Morango Fresco", kcal100g: 32, prot100g: 0.7 },
+            { nome: "Abacate Tradicional", kcal100g: 160, prot100g: 2.0 },
+            { nome: "Melancia", kcal100g: 30, prot100g: 0.6 },
+            { nome: "Mamão Papaia", kcal100g: 43, prot100g: 0.5 },
+            { nome: "Abacaxi Pérola", kcal100g: 48, prot100g: 0.5 },
+            { nome: "Uva Italiana / Rubi", kcal100g: 67, prot100g: 0.6 },
+            { nome: "Laranja Pêra (Suco ou Bagaço)", kcal100g: 47, prot100g: 0.9 },
+            { nome: "Mango / Manga Palmer", kcal100g: 60, prot100g: 0.8 },
+            { nome: "Limão Taiti (Apenas Suco)", kcal100g: 29, prot100g: 0.7 },
+            { nome: "Kiwi", kcal100g: 61, prot100g: 1.1 },
+            { nome: "Melão Amarelo", kcal100g: 34, prot100g: 0.8 },
+            { nome: "Tangerina / Mexerica Ponkã", kcal100g: 44, prot100g: 0.8 },
+            { nome: "Açaí Médio Puro (Sem Xarope)", kcal100g: 60, prot100g: 1.2 },
+        
+            // ==========================================
+            // 🥦 LEGUMES, VERDURAS E HORTALIÇAS
+            // ==========================================
+            { nome: "Brócolis Cozido", kcal100g: 25, prot100g: 2.1 },
+            { nome: "Cenoura Cozida", kcal100g: 32, prot100g: 0.8 },
+            { nome: "Cenoura Crua Ralada", kcal100g: 41, prot100g: 1.3 },
+            { nome: "Tomate Comum Maduro", kcal100g: 18, prot100g: 0.9 },
+            { nome: "Alface (Todos os tipos)", kcal100g: 14, prot100g: 1.0 },
+            { nome: "Rúcula Fresca", kcal100g: 25, prot100g: 2.6 },
+            { nome: "Espinafre Refogado", kcal100g: 40, prot100g: 2.7 },
+            { nome: "Abobrinha Italiana Cozida", kcal100g: 15, prot100g: 1.1 },
+            { nome: "Chuchu Cozido", kcal100g: 19, prot100g: 0.7 },
+            { nome: "Pepino Japonês", kcal100g: 15, prot100g: 0.7 },
+            { nome: "Cebola Roxa / Branca Crua", kcal100g: 40, prot100g: 1.1 },
+            { nome: "Alho Cru", kcal100g: 149, prot100g: 6.4 },
+            { nome: "Couve Manteiga Refogada", kcal100g: 90, prot100g: 1.7 },
+            { nome: "Vagem Cozida", kcal100g: 35, prot100g: 1.8 },
+            { nome: "Beterraba Cozida", kcal100g: 43, prot100g: 1.6 },
+            { nome: "Pimentão Amarelo / Vermelho / Verde", kcal100g: 20, prot100g: 1.0 },
+        
+            // ==========================================
+            // 🥤 SUPLEMENTOS E SHAKES
+            // ==========================================
+            { nome: "Whey Protein Concentrado 80%", kcal100g: 400, prot100g: 80.0 },
+            { nome: "Whey Protein Isolado 90%", kcal100g: 365, prot100g: 90.0 },
+            { nome: "Albumina em Pó", kcal100g: 385, prot100g: 80.0 },
+            { nome: "Hipercalórico Tradicional", kcal100g: 390, prot100g: 15.0 },
+            { nome: "Creatina Monohidratada Pura", kcal100g: 0, prot100g: 0.0 },
+        
+            // ==========================================
+            // 🥜 OLEAGINOSAS E GORDURAS BOAS
+            // ==========================================
+            { nome: "Pasta de Amendoim Integral", kcal100g: 600, prot100g: 28.0 },
+            { nome: "Amendoim Torrado Sem Sal", kcal100g: 585, prot100g: 25.0 },
+            { nome: "Castanha do Pará", kcal100g: 656, prot100g: 14.0 },
+            { nome: "Castanha de Caju Torrada", kcal100g: 570, prot100g: 18.0 },
+            { nome: "Amêndoa Torrada", kcal100g: 580, prot100g: 21.0 },
+            { nome: "Azeite de Oliva Extra Virgem", kcal100g: 884, prot100g: 0.0 }
         ];
 
         let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
@@ -649,6 +836,20 @@
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
+
+        // 🔥 RESTAURADA: Função mestre para salvar os dados no celular
+        function saveToLocalStorage() {
+            try {
+                if (typeof appData !== 'undefined') {
+                    localStorage.setItem('appData', JSON.stringify(appData));
+                    console.log("Dados sincronizados no LocalStorage do celular com sucesso!");
+                } else {
+                    console.error("Erro: A variável 'appData' não foi encontrada para salvar.");
+                }
+            } catch (e) {
+                console.error("Erro crítico ao salvar no LocalStorage: ", e);
+            }
+        }
         
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
@@ -708,10 +909,28 @@
             const kcal = parseInt(document.getElementById('cfg-target-kcal').value);
             const protein = parseInt(document.getElementById('cfg-target-protein').value);
             if(isNaN(kcal) || isNaN(protein) || kcal <= 0 || protein <= 0) return alert("Valores inválidos!");
+            
             appData[currentProfile].metaKcal = kcal;
             appData[currentProfile].metaProtein = protein;
             saveToLocalStorage();
-            alert("Metas atualizadas!");
+        
+            // 🔥 NOVIDADE: Envia as novas metas de calorias e proteínas direto para o Firestore
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("configuracoes")
+              .doc("metas")
+              .set({
+                  metaKcal: kcal,
+                  metaProtein: protein
+              }, { merge: true })
+              .then(() => {
+                  console.log("Metas de dieta atualizadas com sucesso no Firestore!");
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar metas no Firestore: ", error);
+              });
+        
+            alert("Metas updated!");
             switchTab('inicio');
         }
 
@@ -763,16 +982,46 @@
             // Garante que o peso atual exista
             if(!appData[currentProfile].pesoAtual) appData[currentProfile].pesoAtual = pIni;
         
-            saveToLocalStorage(); // Salva no banco de dados
+            saveToLocalStorage(); // Salva localmente por segurança
+        
+            // 🔥 NOVIDADE: Salva as metas de peso na nuvem (Firestore)
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .set({
+                  pesoInicial: appData[currentProfile].pesoInicial,
+                  cinturaInicial: appData[currentProfile].cinturaInicial,
+                  pesoAlvo: appData[currentProfile].pesoAlvo,
+                  pesoAtual: appData[currentProfile].pesoAtual,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true }) // Garante que as informações se unam sem se ssubstituírem totalmente
+              .then(() => console.log("Metas de peso salvas no Firestore!"))
+              .catch((error) => console.error("Erro ao salvar metas: ", error));
+        
             renderWeightTab();    // Atualiza a tela
             alert("Metas salvas!");
-}
+        }
         
         function updateCurrentWeight() {
             const pAtu = parseFloat(document.getElementById('weight-current').value);
             if(!pAtu || pAtu <= 0) return alert("Digite um peso válido!");
+            
             appData[currentProfile].pesoAtual = pAtu;
             saveToLocalStorage();
+        
+            // 🔥 NOVIDADE: Atualiza apenas o peso atual na nuvem
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .set({
+                  pesoAtual: pAtu,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              }, { merge: true }) // Atualiza apenas o peso atual e preserva o peso inicial e o alvo!
+              .then(() => console.log("Peso atual atualizado no Firestore!"))
+              .catch((error) => console.error("Erro ao atualizar peso: ", error));
+        
             renderWeightTab();
             alert("Peso atualizado!");
         }
@@ -817,7 +1066,6 @@
             document.getElementById('count-ambos').innerText = cAmbos;
             document.getElementById('count-dieta').innerText = cDieta;
             document.getElementById('count-treino').innerText = cTreino;
-            document.getElementById('count-nenhum').innerText = cNenhum;
         }
 
         function openCalendarModal(dayKey) {
@@ -826,12 +1074,61 @@
             document.getElementById('calendar-modal').classList.remove('hidden');
         }
 
-        function closeCalendarModal() { document.getElementById('calendar-modal').classList.add('hidden'); }
+        function closeCalendarModal() { 
+    document.getElementById('calendar-modal').classList.add('hidden'); 
+        }
 
         function setDayStatus(status) {
             if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
+            
+            // Mantém a sua lógica local para atualizar a tela na hora
             appData[currentProfile].calendarioStatus[selectedCalendarDayKey] = status;
             saveToLocalStorage();
+        
+            // 🔥 NOVIDADE: Salva o seu dia importante direto no Firestore!
+            // Ele cria uma pasta com o nome do perfil (Gabriel) e salva o dia exato dentro
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .doc(selectedCalendarDayKey)
+              .set({
+                  status: status,
+                  atualizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+              })
+              .then(() => {
+                  console.log(`Sucesso! Dia ${selectedCalendarDayKey} salvo no Firestore como: ${status}`);
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar o dia no Firestore: ", error);
+              });
+        
+            closeCalendarModal();
+            renderCalendar();
+        }
+
+        function clearCalendarDay() {
+            if (!selectedCalendarDayKey) return;
+        
+            // 1. Remove do LocalStorage do celular (deleta a chave do dia)
+            if (appData[currentProfile].calendarioStatus && appData[currentProfile].calendarioStatus[selectedCalendarDayKey]) {
+                delete appData[currentProfile].calendarioStatus[selectedCalendarDayKey];
+                saveToLocalStorage();
+            }
+        
+            // 2. Remove da Nuvem (Firebase Firestore)
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .doc(selectedCalendarDayKey)
+              .delete()
+              .then(() => {
+                  console.log(`Dia ${selectedCalendarDayKey} removido do Firestore.`);
+              })
+              .catch((error) => {
+                  console.error("Erro ao remover do Firestore: ", error);
+              });
+        
+            // 3. Fecha o modal e atualiza o calendário na tela na hora
             closeCalendarModal();
             renderCalendar();
         }
@@ -969,77 +1266,91 @@
             currentPlateItems.splice(index, 1);
             renderPlateUI();
         }
-
-        // Modificado para redirecionar para a Home (Início) após salvar
-        function saveFullMeal() {
-            if(!currentSelectedMoment) return alert("Selecione o tipo da refeição!");
-            const totalKcal = currentPlateItems.reduce((acc, current) => acc + current.kcal, 0);
-            const totalProt = currentPlateItems.reduce((acc, current) => acc + current.prot, 0);
-            const brTime = getBrasiliaDate();
+        
+        function changeHistoryFilter(type) {
+            currentHistoryFilter = type;
             
-            const novaRefeicao = {
-                id: Date.now(),
-                momento: currentSelectedMoment,
-                itens: [...currentPlateItems],
-                totalKcal: totalKcal,
-                totalProt: totalProt,
-                timestamp: brTime.getTime(),
-                dia: brTime.getDate().toString().padStart(2, '0'),
-                mes: (brTime.getMonth() + 1).toString().padStart(2, '0'),
-                ano: brTime.getFullYear()
-            };
-
-            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
-            saveToLocalStorage();
-
-            currentPlateItems = [];
-            currentSelectedMoment = '';
-            renderPlateUI();
-            alert("Refeição salva com sucesso!");
-            switchTab('inicio'); // Direciona para a tela inicial atualizada
+            // Efeito visual dos botões...
+            document.querySelectorAll('.history-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
+            });
+            
+            // 🎨 Aplica a cor azul sólida (ativo) apenas no botão clicado
+            const activeBtn = document.getElementById(`filter-${type}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
+                activeBtn.classList.add('bg-blue-600', 'text-white');
+            }
+            
+            // Recarrega a listagem aplicando o filtro de tempo matemático
+            renderTimelineHistory(); 
         }
-
-        function changeHistoryFilter(filtro) {
-    currentHistoryFilter = filtro;
-    
-    // 1. Limpa TODOS os botões, resetando para o estado original (fundo branco, texto cinza)
-    document.querySelectorAll('.history-filter-btn').forEach(btn => {
-        // Remove classes de ativo e garante as classes de inativo
-        btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
-        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
-    });
-
-    // 2. Ativa APENAS o botão clicado
-    const selectedBtn = document.getElementById(`filter-${filtro}`);
-    if (selectedBtn) {
-        // Remove as classes de inativo e aplica as de ativo
-        selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
-        selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
-    }
-    
-    renderTimelineHistory();
-}
-
-// 3. Garante que o botão 'dia' comece selecionado ao abrir a página
-document.addEventListener('DOMContentLoaded', () => {
-    changeHistoryFilter('dia');
-});
-
+        
+        // 3. Garante que o botão 'dia' comece selecionado ao abrir a página
+        document.addEventListener('DOMContentLoaded', () => {
+            changeHistoryFilter('dia');
+        });
+        
         function renderTimelineHistory() {
             const container = document.getElementById('history-container');
+            if (!container) return; // Segurança caso o elemento não exista na aba atual
             container.innerHTML = '';
             
-            const historico = appData[currentProfile].historicoRefeicoes || [];
+            // Mudamos para 'let' para permitir filtrar a lista com base no botão clicado
+            let historico = appData[currentProfile].historicoRefeicoes || [];
+            
+            // 🛡️ PROTEÇÃO: Filtra e ignora qualquer registro antigo ou corrompido sem itens
+            historico = historico.filter(ref => ref && ref.itens && Array.isArray(ref.itens));
+        
+            // 📅 FILTRAGEM REAL: Lê qual botão do topo está ativo e separa os dados
+            const hoje = new Date();
+            const diaHoje = String(hoje.getDate()).padStart(2, '0');
+            const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoHoje = hoje.getFullYear();
+            
+            // Pega o filtro atual dos seus botões (padrão é 'dia' caso não encontre a variável)
+            const filtroAtivo = typeof currentHistoryFilter !== 'undefined' ? currentHistoryFilter : 'dia';
+        
+            if (filtroAtivo === 'dia') {
+                // Exibe APENAS o dia de hoje
+                historico = historico.filter(ref => 
+                    String(ref.dia).padStart(2, '0') === diaHoje &&
+                    String(ref.mes).padStart(2, '0') === mesHoje &&
+                    Number(ref.ano) === anoHoje
+                );
+            } 
+            else if (filtroAtivo === 'semana') {
+                // Exibe as refeições dos últimos 7 dias usando matemática de data
+                const seteDiasAtras = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                historico = historico.filter(ref => ref.timestamp && ref.timestamp >= seteDiasAtras);
+            } 
+            else if (filtroAtivo === 'mes') {
+                // Exibe tudo do mês atual
+                historico = historico.filter(ref => 
+                    String(ref.mes).padStart(2, '0') === mesHoje &&
+                    Number(ref.ano) === anoHoje
+                );
+            } 
+            else if (filtroAtivo === 'ano') {
+                // Exibe tudo do ano atual
+                historico = historico.filter(ref => Number(ref.ano) === anoHoje);
+            }
+        
+            // Se após a filtragem não sobrar nenhuma refeição nesse período, mostra aviso limpo
             if(historico.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-6">Nenhum registro.</p>';
+                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-6">Nenhum registro encontrado para este período.</p>';
                 return;
             }
         
             const ordemRefeicoes = {
+                'CAFÉ': 1,
                 'CAFÉ DA MANHÃ': 1,
                 'ALMOÇO': 2,
+                'TARDE': 3,
                 'CAFÉ DA TARDE': 3,
-                'JANTAR': 4
+                'JANTAR': 4,
+                'JANTA': 4
             };
         
             const porData = historico.reduce((acc, ref) => {
@@ -1065,13 +1376,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="space-y-4">`;
         
                 const refeicoesDoDia = porData[data].reduce((acc, ref) => {
-                    if(!acc[ref.momento]) acc[ref.momento] = [];
-                    acc[ref.momento].push(ref);
+                    const momentoKey = ref.momento || ref.refeicao || ref.nome || "Refeição";
+                    if(!acc[momentoKey]) acc[momentoKey] = [];
+                    acc[momentoKey].push(ref);
                     return acc;
                 }, {});
         
                 const momentosOrdenados = Object.keys(refeicoesDoDia).sort((a, b) => {
-                    return (ordemRefeicoes[a.toUpperCase()] || 99) - (ordemRefeicoes[b.toUpperCase()] || 99);
+                    return (ordemRefeicoes[a.toUpperCase().trim()] || 99) - (ordemRefeicoes[b.toUpperCase().trim()] || 99);
                 });
         
                 momentosOrdenados.forEach(momento => {
@@ -1094,11 +1406,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
                             </div>
-                            <div class="space-y-1">
-                                ${itens.map(ref => ref.itens.map(item => `
-                                    <div class="flex justify-between text-sm text-slate-600">
-                                        <span>${item.nome}</span>
-                                        <span class="text-slate-400 text-xs">${item.kcal} kcal</span>
+                            <div class="space-y-1.5">
+                               ${itens.map(ref => (ref.itens || []).map(item => `
+                                    <div class="flex justify-between items-center text-xs text-slate-600 py-0.5 border-b border-dashed border-slate-50 last:border-0">
+                                        <span class="font-medium">${item.nome} <span class="text-slate-400 font-normal">(${item.gramas || 100}g)</span></span>
+                                        <span class="text-slate-900 font-semibold">${item.kcal || 0} kcal</span>
                                     </div>
                                 `).join('')).join('')}
                             </div>
@@ -1111,48 +1423,329 @@ document.addEventListener('DOMContentLoaded', () => {
         
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
-        function deleteMeal(id) {
-            if (!confirm("Excluir esta refeição?")) return;
         
-            // Convertemos o ID que vem do botão e o ID da refeição para String 
-            // para garantir que a comparação de igualdade funcione sempre.
-            appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
-                r => String(r.id) !== String(id)
-            );
+        // 🔥 VERSÃO FAXINA: Deleta itens normais E limpa registros corrompidos da nuvem!
+            function deleteMeal(id) {
+                
+                // 🛡️ SE DETECTAR ITEM CORROMPIDO (Sem ID ou Undefined)
+                if (!id || String(id) === 'undefined' || id === null) {
+                    if (confirm("Identificamos refeições antigas corrompidas (sem ID). Deseja fazer uma faxina completa e apagá-las permanentemente do celular e da nuvem?")) {
+                        
+                        // 1. Limpa o celular (LocalStorage) tirando tudo que é inválido
+                        if (appData[currentProfile].historicoRefeicoes) {
+                            appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
+                                r => r.id && String(r.id) !== 'undefined' && r.itens
+                            );
+                        }
+                        saveToLocalStorage();
+            
+                        // 2. Limpa a Nuvem (Firestore) vasculhando e deletando os zumbis
+                        db.collection("usuarios")
+                          .doc(currentProfile)
+                          .collection("historicoRefeicoes")
+                          .get()
+                          .then((querySnapshot) => {
+                              let apagados = 0;
+                              
+                              querySnapshot.forEach((doc) => {
+                                  const data = doc.data();
+                                  // Se o documento na nuvem não tiver ID ou não tiver itens, ele é deletado
+                                  if (!data.id || String(data.id) === 'undefined' || !data.itens) {
+                                      doc.ref.delete();
+                                      apagados++;
+                                  }
+                              });
+                              
+                              console.log(`Faxina concluída! ${apagados} registros corrompidos foram eliminados.`);
+                              alert(`Sucesso! Removemos ${apagados} registros antigos com erro.`);
+                              
+                              // Atualiza a tela limpa
+                              if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                              if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                          })
+                          .catch((error) => {
+                              console.error("Erro durante a faxina no Firestore: ", error);
+                              alert("Erro ao tentar limpar a nuvem: " + error.message);
+                          });
+                    }
+                    return;
+                }
+            
+                // ==========================================
+                // FLUXO NORMAL: Para refeições novas e certinhas
+                // ==========================================
+                if (!confirm("Excluir esta refeição?")) return;
+            
+                // 1. Remove do celular
+                appData[currentProfile].historicoRefeicoes = appData[currentProfile].historicoRefeicoes.filter(
+                    r => String(r.id) !== String(id)
+                );
+                saveToLocalStorage();
+                renderTimelineHistory();
+                if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+            
+                // 2. Remove da nuvem buscando pelo ID exclusivo
+                db.collection("usuarios")
+                  .doc(currentProfile)
+                  .collection("historicoRefeicoes")
+                  .where("id", "==", String(id)) 
+                  .get()
+                  .then((querySnapshot) => {
+                      querySnapshot.forEach((doc) => {
+                          doc.ref.delete().then(() => {
+                              console.log("Refeição deletada do Firestore!");
+                          }).catch(err => console.error("Erro ao deletar item:", err));
+                      });
+                  })
+                  .catch((error) => {
+                      console.error("Erro ao buscar item para deletar: ", error);
+                  });
+            }
         
-            saveToLocalStorage();
-            renderTimelineHistory();
+        // ==========================================
+        // 1. BUSCA AS METAS E O PESO ATUAL DA NUVEM
+        // ==========================================
+        function carregarPesosDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("medidas")
+              .doc("peso")
+              .get()
+              .then((doc) => {
+                  if (doc.exists) {
+                      const dados = doc.data();
+                      appData[currentProfile].pesoInicial = dados.pesoInicial;
+                      appData[currentProfile].cinturaInicial = dados.cinturaInicial;
+                      appData[currentProfile].pesoAlvo = dados.pesoAlvo;
+                      appData[currentProfile].pesoAtual = dados.pesoAtual;
+                      
+                      saveToLocalStorage();
+                      if (typeof renderWeightTab === 'function') renderWeightTab();
+                      console.log("Pesos sincronizados com o Firestore!");
+                  }
+              })
+              .catch((error) => console.error("Erro ao carregar pesos: ", error));
         }
 
-        function saveToLocalStorage() { localStorage.setItem('projetoDietaAppDataMulti', JSON.stringify(appData)); }
-
+        // ==========================================
+        // 2. BUSCA O HISTÓRICO DE REFEIÇÕES DA NUVEM
+        // ==========================================
+        function carregarHistoricoRefeicoesDoBanco() {
+            const usuarioAtivo = currentProfile;
+        
+            db.collection("usuarios")
+              .doc(usuarioAtivo)
+              .collection("historicoRefeicoes")
+              .get()
+              .then((querySnapshot) => {
+                  const historicoVindoDoBanco = [];
+                  querySnapshot.forEach((doc) => { historicoVindoDoBanco.push(doc.data()); });
+        
+                  historicoVindoDoBanco.sort((a, b) => b.timestamp - a.timestamp);
+                  appData[usuarioAtivo].historicoRefeicoes = historicoVindoDoBanco;
+                  saveToLocalStorage();
+        
+                  renderTimelineHistory(); 
+                  if (typeof refreshHomeWheel === 'function') refreshHomeWheel(); // 🔥 Atualiza a rodinha!
+                  
+                  console.log("Histórico e calorias sincronizados com sucesso!");
+              })
+              .catch((error) => console.error("Erro ao buscar histórico: ", error));
+        }
+        
+        // ==========================================
+        // 3. BUSCA OS DIAS MARCADOS DO CALENDÁRIO
+        // ==========================================
+        function carregarCalendarioDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .get()
+              .then((querySnapshot) => {
+                  if(!appData[currentProfile].calendarioStatus) appData[currentProfile].calendarioStatus = {};
+                  
+                  querySnapshot.forEach((doc) => {
+                      appData[currentProfile].calendarioStatus[doc.id] = doc.data().status;
+                  });
+                  
+                  saveToLocalStorage();
+                  if (typeof renderCalendar === 'function') renderCalendar();
+                  console.log("Calendário sincronizado com o Firestore!");
+              })
+              .catch((error) => console.error("Erro ao carregar calendário: ", error));
+        }
+        
+        // ==========================================
+        // 4. BUSCA AS METAS DE CALORIAS E PROTEÍNAS
+        // ==========================================
+        function carregarConfiguracoesDoBanco() {
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("configuracoes")
+              .doc("metas")
+              .get()
+              .then((doc) => {
+                  if (doc.exists) {
+                      const dados = doc.data();
+                      appData[currentProfile].metaKcal = dados.metaKcal;
+                      appData[currentProfile].metaProtein = dados.metaProtein;
+                      
+                      saveToLocalStorage();
+                      
+                      if (typeof loadConfigFields === 'function') loadConfigFields();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel(); // 🔥 Atualiza as metas na rodinha!
+                      
+                      console.log("Metas de dieta carregadas do Firestore!");
+                  }
+              })
+              .catch((error) => console.error("Erro ao carregar configurações: ", error));
+        }
+                
+        // ==========================================
+        // DISPARADOR DE INÍCIO (CHAMA AS 4 FUNÇÕES)
+        // ==========================================
         document.addEventListener('DOMContentLoaded', () => {
-            switchTab('inicio');
+            switchTab('inicio'); // Abre a tela na aba início
+            
+            // 🔥 Puxa tudo da nuvem em segundo plano assim que a página abre
+            carregarPesosDoBanco();
+            carregarHistoricoRefeicoesDoBanco();
+            carregarCalendarioDoBanco();
+            carregarConfiguracoesDoBanco(); 
         });
-    </script>
-    <script>
-        // Esse comando procura todos os ícones da página e desenha eles
-        lucide.createIcons();
-    </script>
-
-    <script>
-    // Your web app's Firebase configuration
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-    const firebaseConfig = {
-      apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
-      authDomain: "projetodietanovo.firebaseapp.com",
-      projectId: "projetodietanovo",
-      storageBucket: "projetodietanovo.firebasestorage.app",
-      messagingSenderId: "1082882912098",
-      appId: "1:1082882912098:web:fbb5f2874b672c5f80863b",
-      measurementId: "G-3JEM06T0C0"
-    };
-    
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    </script>
-    
-</body>
-</html>
+        </script>
+        
+        <script>
+            // Esse comando procura todos os ícones da página e desenha eles
+            lucide.createIcons();
+         </script>
+        
+        <!-- 🔥 LINKS DO FIREBASE (CRUCIAIS PARA NÃO DAR O ERRO DE INDEFINIDO) -->
+        </script> <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+        
+<script>
+        // Configuração do seu Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDzXjckBc_vyNyjYeO1fttXYXfAa3iqLHo",
+            authDomain: "projetodietanovo.firebaseapp.com",
+            projectId: "projetodietanovo",
+            storageBucket: "projetodietanovo.firebasestorage.app",
+            messagingSenderId: "1082882912098",
+            appId: "1:1082882912098:web:fbb5f2874b672c5f80863b",
+            measurementId: "G-3JEM06T0C0"
+        };
+                
+        // Inicializa o Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Sua função de salvar reativada e colorida!
+        function saveFullMeal() {
+            let momentoSelecionado = "Refeição";
+            const botaoAtivo = document.querySelector('#meal-moment-group button[data-active="true"]') || 
+                               document.querySelector('.moment-btn[data-active="true"]');
+            
+            if (botaoAtivo) {
+                momentoSelecionado = botaoAtivo.innerText.trim();
+            } else if (typeof currentMoment !== 'undefined' && currentMoment) {
+                momentoSelecionado = currentMoment;
+            }
+        
+            if (!currentPlateItems || currentPlateItems.length === 0) {
+                return alert("O seu prato está vazio! Inclua pelo menos um item antes de salvar.");
+            }
+        
+            let totalKcal = 0;
+            let totalProt = 0;
+            let nomesAlimentos = [];
+        
+            currentPlateItems.forEach(item => {
+                totalKcal += item.kcal || 0;
+                totalProt += item.prot || 0;
+                nomesAlimentos.push(`${item.nome} (${item.gramas}g)`);
+            });
+        
+            const agora = new Date();
+            const diaObtido = String(agora.getDate()).padStart(2, '0');
+            const mesObtido = String(agora.getMonth() + 1).padStart(2, '0'); 
+            const anoObtido = agora.getFullYear();
+            const dataFormatada = `${diaObtido}/${mesObtido}/${anoObtido}`;
+        
+            const novaRefeicao = {
+                id: "refeicao_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+                nome: momentoSelecionado,
+                refeicao: momentoSelecionado,
+                tipo: momentoSelecionado,
+                momento: momentoSelecionado,
+                titulo: momentoSelecionado,
+                texto: `${momentoSelecionado}: ${nomesAlimentos.join(', ')}`,
+                timestamp: Date.now(),
+                data: dataFormatada,
+                date: dataFormatada,
+                dia: diaObtido,
+                mes: mesObtido,
+                ano: anoObtido,
+                itens: [...currentPlateItems],
+                alimentos: [...currentPlateItems],
+                totalKcal: Math.round(totalKcal),
+                totalProt: Math.round(totalProt),
+                kcal: Math.round(totalKcal),
+                prot: Math.round(totalProt)
+            };
+        
+            if (!appData[currentProfile].historicoRefeicoes) {
+                appData[currentProfile].historicoRefeicoes = [];
+            }
+            appData[currentProfile].historicoRefeicoes.unshift(novaRefeicao);
+            saveToLocalStorage();
+        
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("historicoRefeicoes")
+              .add(novaRefeicao)
+              .then(() => {
+                  console.log("Salvo no Firestore com sucesso!");
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      alert("Refeição salva com sucesso!");
+                      switchTab('inicio'); 
+                  }, 100);
+              })
+              .catch((error) => {
+                  console.error("Erro ao salvar no Firestore: ", error);
+                  currentPlateItems = [];
+                  if (typeof renderPlateUI === 'function') renderPlateUI();
+                  const campoBusca = document.getElementById('search-food');
+                  if (campoBusca) campoBusca.value = '';
+                  const campoGramas = document.getElementById('txt-grams');
+                  if (campoGramas) campoGramas.innerText = '100';
+                  document.querySelectorAll('#meal-moment-group button, .moment-btn').forEach(btn => {
+                      btn.setAttribute('data-active', 'false');
+                      btn.classList.remove('active');
+                  });
+                  if (typeof currentMoment !== 'undefined') currentMoment = null;
+                  alert("Salvo no celular! Mas a Nuvem recusou devido ao erro: " + error.message);
+                  setTimeout(() => {
+                      if (typeof renderTimelineHistory === 'function') renderTimelineHistory();
+                      if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                      switchTab('inicio');
+                  }, 100);
+              });
+        }
+        </script>
+                
+        </body>
+        </html>
