@@ -366,11 +366,12 @@
     <div class="px-4 md:px-12 py-8 w-full">
         
         <div class="w-full grid grid-cols-4 gap-3 mb-8 border-b border-blue-100 pb-6">
-            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm shadow-sm transition-all hover:border-blue-400">Dia</button>
+            <button onclick="changeHistoryFilter('dia')" id="filter-dia" class="history-filter-btn py-2.5 bg-blue-600 text-white font-bold rounded-xl text-xs md:text-sm shadow-sm transition-all hover:border-blue-400">Dia</button>
             <button onclick="changeHistoryFilter('semana')" id="filter-semana" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Semana</button>
             <button onclick="changeHistoryFilter('mes')" id="filter-mes" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Mês</button>
             <button onclick="changeHistoryFilter('ano')" id="filter-ano" class="history-filter-btn py-2.5 bg-white border border-blue-200 text-slate-600 font-bold rounded-xl text-xs md:text-sm transition-all hover:border-blue-400">Ano</button>
         </div>
+                
 
         <div id="history-container" class="w-full space-y-4"></div>
         
@@ -1054,23 +1055,27 @@
             renderPlateUI();
         }
 
-        function changeHistoryFilter(filtro) {
-            currentHistoryFilter = filtro;
+        // Variável global para controlar qual filtro está selecionado (Começa no 'dia')
+        let currentHistoryFilter = 'dia'; 
+        
+        function changeHistoryFilter(type) {
+            currentHistoryFilter = type;
             
-            // 1. Limpa TODOS os botões, resetando para o estado original (fundo branco, texto cinza)
+            // 🎨 EFEITO VISUAL: Remove a cor azul de todos os botões e volta para o padrão branco
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+                btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
             });
-        
-            // 2. Ativa APENAS o botão clicado
-            const selectedBtn = document.getElementById(`filter-${filtro}`);
-            if (selectedBtn) {
-                selectedBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
-                selectedBtn.classList.add('bg-blue-600', '!text-white', 'shadow-sm', 'border-blue-600');
+            
+            // 🎨 Aplica a cor azul sólida (ativo) apenas no botão clicado
+            const activeBtn = document.getElementById(`filter-${type}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-blue-200');
+                activeBtn.classList.add('bg-blue-600', 'text-white');
             }
             
-            renderTimelineHistory();
+            // Recarrega a listagem aplicando o filtro de tempo matemático
+            renderTimelineHistory(); 
         }
         
         // 3. Garante que o botão 'dia' comece selecionado ao abrir a página
@@ -1083,13 +1088,52 @@
             if (!container) return; // Segurança caso o elemento não exista na aba atual
             container.innerHTML = '';
             
-            const historico = appData[currentProfile].historicoRefeicoes || [];
+            // Mudamos para 'let' para permitir filtrar a lista com base no botão clicado
+            let historico = appData[currentProfile].historicoRefeicoes || [];
+            
+            // 🛡️ PROTEÇÃO: Filtra e ignora qualquer registro antigo ou corrompido sem itens
+            historico = historico.filter(ref => ref && ref.itens && Array.isArray(ref.itens));
+        
+            // 📅 FILTRAGEM REAL: Lê qual botão do topo está ativo e separa os dados
+            const hoje = new Date();
+            const diaHoje = String(hoje.getDate()).padStart(2, '0');
+            const mesHoje = String(hoje.getMonth() + 1).padStart(2, '0');
+            const anoHoje = hoje.getFullYear();
+            
+            // Pega o filtro atual dos seus botões (padrão é 'dia' caso não encontre a variável)
+            const filtroAtivo = typeof currentHistoryFilter !== 'undefined' ? currentHistoryFilter : 'dia';
+        
+            if (filtroAtivo === 'dia') {
+                // Exibe APENAS o dia de hoje
+                historico = historico.filter(ref => 
+                    String(ref.dia).padStart(2, '0') === diaHoje &&
+                    String(ref.mes).padStart(2, '0') === mesHoje &&
+                    Number(ref.ano) === anoHoje
+                );
+            } 
+            else if (filtroAtivo === 'semana') {
+                // Exibe as refeições dos últimos 7 dias usando matemática de data
+                const seteDiasAtras = Date.now() - (7 * 24 * 60 * 60 * 1000);
+                historico = historico.filter(ref => ref.timestamp && ref.timestamp >= seteDiasAtras);
+            } 
+            else if (filtroAtivo === 'mes') {
+                // Exibe tudo do mês atual
+                historico = historico.filter(ref => 
+                    String(ref.mes).padStart(2, '0') === mesHoje &&
+                    Number(ref.ano) === anoHoje
+                );
+            } 
+            else if (filtroAtivo === 'ano') {
+                // Exibe tudo do ano atual
+                historico = historico.filter(ref => Number(ref.ano) === anoHoje);
+            }
+        
+            // Se após a filtragem não sobrar nenhuma refeição nesse período, mostra aviso limpo
             if(historico.length === 0) {
-                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-6">Nenhum registro.</p>';
+                container.innerHTML = '<p class="text-slate-400 text-center text-sm py-6">Nenhum registro encontrado para este período.</p>';
                 return;
             }
         
-            // 🔥 CORREÇÃO DA ORDEM: Adicionado 'CAFÉ' e 'TARDE' para bater exatamente com o texto dos seus botões!
             const ordemRefeicoes = {
                 'CAFÉ': 1,
                 'CAFÉ DA MANHÃ': 1,
