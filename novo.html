@@ -1055,13 +1055,13 @@
             renderPlateUI();
         }
 
-        // Variável global para controlar qual filtro está selecionado (Começa no 'dia')
-        let currentHistoryFilter = 'dia'; 
+        // 🟢 SUBSTITUA APENAS ESSE INÍCIO POR ESTE BLOCO LIMPO:
+        var currentHistoryFilter = 'dia'; 
         
         function changeHistoryFilter(type) {
             currentHistoryFilter = type;
             
-            // 🎨 EFEITO VISUAL: Remove a cor azul de todos os botões e volta para o padrão branco
+            // Efeito visual dos botões...
             document.querySelectorAll('.history-filter-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-blue-200');
