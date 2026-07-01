@@ -344,7 +344,9 @@
                 <button onclick="setDayStatus('ambos')" class="w-full p-3 bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors"><i data-lucide="dumbbell" class="w-4 h-4"></i> Dieta + Treino</button>
                 <button onclick="setDayStatus('dieta')" class="w-full p-3 bg-blue-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors"><i data-lucide="apple" class="w-4 h-4"></i> Só Dieta</button>
                 <button onclick="setDayStatus('treino')" class="w-full p-3 bg-amber-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-amber-600 transition-colors"><i data-lucide="zap" class="w-4 h-4"></i> Só Treino</button>
-                <button onclick="setDayStatus('nenhum')" class="w-full p-3 bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 hover:bg-rose-600 transition-colors"><i data-lucide="frown" class="w-4 h-4"></i> Nenhum</button>
+                <button onclick="clearCalendarDay()" class="w-full py-3 rounded-2xl font-semibold flex items-center justify-center gap-2 border border-slate-200 bg-slate-100 text-slate-600 hover:bg-slate-200 transition-all duration-200">
+                <span class="text-lg">🗑️</span> Remover Marcação
+            </button>
             </div>
             <button onclick="closeCalendarModal()" class="w-full mt-4 py-2 text-[10px] font-black text-slate-500 uppercase tracking-wider hover:text-slate-700 transition-colors">Cancelar</button>
         </div>
@@ -880,7 +882,6 @@
             document.getElementById('count-ambos').innerText = cAmbos;
             document.getElementById('count-dieta').innerText = cDieta;
             document.getElementById('count-treino').innerText = cTreino;
-            document.getElementById('count-nenhum').innerText = cNenhum;
         }
 
         function openCalendarModal(dayKey) {
@@ -917,6 +918,33 @@
                   console.error("Erro ao salvar o dia no Firestore: ", error);
               });
         
+            closeCalendarModal();
+            renderCalendar();
+        }
+
+        function clearCalendarDay() {
+            if (!selectedCalendarDayKey) return;
+        
+            // 1. Remove do LocalStorage do celular (deleta a chave do dia)
+            if (appData[currentProfile].calendarioStatus && appData[currentProfile].calendarioStatus[selectedCalendarDayKey]) {
+                delete appData[currentProfile].calendarioStatus[selectedCalendarDayKey];
+                saveToLocalStorage();
+            }
+        
+            // 2. Remove da Nuvem (Firebase Firestore)
+            db.collection("usuarios")
+              .doc(currentProfile)
+              .collection("calendario")
+              .doc(selectedCalendarDayKey)
+              .delete()
+              .then(() => {
+                  console.log(`Dia ${selectedCalendarDayKey} removido do Firestore.`);
+              })
+              .catch((error) => {
+                  console.error("Erro ao remover do Firestore: ", error);
+              });
+        
+            // 3. Fecha o modal e atualiza o calendário na tela na hora
             closeCalendarModal();
             renderCalendar();
         }
