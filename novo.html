@@ -502,16 +502,198 @@
 </nav>
     <script>
         const alimentosBase = [
+            // ==========================================
+            // 🌾 GRÃOS, CEREAIS E TUBÉRCULOS
+            // ==========================================
             { nome: "Arroz Branco Cozido", kcal100g: 130, prot100g: 2.5 },
             { nome: "Arroz Integral Cozido", kcal100g: 124, prot100g: 2.6 },
             { nome: "Feijão Carioca Cozido", kcal100g: 76, prot100g: 4.8 },
-            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
-            { nome: "Patinho Bovino Moído", kcal100g: 220, prot100g: 28 },
-            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13 },
-            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
-            { nome: "Pão de Forma", kcal100g: 250, prot100g: 8 },
+            { nome: "Feijão Preto Cozido", kcal100g: 77, prot100g: 4.5 },
+            { nome: "Feijão Branco Cozido", kcal100g: 82, prot100g: 6.0 },
+            { nome: "Aveia em Flocos", kcal100g: 394, prot100g: 13.9 },
+            { nome: "Farelo de Aveia", kcal100g: 350, prot100g: 15.0 },
+            { nome: "Farinha de Aveia", kcal100g: 370, prot100g: 12.0 },
             { nome: "Batata Doce Cozida", kcal100g: 86, prot100g: 1.5 },
-            { nome: "Whey Protein 80%", kcal100g: 400, prot100g: 80 }
+            { nome: "Batata Inglesa Cozida/Assada", kcal100g: 52, prot100g: 1.2 },
+            { nome: "Batata Inglesa Frita", kcal100g: 270, prot100g: 5.0 },
+            { nome: "Mandioca/Aipim Cozido", kcal100g: 125, prot100g: 0.6 },
+            { nome: "Mandioquinha/Batata Baroa Cozida", kcal100g: 80, prot100g: 0.9 },
+            { nome: "Cuscuz de Milho Cozido", kcal100g: 112, prot100g: 2.2 },
+            { nome: "Tapioca (Goma Pronta)", kcal100g: 240, prot100g: 0.0 },
+            { nome: "Granola Tradicional", kcal100g: 420, prot100g: 10.0 },
+            { nome: "Granola Diet/Zero Açúcar", kcal100g: 370, prot100g: 11.0 },
+            { nome: "Macarrão de Sêmola Cozido", kcal100g: 131, prot100g: 4.5 },
+            { nome: "Macarrão Integral Cozido", kcal100g: 124, prot100g: 5.3 },
+            { nome: "Quinoa Cozida", kcal100g: 120, prot100g: 4.4 },
+        
+            // ==========================================
+            // 🍞 PÃES, TORRADAS E BISCOITOS
+            // ==========================================
+            { nome: "Torrada Magic Toast Original (Marilan)", kcal100g: 392, prot100g: 12.0 },
+            { nome: "Torrada Magic Toast Integral (Marilan)", kcal100g: 380, prot100g: 13.0 },
+            { nome: "Torrada Magic Toast Multigrãos (Marilan)", kcal100g: 385, prot100g: 12.5 },
+            { nome: "Pão de Forma Tradicional", kcal100g: 250, prot100g: 8.0 },
+            { nome: "Pão de Forma Integral", kcal100g: 230, prot100g: 9.5 },
+            { nome: "Pão de Forma 100% Integral", kcal100g: 210, prot100g: 11.0 },
+            { nome: "Pão Francês (1 unidade = 50g)", kcal100g: 300, prot100g: 4.7 },
+            { nome: "Pão de Queijo Assado", kcal100g: 360, prot100g: 5.1 },
+            { nome: "Pão Sírio Integral", kcal100g: 260, prot100g: 9.0 },
+            { nome: "Rap10 Tradicional (Pulp)", kcal100g: 310, prot100g: 8.3 },
+            { nome: "Rap10 Integral (Fit)", kcal100g: 275, prot100g: 9.0 },
+            { nome: "Torrada Bauducco Tradicional", kcal100g: 406, prot100g: 12.0 },
+            { nome: "Torrada Bauducco Integral", kcal100g: 393, prot100g: 13.0 },
+            { nome: "Biscoito de Arroz Integral Tradicional", kcal100g: 380, prot100g: 8.0 },
+            { nome: "Biscoito de Polvilho", kcal100g: 430, prot100g: 1.5 },
+            { nome: "Biscoito Água e Sal", kcal100g: 435, prot100g: 9.0 },
+            { nome: "Biscoito Maizena", kcal100g: 440, prot100g: 7.5 },
+        
+            // ==========================================
+            // 🐔 PROTEÍNAS: FRANGOS E AVES
+            // ==========================================
+            { nome: "Peito de Frango Grelhado", kcal100g: 165, prot100g: 31.5 },
+            { nome: "Peito de Frango Cozido/Desfiado", kcal100g: 150, prot100g: 29.0 },
+            { nome: "Peito de Frango Cru", kcal100g: 120, prot100g: 23.0 },
+            { nome: "Coxa de Frango Assada (Sem Pele)", kcal100g: 167, prot100g: 25.0 },
+            { nome: "Sobrecoxa de Frango Assada (Sem Pele)", kcal100g: 233, prot100g: 22.0 },
+            { nome: "Coração de Frango Grelhado", kcal100g: 207, prot100g: 26.0 },
+            { nome: "Moela de Frango Cozida", kcal100g: 154, prot100g: 30.0 },
+        
+            // ==========================================
+            // 🥩 PROTEÍNAS: CARNES BOVINAS E SUÍNAS
+            // ==========================================
+            { nome: "Patinho Bovino Moído/Grelhado", kcal100g: 220, prot100g: 28.0 },
+            { nome: "Músculo Bovino Cozido", kcal100g: 194, prot100g: 31.2 },
+            { nome: "Alcatra Grelhada (Sem Gordura)", kcal100g: 241, prot100g: 31.9 },
+            { nome: "Filé Mignon Grelhado", kcal100g: 220, prot100g: 32.8 },
+            { nome: "Coxão Mole Grelhado", kcal100g: 219, prot100g: 32.4 },
+            { nome: "Contrafilé Grelhado (Sem Gordura)", kcal100g: 250, prot100g: 29.0 },
+            { nome: "Picanha Grelhada (Sem Gordura)", kcal100g: 238, prot100g: 28.6 },
+            { nome: "Acém Moído/Cozido", kcal100g: 215, prot100g: 26.7 },
+            { nome: "Cupim Assado", kcal100g: 330, prot100g: 22.0 },
+            { nome: "Filet Suíno (Lombo) Grelhado", kcal100g: 210, prot100g: 31.0 },
+            { nome: "Bacon Frito", kcal100g: 540, prot100g: 37.0 },
+        
+            // ==========================================
+            // 🐟 PROTEÍNAS: PEIXES E FRUTOS DO MAR
+            // ==========================================
+            { nome: "Filé de Tilápia / Grelhado", kcal100g: 128, prot100g: 26.0 },
+            { nome: "Salmão Grelhado / Assado", kcal100g: 206, prot100g: 22.0 },
+            { nome: "Atum Fresco Grelhado", kcal100g: 140, prot100g: 28.0 },
+            { nome: "Sardinha Fresca Assada", kcal100g: 164, prot100g: 25.0 },
+            { nome: "File de Pescada Branco Cozido", kcal100g: 110, prot100g: 19.0 },
+            { nome: "Bacalhau Cozido e Desfiado", kcal100g: 140, prot100g: 29.0 },
+            { nome: "Camarão Cozido", kcal100g: 99, prot100g: 24.0 },
+        
+            // ==========================================
+            // 🥫 PRODUTOS ENLATADOS E EM CONSERVA
+            // ==========================================
+            { nome: "Atum em Pedaços em Água (Enlatado)", kcal100g: 90, prot100g: 21.0 },
+            { nome: "Atum Soltinho em Óleo (Drenado)", kcal100g: 160, prot100g: 24.0 },
+            { nome: "Sardinha em Óleo (Drenada)", kcal100g: 250, prot100g: 22.0 },
+            { nome: "Sardinha em Molho de Tomate", kcal100g: 170, prot100g: 18.0 },
+            { nome: "Milho Verde em Conserva", kcal100g: 98, prot100g: 3.1 },
+            { nome: "Ervilha em Conserva", kcal100g: 72, prot100g: 4.8 },
+            { nome: "Seleta de Legumes (Lata)", kcal100g: 65, prot100g: 3.0 },
+            { nome: "Palmito em Conserva", kcal100g: 25, prot100g: 1.8 },
+            { nome: "Azeitona Verde (Sem Caroço)", kcal100g: 140, prot100g: 1.0 },
+            { nome: "Champignon / Cogumelo em Conserva", kcal100g: 22, prot100g: 2.3 },
+            { nome: "Extrato de Tomate", kcal100g: 60, prot100g: 2.0 },
+        
+            // ==========================================
+            // 🧀 LATICÍNIOS: REQUEIJÃO LIGHT (POR MARCA)
+            // ==========================================
+            { nome: "Requeijão Light Nestlé", kcal100g: 173, prot100g: 9.3 },
+            { nome: "Requeijão Light Poços de Caldas", kcal100g: 153, prot100g: 10.0 },
+            { nome: "Requeijão Light Vigor", kcal100g: 160, prot100g: 9.5 },
+            { nome: "Requeijão Light Itambé", kcal100g: 166, prot100g: 9.3 },
+            { nome: "Requeijão Light Tirolez", kcal100g: 147, prot100g: 12.0 },
+            { nome: "Requeijão Light Danone", kcal100g: 155, prot100g: 9.0 },
+            { nome: "Requeijão Light Elegê", kcal100g: 170, prot100g: 8.5 },
+            { nome: "Requeijão Tradicional Integral (Média marcas)", kcal100g: 260, prot100g: 8.0 },
+        
+            // ==========================================
+            // 🥚 OVOS E OUTROS LATICÍNIOS
+            // ==========================================
+            { nome: "Ovo Cozido Inteiro", kcal100g: 155, prot100g: 13.0 },
+            { nome: "Ovo Frito (Sem Óleo / Antiaderente)", kcal100g: 160, prot100g: 13.0 },
+            { nome: "Clara de Ovo Cozida", kcal100g: 52, prot100g: 11.0 },
+            { nome: "Gema de Ovo Cozida", kcal100g: 322, prot100g: 16.0 },
+            { nome: "Queijo Cottage", kcal100g: 98, prot100g: 11.0 },
+            { nome: "Queijo Minas Frescal Light", kcal100g: 160, prot100g: 14.0 },
+            { nome: "Queijo Minas Frescal Tradicional", kcal100g: 240, prot100g: 16.0 },
+            { nome: "Queijo Ricota", kcal100g: 140, prot100g: 12.0 },
+            { nome: "Queijo Muçarela", kcal100g: 330, prot100g: 24.0 },
+            { nome: "Queijo Prato", kcal100g: 350, prot100g: 23.0 },
+            { nome: "Queijo Parmesão Ralado", kcal100g: 430, prot100g: 35.0 },
+            { nome: "Iogurte Natural Desnatado", kcal100g: 41, prot100g: 3.8 },
+            { nome: "Iogurte Natural Integral", kcal100g: 61, prot100g: 3.4 },
+            { nome: "Iogurte Grego Tradicional", kcal100g: 115, prot100g: 4.5 },
+            { nome: "Iogurte Grego Light / Zero", kcal100g: 65, prot100g: 6.0 },
+            { nome: "Leite Desnatado (Líquido)", kcal100g: 35, prot100g: 3.3 },
+            { nome: "Leite Integral (Líquido)", kcal100g: 60, prot100g: 3.2 },
+            { nome: "Leite em Pó Desnatado", kcal100g: 355, prot100g: 35.0 },
+            { nome: "Leite em Pó Integral", kcal100g: 490, prot100g: 26.0 },
+            { nome: "Manteiga com Sal", kcal100g: 720, prot100g: 0.8 },
+            { nome: "Margarina Cremosa Light", kcal100g: 360, prot100g: 0.0 },
+        
+            // ==========================================
+            // 🍏 FRUTAS FRESCAS
+            // ==========================================
+            { nome: "Banana Prata", kcal100g: 89, prot100g: 1.3 },
+            { nome: "Banana Nanica", kcal100g: 92, prot100g: 1.4 },
+            { nome: "Maçã Fuji / Gala com casca", kcal100g: 52, prot100g: 0.3 },
+            { nome: "Morango Fresco", kcal100g: 32, prot100g: 0.7 },
+            { nome: "Abacate Tradicional", kcal100g: 160, prot100g: 2.0 },
+            { nome: "Melancia", kcal100g: 30, prot100g: 0.6 },
+            { nome: "Mamão Papaia", kcal100g: 43, prot100g: 0.5 },
+            { nome: "Abacaxi Pérola", kcal100g: 48, prot100g: 0.5 },
+            { nome: "Uva Italiana / Rubi", kcal100g: 67, prot100g: 0.6 },
+            { nome: "Laranja Pêra (Suco ou Bagaço)", kcal100g: 47, prot100g: 0.9 },
+            { nome: "Mango / Manga Palmer", kcal100g: 60, prot100g: 0.8 },
+            { nome: "Limão Taiti (Apenas Suco)", kcal100g: 29, prot100g: 0.7 },
+            { nome: "Kiwi", kcal100g: 61, prot100g: 1.1 },
+            { nome: "Melão Amarelo", kcal100g: 34, prot100g: 0.8 },
+            { nome: "Tangerina / Mexerica Ponkã", kcal100g: 44, prot100g: 0.8 },
+            { nome: "Açaí Médio Puro (Sem Xarope)", kcal100g: 60, prot100g: 1.2 },
+        
+            // ==========================================
+            // 🥦 LEGUMES, VERDURAS E HORTALIÇAS
+            // ==========================================
+            { nome: "Brócolis Cozido", kcal100g: 25, prot100g: 2.1 },
+            { nome: "Cenoura Cozida", kcal100g: 32, prot100g: 0.8 },
+            { nome: "Cenoura Crua Ralada", kcal100g: 41, prot100g: 1.3 },
+            { nome: "Tomate Comum Maduro", kcal100g: 18, prot100g: 0.9 },
+            { nome: "Alface (Todos os tipos)", kcal100g: 14, prot100g: 1.0 },
+            { nome: "Rúcula Fresca", kcal100g: 25, prot100g: 2.6 },
+            { nome: "Espinafre Refogado", kcal100g: 40, prot100g: 2.7 },
+            { nome: "Abobrinha Italiana Cozida", kcal100g: 15, prot100g: 1.1 },
+            { nome: "Chuchu Cozido", kcal100g: 19, prot100g: 0.7 },
+            { nome: "Pepino Japonês", kcal100g: 15, prot100g: 0.7 },
+            { nome: "Cebola Roxa / Branca Crua", kcal100g: 40, prot100g: 1.1 },
+            { nome: "Alho Cru", kcal100g: 149, prot100g: 6.4 },
+            { nome: "Couve Manteiga Refogada", kcal100g: 90, prot100g: 1.7 },
+            { nome: "Vagem Cozida", kcal100g: 35, prot100g: 1.8 },
+            { nome: "Beterraba Cozida", kcal100g: 43, prot100g: 1.6 },
+            { nome: "Pimentão Amarelo / Vermelho / Verde", kcal100g: 20, prot100g: 1.0 },
+        
+            // ==========================================
+            // 🥤 SUPLEMENTOS E SHAKES
+            // ==========================================
+            { nome: "Whey Protein Concentrado 80%", kcal100g: 400, prot100g: 80.0 },
+            { nome: "Whey Protein Isolado 90%", kcal100g: 365, prot100g: 90.0 },
+            { nome: "Albumina em Pó", kcal100g: 385, prot100g: 80.0 },
+            { nome: "Hipercalórico Tradicional", kcal100g: 390, prot100g: 15.0 },
+            { nome: "Creatina Monohidratada Pura", kcal100g: 0, prot100g: 0.0 },
+        
+            // ==========================================
+            // 🥜 OLEAGINOSAS E GORDURAS BOAS
+            // ==========================================
+            { nome: "Pasta de Amendoim Integral", kcal100g: 600, prot100g: 28.0 },
+            { nome: "Amendoim Torrado Sem Sal", kcal100g: 585, prot100g: 25.0 },
+            { nome: "Castanha do Pará", kcal100g: 656, prot100g: 14.0 },
+            { nome: "Castanha de Caju Torrada", kcal100g: 570, prot100g: 18.0 },
+            { nome: "Amêndoa Torrada", kcal100g: 580, prot100g: 21.0 },
+            { nome: "Azeite de Oliva Extra Virgem", kcal100g: 884, prot100g: 0.0 }
         ];
 
         let appData = JSON.parse(localStorage.getItem('projetoDietaAppDataMulti')) || {
