@@ -649,6 +649,20 @@
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
+
+        // 🔥 RESTAURADA: Função mestre para salvar os dados no celular
+        function saveToLocalStorage() {
+            try {
+                if (typeof appData !== 'undefined') {
+                    localStorage.setItem('appData', JSON.stringify(appData));
+                    console.log("Dados sincronizados no LocalStorage do celular com sucesso!");
+                } else {
+                    console.error("Erro: A variável 'appData' não foi encontrada para salvar.");
+                }
+            } catch (e) {
+                console.error("Erro crítico ao salvar no LocalStorage: ", e);
+            }
+        }
         
         function refreshHomeWheel() {
             document.getElementById('lbl-home-profile').innerText = currentProfile === 'Raissa' ? 'Raíssa' : currentProfile;
