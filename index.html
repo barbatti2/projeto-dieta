@@ -105,7 +105,7 @@
     <!-- LADO DIREITO: Card do Formulário (Mobile e Desktop) -->
     <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
         
-        <!-- Card Branco Baseado na image_5.png -->
+        <!-- Card Branco Alinhado com a image_5.png -->
         <div class="bg-white w-full max-w-md p-8 md:p-12 rounded-[2.5rem] shadow-2xl md:shadow-xl flex flex-col items-center text-center border border-slate-100/80">
             
             <!-- Ícone Azul Redondo -->
@@ -113,7 +113,7 @@
                 <i data-lucide="lock" class="w-6 h-6"></i>
             </div>
             
-            <!-- Títulos com a nova escrita da imagem -->
+            <!-- Títulos -->
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">
                 Insira seu Token
             </h2>
@@ -121,13 +121,13 @@
                 Digite a sua chave de validação para liberar o painel.
             </p>
 
-            <!-- Inputs e Botão -->
-            <div class="w-full mt-8 text-left">
+            <!-- Inputs, Botão e Selo Integrados -->
+            <div class="w-full mt-8 flex flex-col items-center">
                 <input id="token-input" type="password" placeholder="••••••••" 
                     class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
                 
                 <!-- Alerta de Erro -->
-                <p id="login-error" class="hidden text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
+                <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
                     ⚠️ Token incorreto. Tente novamente.
                 </p>
 
@@ -137,12 +137,12 @@
                     Acessar Plataforma 
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
-            </div>
 
-            <!-- Selo de Segurança Inferior (idêntico à image_5.png) -->
-            <div class="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 mt-8">
-                <i data-lucide="shield" class="w-4 h-4 text-slate-400"></i>
-                <span>Ambiente seguro</span>
+                <!-- NOVO POSICIONAMENTO: Selo de Segurança logo abaixo do botão -->
+                <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-400/90 mt-5 select-none">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-slate-400/90 stroke-[2.5]"></i>
+                    <span>Ambiente seguro</span>
+                </div>
             </div>
 
         </div>
