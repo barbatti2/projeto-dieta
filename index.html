@@ -64,38 +64,98 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
-    <div id="login-screen" class="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-[9999] p-4 transition-all duration-300">
-        <div class="w-full max-w-sm">
-            
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <i data-lucide="lock" class="w-5 h-5"></i>
-                </div>
-                <div class="text-left">
-                    <h1 class="text-xl font-black text-slate-800 tracking-tight leading-none">DIETA PRO</h1>
-                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mt-1">Painel de Acesso</span>
-                </div>
+    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto">
+    
+    <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
+    <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
+        <!-- Detalhes de ondas decorativas no fundo -->
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+        
+        <!-- Elemento Central: Logo e Slogan -->
+        <div class="flex-1 flex flex-col justify-center items-center text-center">
+            <!-- Ícone do Cadeado no Topo -->
+            <div class="w-16 h-16 bg-white text-[#004df0] rounded-2xl flex items-center justify-center mb-6 shadow-xl transform rotate-12 hover:rotate-0 transition-transform duration-300">
+                <i data-lucide="lock" class="w-8 h-8"></i>
             </div>
+            
+            <h1 class="text-5xl font-black tracking-wide drop-shadow-md">
+                DIETA <span class="text-blue-300 font-medium">PRO</span>
+            </h1>
+            <p class="text-xs uppercase tracking-[0.4em] text-blue-200/80 font-bold mt-2">
+                Painel de Acesso
+            </p>
+            
+            <div class="w-12 h-[2px] bg-blue-400/30 my-6 rounded-full"></div>
+            
+            <p class="text-sm text-blue-100/90 max-w-sm leading-relaxed font-medium">
+                Sua plataforma completa para nutrição, progresso e resultados.
+            </p>
+        </div>
 
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 flex flex-col items-center">
-                <h2 class="text-base font-bold text-slate-700 tracking-tight">Insira seu Token</h2>
-                <p class="text-xs text-slate-400 text-center mt-1 mb-6">Digite a sua chave de validação para liberar o painel.</p>
-
-                <div class="w-full text-left">
-                    <input type="password" id="token-input" placeholder="•••••••••" 
-                           onkeydown="if(event.key === 'Enter') checkToken()" 
-                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl font-black tracking-widest text-slate-700 focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
-                    <p id="login-error" class="text-xs font-bold text-rose-500 mt-2.5 text-center hidden">⚠️ Token inválido. Tente novamente!</p>
-                </div>
-
-                <button onclick="checkToken()" 
-                        class="w-full mt-5 p-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-md shadow-blue-500/10 transition-all flex items-center justify-center gap-2">
-                    <span>Acessar Plataforma</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </button>
+        <!-- Rodapé do Painel Esquerdo: Badges de Segurança -->
+        <div class="grid grid-cols-3 gap-2 border-t border-white/10 pt-6 text-center text-[11px] font-bold tracking-wide text-blue-100/70">
+            <div class="flex flex-col items-center gap-2">
+                <i data-lucide="shield-check" class="w-5 h-5 text-blue-300"></i> Ambiente seguro
+            </div>
+            <div class="flex flex-col items-center gap-2 border-x border-white/10">
+                <i data-lucide="lock" class="w-5 h-5 text-blue-300"></i> Dados protegidos
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5 text-blue-300"></i> Acesso rápido
             </div>
         </div>
     </div>
+
+    <!-- LADO DIREITO: Card do Formulário (Mobile e Desktop) -->
+    <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
+        
+        <!-- Card Branco Estilo image_6.png -->
+        <div class="bg-white w-full max-w-md p-8 md:p-12 rounded-[2.5rem] shadow-2xl md:shadow-xl flex flex-col items-center text-center border border-slate-100/80">
+            
+            <!-- Ícone Azul Redondo -->
+            <div class="w-16 h-16 bg-[#004df0] text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+            </div>
+            
+            <!-- Títulos -->
+            <h2 class="text-2xl font-black text-slate-800 tracking-tight">
+                Insira seu Token
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-[260px] font-medium leading-relaxed">
+                Digite sua chave de validação para acessar o sistema.
+            </p>
+
+            <!-- Inputs e Botão -->
+            <div class="w-full mt-8 text-left">
+                <input id="token-input" type="password" placeholder="••••••••" 
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
+                
+                <!-- Alerta de Erro -->
+                <p id="login-error" class="hidden text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
+                    ⚠️ Token incorreto. Tente novamente.
+                </p>
+
+                <!-- Botão de Login -->
+                <button onclick="checkToken()" 
+                    class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
+                    Acessar Plataforma 
+                    <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
+                </button>
+            </div>
+
+            <!-- Rodapé / Suporte -->
+            <div class="w-full flex items-center my-8 text-xs text-slate-300 font-bold before:content-[''] before:flex-1 before:border-t before:border-slate-100 after:content-[''] after:flex-1 after:border-t after:border-slate-100">
+                <span class="px-4 text-[#004df0] hover:underline cursor-pointer transition-colors">Precisa de ajuda?</span>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-400 hover:text-slate-600 cursor-pointer transition-colors bg-slate-50 px-4 py-2.5 rounded-full border border-slate-100">
+                <i data-lucide="headset" class="w-4 h-4 text-[#004df0]"></i> 
+                Entre em contato com o suporte
+            </div>
+
+        </div>
+    </div>
+</div>
 
     <header class="md:hidden w-full bg-white p-6 flex justify-between items-center border-b border-slate-100 shadow-sm">
     <div class="flex items-center gap-4">
