@@ -544,12 +544,12 @@
         <i data-lucide="settings" class="w-6 h-6"></i>
     </button>
     
-    <!-- Botão de Sair com a função correta configurada -->
-    <button onclick="logout()" id="nav-mobile-logout" class="nav-btn flex items-center justify-center flex-1 h-full text-slate-500 hover:text-red-500 transition-colors">
-        <i data-lucide="log-out" class="w-6 h-6"></i>
-    </button>
-
-</nav>
+    <!-- Botão Sair estilo Círculo Vermelho (image_12.png) -->
+    <div class="flex-1 flex justify-center items-center h-full">
+        <button onclick="logout()" id="nav-mobile-logout" class="w-11 h-11 bg-red-500 hover:bg-red-600 active:scale-95 text-white rounded-full flex items-center justify-center shadow-md transition-all">
+            <i data-lucide="log-out" class="w-5 h-5"></i>
+        </button>
+    </div>
 
 </nav>
     <script>
@@ -912,11 +912,14 @@
         function verificarAutenticacao() {
             const tokenSalvo = localStorage.getItem('dieta_pro_token');
             const loginScreen = document.getElementById('login-screen');
+            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
             
             if (tokenSalvo === TOKEN_CORRETO) {
                 loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
+                if (mobileNav) mobileNav.classList.remove('hidden'); // Mostra o menu mobile
             } else {
                 loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
+                if (mobileNav) mobileNav.classList.add('hidden'); // ESCONDE o menu mobile ao deslogar
             }
             
             // Força o Lucide a renderizar os novos ícones (cadeado, portinha de sair)
@@ -930,11 +933,13 @@
             const inputVal = document.getElementById('token-input').value.trim();
             const errorMsg = document.getElementById('login-error');
             const loginScreen = document.getElementById('login-screen');
+            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
             
             if (inputVal === TOKEN_CORRETO) {
                 localStorage.setItem('dieta_pro_token', inputVal); // Guarda no navegador para "lembrar de mim"
                 errorMsg.classList.add('hidden');
                 loginScreen.classList.add('hidden'); // Libera o app de fundo
+                if (mobileNav) mobileNav.classList.remove('hidden'); // MOSTRA o menu mobile assim que logar
             } else {
                 errorMsg.classList.remove('hidden'); // Erro na tela
                 document.getElementById('token-input').value = '';
