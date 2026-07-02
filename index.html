@@ -105,11 +105,11 @@
     <!-- LADO DIREITO: Container Mobile e Desktop Form -->
     <div class="w-full md:w-1/2 flex flex-col items-center justify-between min-h-screen p-6 relative z-10">
         
-        <!-- 🌟 TOPO MOBILE: Identidade Visual completa extraída da image_9.png -->
+        <!-- 🌟 TOPO MOBILE: Identidade Visual completa extraída da image_8.png -->
         <div class="flex flex-col items-center text-center pt-6 pb-2 md:hidden">
-            <!-- Quadrado Branco Inclinado com o Cadeado -->
-            <div class="w-16 h-16 bg-white text-[#004df0] rounded-[1.25rem] flex items-center justify-center mb-4 shadow-xl transform rotate-12 border border-white/10">
-                <i data-lucide="lock" class="w-7 h-7 stroke-[2.2]"></i>
+            <!-- Quadrado Branco Inclinado com o Cadeado em SVG Nativo -->
+            <div class="w-16 h-16 bg-white rounded-[1.25rem] flex items-center justify-center mb-4 shadow-xl transform rotate-12 border border-white/10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#004df0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             
             <!-- Título Dieta Pro -->
@@ -131,10 +131,10 @@
             </p>
         </div>
 
-        <!-- CARD BRANCO: Otimizado para não duplicar ícones no celular -->
+        <!-- CARD BRANCO: Centralizado e sem o ícone repetido no mobile -->
         <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80 my-auto">
             
-            <!-- Ícone interno do Card (Fica visível APENAS no desktop, sumindo no mobile para respeitar a image_9.png) -->
+            <!-- Ícone interno do Card (Fica visível APENAS no desktop, sumindo no mobile) -->
             <div class="hidden md:flex w-16 h-16 bg-[#004df0] text-white rounded-full items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
                 <i data-lucide="lock" class="w-6 h-6"></i>
             </div>
@@ -166,14 +166,14 @@
 
         </div>
 
-        <!-- RODAPÉ: Selo de Segurança de rodapé -->
+        <!-- RODAPÉ: Selo de Segurança de rodapé em SVG Nativo -->
         <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-200/80 md:text-slate-400 pt-4 pb-2 select-none">
-            <i data-lucide="shield-check" class="w-4 h-4 stroke-[2.5]"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span>Conexão 100% segura</span>
         </div>
-
     </div>
 </div>
+
 
     <div class="flex items-center gap-2">
 
