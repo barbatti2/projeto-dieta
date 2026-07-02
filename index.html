@@ -64,7 +64,7 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
-    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto">
+    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto" style="display: flex !important;">
     
     <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
     <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
@@ -102,41 +102,46 @@
         </div>
     </div>
 
-    <!-- LADO DIREITO: Container Mobile e Desktop Form -->
+    <!-- LADO DIREITO / CONTAINER MOBILE -->
     <div class="w-full md:w-1/2 flex flex-col items-center justify-between min-h-screen p-6 relative z-10">
         
-        <!-- 🌟 TOPO MOBILE: Identidade Visual completa extraída da image_8.png -->
-        <div class="flex flex-col items-center text-center pt-6 pb-2 md:hidden">
-            <!-- Quadrado Branco Inclinado com o Cadeado em SVG Nativo -->
-            <div class="w-16 h-16 bg-white rounded-[1.25rem] flex items-center justify-center mb-4 shadow-xl transform rotate-12 border border-white/10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#004df0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <!-- 🌟 TOPO MOBILE: Forçado via CSS para aparecer apenas em telas pequenas (image_8.png) -->
+        <div class="flex flex-col items-center text-center pt-4 pb-2 md:hidden" style="display: flex;">
+            
+            <!-- Quadrado Branco Inclinado com o Cadeado -->
+            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-xl" style="transform: rotate(12deg); min-width: 56px; min-height: 56px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#004df0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             
             <!-- Título Dieta Pro -->
-            <h1 class="text-3xl font-black tracking-wide text-white drop-shadow-sm">
+            <h1 class="text-3xl font-black tracking-wide text-white">
                 DIETA <span class="text-blue-300 font-normal">PRO</span>
             </h1>
             
-            <!-- Painel de Acesso -->
-            <p class="text-[10px] uppercase tracking-[0.35em] text-blue-200/90 font-bold mt-1.5">
+            <!-- Subtítulo -->
+            <p class="text-[10px] uppercase tracking-[0.35em] text-blue-200/90 font-bold mt-1">
                 Painel de Acesso
             </p>
             
-            <!-- Linha Divisória Fina -->
-            <div class="w-8 h-[1px] bg-blue-400/30 my-4 rounded-full"></div>
+            <!-- Divisória -->
+            <div class="w-8 h-[1px] bg-white/20 my-3"></div>
             
-            <!-- Descrição de plataforma completa -->
-            <p class="text-xs text-blue-100/80 max-w-[280px] leading-relaxed font-medium">
+            <!-- Descrição Curta -->
+            <p class="text-xs text-blue-100/80 max-w-[260px] font-medium leading-relaxed">
                 Sua plataforma completa para nutrição, progresso e resultados.
             </p>
         </div>
 
-        <!-- CARD BRANCO: Centralizado e sem o ícone repetido no mobile -->
+        <!-- CARD BRANCO -->
         <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80 my-auto">
             
-            <!-- Ícone interno do Card (Fica visível APENAS no desktop, sumindo no mobile) -->
-            <div class="hidden md:flex w-16 h-16 bg-[#004df0] text-white rounded-full items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
-                <i data-lucide="lock" class="w-6 h-6"></i>
+            <!-- Ícone interno do Card (Fica ocultado no Mobile usando estilo nativo inline) -->
+            <div class="hidden md:flex w-16 h-16 bg-[#004df0] text-white rounded-full items-center justify-center mb-6 shadow-lg shadow-blue-600/20" style="display: none !important; margin-left: auto; margin-right: auto;">
+                <!-- Forçado oculto no mobile, o Tailwind 'md:flex' vai reativar no desktop -->
+                <style> @media (min-width: 768px) { #internal-lock { display: flex !important; } } </style>
+                <div id="internal-lock" class="w-full h-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
             </div>
             
             <h2 class="text-xl font-black text-slate-800 tracking-tight">
@@ -151,28 +156,28 @@
                 <input id="token-input" type="password" placeholder="••••••••" 
                     class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
                 
-                <!-- Alerta de Erro -->
                 <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
                     ⚠️ Token incorreto. Tente novamente.
                 </p>
 
-                <!-- Botão de Acesso -->
                 <button onclick="checkToken()" 
                     class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
                     Acessar Plataforma 
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>
             </div>
 
         </div>
 
-        <!-- RODAPÉ: Selo de Segurança de rodapé em SVG Nativo -->
+        <!-- RODAPÉ DE SEGURANÇA -->
         <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-200/80 md:text-slate-400 pt-4 pb-2 select-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span>Conexão 100% segura</span>
         </div>
+
     </div>
 </div>
+
 
 
     <div class="flex items-center gap-2">
