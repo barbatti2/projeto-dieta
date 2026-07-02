@@ -64,69 +64,41 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
-    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto">
+    <div id="login-screen" class="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-gradient-to-b from-[#0046d5] via-[#002e99] to-[#001440] overflow-y-auto p-4 sm:p-6">
     
-    <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
-    <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
-        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+    <!-- Container Centralizador (Mantém o visual perfeito de aplicativo em qualquer tela) -->
+    <div class="w-full max-w-sm flex flex-col items-center justify-between min-h-[85vh] sm:min-h-0 sm:gap-8">
         
-        <div class="flex-1 flex flex-col justify-center items-center text-center">
-            <div class="w-16 h-16 bg-white text-[#004df0] rounded-2xl flex items-center justify-center mb-6 shadow-xl transform rotate-12">
-                <i data-lucide="lock" class="w-8 h-8"></i>
+        <!-- 1. TOPO: Marca e Logotipo (Fora do card, idêntico à imagem) -->
+        <div class="flex flex-col items-center text-center pt-4">
+            <!-- Ícone do Cadeado dentro do Hexágono Branco -->
+            <div class="w-14 h-14 bg-white text-[#0046d5] flex items-center justify-center mb-4 shadow-lg shadow-black/10" style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
+                <i data-lucide="lock" class="w-5 h-5 stroke-[2.5]"></i>
             </div>
             
-            <h1 class="text-5xl font-black tracking-wide drop-shadow-md">
+            <h1 class="text-3xl font-black tracking-wide text-white drop-shadow-sm">
                 DIETA <span class="text-blue-300 font-medium">PRO</span>
             </h1>
-            <p class="text-xs uppercase tracking-[0.4em] text-blue-200/80 font-bold mt-2">
+            <p class="text-[10px] uppercase tracking-[0.4em] text-blue-200/70 font-bold mt-1">
                 Painel de Acesso
             </p>
-            
-            <div class="w-12 h-[2px] bg-blue-400/30 my-6 rounded-full"></div>
-            
-            <p class="text-sm text-blue-100/90 max-w-sm leading-relaxed font-medium">
-                Sua plataforma completa para nutrição, progresso e resultados.
-            </p>
         </div>
 
-        <div class="grid grid-cols-3 gap-2 border-t border-white/10 pt-6 text-center text-[11px] font-bold tracking-wide text-blue-100/70">
-            <div class="flex flex-col items-center gap-2">
-                <i data-lucide="shield-check" class="w-5 h-5 text-blue-300"></i> Ambiente seguro
-            </div>
-            <div class="flex flex-col items-center gap-2 border-x border-white/10">
-                <i data-lucide="lock" class="w-5 h-5 text-blue-300"></i> Dados protegidos
-            </div>
-            <div class="flex flex-col items-center gap-2">
-                <i data-lucide="zap" class="w-5 h-5 text-blue-300"></i> Acesso rápido
-            </div>
-        </div>
-    </div>
-
-    <!-- LADO DIREITO: Card do Formulário (Mobile e Desktop) -->
-    <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
-        
-        <div class="bg-white w-full max-w-md p-8 md:p-12 rounded-[2.5rem] shadow-2xl md:shadow-xl flex flex-col items-center text-center border border-slate-100/80">
+        <!-- 2. MIOLO: O Card Branco de Login -->
+        <div class="bg-white w-full p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-white/10 my-6 sm:my-0">
             
-            <!-- Ícone Azul Redondo -->
-            <div class="w-16 h-16 bg-[#004df0] text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
-                <i data-lucide="lock" class="w-6 h-6"></i>
-            </div>
-            
-            <!-- Títulos -->
-            <h2 class="text-2xl font-black text-slate-800 tracking-tight">
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">
                 Insira seu Token
             </h2>
-            <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-[280px] font-medium leading-relaxed">
+            <p class="text-xs text-slate-400 mt-2 max-w-[240px] font-medium leading-relaxed">
                 Digite a sua chave de validação para liberar o painel.
             </p>
 
-            <!-- Inputs e Botões -->
-            <div class="w-full mt-8 flex flex-col items-center">
-                
-                <!-- Campo de digitar a senha -->
+            <!-- Campo de Senha e Botão -->
+            <div class="w-full mt-6 flex flex-col items-center">
                 <input id="token-input" type="password" placeholder="••••••••" 
-                    class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
-
+                    class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#0046d5] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
+                
                 <!-- Alerta de Erro -->
                 <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
                     ⚠️ Token incorreto. Tente novamente.
@@ -134,24 +106,20 @@
 
                 <!-- Botão de Login -->
                 <button onclick="checkToken()" 
-                    class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
+                    class="w-full mt-4 bg-[#0046d5] hover:bg-[#0036b3] active:scale-[0.98] text-white font-bold py-3.5 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
                     Acessar Plataforma 
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
-
-                <!-- 🎯 TEXTO QUE VOCÊ QUERIA: Embaixo do campo de senha -->
-                <p class="text-[11px] font-semibold text-slate-400 mt-2.5 text-center tracking-wide">
-                    Ambiente seguro
-                </p>
-
-                <!-- Ambiente Seguro no final do botão -->
-                <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-slate-400 mt-5 select-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400"><path d="M20 13c0 5-3.5 7.5-7.66 9.7a1 1 0 0 1-.68 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .76-.97l8-2a1 1 0 0 1 .48 0l8 2A1 1 0 0 1 20 6z"/><path d="m9 12 2 2 4-4"/></svg>
-                    <span>Ambiente seguro</span>
-                </div>
             </div>
 
         </div>
+
+        <!-- 3. RODAPÉ: Selo de Segurança Inferior (No fundo azul, igual à imagem) -->
+        <div class="flex items-center justify-center gap-1.5 text-xs font-medium text-blue-200/80 pb-4 select-none">
+            <i data-lucide="lock" class="w-3.5 h-3.5 text-blue-300/90"></i>
+            <span>Conexão 100% segura</span>
+        </div>
+
     </div>
 </div>
 
