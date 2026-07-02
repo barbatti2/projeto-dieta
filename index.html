@@ -68,13 +68,10 @@
     
     <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
     <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
-        <!-- Detalhes de ondas decorativas no fundo -->
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
         
-        <!-- Elemento Central: Logo e Slogan -->
         <div class="flex-1 flex flex-col justify-center items-center text-center">
-            <!-- Ícone do Cadeado no Topo -->
-            <div class="w-16 h-16 bg-white text-[#004df0] rounded-2xl flex items-center justify-center mb-6 shadow-xl transform rotate-12 hover:rotate-0 transition-transform duration-300">
+            <div class="w-16 h-16 bg-white text-[#004df0] rounded-2xl flex items-center justify-center mb-6 shadow-xl transform rotate-12">
                 <i data-lucide="lock" class="w-8 h-8"></i>
             </div>
             
@@ -92,7 +89,6 @@
             </p>
         </div>
 
-        <!-- Rodapé do Painel Esquerdo: Badges de Segurança -->
         <div class="grid grid-cols-3 gap-2 border-t border-white/10 pt-6 text-center text-[11px] font-bold tracking-wide text-blue-100/70">
             <div class="flex flex-col items-center gap-2">
                 <i data-lucide="shield-check" class="w-5 h-5 text-blue-300"></i> Ambiente seguro
@@ -109,7 +105,7 @@
     <!-- LADO DIREITO: Card do Formulário (Mobile e Desktop) -->
     <div class="w-full md:w-1/2 flex items-center justify-center p-4 sm:p-8 relative z-10">
         
-        <!-- Card Branco Estilo image_4.png (Sem os links de suporte no final) -->
+        <!-- Card Branco Baseado na image_5.png -->
         <div class="bg-white w-full max-w-md p-8 md:p-12 rounded-[2.5rem] shadow-2xl md:shadow-xl flex flex-col items-center text-center border border-slate-100/80">
             
             <!-- Ícone Azul Redondo -->
@@ -117,12 +113,12 @@
                 <i data-lucide="lock" class="w-6 h-6"></i>
             </div>
             
-            <!-- Títulos -->
+            <!-- Títulos com a nova escrita da imagem -->
             <h2 class="text-2xl font-black text-slate-800 tracking-tight">
                 Insira seu Token
             </h2>
-            <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-[260px] font-medium leading-relaxed">
-                Digite sua chave de validação para acessar o sistema.
+            <p class="text-xs sm:text-sm text-slate-400 mt-2 max-w-[280px] font-medium leading-relaxed">
+                Digite a sua chave de validação para liberar o painel.
             </p>
 
             <!-- Inputs e Botão -->
@@ -141,6 +137,12 @@
                     Acessar Plataforma 
                     <i data-lucide="arrow-right" class="w-4 h-4"></i>
                 </button>
+            </div>
+
+            <!-- Selo de Segurança Inferior (idêntico à image_5.png) -->
+            <div class="flex items-center justify-center gap-2 text-xs font-bold text-slate-400 mt-8">
+                <i data-lucide="shield" class="w-4 h-4 text-slate-400"></i>
+                <span>Ambiente seguro</span>
             </div>
 
         </div>
