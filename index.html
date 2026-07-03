@@ -1057,10 +1057,8 @@
         
         
         // ==========================================
-        // 🔄 VERIFICAÇÃO AUTOMÁTICA (AUTO-LOGIN)
+        // 🔄 VERIFICAÇÃO AUTOMÁTICA (AUTO-LOGIN) E INICIALIZAÇÃO
         // ==========================================
-        // Certifique-se de adicionar ou substituir o script de carregamento de página por este, 
-        // para que o sistema reconheça o Hash salvo e faça o login direto sem deslogar o usuário.
         document.addEventListener("DOMContentLoaded", () => {
             const tokenSalvo = localStorage.getItem('dieta_pro_token');
             
@@ -1070,17 +1068,25 @@
                 
                 if (loginScreen) loginScreen.classList.add('hidden');
                 if (mobileNav) mobileNav.classList.remove('hidden');
+                
+                // ✨ CORREÇÃO DO BUG: Força o site a renderizar o topo, o botão trocar e o gráfico da rodinha
+                setTimeout(() => {
+                    if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                    if (typeof loadConfigFields === 'function') loadConfigFields();
+                }, 50);
+        
+            } else {
+                // Se não estiver logado, garante que a tela de login apareça bloqueando tudo
+                const loginScreen = document.getElementById('login-screen');
+                if (loginScreen) loginScreen.classList.remove('hidden');
             }
         });
-        
+                
         // 3. Sistema do Botão Sair (Logout)
         function logout() {
             localStorage.removeItem('dieta_pro_token'); // Limpa a memória do token
             window.location.reload(); // Dá refresh na página e ela já acorda bloqueada
         }
-        
-        // Ativa o guardião assim que o site terminar de carregar a estrutura básica
-        window.addEventListener('DOMContentLoaded', verificarAutenticacao);
 
         
         function refreshHomeWheel() {
