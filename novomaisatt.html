@@ -153,19 +153,50 @@
     </div>
 </div>
 
-
-
     <div class="flex items-center gap-2">
 
-        <button onclick="toggleProfile()" 
-                class="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all active:scale-90 shadow-lg shadow-blue-600/20 border border-blue-500">
-            <span class="text-sm">Trocar</span>
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-        </button>
+        <!-- ... [Aqui termina a sua div id="login-screen"] ... -->
+</div>
+
+<!-- ⚡ ESCUDO DE PROTEÇÃO CSS (Força o layout correto independente de bugs no Tailwind) -->
+<style>
+    @media (min-width: 768px) {
+        .mobile-header-shield { display: none !important; }
+        .desktop-aside-shield { display: flex !important; }
+    }
+    @media (max-width: 767px) {
+        .mobile-header-shield { display: flex !important; }
+        .desktop-aside-shield { display: none !important; }
+    }
+</style>
+
+<!-- 📱 HEADER MOBILE ORIGINAL (Idêntico à image_07d22b.png) -->
+<header class="mobile-header-shield md:hidden w-full bg-white p-6 flex justify-between items-center border-b border-slate-100 shadow-sm">
+    <div class="flex items-center gap-4">
+        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+            <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
+        </div>
+        
+        <div class="flex flex-col">
+            <h1 class="text-lg font-black tracking-widest text-slate-800 uppercase leading-tight">Dieta Pro</h1>
+            <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 bolinha-piscando mr-1"></span>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    Ativo: <span id="selected-profile-mobile" class="text-blue-600">Gabriel</span>
+                </p>
+            </div>
+        </div>
     </div>
+
+    <button onclick="toggleProfile()" 
+            class="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all active:scale-90 shadow-lg shadow-blue-600/20 border border-blue-500">
+        <span class="text-sm">Trocar</span>
+        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+    </button>
 </header>
 
-<aside class="hidden md:flex w-64 bg-white border-r border-blue-100 flex-col p-5 flex-shrink-0 z-10 shadow-sm h-screen sticky top-0">
+<!-- 🖥️ ASIDE DESKTOP ORIGINAL -->
+<aside class="desktop-aside-shield hidden md:flex w-64 bg-white border-r border-blue-100 flex-col p-5 flex-shrink-0 z-10 shadow-sm h-screen sticky top-0">
     
     <div class="flex flex-col items-center text-center py-5 border-b border-blue-50 mb-4 gap-2">
         <div class="p-3 bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-600/20">
@@ -187,11 +218,13 @@
             </button>
 
             <div id="dropdown-menu" class="hidden absolute top-full mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-xl z-50 overflow-hidden">
-                <div onclick="selectProfile('Gabriel')" class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-100">
-                    Gabriel
+                <div onclick="selectProfile('Gabriel')" 
+                     class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors border-b border-slate-100">
+                     Gabriel
                 </div>
-                <div onclick="selectProfile('Raissa')" class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors">
-                    Raíssa
+                <div onclick="selectProfile('Raissa')" 
+                     class="px-4 py-3 text-sm font-bold text-slate-800 hover:bg-slate-50 cursor-pointer transition-colors">
+                     Raíssa
                 </div>
             </div>
         </div>
@@ -855,14 +888,25 @@
         
         // 4. Função chamada quando você clica em um nome DENTRO do menu
         function selectProfile(name) {
-            document.getElementById('dropdown-menu').classList.add('hidden');
-            
-            // 🎯 LINHA ADICIONADA: Força o botão do menu lateral a exibir o nome selecionado
-            const labelPerfil = document.getElementById('selected-profile-desktop');
-            if (labelPerfil) {
-                labelPerfil.innerText = name;
+            // Fecha o dropdown caso ele esteja aberto
+            const dropdown = document.getElementById('dropdown-menu');
+            if (dropdown) {
+                dropdown.classList.add('hidden');
             }
             
+            // 🎯 ATUALIZA NO COMPUTADOR: Exibe o nome selecionado no menu lateral
+            const labelPerfilDesktop = document.getElementById('selected-profile-desktop');
+            if (labelPerfilDesktop) {
+                labelPerfilDesktop.innerText = name;
+            }
+        
+            // 🎯 ATUALIZA NO CELULAR: Exibe o nome selecionado na barra do topo mobile
+            const labelPerfilMobile = document.getElementById('selected-profile-mobile');
+            if (labelPerfilMobile) {
+                labelPerfilMobile.innerText = name;
+            }
+            
+            // Roda a sua função padrão que altera os dados do usuário na tela
             changeProfile(name);
         }
         
