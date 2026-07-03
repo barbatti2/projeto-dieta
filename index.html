@@ -1016,15 +1016,36 @@
             }
         }
         
+        // ==========================================
+        // 🔑 SEGURANÇA: CONFIGURAÇÃO DO TOKEN CRIPTOGRAFADO
+        // ==========================================
+        // Acesse um gerador de SHA-256 online, coloque o seu token lá e cole o resultado de 64 caracteres aqui:
+        const HASH_TOKEN_CORRETO = "f4610aa514477222afac2b77f971d069780ca2846f375849f3dfa3c0047ebbd1";
+        
+        // Função interna que gera a "digital" (Hash SHA-256) do que for digitado
+        async function gerarHash(string) {
+            const msgUint8 = new TextEncoder().encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        
+        // ==========================================
         // 2. Validador do Botão de Entrar
-        function checkToken() {
+        // ==========================================
+        async function checkToken() {
             const inputVal = document.getElementById('token-input').value.trim();
             const errorMsg = document.getElementById('login-error');
             const loginScreen = document.getElementById('login-screen');
             const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
             
-            if (inputVal === TOKEN_CORRETO) {
-                localStorage.setItem('dieta_pro_token', inputVal); // Guarda no navegador para "lembrar de mim"
+            // Transforma o token digitado na tela em um Hash criptografado
+            const hashDigitado = await gerarHash(inputVal);
+            
+            // Compara as duas digitais criptografadas
+            if (hashDigitado === HASH_TOKEN_CORRETO) {
+                localStorage.setItem('dieta_pro_token', hashDigitado); // Guarda o HASH de forma segura para o "lembrar de mim"
                 errorMsg.classList.add('hidden');
                 loginScreen.classList.add('hidden'); // Libera o app de fundo
                 if (mobileNav) mobileNav.classList.remove('hidden'); // MOSTRA o menu mobile assim que logar
@@ -1033,6 +1054,24 @@
                 document.getElementById('token-input').value = '';
             }
         }
+        
+        
+        // ==========================================
+        // 🔄 VERIFICAÇÃO AUTOMÁTICA (AUTO-LOGIN)
+        // ==========================================
+        // Certifique-se de adicionar ou substituir o script de carregamento de página por este, 
+        // para que o sistema reconheça o Hash salvo e faça o login direto sem deslogar o usuário.
+        document.addEventListener("DOMContentLoaded", () => {
+            const tokenSalvo = localStorage.getItem('dieta_pro_token');
+            
+            if (tokenSalvo === HASH_TOKEN_CORRETO) {
+                const loginScreen = document.getElementById('login-screen');
+                const mobileNav = document.getElementById('mobile-navigation-bar');
+                
+                if (loginScreen) loginScreen.classList.add('hidden');
+                if (mobileNav) mobileNav.classList.remove('hidden');
+            }
+        });
         
         // 3. Sistema do Botão Sair (Logout)
         function logout() {
