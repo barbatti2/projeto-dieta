@@ -997,14 +997,15 @@
             const loginScreen = document.getElementById('login-screen');
             const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
             
-            // 🔍 CORREÇÃO: Adicionada a chave "{" que faltava no final da linha abaixo
+            // 🔍 CORREÇÃO: Chave "{" aberta corretamente aqui
             if (tokenSalvo === HASH_TOKEN_CORRETO) { 
                 if (loginScreen) loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
-                if (mobileNav) mobileNav.classList.remove('hidden'); // Mostra o menu mobile
                 
-                // ✨ Além de desbloquear, força os dados e gráficos (rodinha) a carregarem na tela
-                if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                if (typeof loadConfigFields === 'function') loadConfigFields();
+                // 🖥️ CORREÇÃO DO RODAPÉ: Só mostra o menu inferior no celular (telas menores que 1024px)
+                // Isso impede que o botão "Trocar 🔄" quebre o seu layout no computador!
+                if (mobileNav && window.innerWidth < 1024) {
+                    mobileNav.classList.remove('hidden');
+                }
             } else { 
                 if (loginScreen) loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
                 if (mobileNav) mobileNav.classList.add('hidden'); // ESCONDE o menu mobile ao deslogar
