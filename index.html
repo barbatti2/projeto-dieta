@@ -906,18 +906,11 @@
         // 4. Função chamada quando você clica em um nome DENTRO do menu
         function selectProfile(name) {
             document.getElementById('dropdown-menu').classList.add('hidden');
-            
-            // 🎯 LINHA ADICIONADA: Força o botão do menu lateral a exibir o nome selecionado
-            const labelPerfil = document.getElementById('selected-profile-desktop');
-            if (labelPerfil) {
-                labelPerfil.innerText = name;
-            }
-            
             changeProfile(name);
         }
-        
+
         // Adicione isto no final do seu arquivo JavaScript
-        document.addEventListener('click', function(event) {
+            document.addEventListener('click', function(event) {
             const dropdownMenu = document.getElementById('dropdown-menu');
             const toggleButton = document.querySelector('[onclick="toggleDropdown()"]');
         
