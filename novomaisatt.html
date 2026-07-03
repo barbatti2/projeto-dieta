@@ -64,55 +64,121 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
-    <div id="login-screen" class="fixed inset-0 bg-slate-50 flex flex-col items-center justify-center z-[9999] p-4 transition-all duration-300">
-        <div class="w-full max-w-sm">
+    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto" style="display: flex !important;">
+    
+    <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
+    <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
+        <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
+        
+        <div class="flex-1 flex flex-col justify-center items-center text-center">
+            <div class="w-16 h-16 bg-white text-[#004df0] rounded-2xl flex items-center justify-center mb-6 shadow-xl transform rotate-12">
+                <i data-lucide="lock" class="w-8 h-8"></i>
+            </div>
             
-            <div class="flex items-center justify-center gap-3 mb-6">
-                <div class="w-12 h-12 bg-blue-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                    <i data-lucide="lock" class="w-5 h-5"></i>
-                </div>
-                <div class="text-left">
-                    <h1 class="text-xl font-black text-slate-800 tracking-tight leading-none">DIETA PRO</h1>
-                    <span class="text-[10px] font-bold text-blue-600 uppercase tracking-widest block mt-1">Painel de Acesso</span>
+            <h1 class="text-5xl font-black tracking-wide drop-shadow-md">
+                DIETA <span class="text-blue-300 font-medium">PRO</span>
+            </h1>
+            <p class="text-xs uppercase tracking-[0.4em] text-blue-200/80 font-bold mt-2">
+                Painel de Acesso
+            </p>
+            
+            <div class="w-12 h-[2px] bg-blue-400/30 my-6 rounded-full"></div>
+            
+            <p class="text-sm text-blue-100/90 max-w-sm leading-relaxed font-medium">
+                Sua plataforma completa para nutrição, progresso e resultados.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2 border-t border-white/10 pt-6 text-center text-[11px] font-bold tracking-wide text-blue-100/70">
+            <div class="flex flex-col items-center gap-2">
+                <i data-lucide="shield-check" class="w-5 h-5 text-blue-300"></i> Ambiente seguro
+            </div>
+            <div class="flex flex-col items-center gap-2 border-x border-white/10">
+                <i data-lucide="lock" class="w-5 h-5 text-blue-300"></i> Dados protegidos
+            </div>
+            <div class="flex flex-col items-center gap-2">
+                <i data-lucide="zap" class="w-5 h-5 text-blue-300"></i> Acesso rápido
+            </div>
+        </div>
+    </div>
+
+    <!-- LADO DIREITO / CONTAINER MOBILE -->
+    <div class="w-full md:w-1/2 flex flex-col items-center justify-between min-h-screen p-6 relative z-10">
+        
+        <!-- 🌟 TOPO MOBILE: Forçado via CSS para aparecer apenas em telas pequenas (image_8.png) -->
+        <div class="flex flex-col items-center text-center pt-4 pb-2 md:hidden" style="display: flex;">
+            
+            <!-- Quadrado Branco Inclinado com o Cadeado -->
+            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-xl" style="transform: rotate(12deg); min-width: 56px; min-height: 56px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#004df0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            
+            <!-- Título Dieta Pro -->
+            <h1 class="text-3xl font-black tracking-wide text-white">
+                DIETA <span class="text-blue-300 font-normal">PRO</span>
+            </h1>
+            
+            <!-- Subtítulo -->
+            <p class="text-[10px] uppercase tracking-[0.35em] text-blue-200/90 font-bold mt-1">
+                Painel de Acesso
+            </p>
+            
+            <!-- Divisória -->
+            <div class="w-8 h-[1px] bg-white/20 my-3"></div>
+            
+            <!-- Descrição Curta -->
+            <p class="text-xs text-blue-100/80 max-w-[260px] font-medium leading-relaxed">
+                Sua plataforma completa para nutrição, progresso e resultados.
+            </p>
+        </div>
+
+        <!-- CARD BRANCO -->
+        <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80 my-auto">
+            
+            <!-- Ícone interno do Card (Fica ocultado no Mobile usando estilo nativo inline) -->
+            <div class="hidden md:flex w-16 h-16 bg-[#004df0] text-white rounded-full items-center justify-center mb-6 shadow-lg shadow-blue-600/20" style="display: none !important; margin-left: auto; margin-right: auto;">
+                <!-- Forçado oculto no mobile, o Tailwind 'md:flex' vai reativar no desktop -->
+                <style> @media (min-width: 768px) { #internal-lock { display: flex !important; } } </style>
+                <div id="internal-lock" class="w-full h-full flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
             </div>
+            
+            <h2 class="text-xl font-black text-slate-800 tracking-tight">
+                Insira seu Token
+            </h2>
+            <p class="text-xs text-slate-400 mt-2 max-w-[240px] font-medium leading-relaxed">
+                Digite a sua chave de validação para acessar o sistema.
+            </p>
 
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 flex flex-col items-center">
-                <h2 class="text-base font-bold text-slate-700 tracking-tight">Insira seu Token</h2>
-                <p class="text-xs text-slate-400 text-center mt-1 mb-6">Digite a sua chave de validação para liberar o painel.</p>
-
-                <div class="w-full text-left">
-                    <input type="password" id="token-input" placeholder="•••••••••" 
-                           onkeydown="if(event.key === 'Enter') checkToken()" 
-                           class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl font-black tracking-widest text-slate-700 focus:outline-none focus:border-blue-500 focus:bg-white transition-all">
-                    <p id="login-error" class="text-xs font-bold text-rose-500 mt-2.5 text-center hidden">⚠️ Token inválido. Tente novamente!</p>
-                </div>
+            <!-- Input e Botão -->
+            <div class="w-full mt-6 flex flex-col items-center">
+                <input id="token-input" type="password" placeholder="••••••••" 
+                    class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
+                
+                <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
+                    ⚠️ Token incorreto. Tente novamente.
+                </p>
 
                 <button onclick="checkToken()" 
-                        class="w-full mt-5 p-4 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-bold text-sm rounded-2xl shadow-md shadow-blue-500/10 transition-all flex items-center justify-center gap-2">
-                    <span>Acessar Plataforma</span>
-                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
+                    Acessar Plataforma 
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>
             </div>
-        </div>
-    </div>
 
-    <header class="md:hidden w-full bg-white p-6 flex justify-between items-center border-b border-slate-100 shadow-sm">
-    <div class="flex items-center gap-4">
-        <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-            <i data-lucide="shield-check" class="w-7 h-7 text-white"></i>
         </div>
-        
-        <div class="flex flex-col">
-            <h1 class="text-lg font-black tracking-widest text-slate-800 uppercase leading-tight">Dieta Pro</h1>
-            <div class="flex items-center gap-1.0">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 bolinha-piscando mr-1"></span>
-                <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Ativo: <span id="selected-profile" class="text-blue-600">Gabriel</span>
-                </p>
-            </div>
+
+        <!-- RODAPÉ DE SEGURANÇA -->
+        <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-200/80 md:text-slate-400 pt-4 pb-2 select-none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Conexão 100% segura</span>
         </div>
+
     </div>
+</div>
+
+
 
     <div class="flex items-center gap-2">
 
