@@ -1026,47 +1026,29 @@
         }
         
         
-        // ==========================================
-        // 2. Validador do Botão de Entrar (Versão Blindada)
-        // ==========================================
+        // 2. Validador do Botão de Entrar (Atualizado e Protegido)
         async function checkToken() {
-            try {
-                const inputVal = document.getElementById('token-input').value.trim();
-                const errorMsg = document.getElementById('login-error');
-                const loginScreen = document.getElementById('login-screen');
-                const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
+            const inputVal = document.getElementById('token-input').value.trim();
+            const errorMsg = document.getElementById('login-error');
+            const loginScreen = document.getElementById('login-screen');
+            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
+            
+            // Gera a digital (hash) do que o usuário digitou na tela
+            const hashDigitado = await gerarHash(inputVal);
+            
+            // Compara as duas digitais criptografadas
+            if (hashDigitado === HASH_TOKEN_CORRETO) {
+                // Guarda o HASH no navegador (assim ninguém pega seu token inspecionando o PC)
+                localStorage.setItem('dieta_pro_token', hashDigitado); 
                 
-                // 🔒 PROTEÇÃO HTTPS: Se o navegador bloquear a criptografia por falta de SSL, ele avisa aqui
-                if (!window.crypto || !window.crypto.subtle) {
-                    alert("⚠️ Erro de Conexão: O seu domínio próprio ainda está propagando o certificado de segurança. Ative a opção 'Enforce HTTPS' nas configurações do GitHub Pages ou aguarde alguns minutos.");
-                    return;
-                }
-        
-                // Transforma o token digitado na tela em um Hash criptografado
-                const hashDigitado = await gerarHash(inputVal);
-                
-                // Compara as duas digitais criptografadas
-                if (hashDigitado === HASH_TOKEN_CORRETO) {
-                    localStorage.setItem('dieta_pro_token', hashDigitado); // Guarda o HASH com segurança
-                    
-                    errorMsg.classList.add('hidden');
-                    loginScreen.classList.add('hidden'); // Libera o app de fundo
-                    if (mobileNav) mobileNav.classList.remove('hidden'); // MOSTRA o menu mobile assim que logar
-                    
-                    // ✨ CORREÇÃO DA TELA BRANCA: Força o app a carregar os dados e o visual imediatamente
-                    if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                    if (typeof loadConfigFields === 'function') loadConfigFields();
-                    
-                } else {
-                    errorMsg.classList.remove('hidden'); // Erro na tela
-                    document.getElementById('token-input').value = '';
-                }
-            } catch (erro) {
-                // Se qualquer outra coisa quebrar, um alerta vai te dizer o motivo exato na tela
-                alert("Erro crítico no script: " + erro.message);
-                console.error(erro);
+                errorMsg.classList.add('hidden');
+                loginScreen.classList.add('hidden'); // Libera o app de fundo
+                if (mobileNav) mobileNav.classList.remove('hidden'); // MOSTRA o menu mobile assim que logar
+            } else {
+                errorMsg.classList.remove('hidden'); // Erro na tela
+                document.getElementById('token-input').value = '';
             }
-}
+        }
         
         
         // ==========================================
