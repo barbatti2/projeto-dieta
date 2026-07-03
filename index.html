@@ -987,6 +987,13 @@
                 btn.classList.remove('!bg-blue-600', '!text-white', 'shadow-md', 'text-blue-600');
                 btn.classList.add('text-slate-500'); 
                 btn.classList.remove('text-slate-600'); // Remove o cinza escuro para não dar conflito
+        
+                // 🆕 ADICIONADO AQUI: Desativa a bordinha azul (image_2.png) de todos os botões mobile
+                const indicator = btn.querySelector('.nav-indicator');
+                if (indicator) {
+                    indicator.classList.remove('opacity-100', 'scale-x-100');
+                    indicator.classList.add('opacity-0', 'scale-x-0');
+                }
             });
         
             // 3. Mostra a tela correspondente ao botão clicado
@@ -1017,6 +1024,13 @@
             if (activeMobileNav) {
                 activeMobileNav.classList.add('text-blue-600');
                 activeMobileNav.classList.remove('text-slate-400', 'text-slate-500', 'text-slate-600');
+        
+                // 🆕 ADICIONADO AQUI: Ativa a bordinha azul (image_2.png) expandindo ela no botão atual
+                const activeIndicator = activeMobileNav.querySelector('.nav-indicator');
+                if (activeIndicator) {
+                    activeIndicator.classList.remove('opacity-0', 'scale-x-0');
+                    activeIndicator.classList.add('opacity-100', 'scale-x-100');
+                }
             }
         
             // 7. Chamadas de funções extras (com proteção para não travar o app se não existirem)
@@ -1028,7 +1042,6 @@
             
             if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-
         // 🔥 RESTAURADA: Função mestre para salvar os dados no celular
         function saveToLocalStorage() {
             try {
