@@ -63,18 +63,6 @@
     </style>
     </head>
 
-<!-- ⚡ ESCUDO DE PROTEÇÃO CSS (Força o layout correto independente de bugs no Tailwind) -->
-<style>
-    @media (min-width: 768px) {
-        .mobile-header-shield { display: none !important; }
-        .desktop-aside-shield { display: flex !important; }
-    }
-    @media (max-width: 767px) {
-        .mobile-header-shield { display: flex !important; }
-        .desktop-aside-shield { display: none !important; }
-    }
-</style>
-
 <!-- 📱 HEADER MOBILE ORIGINAL (Idêntico à image_07d22b.png) -->
 <header class="mobile-header-shield md:hidden w-full bg-white p-6 flex justify-between items-center border-b border-slate-100 shadow-sm">
     <div class="flex items-center gap-4">
