@@ -997,7 +997,7 @@
             const loginScreen = document.getElementById('login-screen');
             const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
             
-            if (tokenSalvo === TOKEN_CORRETO) {
+            if (tokenSalvo === HASH_TOKEN_CORRETO)
                 loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
                 if (mobileNav) mobileNav.classList.remove('hidden'); // Mostra o menu mobile
             } else {
