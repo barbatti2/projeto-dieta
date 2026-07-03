@@ -188,17 +188,27 @@
 </div>
 
 
-
+<!-- 📱 NAVBAR MOBILE: Fica fixa no topo do celular e SUMDE no computador (md:hidden) -->
+<header class="md:hidden w-full flex items-center justify-between px-5 py-3.5 bg-white border-b border-slate-100 sticky top-0 z-40 shadow-sm">
+    
+    <!-- Lado Esquerdo: Logo discreta para o celular não ficar vazio -->
+    <div class="flex items-center gap-1.5 select-none">
+        <span class="font-black text-sm tracking-wide text-slate-800">
+            DIETA <span class="text-blue-600 font-semibold">PRO</span>
+        </span>
+    </div>
+    
+    <!-- Lado Direito: O seu botão de trocar perfil ajustado e perfeito -->
     <div class="flex items-center gap-2">
-
         <button onclick="toggleProfile()" 
-                class="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all active:scale-90 shadow-lg shadow-blue-600/20 border border-blue-500">
-            <span class="text-sm">Trocar</span>
-            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full transition-all active:scale-95 shadow-md shadow-blue-600/10 border border-blue-500">
+            <span class="text-xs">Trocar</span>
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
         </button>
     </div>
 </header>
 
+<!-- 🖥️ SEU MENU LATERAL DESKTOP (Mantido intacto e protegido) -->
 <aside class="hidden md:flex w-64 bg-white border-r border-blue-100 flex-col p-5 flex-shrink-0 z-10 shadow-sm h-screen sticky top-0">
     
     <div class="flex flex-col items-center text-center py-5 border-b border-blue-50 mb-4 gap-2">
