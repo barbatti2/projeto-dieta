@@ -889,32 +889,65 @@
         
         // 2. Função para o seu botão "Trocar" (Mobile) - Troca direto sem menu
         function toggleProfile() {
-            const displaySpan = document.getElementById('selected-profile');
-            if (!displaySpan) return;
+            // Procuramos o elemento do mobile para saber quem está ativo agora
+            const displaySpanMobile = document.getElementById('selected-profile-mobile');
+            if (!displaySpanMobile) return;
         
-            const currentName = displaySpan.innerText.trim().toLowerCase();
-            const nextName = (currentName === 'gabriel') ? 'Raissa' : 'Gabriel';
+            // Pega o nome atual e transforma em minúsculo para evitar erros de digitação
+            const currentName = displaySpanMobile.innerText.trim().toLowerCase();
             
+            // Define o próximo perfil (Atenção: se no seu banco for 'Raíssa' com acento, mude aqui!)
+            const nextName = (currentName === 'gabriel') ? 'Raissa' : 'Gabriel';
+        
+            // 🎯 SINCRO DE TEXTO: Atualiza o nome visível no Celular
+            displaySpanMobile.innerText = nextName;
+            
+            // 🎯 SINCRO DE TEXTO: Atualiza o nome visível no Computador também
+            const displaySpanDesktop = document.getElementById('selected-profile-desktop');
+            if (displaySpanDesktop) {
+                displaySpanDesktop.innerText = nextName;
+            }
+        
+            // Executa a sua função nativa que atualiza os gráficos e dados
             changeProfile(nextName);
         }
         
         // 3. Função para o Desktop - Abre e fecha o dropdown
         function toggleDropdown() {
-            document.getElementById('dropdown-menu').classList.toggle('hidden');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.toggle('hidden');
+            }
         }
         
-        // 4. Função chamada quando você clica em um nome DENTRO do menu
+        // 4. Função chamada quando você clica em um nome DENTRO do menu (Desktop)
         function selectProfile(name) {
-            document.getElementById('dropdown-menu').classList.add('hidden');
+            const dropdownMenu = document.getElementById('dropdown-menu');
+            if (dropdownMenu) {
+                dropdownMenu.classList.add('hidden');
+            }
+            
+            // 🎯 SINCRO DE TEXTO: Garante que o celular mude o nome
+            const displaySpanMobile = document.getElementById('selected-profile-mobile');
+            if (displaySpanMobile) {
+                displaySpanMobile.innerText = name;
+            }
+        
+            // 🎯 SINCRO DE TEXTO: Garante que o computador mude o nome
+            const displaySpanDesktop = document.getElementById('selected-profile-desktop');
+            if (displaySpanDesktop) {
+                displaySpanDesktop.innerText = name;
+            }
+        
+            // Executa a sua função nativa que atualiza os gráficos e dados
             changeProfile(name);
         }
-
-        // Adicione isto no final do seu arquivo JavaScript
-            document.addEventListener('click', function(event) {
+        
+        // 5. Fechamento inteligente do dropdown ao clicar fora
+        document.addEventListener('click', function(event) {
             const dropdownMenu = document.getElementById('dropdown-menu');
             const toggleButton = document.querySelector('[onclick="toggleDropdown()"]');
         
-            // Se o menu estiver aberto e o clique foi fora dele e fora do botão, ele fecha
             if (dropdownMenu && !dropdownMenu.classList.contains('hidden')) {
                 if (!dropdownMenu.contains(event.target) && (!toggleButton || !toggleButton.contains(event.target))) {
                     dropdownMenu.classList.add('hidden');
