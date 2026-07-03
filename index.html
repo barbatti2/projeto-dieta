@@ -985,43 +985,12 @@
         }
 
         // 🔑 =======================================================
-        // 🛡️ SISTEMA DE SEGURANÇA: CONTROLE DE TOKEN E ACESSO
+        // 🛡️ SISTEMA DE SEGURANÇA: CONTROLE DE TOKEN E ACESSO (VERSÃO BLINDADA)
         // =======================================================
         
-        // Defina aqui a sua senha/chave secreta:
-        const TOKEN_CORRETO = "gabriel2026"; 
-        
-        // 1. Monitor de Segurança: Verifica o acesso assim que a página abre
-        function verificarAutenticacao() {
-            const tokenSalvo = localStorage.getItem('dieta_pro_token');
-            const loginScreen = document.getElementById('login-screen');
-            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
-            
-            // 🔍 CORREÇÃO: Chave "{" aberta corretamente aqui
-            if (tokenSalvo === HASH_TOKEN_CORRETO) { 
-                if (loginScreen) loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
-                
-                // 🖥️ CORREÇÃO DO RODAPÉ: Só mostra o menu inferior no celular (telas menores que 1024px)
-                // Isso impede que o botão "Trocar 🔄" quebre o seu layout no computador!
-                if (mobileNav && window.innerWidth < 1024) {
-                    mobileNav.classList.remove('hidden');
-                }
-            } else { 
-                if (loginScreen) loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
-                if (mobileNav) mobileNav.classList.add('hidden'); // ESCONDE o menu mobile ao deslogar
-            }
-            
-            // Força o Lucide a renderizar os novos ícones (cadeado, portinha de sair)
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        }
-        
-        // ==========================================
-        // 🔑 SEGURANÇA: CONFIGURAÇÃO DO TOKEN CRIPTOGRAFADO
-        // ==========================================
-        // Acesse um gerador de SHA-256 online, coloque o seu token lá e cole o resultado de 64 caracteres aqui:
+        // 1. CONFIGURAÇÕES E CONSTANTES (Sempre no topo para evitar a tela branca!)
         const HASH_TOKEN_CORRETO = "f4610aa514477222afac2b77f971d069780ca2846f375849f3dfa3c0047ebbd1";
+        const TOKEN_CORRETO = "gabriel2026"; // Mantido por compatibilidade, se necessário
         
         // Função interna que gera a "digital" (Hash SHA-256) do que for digitado
         async function gerarHash(string) {
@@ -1031,45 +1000,83 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
         
-        
-        // ==========================================
-        // 2. Validador do Botão de Entrar (Corrigido)
-        // ==========================================
-        async function checkToken() {
-            const inputVal = document.getElementById('token-input').value.trim();
-            const errorMsg = document.getElementById('login-error');
-            const loginScreen = document.getElementById('login-screen');
-            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
-            
-            const hashDigitado = await gerarHash(inputVal);
-            
-            if (hashDigitado === HASH_TOKEN_CORRETO) {
-                localStorage.setItem('dieta_pro_token', hashDigitado); // Guarda o HASH seguro
-                errorMsg.classList.add('hidden');
-                loginScreen.classList.add('hidden'); // Libera o app de fundo
+        // 2. Monitor de Segurança: Verifica o acesso assim que a página abre
+        function verificarAutenticacao() {
+            try {
+                const tokenSalvo = localStorage.getItem('dieta_pro_token');
+                const loginScreen = document.getElementById('login-screen');
+                const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
                 
-                // 🖥️ CORREÇÃO DO RODAPÉ: Só mostra o menu inferior se a tela for de celular (menor que 1024px)
-                // Isso impede que o botão "Trocar 🔄" e o rodapé quebrem o seu layout no computador!
-                if (mobileNav && window.innerWidth < 1024) {
-                    mobileNav.classList.remove('hidden');
+                if (tokenSalvo === HASH_TOKEN_CORRETO) { 
+                    if (loginScreen) loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
+                    
+                    // 🖥️ CORREÇÃO DO RODAPÉ: Controla as duas situações para não bugar o computador
+                    if (mobileNav) {
+                        if (window.innerWidth < 1024) {
+                            mobileNav.classList.remove('hidden'); // Se for celular, mostra
+                        } else {
+                            mobileNav.classList.add('hidden');    // Se for computador, força esconder!
+                        }
+                    }
+                } else { 
+                    if (loginScreen) loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
+                    if (mobileNav) mobileNav.classList.add('hidden');        // ESCONDE o menu mobile ao deslogar
                 }
                 
-                // Força a atualização do painel assim que logar
-                if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
-                if (typeof loadConfigFields === 'function') loadConfigFields();
-            } else {
-                errorMsg.classList.remove('hidden'); // Erro na tela
-                document.getElementById('token-input').value = '';
+                // Força o Lucide a renderizar os novos ícones (cadeado, portinha de sair)
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } catch (erro) {
+                // Anti-Tela-Branca: Se algo travar, o navegador te avisa o motivo real num pop-up
+                alert("Erro na inicialização do app: " + erro.message);
             }
         }
         
-        // 3. Sistema do Botão Sair (Logout)
+        // 3. Validador do Botão de Entrar
+        async function checkToken() {
+            try {
+                const inputVal = document.getElementById('token-input').value.trim();
+                const errorMsg = document.getElementById('login-error');
+                const loginScreen = document.getElementById('login-screen');
+                const mobileNav = document.getElementById('mobile-navigation-bar');
+                
+                const hashDigitado = await gerarHash(inputVal);
+                
+                if (hashDigitado === HASH_TOKEN_CORRETO) {
+                    localStorage.setItem('dieta_pro_token', hashDigitado); // Guarda o HASH seguro
+                    if (errorMsg) errorMsg.classList.add('hidden');
+                    if (loginScreen) loginScreen.classList.add('hidden'); // Libera o app de fundo
+                    
+                    // Aplica a mesma regra de segurança do rodapé ao clicar no botão entrar
+                    if (mobileNav) {
+                        if (window.innerWidth < 1024) {
+                            mobileNav.classList.remove('hidden');
+                        } else {
+                            mobileNav.classList.add('hidden');
+                        }
+                    }
+                    
+                    // Força a atualização do painel assim que logar
+                    if (typeof refreshHomeWheel === 'function') refreshHomeWheel();
+                    if (typeof loadConfigFields === 'function') loadConfigFields();
+                } else {
+                    if (errorMsg) errorMsg.classList.remove('hidden'); // Erro na tela
+                    const inputElement = document.getElementById('token-input');
+                    if (inputElement) inputElement.value = '';
+                }
+            } catch (erro) {
+                alert("Erro ao processar login: " + erro.message);
+            }
+        }
+        
+        // 4. Sistema do Botão Sair (Logout)
         function logout() {
             localStorage.removeItem('dieta_pro_token'); // Limpa a memória do token
             window.location.reload(); // Dá refresh na página e ela já acorda bloqueada
         }
         
-        // 🔄 INICIALIZAÇÃO ORIGINAL: Mantida exatamente como estava para sumir com a tela branca
+        // 🔄 INICIALIZAÇÃO DA PÁGINA
         window.addEventListener('DOMContentLoaded', verificarAutenticacao);
 
         
