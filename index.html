@@ -64,9 +64,9 @@
 </head>
 <body class="bg-slate-50 flex flex-col md:flex-row h-screen w-full text-slate-800">
 
-    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto" style="display: flex !important;">
+    <div id="login-screen" class="fixed inset-0 z-[10000] flex bg-gradient-to-br from-[#004df0] to-[#002166] md:from-transparent md:to-transparent md:bg-[#f4f7fe] overflow-y-auto">
     
-    <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop) -->
+    <!-- LADO ESQUERDO: Painel de Marca (Exclusivo para Computadores/Desktop - Perfeito como está) -->
     <div class="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#0055ff] via-[#0042cc] to-[#002166] text-white p-12 flex-col justify-between relative overflow-hidden shadow-[inset_-20px_0_40px_rgba(0,0,0,0.1)]">
         <div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white via-transparent to-transparent pointer-events-none"></div>
         
@@ -102,46 +102,42 @@
         </div>
     </div>
 
-    <!-- LADO DIREITO / CONTAINER MOBILE -->
-    <div class="w-full md:w-1/2 flex flex-col items-center justify-between min-h-screen p-6 relative z-10">
+    <!-- LADO DIREITO: Container do Formulário (Onde a mágica do Mobile acontece) -->
+    <div class="w-full md:w-1/2 flex flex-col items-center justify-center min-h-screen p-4 sm:p-8 relative z-10">
         
-        <!-- 🌟 TOPO MOBILE: Forçado via CSS para aparecer apenas em telas pequenas (image_8.png) -->
-        <div class="flex flex-col items-center text-center pt-4 pb-2 md:hidden" style="display: flex;">
-            
-            <!-- Quadrado Branco Inclinado com o Cadeado -->
-            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-xl" style="transform: rotate(12deg); min-width: 56px; min-height: 56px;">
+        <!-- 🌟 TOPO MOBILE: Identidade completa extraída da terceira foto (image_eb109d.jpg) -->
+        <!-- A classe 'md:hidden' garante que isso SÓ apareça em telas de celular! -->
+        <div class="flex flex-col items-center text-center pt-4 pb-6 md:hidden">
+            <!-- Quadrado Branco Inclinado com o Cadeado Vazado -->
+            <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-xl transform rotate-12">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#004df0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             
             <!-- Título Dieta Pro -->
-            <h1 class="text-3xl font-black tracking-wide text-white">
+            <h1 class="text-3xl font-black tracking-wide text-white drop-shadow-sm">
                 DIETA <span class="text-blue-300 font-normal">PRO</span>
             </h1>
             
-            <!-- Subtítulo -->
+            <!-- Painel de Acesso com espaçamento de letras -->
             <p class="text-[10px] uppercase tracking-[0.35em] text-blue-200/90 font-bold mt-1">
                 Painel de Acesso
             </p>
             
-            <!-- Divisória -->
-            <div class="w-8 h-[1px] bg-white/20 my-3"></div>
+            <!-- Linha Divisória Fina -->
+            <div class="w-10 h-[1px] bg-white/20 my-3"></div>
             
-            <!-- Descrição Curta -->
+            <!-- Slogan Exato da Imagem -->
             <p class="text-xs text-blue-100/80 max-w-[260px] font-medium leading-relaxed">
                 Sua plataforma completa para nutrição, progresso e resultados.
             </p>
         </div>
 
-        <!-- CARD BRANCO -->
-        <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80 my-auto">
+        <!-- CARD BRANCO: Mantém o visual limpo e perfeito em ambos os dispositivos -->
+        <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80">
             
-            <!-- Ícone interno do Card (Fica ocultado no Mobile usando estilo nativo inline) -->
-            <div class="hidden md:flex w-16 h-16 bg-[#004df0] text-white rounded-full items-center justify-center mb-6 shadow-lg shadow-blue-600/20" style="display: none !important; margin-left: auto; margin-right: auto;">
-                <!-- Forçado oculto no mobile, o Tailwind 'md:flex' vai reativar no desktop -->
-                <style> @media (min-width: 768px) { #internal-lock { display: flex !important; } } </style>
-                <div id="internal-lock" class="w-full h-full flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </div>
+            <!-- Ícone do Círculo Azul (Presente na segunda foto) -->
+            <div class="w-16 h-16 bg-[#004df0] text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             </div>
             
             <h2 class="text-xl font-black text-slate-800 tracking-tight">
@@ -156,10 +152,12 @@
                 <input id="token-input" type="password" placeholder="••••••••" 
                     class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
                 
+                <!-- Mensagem de Erro Oculta -->
                 <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
                     ⚠️ Token incorreto. Tente novamente.
                 </p>
 
+                <!-- Botão de Ação -->
                 <button onclick="checkToken()" 
                     class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
                     Acessar Plataforma 
@@ -169,8 +167,8 @@
 
         </div>
 
-        <!-- RODAPÉ DE SEGURANÇA -->
-        <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-200/80 md:text-slate-400 pt-4 pb-2 select-none">
+        <!-- SELO DE SEGURANÇA INFERIOR (Discreto e elegante) -->
+        <div class="flex items-center justify-center gap-1.5 text-xs font-semibold text-blue-200/60 md:text-slate-400 pt-6 select-none">
             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
             <span>Conexão 100% segura</span>
         </div>
