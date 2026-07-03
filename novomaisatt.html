@@ -893,23 +893,36 @@
         // Defina aqui a sua senha/chave secreta:
         const TOKEN_CORRETO = "gabriel2026"; 
         
-        // 1. Monitor de Segurança: Verifica o acesso assim que a página abre
+        // 2. Monitor de Segurança: Verifica o acesso assim que a página abre
         function verificarAutenticacao() {
-            const tokenSalvo = localStorage.getItem('dieta_pro_token');
-            const loginScreen = document.getElementById('login-screen');
-            const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
-            
-            if (tokenSalvo === TOKEN_CORRETO) {
-                loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
-                if (mobileNav) mobileNav.classList.remove('hidden'); // Mostra o menu mobile
-            } else {
-                loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
-                if (mobileNav) mobileNav.classList.add('hidden'); // ESCONDE o menu mobile ao deslogar
-            }
-            
-            // Força o Lucide a renderizar os novos ícones (cadeado, portinha de sair)
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
+            try {
+                const tokenSalvo = localStorage.getItem('dieta_pro_token');
+                const loginScreen = document.getElementById('login-screen');
+                const mobileNav = document.getElementById('mobile-navigation-bar'); // Pega o menu inferior
+                
+                if (tokenSalvo === HASH_TOKEN_CORRETO) { 
+                    if (loginScreen) loginScreen.classList.add('hidden'); // Usuário validado, esconde tela de login
+                    
+                    // 🖥️ CORREÇÃO DO RODAPÉ: Controla as duas situações para não bugar o computador
+                    if (mobileNav) {
+                        if (window.innerWidth < 1024) {
+                            mobileNav.classList.remove('hidden'); // Se for celular, mostra
+                        } else {
+                            mobileNav.classList.add('hidden');    // Se for computador, força esconder!
+                        }
+                    }
+                } else { 
+                    if (loginScreen) loginScreen.classList.remove('hidden'); // Sem validação, bloqueia a tela inteira
+                    if (mobileNav) mobileNav.classList.add('hidden');        // ESCONDE o menu mobile ao deslogar
+                }
+                
+                // Força o Lucide a renderizar os novos ícones (cadeado, portinha de sair)
+                if (typeof lucide !== 'undefined') {
+                    lucide.createIcons();
+                }
+            } catch (erro) {
+                // Anti-Tela-Branca: Se algo travar, o navegador te avisa o motivo real num pop-up
+                alert("Erro na inicialização do app: " + erro.message);
             }
         }
         
