@@ -146,32 +146,34 @@
             <div style="width: 40px; height: 1px; background-color: rgba(255, 255, 255, 0.2); margin-top: 0.75rem; margin-bottom: 0.75rem;"></div>
         </div> <!--  CORREÇÃO AQUI: Fechamento da div do topo mobile adicionada com sucesso! -->
 
-        <!-- CARD BRANCO: Totalmente isolado agora -->
-        <div class="bg-white w-full max-w-sm p-8 rounded-[2.5rem] shadow-2xl flex flex-col items-center text-center border border-slate-100/80">
+        <!-- CARD BRANCO: Compacto, Moderno e Sem Cadeado -->
+        <div class="bg-white w-full max-w-sm p-6 rounded-[2rem] shadow-xl flex flex-col items-center text-center border border-slate-100/90">
             
-            <!-- Círculo Azul com Cadeado -->
-            <div class="w-16 h-16 bg-[#004df0] text-white rounded-full flex items-center justify-center mb-6 shadow-lg shadow-blue-600/20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <!-- ÁREA DE TEXTO: Tipografia Premium e Elegante -->
+            <div class="mb-5">
+                <h2 class="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-br from-slate-900 to-slate-700">
+                    Insira seu Token
+                </h2>
+                <p class="text-xs text-slate-400 mt-1.5 max-w-[240px] mx-auto font-semibold leading-relaxed">
+                    Digite a sua chave de validação para acessar o sistema.
+                </p>
             </div>
-            
-            <h2 class="text-xl font-black text-slate-800 tracking-tight">
-                Insira seu Token
-            </h2>
-            <p class="text-xs text-slate-400 mt-2 max-w-[240px] font-medium leading-relaxed">
-                Digite a sua chave de validação para acessar o sistema.
-            </p>
-
-            <!-- Input e Botão -->
-            <div class="w-full mt-6 flex flex-col items-center">
-                <input id="token-input" type="password" placeholder="••••••••" 
-                    class="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-center text-xl tracking-[0.5em] focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all text-slate-800 placeholder-slate-300 shadow-inner font-mono">
+        
+            <!-- ÁREA INTERATIVA: Input Novo e Botão -->
+            <div class="w-full flex flex-col items-center">
                 
-                <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2 text-center bg-red-50 py-2 rounded-xl border border-red-100">
+                <!-- Input de Senha com Estilo Minimalista de App Nativo -->
+                <input id="token-input" type="password" placeholder="••••••••" 
+                    class="w-full px-5 py-4 bg-slate-50/80 border-2 border-slate-100 rounded-2xl text-center text-xl tracking-[0.6em] font-mono text-slate-800 placeholder-slate-300 focus:outline-none focus:border-[#004df0] focus:bg-white focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                
+                <!-- Feedback de Erro Oculto (Mantido Exatamente Igual) -->
+                <p id="login-error" class="hidden w-full text-xs font-bold text-red-500 mt-2.5 text-center bg-red-50 py-2 rounded-xl border border-red-100">
                     ⚠️ Token incorreto. Tente novamente.
                 </p>
-
+        
+                <!-- Botão de Comando Principal -->
                 <button onclick="checkToken()" 
-                    class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.98] text-white font-bold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-blue-600/25 transition-all text-sm tracking-wide">
+                    class="w-full mt-4 bg-[#004df0] hover:bg-[#003ec4] active:scale-[0.97] text-white font-extrabold py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 transition-all text-xs uppercase tracking-wider">
                     Acessar Plataforma 
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </button>
