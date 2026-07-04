@@ -653,12 +653,12 @@
     
     <!-- Botão Sair (Estilo Círculo Vermelho Lateral) -->
     <div class="flex-1 flex justify-center items-center h-full">
-    <button onclick="logout()" id="nav-mobile-logout" class="nav-btn relative w-11 h-11 bg-red-400 hover:bg-red-100 active:scale-95 text-red-500 rounded-xl flex items-center justify-center transition-all group">
+    <button onclick="logout()" id="nav-mobile-logout" class="nav-btn relative w-11 h-11 bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:scale-95 text-white rounded-xl flex items-center justify-center transition-all group shadow-sm shadow-red-500/30">
         
-        <!-- Ícone ajustado para w-5 h-5 para respirar melhor no novo formato -->
-        <i data-lucide="log-out" class="w-6 h-6 transition-transform group-hover:translate-x-0.5"></i>
+        <!-- Ícone em branco puro para dar o destaque idêntico ao da image_3.png -->
+        <i data-lucide="log-out" class="w-5 h-5 text-white transition-transform group-hover:translate-x-0.5"></i>
         
-        <!-- 🎯 Indicador fantasma essencial para o seu JavaScript não dar erro -->
+        <!-- 🎯 Indicador fantasma essencial para o seu JavaScript -->
         <div class="nav-indicator absolute hidden"></div>
     </button>
 </div>
