@@ -337,13 +337,11 @@
             <!-- TAB ADICIONAR ALIMENTO -->
 <div id="tab-adicionar" class="tab-content hidden w-full">
 
-        <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
-        
+    <div class="w-full bg-gradient-to-b from-blue-600 to-blue-500 p-6 text-center text-white flex flex-col items-center justify-center">
         <div class="flex items-center justify-center gap-2.5">
             <i data-lucide="plus-circle" class="w-6 h-6 opacity-90"></i>
             <h1 class="text-2xl font-extrabold tracking-tight">Montar Refeição</h1>
         </div>
-        
         <p class="text-[10px] font-bold uppercase tracking-widest mt-3 bg-black/10 px-3 py-1 rounded-full backdrop-blur-sm text-blue-100">
             Adicione novos itens ao seu prato
         </p>
@@ -374,20 +372,26 @@
 
             <!-- 2. Porção -->
             <div>
-                <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-3 text-center">2. Ajustar Porção (Gramas)</label>
+                <!-- ID adicionado no título para mudar o texto (Gramas) -->
+                <label id="lbl-portion-title" class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-3 text-center">2. Ajustar Porção (Gramas)</label>
+                
                 <div class="flex items-center justify-center gap-4 mb-4">
-                    <button onclick="changeGrams(-10)" class="w-12 h-12 bg-blue-600 border-blue-200 text-white font-black rounded-xl text-lg hover:bg-blue-700 transition-colors">-</button>
+                    <!-- Modificado para aceitar variação dinâmica no JS -->
+                    <button onclick="handleQuantityChange(-1)" class="w-12 h-12 bg-blue-600 border-blue-200 text-white font-black rounded-xl text-lg hover:bg-blue-700 transition-colors">-</button>
                     <div class="text-center min-w-[80px]">
                         <span id="txt-grams" class="text-3xl font-black text-slate-900">100</span>
-                        <span class="text-[9px] font-bold text-slate-600 block uppercase">Gramas</span>
+                        <!-- ID adicionado na legenda interna -->
+                        <span id="lbl-unit-name" class="text-[9px] font-bold text-slate-600 block uppercase">Gramas</span>
                     </div>
-                    <button onclick="changeGrams(10)" class="w-12 h-12 bg-blue-600 border-blue-200 text-white font-black rounded-xl text-lg hover:bg-blue-700 transition-colors">+</button>
+                    <button onclick="handleQuantityChange(1)" class="w-12 h-12 bg-blue-600 border-blue-200 text-white font-black rounded-xl text-lg hover:bg-blue-700 transition-colors">+</button>
                 </div>
+                
+                <!-- IDs adicionados nos botões rápidos para mudar de "50g" para "1 un" se for ovo -->
                 <div class="grid grid-cols-4 gap-2">
-                    <button onclick="setGrams(50)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">50g</button>
-                    <button onclick="setGrams(100)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">100g</button>
-                    <button onclick="setGrams(150)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">150g</button>
-                    <button onclick="setGrams(200)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">200g</button>
+                    <button id="btn-quick-1" onclick="setGrams(50)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">50g</button>
+                    <button id="btn-quick-2" onclick="setGrams(100)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">100g</button>
+                    <button id="btn-quick-3" onclick="setGrams(150)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">150g</button>
+                    <button id="btn-quick-4" onclick="setGrams(200)" class="py-2 bg-white border border-blue-200 rounded-lg text-[10px] font-bold text-slate-700 hover:border-blue-400">200g</button>
                 </div>
             </div>
 
@@ -395,7 +399,6 @@
             <div>
                 <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-2">3. Tipo de Refeição</label>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-2" id="meal-moment-group">
-                    <!-- Botões Momento -->
                     <button onclick="selectMoment('Café da Manhã', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Café</button>
                     <button onclick="selectMoment('Almoço', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Almoço</button>
                     <button onclick="selectMoment('Café da Tarde', this)" class="moment-btn p-3 bg-white border border-blue-200 rounded-xl font-bold text-[10px] text-slate-700 data-[active=true]:bg-blue-600 data-[active=true]:text-white">Tarde</button>
@@ -1447,10 +1450,10 @@
             const resultsBox = document.getElementById('search-results');
             resultsBox.innerHTML = '';
             if(!input) { resultsBox.classList.add('hidden'); return; }
-
+        
             const filtered = alimentosBase.filter(item => item.nome.toLowerCase().includes(input));
             if(filtered.length === 0) { resultsBox.classList.add('hidden'); return; }
-
+        
             filtered.forEach(food => {
                 const row = document.createElement('div');
                 row.className = "p-3 hover:bg-slate-100 cursor-pointer text-sm font-medium border-b border-slate-100 last:border-0";
@@ -1460,14 +1463,68 @@
             });
             resultsBox.classList.remove('hidden');
         }
-
+        
         function selectFood(food) {
             currentSelectedFood = food;
             document.getElementById('search-food').value = food.nome;
             document.getElementById('search-results').classList.add('hidden');
             document.getElementById('lbl-food-name').innerText = food.nome;
-            document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
+            
+            // 🥚 DETECTOR INTELIGENTE: Verifica se o alimento é Ovo
+            const isUnidade = food.nome.toLowerCase().includes('ovo');
+            
+            if (isUnidade) {
+                currentGrams = 1; // Começa com 1 unidade padrão
+                document.getElementById('lbl-portion-title').innerText = "2. Ajustar Porção (Unidades)";
+                document.getElementById('lbl-unit-name').innerText = "Unidades";
+                document.getElementById('lbl-food-base-kcal').innerText = `${Math.round(food.kcal100g * 0.5)} kcal / unidade`;
+                
+                // Adapta os botões rápidos para contagem de unidades
+                updateQuickButtons([1, 2, 3, 4], "un");
+            } else {
+                currentGrams = 100; // Padrão clássico de 100 gramas
+                document.getElementById('lbl-portion-title').innerText = "2. Ajustar Porção (Gramas)";
+                document.getElementById('lbl-unit-name').innerText = "Gramas";
+                document.getElementById('lbl-food-base-kcal').innerText = `${food.kcal100g} kcal / 100g`;
+                
+                // Restaura os botões rápidos originais para gramas
+                updateQuickButtons([50, 100, 150, 200], "g");
+            }
+            
+            document.getElementById('txt-grams').innerText = currentGrams;
             document.getElementById('selected-food-card').classList.remove('hidden');
+        }
+        
+        // 📐 FUNÇÃO PARA CONTROLAR OS BOTÕES DE + E - (Unidade vs Grama)
+        function handleQuantityChange(amount) {
+            if (!currentSelectedFood) return;
+            const isUnidade = currentSelectedFood.nome.toLowerCase().includes('ovo');
+            
+            if (isUnidade) {
+                // Se for ovo, vai de 1 em 1 unidade (mínimo 1)
+                currentGrams = Math.max(1, currentGrams + amount);
+            } else {
+                // Se for normal, vai de 10g em 10g (mínimo 10g)
+                currentGrams = Math.max(10, currentGrams + (amount * 10));
+            }
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+        
+        // ⚡ FUNÇÃO DOS BOTÕES RÁPIDOS
+        function setGrams(amount) {
+            currentGrams = amount;
+            document.getElementById('txt-grams').innerText = currentGrams;
+        }
+        
+        // 🛠️ AUXILIAR: Atualiza o texto e clique dos 4 botões rápidos de porção
+        function updateQuickButtons(values, suffix) {
+            values.forEach((val, index) => {
+                const btn = document.getElementById(`btn-quick-${index + 1}`);
+                if(btn) {
+                    btn.innerText = `${val}${suffix}`;
+                    btn.setAttribute('onclick', `setGrams(${val})`);
+                }
+            });
         }
 
         // 1. FUNÇÃO AUXILIAR PARA SALVAR NO FIRESTORE (Não muda nada na tela, só envia pro banco)
@@ -1533,10 +1590,30 @@
         
         function addFoodToPlate() {
             if(!currentSelectedFood) return alert("Selecione um alimento!");
-            const calculatedKcal = Math.round((currentSelectedFood.kcal100g * currentGrams) / 100);
-            const calculatedProt = Math.round(((currentSelectedFood.prot100g || 0) * currentGrams) / 100);
             
-            currentPlateItems.push({ nome: currentSelectedFood.nome, gramas: currentGrams, kcal: calculatedKcal, prot: calculatedProt });
+            const isUnidade = currentSelectedFood.nome.toLowerCase().includes('ovo');
+            let pesoEfetivo = currentGrams;
+            let textoExibicao = `${currentGrams}g`;
+            
+            if (isUnidade) {
+                // Converte unidades para gramas (1 ovo = ~50g) para o cálculo bater com a tabela nutricional
+                pesoEfetivo = currentGrams * 50; 
+                textoExibicao = `${currentGrams} un`;
+            }
+            
+            const calculatedKcal = Math.round((currentSelectedFood.kcal100g * pesoEfetivo) / 100);
+            const calculatedProt = Math.round(((currentSelectedFood.prot100g || 0) * pesoEfetivo) / 100);
+            
+            // Insere a contagem de unidades direto no nome do item para o histórico ficar lindo
+            const nomeFormatado = isUnidade ? `${currentSelectedFood.nome} (${textoExibicao})` : currentSelectedFood.nome;
+            
+            currentPlateItems.push({ 
+                nome: nomeFormatado, 
+                gramas: pesoEfetivo, 
+                kcal: calculatedKcal, 
+                prot: calculatedProt 
+            });
+            
             renderPlateUI();
             currentSelectedFood = null;
             document.getElementById('search-food').value = '';
