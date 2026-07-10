@@ -1225,7 +1225,14 @@ async function connectFirestore(configStr, silent){
     if(!firebase.apps.length) firebase.initializeApp(cfg);
     window.__db = firebase.firestore();
     window.__firestoreReady = true;
-    await window.storage.set('nutriring_firestore_config', configStr, false);
+
+    // 🔥 CORREÇÃO TRAVA DE SEGURANÇA: Se o window.storage não existir, usa o localStorage nativo
+    if (window.storage && typeof window.storage.set === 'function') {
+        await window.storage.set('nutriring_firestore_config', configStr, false);
+    } else {
+        localStorage.setItem('nutriring_firestore_config', configStr);
+    }
+
     updateSettingsStatus();
     if(!silent) showToast('Conectado ao Firestore!');
   }catch(e){
@@ -1234,6 +1241,7 @@ async function connectFirestore(configStr, silent){
     if(!silent) showToast('Erro ao conectar: verifique o firebaseConfig informado');
   }
 }
+
 async function saveToFirestoreManual(){
   if(!window.__firestoreReady){ showToast('Conecte-se ao Firestore primeiro'); return; }
   try{
@@ -1241,6 +1249,7 @@ async function saveToFirestoreManual(){
     showToast('Dados de '+PROFILE_NAMES[currentProfile]+' salvos no Firestore!');
   }catch(e){ console.error(e); showToast('Erro ao salvar no Firestore'); }
 }
+
 async function loadFromFirestoreManual(){
   if(!window.__firestoreReady){ showToast('Conecte-se ao Firestore primeiro'); return; }
   try{
@@ -1313,35 +1322,30 @@ document.getElementById('profileSwitch').addEventListener('click', async (e)=>{
 });
 document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
 
+// Procure por isso no final do seu código e ajuste o "try":
 (async function init(){
   await loadProfile('gabriel');
   try{
-    const cfgRes = await window.storage.get('nutriring_firestore_config', false);
-    if(cfgRes && cfgRes.value){
-      window.__lastFirebaseConfigStr = cfgRes.value;
-      await connectFirestore(cfgRes.value, true);
+    // 🔥 TRAVA DE SEGURANÇA PARA RECARREGAR A PÁGINA:
+    let savedConfig = null;
+    if (window.storage && typeof window.storage.get === 'function') {
+        const cfgRes = await window.storage.get('nutriring_firestore_config', false);
+        if (cfgRes) savedConfig = cfgRes.value;
+    } else {
+        savedConfig = localStorage.getItem('nutriring_firestore_config');
     }
-  }catch(e){ /* no stored config yet, that's fine */ }
+
+    if(savedConfig){
+      window.__lastFirebaseConfigStr = savedConfig;
+      await connectFirestore(savedConfig, true);
+    }
+  }catch(e){ /* nenhuma configuração salva ainda, tudo bem */ }
+  
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   icons();
 })();
-
-  // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyAd6s6CIJN25EHLFUg8fDdSKOMalcZvpEg",
-  authDomain: "nutri-b9074.firebaseapp.com",
-  projectId: "nutri-b9074",
-  storageBucket: "nutri-b9074.firebasestorage.app",
-  messagingSenderId: "480936579666",
-  appId: "1:480936579666:web:770b5759b52a0bdec4058b",
-  measurementId: "G-2M4RVVL2EF"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+  
 </script>
 </body>
 </html>
