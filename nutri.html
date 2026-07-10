@@ -562,6 +562,8 @@ async function saveState(){
   }
   if(window.__firestoreReady && window.__firestoreAutoSync){
     try{ await window.__db.collection('nutriring').doc(currentProfile).set(state); }catch(e){ console.error(e); }
+  // 🔥 ADICIONE ESTA LINHA NO FINAL DA SUA FUNÇÃO SAVESTATE:
+  if (typeof saveToFirestoreAutomatic === 'function') saveToFirestoreAutomatic();
   }
 }
 
@@ -1250,6 +1252,32 @@ async function saveToFirestoreManual(){
   }catch(e){ console.error(e); showToast('Erro ao salvar no Firestore'); }
 }
 
+  // ☁️ AUTO-SAVE: Salva na nuvem silenciosamente sempre que houver alteração
+async function saveToFirestoreAutomatic(){
+  if(!window.__firestoreReady || window.__isSyncing) return;
+  try{
+    await window.__db.collection('nutriring').doc(currentProfile).set(state);
+    console.log('☁️ [Firestore] Banco de dados atualizado automaticamente!');
+  }catch(e){ console.error('Erro no auto-save do Firestore:', e); }
+}
+
+// ☁️ AUTO-LOAD: Baixa os dados da nuvem silenciosamente
+async function loadFromFirestoreAutomatic(){
+  if(!window.__firestoreReady) return;
+  try{
+    const doc = await window.__db.collection('nutriring').doc(currentProfile).get();
+    if(doc.exists){
+      window.__isSyncing = true; // Trava temporária para não gerar loop de salvamento
+      state = doc.data();
+      profileCache[currentProfile] = state;
+      if(typeof saveState === 'function') await saveState();
+      window.__isSyncing = false;
+      if(typeof render === 'function') render();
+      showToast('Sincronizado com a nuvem! ☁️');
+    }
+  }catch(e){ console.error('Erro no auto-load do Firestore:', e); }
+}
+
 async function loadFromFirestoreManual(){
   if(!window.__firestoreReady){ showToast('Conecte-se ao Firestore primeiro'); return; }
   try{
@@ -1305,7 +1333,7 @@ function openSettingsModal(){
 }
 
 /* ============================================================
-   INIT / GLOBAL WIRING
+   FIRESTORE / INIT / GLOBAL WIRING (ATUALIZADO AUTOMÁTICO)
    ============================================================ */
 document.getElementById('tabNav').addEventListener('click', (e)=>{
   const btn = e.target.closest('.tab-btn');
@@ -1313,20 +1341,27 @@ document.getElementById('tabNav').addEventListener('click', (e)=>{
   currentTab = btn.dataset.tab;
   render();
 });
+
+// 🔄 Atualizado: Carrega os dados da nuvem quando você troca de perfil
 document.getElementById('profileSwitch').addEventListener('click', async (e)=>{
   const btn = e.target.closest('.profile-avatar');
   if(!btn) return;
   const profile = btn.dataset.profile;
   if(profile===currentProfile) return;
   await loadProfile(profile);
+  
+  // 🔥 NOVO: Baixa automaticamente os dados do novo perfil vindo do Firestore
+  if (typeof loadFromFirestoreAutomatic === 'function') {
+      await loadFromFirestoreAutomatic();
+  }
 });
+
 document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
 
-// Procure por isso no final do seu código e ajuste o "try":
+// 🚀 Inicialização do App com Auto-Load ao entrar no site
 (async function init(){
   await loadProfile('gabriel');
   try{
-    // 🔥 TRAVA DE SEGURANÇA PARA RECARREGAR A PÁGINA:
     let savedConfig = null;
     if (window.storage && typeof window.storage.get === 'function') {
         const cfgRes = await window.storage.get('nutriring_firestore_config', false);
@@ -1338,6 +1373,11 @@ document.getElementById('settingsBtn').addEventListener('click', openSettingsMod
     if(savedConfig){
       window.__lastFirebaseConfigStr = savedConfig;
       await connectFirestore(savedConfig, true);
+      
+      // 🔥 NOVO: Puxa automaticamente o seu progresso salvo na nuvem assim que abre o site
+      if (typeof loadFromFirestoreAutomatic === 'function') {
+          await loadFromFirestoreAutomatic();
+      }
     }
   }catch(e){ /* nenhuma configuração salva ainda, tudo bem */ }
   
