@@ -38,7 +38,7 @@
   }
   [data-profile="raissa"]{
     --accent-1:#FB7185;
-    --accent-2:#F59E0B;
+    --accent-2:#F9A8D4;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent; touch-action:manipulation;}
   html,body{margin:0;padding:0; touch-action:manipulation;}
@@ -406,8 +406,6 @@
     </div>
     <button class="login-submit" id="loginSubmitBtn">Entrar <i data-lucide="arrow-right"></i></button>
     <p class="login-error hidden" id="loginError">Senha incorreta. Tente novamente.</p>
-    <p class="login-foot">Diário alimentar premium · build 2026-07-11.7</p>
-    <p class="login-foot" style="margin-top:4px;">🔒 Salvamento local + Firestore automático</p>
   </div>
 </div>
 
@@ -1508,8 +1506,15 @@ function setupProfileSlider(){
 /* ============================================================
    LOGIN GATE
    ============================================================ */
-// Altere esta senha aqui sempre que quiser trocar o acesso.
-const APP_PASSWORD = "gabrielraissa2026";
+// Senha protegida por hash SHA-256 — o texto original não fica exposto no código.
+// Para trocar a senha, gere um novo hash SHA-256 (ex: tools.keycdn.com) e cole aqui.
+const APP_PASSWORD_HASH = "fe47d3f52122243998056618c7146e35ece42d79d1e3a0bbbdc66d5ca2b17cb3";
+
+async function sha256Hex(text){
+  const encoded = new TextEncoder().encode(text);
+  const digest = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
 function wireLogin(){
   const input = document.getElementById('loginPasswordInput');
@@ -1518,8 +1523,9 @@ function wireLogin(){
   const card = document.getElementById('loginCard');
   const eyeBtn = document.getElementById('toggleEyeBtn');
 
-  function tryLogin(){
-    if(input.value === APP_PASSWORD){
+  async function tryLogin(){
+    const hash = await sha256Hex(input.value);
+    if(hash === APP_PASSWORD_HASH){
       document.getElementById('loginScreen').style.display = 'none';
       startApp();
     } else {
