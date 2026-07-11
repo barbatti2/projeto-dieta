@@ -342,11 +342,15 @@
   .login-card > p{color:var(--text-muted); font-size:13px; margin:0 0 26px 0;}
   .login-field{
     position:relative; display:flex; align-items:center; background:var(--surface-2); border:1px solid var(--border);
-    border-radius:14px; padding:4px 6px 4px 16px; margin-bottom:16px;
+    border-radius:14px; padding:4px 6px 4px 16px; margin-bottom:16px; transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .login-field:focus-within{
+    border-color:color-mix(in srgb, var(--accent-2) 55%, var(--border));
+    box-shadow:0 0 0 4px color-mix(in srgb, var(--accent-2) 14%, transparent);
   }
   .login-field svg{width:17px;height:17px; color:var(--text-dim); flex:none;}
   .login-field input{
-    flex:1; background:transparent; border:none; outline:none; color:var(--text); font-family:var(--font-body);
+    flex:1; background:transparent; border:none; outline:none !important; box-shadow:none !important; color:var(--text); font-family:var(--font-body);
     font-size:15px; padding:12px 10px; min-width:0;
   }
   .login-field input::placeholder{color:var(--text-dim);}
@@ -630,7 +634,7 @@ async function loadProfile(profile){
         render();
         return;
       }
-    }catch(e){ console.error('Erro ao ler do Firestore', e); }
+    }catch(e){ reportFirestoreError(e); }
   }
   try{
     const res = await window.storage.get('nutriring_'+profile, false);
@@ -655,7 +659,7 @@ async function saveState(){
   }
   if(window.__firestoreReady){
     try{ await window.__db.collection('nutriring').doc(currentProfile).set(state); }
-    catch(e){ console.error('Erro ao sincronizar com Firestore', e); }
+    catch(e){ reportFirestoreError(e); }
   }
 }
 
@@ -831,7 +835,7 @@ function renderItemsListHTML(){
     </div>
   `).join('');
 }
-function updateQtyUI(){
+function updateQtyUI(rebuildPresets){
   const food = addFoodState.selected;
   if(!food) return;
   const qtyDisplay = document.getElementById('qtyDisplay');
@@ -840,18 +844,19 @@ function updateQtyUI(){
   qtyDisplay.childNodes[0].nodeValue = addFoodState.qty;
   qtySub.textContent = addFoodState.isUnit ? (addFoodState.qty===1?'unidade':'unidades') : 'gramas';
 
-  const presets = addFoodState.isUnit ? [1,2,3,4] : [50,100,150,200];
-  quickQty.innerHTML = presets.map(p=>`<button class="quick-btn${p===addFoodState.qty?' active':''}" data-qty="${p}">${p}${addFoodState.isUnit?' un':'g'}</button>`).join('');
+  if(rebuildPresets){
+    const presets = addFoodState.isUnit ? [1,2,3,4] : [50,100,150,200];
+    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${addFoodState.isUnit?' un':'g'}</button>`).join('');
+  }
+  quickQty.querySelectorAll('.quick-btn').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.qty)===addFoodState.qty));
 
   const gramsEquiv = addFoodState.isUnit ? addFoodState.qty*food.unitWeight : addFoodState.qty;
   const factor = gramsEquiv/100;
-  document.getElementById('ftMacros').innerHTML = `
-    <div class="ft-macro"><div class="fm-val">${Math.round(food.kcal*factor)}</div><div class="fm-label">kcal</div></div>
-    <div class="ft-macro"><div class="fm-val">${(Math.round(food.protein*factor*10)/10)}g</div><div class="fm-label">prot</div></div>
-    <div class="ft-macro"><div class="fm-val">${(Math.round(food.carbs*factor*10)/10)}g</div><div class="fm-label">carb</div></div>
-    <div class="ft-macro"><div class="fm-val">${(Math.round(food.fat*factor*10)/10)}g</div><div class="fm-label">gord</div></div>
-  `;
-  icons();
+  const ftMacros = document.getElementById('ftMacros');
+  ftMacros.children[0].firstElementChild.textContent = Math.round(food.kcal*factor);
+  ftMacros.children[1].firstElementChild.textContent = (Math.round(food.protein*factor*10)/10)+'g';
+  ftMacros.children[2].firstElementChild.textContent = (Math.round(food.carbs*factor*10)/10)+'g';
+  ftMacros.children[3].firstElementChild.textContent = (Math.round(food.fat*factor*10)/10)+'g';
 }
 function selectFood(food){
   addFoodState.selected = food;
@@ -861,7 +866,13 @@ function selectFood(food){
   document.getElementById('ftName').textContent = food.name;
   document.getElementById('ftCat').textContent = food.category + (food.unit ? ' · medido por unidade' : ' · medido por gramas');
   document.getElementById('ftIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
-  updateQtyUI();
+  document.getElementById('ftMacros').innerHTML = `
+    <div class="ft-macro"><div class="fm-val">0</div><div class="fm-label">kcal</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">prot</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
+  `;
+  updateQtyUI(true);
   icons();
 }
 function clearFoodSelection(){
@@ -1314,14 +1325,20 @@ function firebaseConfigProvided(){
   return !!(FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.projectId);
 }
 function loadFirebaseSDK(){
-  if(window.firebase && window.firebase.firestore) return Promise.resolve();
+  if(window.firebase && window.firebase.firestore && window.firebase.auth) return Promise.resolve();
   return new Promise((resolve, reject)=>{
     const s1 = document.createElement('script');
     s1.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js';
     s1.onload = ()=>{
       const s2 = document.createElement('script');
       s2.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js';
-      s2.onload = resolve;
+      s2.onload = ()=>{
+        const s3 = document.createElement('script');
+        s3.src = 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js';
+        s3.onload = resolve;
+        s3.onerror = reject;
+        document.head.appendChild(s3);
+      };
       s2.onerror = reject;
       document.head.appendChild(s2);
     };
@@ -1335,12 +1352,26 @@ async function autoConnectFirestore(){
     await loadFirebaseSDK();
     if(!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
     window.__db = firebase.firestore();
+    // Sign in anonymously so Firestore security rules can safely require
+    // `request.auth != null` — this happens silently, with no extra login
+    // screen for Gabriel/Raissa (their only login is the password gate).
+    // We only mark Firestore as "ready" if this succeeds — otherwise every
+    // read/write would silently fail with permission-denied while the app
+    // still claimed to be connected.
+    await firebase.auth().signInAnonymously();
     window.__firestoreReady = true;
   }catch(e){
-    console.error('Firestore não conectou', e);
+    console.error('Firestore/Auth não conectou — verifique: 1) "Anonymous" habilitado em Authentication > Sign-in method, 2) o domínio atual em Authentication > Settings > Authorized domains, 3) as regras do Firestore.', e);
     window.__firestoreReady = false;
   }
   updateSyncStatusUI();
+}
+function reportFirestoreError(e){
+  console.error('Erro de sincronização com o Firestore', e);
+  if(!window.__firestoreErrorShown){
+    window.__firestoreErrorShown = true;
+    showToast('Não sincronizou com o Firestore — confira as regras de segurança do projeto.');
+  }
 }
 function updateSyncStatusUI(){
   const wrap = document.getElementById('syncStatus');
@@ -1411,15 +1442,11 @@ function setupProfileSlider(){
 /* ============================================================
    DOUBLE-TAP ZOOM PREVENTION (mobile)
    ============================================================ */
-(function preventDoubleTapZoom(){
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function(e){
-    const now = Date.now();
-    if(now - lastTouchEnd <= 350){ e.preventDefault(); }
-    lastTouchEnd = now;
-  }, {passive:false});
-  document.addEventListener('dblclick', function(e){ e.preventDefault(); }, {passive:false});
-})();
+/* Double-tap-to-zoom is already fully prevented by `touch-action:manipulation`
+   (set globally in the CSS) plus the `user-scalable=no` viewport meta tag.
+   We intentionally do NOT add a JS touchend guard here — that approach ends up
+   swallowing every other legitimate fast tap (e.g. rapidly tapping +/- buttons),
+   making the UI feel laggy. */
 
 /* ============================================================
    LOGIN GATE
@@ -1479,6 +1506,9 @@ async function startApp(){
   document.getElementById('app').style.display = 'block';
   setupProfileSlider();
   icons();
+  if(firebaseConfigProvided() && !window.__firestoreReady){
+    showToast('Não conectou ao Firestore — os dados ficam salvos só nesta sessão. Veja o console (F12) para o motivo.');
+  }
 }
 
 wireLogin();
