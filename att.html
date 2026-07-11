@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
+  @property --pct-deg{
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0deg;
+  }
   :root{
     --bg:#F6F7FC;
     --surface:#FFFFFF;
@@ -132,7 +137,7 @@
   .ring-section{display:flex; flex-direction:column; align-items:center; padding:26px 18px;}
   .ring-outer{position:relative; width:220px; height:220px;}
   .ring-glow{position:absolute; inset:8px; border-radius:50%; background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); filter:blur(30px); opacity:.28;}
-  .ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:background 1.2s cubic-bezier(.4,0,.2,1);}
+  .ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:--pct-deg 1.2s cubic-bezier(.4,0,.2,1);}
   .ring-inner{position:absolute; inset:16px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border:1px solid var(--border);}
   .ring-inner .kcal-num{font-family:var(--font-mono); font-size:30px; font-weight:700; line-height:1;}
   .ring-inner .kcal-goal{font-family:var(--font-mono); font-size:12.5px; color:var(--text-muted); margin-top:4px;}
@@ -288,8 +293,13 @@
   .hist-date-title{font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:8px; color:var(--text); text-align:center;}
   .hist-meal-group{margin-bottom:10px;}
   .hist-meal-title{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:700; margin-bottom:6px; text-align:center;}
-  .hist-item{display:flex; justify-content:space-between; font-size:13px; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; margin-bottom:5px;}
-  .hist-item .hi-sub{font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);}
+  .hist-item{display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; margin-bottom:5px;}
+  .hist-item .hi-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .hist-item .hi-sub{flex:none; font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);}
+  .hi-delete{flex:none; background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:4px; border-radius:8px; transition:color .15s ease, background .15s ease;}
+  .hi-delete:active{background:color-mix(in srgb, var(--danger) 12%, transparent);}
+  .hi-delete svg{width:15px;height:15px;}
+  .hi-delete:hover{color:var(--danger);}
   .hist-day-total{font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted); margin-top:2px; text-align:center;}
 
   /* ---------- PESOS ---------- */
@@ -771,7 +781,7 @@ function renderInicio(){
           const tot = items.reduce((a,i)=>a+i.kcal,0);
           return `<div class="hist-meal-group">
             <div class="hist-meal-title">${MEAL_LABELS[mt]} · ${Math.round(tot)} kcal</div>
-            ${items.map(i=>`<div class="hist-item"><span>${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span></div>`).join('')}
+            ${items.map(i=>`<div class="hist-item" data-meal-id="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
           </div>`;
         }).join('')
       }
@@ -1112,6 +1122,37 @@ function openDayModal(dateStr){
 }
 
 /* ============================================================
+   EXCLUIR ALIMENTO SALVO (Início e Histórico)
+   ============================================================ */
+function confirmDeleteMeal(mealId, mealName){
+  const overlay = document.getElementById('modalOverlay');
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <h3>Excluir "${mealName}"?</h3>
+    <div class="modal-options">
+      <button class="modal-opt-btn remove" data-confirm-delete="1"><i data-lucide="trash-2"></i>Sim, excluir</button>
+    </div>
+    <button class="modal-close" id="modalCloseBtn">Cancelar</button>
+  `;
+  overlay.classList.remove('hidden');
+  icons();
+  box.querySelector('[data-confirm-delete]').addEventListener('click', async ()=>{
+    state.meals = state.meals.filter(m=>m.id!==mealId);
+    await saveState();
+    overlay.classList.add('hidden');
+    render();
+    showToast('Alimento excluído.');
+  });
+  document.getElementById('modalCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
+}
+document.getElementById('content').addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-delete-meal]');
+  if(!btn) return;
+  confirmDeleteMeal(btn.dataset.deleteMeal, btn.dataset.mealName || 'este alimento');
+});
+
+/* ============================================================
    TAB: HISTÓRICO
    ============================================================ */
 function renderHistorico(){
@@ -1166,7 +1207,7 @@ function renderHistContent(){
       if(mi.length===0) return '';
       return `<div class="hist-meal-group">
         <div class="hist-meal-title">${MEAL_LABELS[mt]}</div>
-        ${mi.map(i=>`<div class="hist-item"><span>${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span></div>`).join('')}
+        ${mi.map(i=>`<div class="hist-item" data-meal-id="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
       </div>`;
     }).join('');
     return `<div class="hist-day-group">
