@@ -396,7 +396,7 @@
     </div>
     <button class="login-submit" id="loginSubmitBtn">Entrar <i data-lucide="arrow-right"></i></button>
     <p class="login-error hidden" id="loginError">Senha incorreta. Tente novamente.</p>
-    <p class="login-foot">Diário alimentar premium · build 2026-07-11.6</p>
+    <p class="login-foot">Diário alimentar premium · build 2026-07-11.7</p>
     <p class="login-foot" style="margin-top:4px;">🔒 Salvamento local + Firestore automático</p>
   </div>
 </div>
@@ -616,6 +616,9 @@ function defaultState(){
   };
 }
 
+function hasLocalStorage(){
+  return typeof window.storage !== 'undefined' && window.storage !== null;
+}
 async function loadProfile(profile){
   currentProfile = profile;
   document.body.setAttribute('data-profile', profile);
@@ -624,7 +627,8 @@ async function loadProfile(profile){
     render();
     return;
   }
-  // Firestore is the source of truth when connected; window.storage is the offline cache/fallback.
+  // Firestore is the source of truth when connected; window.storage (only available
+  // inside Claude's own artifact runtime) is just an extra offline cache when present.
   if(window.__firestoreReady){
     try{
       console.log('[NutriRing] Buscando perfil no Firestore:', profile);
@@ -633,16 +637,22 @@ async function loadProfile(profile){
       if(doc.exists){
         state = doc.data();
         profileCache[profile] = state;
-        window.storage.set('nutriring_'+profile, JSON.stringify(state), false).catch(()=>{});
+        if(hasLocalStorage()){
+          window.storage.set('nutriring_'+profile, JSON.stringify(state), false).catch(()=>{});
+        }
         render();
         return;
       }
     }catch(e){ reportFirestoreError(e); }
   }
-  try{
-    const res = await window.storage.get('nutriring_'+profile, false);
-    state = res && res.value ? JSON.parse(res.value) : defaultState();
-  }catch(e){
+  if(hasLocalStorage()){
+    try{
+      const res = await window.storage.get('nutriring_'+profile, false);
+      state = res && res.value ? JSON.parse(res.value) : defaultState();
+    }catch(e){
+      state = defaultState();
+    }
+  } else {
     state = defaultState();
   }
   profileCache[profile] = state;
@@ -652,13 +662,15 @@ async function saveState(){
   // keep the in-memory cache authoritative immediately so switching tabs/profiles
   // never shows stale data even if a network write is slow or briefly fails.
   profileCache[currentProfile] = state;
-  try{
-    const result = await window.storage.set('nutriring_'+currentProfile, JSON.stringify(state), false);
-    if(!result){
-      await window.storage.set('nutriring_'+currentProfile, JSON.stringify(state), false);
+  if(hasLocalStorage()){
+    try{
+      const result = await window.storage.set('nutriring_'+currentProfile, JSON.stringify(state), false);
+      if(!result){
+        await window.storage.set('nutriring_'+currentProfile, JSON.stringify(state), false);
+      }
+    }catch(e){
+      console.error('Erro ao salvar localmente', e);
     }
-  }catch(e){
-    console.error('Erro ao salvar', e);
   }
   if(window.__firestoreReady){
     try{ await window.__db.collection('nutriring').doc(currentProfile).set(state); }
