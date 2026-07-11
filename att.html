@@ -396,7 +396,8 @@
     </div>
     <button class="login-submit" id="loginSubmitBtn">Entrar <i data-lucide="arrow-right"></i></button>
     <p class="login-error hidden" id="loginError">Senha incorreta. Tente novamente.</p>
-    <p class="login-foot">Diário alimentar premium</p>
+    <p class="login-foot">Diário alimentar premium · build 2026-07-11.6</p>
+    <p class="login-foot" style="margin-top:4px;">🔒 Salvamento local + Firestore automático</p>
   </div>
 </div>
 
@@ -626,7 +627,9 @@ async function loadProfile(profile){
   // Firestore is the source of truth when connected; window.storage is the offline cache/fallback.
   if(window.__firestoreReady){
     try{
+      console.log('[NutriRing] Buscando perfil no Firestore:', profile);
       const doc = await window.__db.collection('nutriring').doc(profile).get();
+      console.log('[NutriRing] Documento existe?', doc.exists, doc.exists ? doc.data() : null);
       if(doc.exists){
         state = doc.data();
         profileCache[profile] = state;
@@ -1365,6 +1368,7 @@ async function autoConnectFirestore(){
     window.__firestoreReady = false;
   }
   updateSyncStatusUI();
+  console.log('[NutriRing] Firestore pronto?', window.__firestoreReady);
 }
 function reportFirestoreError(e){
   console.error('Erro de sincronização com o Firestore', e);
