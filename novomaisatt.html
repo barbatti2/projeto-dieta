@@ -334,41 +334,71 @@
   .inline-row{display:flex; gap:10px; align-items:flex-end;}
   .inline-row .form-field{flex:1;}
 
-  /* ---------- CARDAPIO (semanal, por dia) ---------- */
-  .day-card{position:relative; transition:box-shadow .12s ease;}
-  .day-card-header{
+  /* ---------- CARDÁPIO ÚNICO (por categoria, com alternativas) ---------- */
+  .menu-meal-card{position:relative;}
+  .menu-meal-header{
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
-    gap:3px; cursor:pointer; padding:6px 40px 10px; position:relative;
+    gap:4px; margin-bottom:16px; padding-bottom:16px; border-bottom:1px dashed var(--border);
   }
-  .day-card-header:active{opacity:.85;}
-  .day-card-badge{
-    font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.08em;
-    color:#fff; background:linear-gradient(90deg, var(--accent-1), var(--accent-2));
-    padding:3px 10px; border-radius:99px; margin-bottom:4px;
+  .menu-meal-icon{
+    width:44px; height:44px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; margin-bottom:6px;
+    box-shadow:0 8px 18px -8px var(--accent-2);
   }
-  .day-card-title{font-family:var(--font-display); font-weight:700; font-size:19px; letter-spacing:-.01em;}
-  .day-card-total{font-size:12px; color:var(--text-muted); font-family:var(--font-mono); margin-top:1px;}
-  .day-card-total.is-muted{opacity:.6;}
-  .day-card-chevron{width:18px; height:18px; color:var(--text-dim); margin-top:4px; transition:transform .2s ease;}
-  .day-card.is-expanded .day-card-chevron{transform:rotate(180deg);}
-  .day-card-edit-btn{
-    position:absolute; top:16px; right:16px;
-    width:34px; height:34px; border-radius:11px; border:1px solid var(--border); background:var(--surface-2);
-    color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; z-index:2;
-  }
-  .day-card-edit-btn svg{width:15px;height:15px;}
-  .day-card-body{display:none;}
-  .day-card.is-expanded .day-card-body{display:block;}
-  .day-meal-block{margin-top:14px;}
-  .day-meal-label{
-    display:flex; align-items:center; gap:6px; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
-    color:var(--text-muted); font-weight:700; margin-bottom:8px;
-  }
-  .day-meal-label svg{width:13px;height:13px; color:var(--accent-2);}
-  .day-item-row{display:flex; align-items:center; gap:10px; padding:6px 0;}
-  .day-item-row + .day-item-row{border-top:1px solid var(--border);}
+  .menu-meal-icon svg{width:20px;height:20px;}
+  .menu-meal-title{font-family:var(--font-display); font-weight:700; font-size:17px; letter-spacing:-.01em;}
+  .menu-meal-sub{font-size:11.5px; color:var(--text-muted); font-family:var(--font-mono);}
 
-  /* taller bottom sheet, for the day editor */
+  .menu-slot{margin-bottom:18px;}
+  .menu-slot:last-of-type{margin-bottom:8px;}
+  .menu-slot-header{display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; position:relative;}
+  .menu-slot-title{
+    font-family:var(--font-display); font-weight:700; font-size:13px; text-align:center;
+    text-transform:uppercase; letter-spacing:.06em; color:var(--text);
+    background:var(--surface-2); border:1px solid var(--border); padding:5px 14px; border-radius:99px;
+  }
+  .menu-slot-del{
+    position:absolute; right:0; background:none; border:none; color:var(--text-dim); cursor:pointer;
+    display:flex; align-items:center; justify-content:center; padding:4px;
+  }
+  .menu-slot-del svg{width:14px;height:14px;}
+  .menu-options-row{display:flex; flex-wrap:wrap; justify-content:center; gap:8px;}
+  .menu-option-pill{
+    display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1.5px solid var(--border);
+    border-radius:14px; padding:9px 12px; cursor:pointer; transition:all .15s ease; max-width:100%;
+  }
+  .menu-option-pill .mo-check{
+    width:17px; height:17px; border-radius:50%; border:2px solid var(--text-dim); flex:none;
+    display:flex; align-items:center; justify-content:center; transition:all .15s ease;
+  }
+  .menu-option-pill .mo-check svg{width:10px;height:10px; color:#fff; opacity:0; transition:opacity .15s ease;}
+  .menu-option-pill .mo-info{display:flex; flex-direction:column; min-width:0;}
+  .menu-option-pill .mo-name{font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:150px;}
+  .menu-option-pill .mo-kcal{font-size:10.5px; color:var(--text-muted); font-family:var(--font-mono);}
+  .menu-option-pill.selected{background:color-mix(in srgb, var(--accent-1) 14%, white); border-color:var(--accent-1);}
+  .menu-option-pill.selected .mo-check{background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); border-color:transparent;}
+  .menu-option-pill.selected .mo-check svg{opacity:1;}
+  .menu-option-pill .mo-remove{background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; padding:2px; flex:none;}
+  .menu-option-pill .mo-remove svg{width:13px;height:13px;}
+  .menu-option-add{
+    display:flex; align-items:center; gap:6px; background:transparent; border:1.5px dashed var(--border);
+    border-radius:14px; padding:9px 14px; cursor:pointer; color:var(--accent-2); font-size:12.5px; font-weight:700;
+  }
+  .menu-option-add svg{width:14px;height:14px;}
+  .menu-add-slot-btn{
+    width:100%; margin-top:4px; background:var(--surface-2); border:1.5px dashed var(--border); color:var(--text-muted);
+    font-weight:700; font-size:13px; padding:12px; border-radius:14px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .menu-add-slot-btn svg{width:15px;height:15px;}
+  .menu-meal-total{
+    text-align:center; font-family:var(--font-mono); font-size:12px; color:var(--text-muted);
+    margin-top:14px; padding-top:14px; border-top:1px dashed var(--border);
+  }
+  .menu-meal-total b{color:var(--text); font-size:14px;}
+  .menu-empty-slots{text-align:center; color:var(--text-dim); font-size:12.5px; padding:6px 0 12px 0;}
+
+  /* taller bottom sheet, for the menu option picker */
   .modal-box-tall{max-height:88vh; overflow-y:auto; -webkit-overflow-scrolling:touch;}
   .sheet-drag-handle{width:36px; height:4px; border-radius:99px; background:var(--surface-3); margin:0 auto 14px auto;}
   .sheet-subtitle{text-align:center; font-size:12px; color:var(--text-muted); margin-top:-10px; margin-bottom:16px;}
@@ -714,7 +744,44 @@ function buildFoodDB(){
     ['Ch\u00e1 sem a\u00e7\u00facar',1,0,0.2,0],['Achocolatado pronto',65,1.6,11,1.5],['Vitamina de banana',85,3,14,2],
     ['Isot\u00f4nico',24,0,6,0],['Energ\u00e9tico',45,0,11,0],['Cerveja',43,0.5,3.6,0],['Vinho tinto',85,0.1,2.6,0],
     ['Leite de am\u00eandoas',17,0.6,0.9,1.2],['Leite de aveia',46,1,7,1.5],['Leite de coco',152,1.4,3.3,15],
-    ['Kombucha',30,0,7,0],['Ch\u00e1 gelado',34,0,8,0],['Suco de caixinha',46,0.2,11,0],['\u00c1gua t\u00f4nica',34,0,9,0]
+    ['Kombucha',30,0,7,0],['Ch\u00e1 gelado',34,0,8,0],['Suco de caixinha',46,0.2,11,0],['\u00c1gua t\u00f4nica',34,0,9,0],
+
+    /* -- Refrigerantes zero / diet / light, por marca -- */
+    ['Coca-Cola Zero',0.2,0,0,0],['Coca-Cola Diet',0.3,0,0.1,0],
+    ['Pepsi Zero',0.2,0,0,0],['Pepsi Black',0.2,0,0,0],
+    ['Guaran\u00e1 Antarctica Zero',0.3,0,0.1,0],['Guaran\u00e1 Jesus Zero',0.3,0,0.1,0],
+    ['Fanta Laranja Zero',0.4,0,0.2,0],['Fanta Uva Zero',0.4,0,0.2,0],
+    ['Sprite Zero',0.2,0,0,0],['Schweppes Citrus Zero',0.3,0,0.1,0],
+    ['Sukita Zero',0.4,0,0.2,0],['H2OH! Zero',20,0,5,0],
+    ['Dolly Zero (Guaran\u00e1)',0.3,0,0.1,0],['Dolly Zero (Cola)',0.3,0,0.1,0],
+    ['Itub\u00e3ina Zero',0.4,0,0.2,0],['Soda Limonada Zero',0.4,0,0.2,0],
+
+    /* -- Refrigerantes tradicionais (com a\u00e7\u00facar), por marca -- */
+    ['Coca-Cola Original',42,0,10.6,0],['Pepsi Original',41,0,11,0],
+    ['Guaran\u00e1 Antarctica Original',44,0,11,0],['Fanta Laranja Original',48,0,12,0],
+    ['Fanta Uva Original',49,0,12.4,0],['Sprite Original',39,0,10,0],
+    ['Sukita Laranja',47,0,12,0],['Dolly Cola',42,0,10.7,0],
+
+    /* -- Ch\u00e1s (quentes e prontos, sem a\u00e7\u00facar / adoçados) -- */
+    ['Ch\u00e1 verde sem a\u00e7\u00facar',1,0,0.3,0],['Ch\u00e1 preto sem a\u00e7\u00facar',1,0,0.2,0],
+    ['Ch\u00e1 de camomila',1,0,0.2,0],['Ch\u00e1 de hibisco',2,0,0.5,0],
+    ['Ch\u00e1 de erva-doce',1,0,0.2,0],['Ch\u00e1 de cidreira',1,0,0.2,0],
+    ['Ch\u00e1 de gengibre',3,0,0.7,0],['Ch\u00e1 mate sem a\u00e7\u00facar',2,0,0.4,0],
+    ['Ch\u00e1 branco sem a\u00e7\u00facar',1,0,0.2,0],['Ch\u00e1 de hortel\u00e3',1,0,0.2,0],
+    ['Matte Leão sabor limão',34,0,8.4,0],['Matte Leão zero a\u00e7\u00facar',1,0,0.3,0],
+    ['Ch\u00e1 gelado de p\u00eassego (Lipton)',36,0,9,0],['Lipton Ice Tea Zero',1,0,0.3,0],
+    ['Ch\u00e1 mate gelado (Leão)',37,0,9.3,0],
+
+    /* -- Sucos (naturais, prontos e concentrados) -- */
+    ['Suco de maracuj\u00e1 natural',38,0.5,9.4,0.1],['Suco de abacaxi natural',48,0.3,12,0.1],
+    ['Suco de melancia natural',30,0.6,7.6,0.1],['Suco de manga natural',54,0.4,13.7,0.2],
+    ['Suco de caju natural',43,0.3,11,0.1],['Suco de acerola natural',28,0.4,6.5,0.2],
+    ['Suco de goiaba natural',52,0.7,13,0.2],['Suco de morango natural',33,0.5,8,0.2],
+    ['Suco de lim\u00e3o natural (limonada)',35,0.2,9,0],['Suco verde detox',45,1.2,10,0.2],
+    ['Suco Del Valle (caixinha)',48,0.2,12,0],['Suco Del Valle Mais Suco',44,0.3,11,0],
+    ['Suco Ades (soja)',43,1.0,8,1.0],['Suco Da Fruta (Maguary)',46,0.2,11.5,0],
+    ['N\u00e9ctar de p\u00eassego',52,0.2,13,0],['N\u00e9ctar de manga',54,0.2,13.5,0],
+    ['Suco integral de uva (Su\u00e9lo/Aurora)',60,0.4,15,0.1],['Suco em p\u00f3 (preparado)',33,0,8.2,0]
   ].forEach(r=>push(r[0],'Bebidas',r[1],r[2],r[3],r[4]));
 
   /* ---- Oleaginosas ---- */
@@ -920,33 +987,21 @@ const MARK_INFO = {
 const TAB_META = {
   inicio: {title:'Início', subtitle:'Resumo de hoje', icon:'home'},
   adicionar: {title:'Adicionar alimento', subtitle:'Monte sua refeição', icon:'utensils'},
-  cardapio: {title:'Cardápio', subtitle:'Seu cardápio da semana, dia a dia', icon:'book-open'},
+  cardapio: {title:'Cardápio', subtitle:'Seu cardápio, com opções por categoria', icon:'book-open'},
   calendario: {title:'Calendário', subtitle:'Planeje seus dias', icon:'calendar-days'},
   historico: {title:'Histórico', subtitle:'Tudo que você registrou', icon:'history'},
   pesos: {title:'Pesos e medidas', subtitle:'Acompanhe sua evolução', icon:'scale'}
 };
 
-const DAY_META = [
-  {key:'segunda', label:'Segunda-feira'},
-  {key:'terca', label:'Terça-feira'},
-  {key:'quarta', label:'Quarta-feira'},
-  {key:'quinta', label:'Quinta-feira'},
-  {key:'sexta', label:'Sexta-feira'},
-  {key:'sabado', label:'Sábado'},
-  {key:'domingo', label:'Domingo'}
-];
-function emptyDayMeals(){ return {cafe_manha:[], almoco:[], cafe_tarde:[], jantar:[]}; }
-function defaultCardapioSemanal(){
-  const obj = {};
-  DAY_META.forEach(d=>{ obj[d.key] = emptyDayMeals(); });
-  return obj;
+function emptyMenuMeal(){ return []; } // array de slots: {id, categoria, options:[...]}
+function defaultCardapioUnico(){
+  return {
+    cafe_manha: emptyMenuMeal(),
+    almoco: emptyMenuMeal(),
+    cafe_tarde: emptyMenuMeal(),
+    jantar: emptyMenuMeal()
+  };
 }
-function getTodayDayKey(){
-  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Sao_Paulo', weekday:'long'}).format(new Date());
-  const map = {Monday:'segunda', Tuesday:'terca', Wednesday:'quarta', Thursday:'quinta', Friday:'sexta', Saturday:'sabado', Sunday:'domingo'};
-  return map[weekday] || 'segunda';
-}
-let cardapioExpanded = null; // Set com as chaves dos dias abertos na aba Cardápio (inicializada com o dia de hoje)
 
 let currentProfile = 'gabriel';
 let state = null;
@@ -954,9 +1009,9 @@ let currentTab = 'inicio';
 let calendarViewDate = new Date();
 let historicoFilter = 'dia';
 const addFoodState = {qty:100, isUnit:false, mealType:'cafe_manha', selected:null, itemsToSave:[], aiMacros:null, aiLoading:false};
-// dayEditor: estado da tela (bottom sheet) de edição de um dia específico do cardápio semanal
-const dayEditor = {
-  dayKey:null, mealType:'cafe_manha', selected:null, isUnit:false, qty:100, aiMacros:null, aiLoading:false
+// menuEditor: estado da tela (bottom sheet) de edição de uma refeição do cardápio único
+const menuEditor = {
+  mealType:null, slotId:null, selected:null, isUnit:false, qty:100, aiMacros:null, aiLoading:false
 };
 const profileCache = {};
 
@@ -966,15 +1021,38 @@ function defaultState(){
     calendarMarks: {},
     weight: {initial:null, history:[]},
     goals: {calorias:2000, proteina:150, carboidratos:250},
-    cardapioSemanal: defaultCardapioSemanal()
+    cardapioUnico: defaultCardapioUnico()
   };
 }
 function ensureStateShape(s){
   if(!s) return;
-  if(!s.cardapioSemanal){
-    s.cardapioSemanal = defaultCardapioSemanal();
+  if(!s.cardapioUnico){
+    // migra estrutura antiga (por dia da semana), se existir, para o cardápio único
+    if(s.cardapioSemanal){
+      const merged = defaultCardapioUnico();
+      Object.keys(s.cardapioSemanal).forEach(dayKey=>{
+        const dayMeals = s.cardapioSemanal[dayKey];
+        Object.keys(MEAL_LABELS).forEach(mt=>{
+          (dayMeals[mt]||[]).forEach(item=>{
+            merged[mt].push({
+              id: 'slot_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+              categoria: item.category || 'Item',
+              options: [{
+                uid: item.uid || (Date.now()+'_'+Math.random().toString(36).slice(2,7)),
+                name:item.name, category:item.category, grams:item.grams, qty:item.qty, isUnit:item.isUnit,
+                kcal:item.kcal, protein:item.protein, carbs:item.carbs, fat:item.fat, selected:false
+              }]
+            });
+          });
+        });
+      });
+      s.cardapioUnico = merged;
+      delete s.cardapioSemanal;
+    } else {
+      s.cardapioUnico = defaultCardapioUnico();
+    }
   } else {
-    DAY_META.forEach(d=>{ if(!s.cardapioSemanal[d.key]) s.cardapioSemanal[d.key] = emptyDayMeals(); });
+    Object.keys(MEAL_LABELS).forEach(mt=>{ if(!s.cardapioUnico[mt]) s.cardapioUnico[mt] = emptyMenuMeal(); });
   }
   if(!s.meals) s.meals = [];
   if(!s.calendarMarks) s.calendarMarks = {};
@@ -1407,82 +1485,150 @@ function wireAdicionar(){
 }
 
 /* ============================================================
-   TAB: CARDÁPIO — build & manage full saved meal plans
+   TAB: CARDÁPIO — cardápio único, por categoria, com alternativas
+   (ex.: na Proteína do almoço: "Frango grelhado" OU "Patinho moído")
    ============================================================ */
-function dayTotalKcal(dayKey){
-  const meals = state.cardapioSemanal[dayKey];
-  return Object.values(meals).reduce((sum,arr)=>sum+arr.reduce((a,i)=>a+i.kcal,0),0);
+function slotTotalsHTML(slot){
+  const sel = slot.options.find(o=>o.selected);
+  return sel;
 }
-function resetDayEditor(dayKey){
-  dayEditor.dayKey = dayKey;
-  dayEditor.mealType = 'cafe_manha';
-  dayEditor.selected = null;
-  dayEditor.isUnit = false;
-  dayEditor.qty = 100;
-  dayEditor.aiMacros = null;
-  dayEditor.aiLoading = false;
+function mealSelectedTotal(mealType){
+  const slots = state.cardapioUnico[mealType];
+  return slots.reduce((sum,slot)=>{
+    const sel = slot.options.find(o=>o.selected);
+    return sum + (sel ? sel.kcal : 0);
+  },0);
 }
 function renderCardapio(){
-  if(!cardapioExpanded){ cardapioExpanded = new Set([getTodayDayKey()]); }
-  const todayKey = getTodayDayKey();
   return `
     ${heroHTML('cardapio')}
-    ${DAY_META.map(d=>renderDayCard(d, d.key===todayKey, cardapioExpanded.has(d.key))).join('')}
+    ${Object.keys(MEAL_LABELS).map(mt=>renderMenuMealCard(mt)).join('')}
   `;
 }
-function renderDayCard(d, isToday, isExpanded){
-  const meals = state.cardapioSemanal[d.key];
-  const hasAny = Object.values(meals).some(arr=>arr.length>0);
-  const total = dayTotalKcal(d.key);
+function renderMenuMealCard(mealType){
+  const slots = state.cardapioUnico[mealType];
+  const total = mealSelectedTotal(mealType);
+  const anySelected = slots.some(s=>s.options.some(o=>o.selected));
   return `
-    <section class="card day-card ${isToday?'is-today':''} ${isExpanded?'is-expanded':''}">
-      <button class="day-card-edit-btn" data-day-open="${d.key}"><i data-lucide="pencil"></i></button>
-      <div class="day-card-header" data-day-toggle="${d.key}">
-        ${isToday ? '<div class="day-card-badge">HOJE</div>' : ''}
-        <div class="day-card-title">${d.label}</div>
-        ${hasAny ? `<div class="day-card-total">${Math.round(total)} kcal no dia</div>` : `<div class="day-card-total is-muted">Sem itens ainda</div>`}
-        <i data-lucide="chevron-down" class="day-card-chevron"></i>
+    <section class="card menu-meal-card">
+      <div class="menu-meal-header">
+        <div class="menu-meal-icon"><i data-lucide="${MEAL_ICONS[mealType]}"></i></div>
+        <div class="menu-meal-title">${MEAL_LABELS[mealType]}</div>
+        <div class="menu-meal-sub">${slots.length} ${slots.length===1?'categoria':'categorias'}</div>
       </div>
-      <div class="day-card-body">
-        ${hasAny ? Object.keys(MEAL_LABELS).map(mt=>renderDayMealBlock(meals, mt)).join('') : `<p class="empty-hint" data-day-open="${d.key}">Toque para adicionar itens deste dia.</p>`}
-      </div>
+
+      ${slots.length===0 ? '<p class="menu-empty-slots">Nenhuma categoria ainda. Crie a primeira abaixo, ex: "Proteína".</p>' :
+        slots.map(slot=>renderMenuSlot(mealType, slot)).join('')}
+
+      <button class="menu-add-slot-btn" data-add-slot="${mealType}"><i data-lucide="folder-plus"></i>Nova categoria</button>
+
+      ${anySelected ? `<div class="menu-meal-total">Total escolhido: <b>${Math.round(total)} kcal</b></div>` : ''}
     </section>
   `;
 }
-function renderDayMealBlock(meals, mt){
-  const arr = meals[mt];
-  if(arr.length===0) return '';
-  return `<div class="day-meal-block">
-    <div class="day-meal-label"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</div>
-    ${arr.map(it=>`
-      <div class="day-item-row">
-        <div class="di-icon"><i data-lucide="${CATEGORY_ICONS[it.category] || 'utensils'}"></i></div>
-        <div class="di-text">
-          <div class="di-name">${escapeHtml(it.name)}</div>
-          <div class="di-cat">${formatQtyLabel(it)} · ${Math.round(it.kcal)} kcal</div>
-        </div>
+function renderMenuSlot(mealType, slot){
+  return `
+    <div class="menu-slot" data-slot-id="${slot.id}">
+      <div class="menu-slot-header">
+        <span class="menu-slot-title">${escapeHtml(slot.categoria)}</span>
+        <button class="menu-slot-del" data-del-slot="${slot.id}" data-meal="${mealType}"><i data-lucide="trash-2"></i></button>
       </div>
-    `).join('')}
-  </div>`;
+      <div class="menu-options-row">
+        ${slot.options.map(opt=>`
+          <div class="menu-option-pill ${opt.selected?'selected':''}" data-select-opt="${opt.uid}" data-meal="${mealType}" data-slot="${slot.id}">
+            <span class="mo-check"><i data-lucide="check"></i></span>
+            <div class="mo-info">
+              <span class="mo-name">${escapeHtml(opt.name)}</span>
+              <span class="mo-kcal">${formatQtyLabel(opt)} · ${Math.round(opt.kcal)}kcal</span>
+            </div>
+            <button class="mo-remove" data-remove-opt="${opt.uid}" data-meal="${mealType}" data-slot="${slot.id}"><i data-lucide="x"></i></button>
+          </div>
+        `).join('')}
+        <button class="menu-option-add" data-add-opt="${slot.id}" data-meal="${mealType}"><i data-lucide="plus"></i>Alternativa</button>
+      </div>
+    </div>
+  `;
 }
 
-/* ---------- bottom sheet: editor de um dia do cardápio ---------- */
-function openDayEditor(dayKey){
-  resetDayEditor(dayKey);
-  const dayLabel = DAY_META.find(d=>d.key===dayKey).label;
+/* ---------- criar nova categoria (slot) ---------- */
+function promptNewSlot(mealType){
+  const overlay = document.getElementById('modalOverlay');
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <h3>Nova categoria em ${MEAL_LABELS[mealType]}</h3>
+    <div class="modal-field">
+      <label>Nome da categoria</label>
+      <input type="text" id="newSlotNameInput" class="name-input" placeholder="Ex: Proteína, Carboidrato, Bebida...">
+    </div>
+    <button class="btn-gradient full" id="confirmNewSlotBtn"><i data-lucide="check"></i>Criar categoria</button>
+    <button class="modal-close" id="modalCloseBtn">Cancelar</button>
+  `;
+  overlay.classList.remove('hidden');
+  icons();
+  const input = document.getElementById('newSlotNameInput');
+  input.focus();
+  async function confirm(){
+    const name = input.value.trim();
+    if(!name){ showToast('Digite um nome para a categoria'); return; }
+    state.cardapioUnico[mealType].push({
+      id: 'slot_'+Date.now()+'_'+Math.random().toString(36).slice(2,7),
+      categoria: name,
+      options: []
+    });
+    await saveState();
+    overlay.classList.add('hidden');
+    render();
+    showToast('Categoria criada: '+name);
+  }
+  document.getElementById('confirmNewSlotBtn').addEventListener('click', confirm);
+  input.addEventListener('keydown', (e)=>{ if(e.key==='Enter') confirm(); });
+  document.getElementById('modalCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
+}
+function confirmDeleteSlot(mealType, slotId){
+  const overlay = document.getElementById('modalOverlay');
+  const box = document.getElementById('modalBox');
+  const slot = state.cardapioUnico[mealType].find(s=>s.id===slotId);
+  box.innerHTML = `
+    <h3>Excluir categoria "${escapeHtml(slot ? slot.categoria : '')}"?</h3>
+    <div class="modal-options">
+      <button class="modal-opt-btn remove" data-confirm-delete-slot="1"><i data-lucide="trash-2"></i>Sim, excluir</button>
+    </div>
+    <button class="modal-close" id="modalCloseBtn">Cancelar</button>
+  `;
+  overlay.classList.remove('hidden');
+  icons();
+  box.querySelector('[data-confirm-delete-slot]').addEventListener('click', async ()=>{
+    state.cardapioUnico[mealType] = state.cardapioUnico[mealType].filter(s=>s.id!==slotId);
+    await saveState();
+    overlay.classList.add('hidden');
+    render();
+    showToast('Categoria excluída.');
+  });
+  document.getElementById('modalCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
+}
+
+/* ---------- bottom sheet: adicionar alimento como alternativa em um slot ---------- */
+function openMenuOptionPicker(mealType, slotId){
+  menuEditor.mealType = mealType;
+  menuEditor.slotId = slotId;
+  menuEditor.selected = null;
+  menuEditor.isUnit = false;
+  menuEditor.qty = 100;
+  menuEditor.aiMacros = null;
+  menuEditor.aiLoading = false;
+
+  const slot = state.cardapioUnico[mealType].find(s=>s.id===slotId);
   const overlay = document.getElementById('modalOverlay');
   const box = document.getElementById('modalBox');
   box.classList.add('modal-box-tall');
   box.innerHTML = `
     <div class="sheet-drag-handle"></div>
-    <h3>${dayLabel}</h3>
-    <p class="sheet-subtitle">Escolha a refeição e vá adicionando os alimentos</p>
+    <h3>Nova alternativa · ${escapeHtml(slot.categoria)}</h3>
+    <p class="sheet-subtitle">${MEAL_LABELS[mealType]}</p>
 
-    <div class="meal-type-grid" id="deMealTypeGrid">
-      ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===dayEditor.mealType?' active':''}" data-meal="${mt}"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</button>`).join('')}
-    </div>
-
-    <div class="search-wrap" style="margin-top:14px;">
+    <div class="search-wrap">
       <span class="search-input-icon"><i data-lucide="search"></i></span>
       <input type="text" id="deSearchInput" placeholder="Digite o nome do alimento..." autocomplete="off">
       <div id="deDropdown" class="dropdown hidden"></div>
@@ -1505,19 +1651,14 @@ function openDayEditor(dayKey){
       <div class="quick-qty" id="deQuickQty"></div>
     </div>
 
-    <button id="deIncludeBtn" class="btn-gradient full" style="margin-top:12px;"><i data-lucide="circle-plus"></i>Incluir item</button>
-
-    <div class="day-meal-label" style="margin-top:18px;" id="deCurrentMealLabel"></div>
-    <div id="deItemsList"></div>
-
+    <button id="deIncludeBtn" class="btn-gradient full" style="margin-top:12px;"><i data-lucide="circle-plus"></i>Incluir alternativa</button>
     <button class="modal-close" id="deDoneBtn">Concluído</button>
   `;
   overlay.classList.remove('hidden');
-  refreshDayEditorItemsList();
   icons();
-  wireDayEditor();
+  wireMenuOptionPicker();
 }
-function closeDayEditor(){
+function closeMenuOptionPicker(){
   const overlay = document.getElementById('modalOverlay');
   const box = document.getElementById('modalBox');
   overlay.classList.add('hidden');
@@ -1525,59 +1666,38 @@ function closeDayEditor(){
   box.innerHTML = '';
   render();
 }
-function refreshDayEditorItemsList(){
-  const label = document.getElementById('deCurrentMealLabel');
-  const list = document.getElementById('deItemsList');
-  if(!label || !list) return;
-  const arr = state.cardapioSemanal[dayEditor.dayKey][dayEditor.mealType];
-  const subtotal = arr.reduce((a,i)=>a+i.kcal,0);
-  label.innerHTML = `<i data-lucide="${MEAL_ICONS[dayEditor.mealType]}"></i>${MEAL_LABELS[dayEditor.mealType]}${arr.length ? ' · '+Math.round(subtotal)+' kcal' : ''}`;
-  list.innerHTML = arr.length===0 ? '<p class="empty-hint">Nenhum item ainda nesta refeição.</p>' : arr.map(it=>`
-    <div class="item-row" data-item-uid="${it.uid}">
-      <div class="ir-info">
-        <span class="ir-dot"></span>
-        <div>
-          <div class="ir-name">${escapeHtml(it.name)}</div>
-          <div class="ir-sub">${formatQtyLabel(it)} · ${Math.round(it.kcal)}kcal</div>
-        </div>
-      </div>
-      <button class="ir-remove" data-de-remove="${it.uid}"><i data-lucide="x"></i></button>
-    </div>
-  `).join('');
-  icons();
-}
-function updateDeQtyUI(rebuildPresets){
-  const food = dayEditor.selected;
+function updateMeQtyUI(rebuildPresets){
+  const food = menuEditor.selected;
   if(!food) return;
   const qtyDisplay = document.getElementById('deQtyDisplay');
   const qtySub = document.getElementById('deQtySub');
   const quickQty = document.getElementById('deQuickQty');
-  qtyDisplay.childNodes[0].nodeValue = dayEditor.qty;
-  qtySub.textContent = dayEditor.isUnit ? (dayEditor.qty===1?'unidade':'unidades') : 'gramas';
+  qtyDisplay.childNodes[0].nodeValue = menuEditor.qty;
+  qtySub.textContent = menuEditor.isUnit ? (menuEditor.qty===1?'unidade':'unidades') : 'gramas';
 
   if(rebuildPresets){
-    const presets = dayEditor.isUnit ? [1,2,3,4] : [50,100,150,200];
-    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${dayEditor.isUnit?' un':'g'}</button>`).join('');
+    const presets = menuEditor.isUnit ? [1,2,3,4] : [50,100,150,200];
+    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${menuEditor.isUnit?' un':'g'}</button>`).join('');
   }
-  quickQty.querySelectorAll('.quick-btn').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.qty)===dayEditor.qty));
+  quickQty.querySelectorAll('.quick-btn').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.qty)===menuEditor.qty));
 
-  if(!dayEditor.aiMacros) return; // ainda calculando com a IA
+  if(!menuEditor.aiMacros) return;
 
-  const gramsEquiv = dayEditor.isUnit ? dayEditor.qty*food.unitWeight : dayEditor.qty;
+  const gramsEquiv = menuEditor.isUnit ? menuEditor.qty*food.unitWeight : menuEditor.qty;
   const factor = gramsEquiv/100;
-  const macros = dayEditor.aiMacros;
+  const macros = menuEditor.aiMacros;
   const ftMacros = document.getElementById('deMacros');
   ftMacros.children[0].firstElementChild.textContent = Math.round(macros.kcal*factor);
   ftMacros.children[1].firstElementChild.textContent = (Math.round(macros.protein*factor*10)/10)+'g';
   ftMacros.children[2].firstElementChild.textContent = (Math.round(macros.carbs*factor*10)/10)+'g';
   ftMacros.children[3].firstElementChild.textContent = (Math.round(macros.fat*factor*10)/10)+'g';
 }
-function selectDeFood(food){
-  dayEditor.selected = food;
-  dayEditor.isUnit = !!food.unit;
-  dayEditor.qty = food.unit ? 1 : 100;
-  dayEditor.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
-  dayEditor.aiLoading = false;
+function selectMeFood(food){
+  menuEditor.selected = food;
+  menuEditor.isUnit = !!food.unit;
+  menuEditor.qty = food.unit ? 1 : 100;
+  menuEditor.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
+  menuEditor.aiLoading = false;
 
   const ticket = document.getElementById('deTicket');
   if(!ticket) return;
@@ -1593,23 +1713,21 @@ function selectDeFood(food){
     <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
     <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
   `;
-  const includeBtn = document.getElementById('deIncludeBtn');
-  if(includeBtn) includeBtn.disabled = false;
-  updateDeQtyUI(true);
+  updateMeQtyUI(true);
   icons();
 }
-function clearDeFoodSelection(){
-  dayEditor.selected = null;
-  dayEditor.isUnit = false;
-  dayEditor.qty = 100;
-  dayEditor.aiMacros = null;
-  dayEditor.aiLoading = false;
+function clearMeFoodSelection(){
+  menuEditor.selected = null;
+  menuEditor.isUnit = false;
+  menuEditor.qty = 100;
+  menuEditor.aiMacros = null;
+  menuEditor.aiLoading = false;
   const ticket = document.getElementById('deTicket');
   if(ticket) ticket.classList.remove('show');
   const input = document.getElementById('deSearchInput');
   if(input) input.value = '';
 }
-function wireDayEditor(){
+function wireMenuOptionPicker(){
   const searchInput = document.getElementById('deSearchInput');
   const dropdown = document.getElementById('deDropdown');
 
@@ -1637,7 +1755,7 @@ function wireDayEditor(){
     if(food){
       searchInput.value = food.name;
       dropdown.classList.add('hidden');
-      selectDeFood(food);
+      selectMeFood(food);
     }
   });
   document.getElementById('modalBox').addEventListener('click', (e)=>{
@@ -1645,80 +1763,81 @@ function wireDayEditor(){
   });
 
   document.getElementById('deQtyMinus').addEventListener('click', ()=>{
-    if(!dayEditor.selected) return;
-    const step = dayEditor.isUnit ? 1 : 10;
-    const min = dayEditor.isUnit ? 1 : 10;
-    dayEditor.qty = clamp(dayEditor.qty-step, min, 5000);
-    updateDeQtyUI();
+    if(!menuEditor.selected) return;
+    const step = menuEditor.isUnit ? 1 : 10;
+    const min = menuEditor.isUnit ? 1 : 10;
+    menuEditor.qty = clamp(menuEditor.qty-step, min, 5000);
+    updateMeQtyUI();
   });
   document.getElementById('deQtyPlus').addEventListener('click', ()=>{
-    if(!dayEditor.selected) return;
-    const step = dayEditor.isUnit ? 1 : 10;
-    dayEditor.qty = clamp(dayEditor.qty+step, 1, 5000);
-    updateDeQtyUI();
+    if(!menuEditor.selected) return;
+    const step = menuEditor.isUnit ? 1 : 10;
+    menuEditor.qty = clamp(menuEditor.qty+step, 1, 5000);
+    updateMeQtyUI();
   });
   document.getElementById('deQuickQty').addEventListener('click', (e)=>{
     const btn = e.target.closest('.quick-btn');
-    if(!btn || !dayEditor.selected) return;
-    dayEditor.qty = parseFloat(btn.dataset.qty);
-    updateDeQtyUI();
-  });
-
-  document.getElementById('deMealTypeGrid').addEventListener('click', (e)=>{
-    const btn = e.target.closest('.meal-type-btn');
-    if(!btn) return;
-    dayEditor.mealType = btn.dataset.meal;
-    document.querySelectorAll('#deMealTypeGrid .meal-type-btn').forEach(b=>b.classList.toggle('active', b.dataset.meal===dayEditor.mealType));
-    refreshDayEditorItemsList();
+    if(!btn || !menuEditor.selected) return;
+    menuEditor.qty = parseFloat(btn.dataset.qty);
+    updateMeQtyUI();
   });
 
   document.getElementById('deIncludeBtn').addEventListener('click', async ()=>{
-    if(!dayEditor.selected){ showToast('Selecione um alimento primeiro'); return; }
-    if(dayEditor.aiLoading){ showToast('Aguarde o cálculo de calorias...'); return; }
-    const f = dayEditor.selected;
-    const macros = dayEditor.aiMacros || {kcal:f.kcal, protein:f.protein, carbs:f.carbs, fat:f.fat};
-    const gramsEquiv = dayEditor.isUnit ? dayEditor.qty*f.unitWeight : dayEditor.qty;
+    if(!menuEditor.selected){ showToast('Selecione um alimento primeiro'); return; }
+    const f = menuEditor.selected;
+    const macros = menuEditor.aiMacros || {kcal:f.kcal, protein:f.protein, carbs:f.carbs, fat:f.fat};
+    const gramsEquiv = menuEditor.isUnit ? menuEditor.qty*f.unitWeight : menuEditor.qty;
     const factor = gramsEquiv/100;
-    state.cardapioSemanal[dayEditor.dayKey][dayEditor.mealType].push({
+    const slot = state.cardapioUnico[menuEditor.mealType].find(s=>s.id===menuEditor.slotId);
+    slot.options.push({
       uid: Date.now()+'_'+Math.random().toString(36).slice(2,7),
-      name:f.name, category:f.category, grams:gramsEquiv, qty:dayEditor.qty, isUnit:dayEditor.isUnit,
-      kcal:macros.kcal*factor, protein:macros.protein*factor, carbs:macros.carbs*factor, fat:macros.fat*factor
+      name:f.name, category:f.category, grams:gramsEquiv, qty:menuEditor.qty, isUnit:menuEditor.isUnit,
+      kcal:macros.kcal*factor, protein:macros.protein*factor, carbs:macros.carbs*factor, fat:macros.fat*factor,
+      selected:false
     });
-    showToast('Item incluído: '+f.name);
-    clearDeFoodSelection();
-    refreshDayEditorItemsList();
+    showToast('Alternativa incluída: '+f.name);
     await saveState();
+    clearMeFoodSelection();
   });
 
-  document.getElementById('deItemsList').addEventListener('click', async (e)=>{
-    const btn = e.target.closest('[data-de-remove]');
-    if(!btn) return;
-    const arr = state.cardapioSemanal[dayEditor.dayKey][dayEditor.mealType];
-    state.cardapioSemanal[dayEditor.dayKey][dayEditor.mealType] = arr.filter(it=>it.uid!==btn.dataset.deRemove);
-    refreshDayEditorItemsList();
-    await saveState();
-  });
-
-  document.getElementById('deDoneBtn').addEventListener('click', closeDayEditor);
+  document.getElementById('deDoneBtn').addEventListener('click', closeMenuOptionPicker);
   const overlayEl = document.getElementById('modalOverlay');
-  overlayEl.onclick = (e)=>{ if(e.target===overlayEl) closeDayEditor(); };
+  overlayEl.onclick = (e)=>{ if(e.target===overlayEl) closeMenuOptionPicker(); };
 }
 
-function toggleDayCard(key){
-  if(cardapioExpanded.has(key)) cardapioExpanded.delete(key);
-  else cardapioExpanded.add(key);
-  const content = document.getElementById('content');
-  if(content){ content.innerHTML = renderCardapio(); wireCardapio(); icons(); }
-}
 function wireCardapio(){
-  // cada visita à aba recria estes elementos (innerHTML novo), então é seguro
-  // vincular direto neles sem acumular listeners.
-  document.querySelectorAll('.day-card').forEach(card=>{
-    card.addEventListener('click', (e)=>{
-      const editTrigger = e.target.closest('[data-day-open]');
-      if(editTrigger){ openDayEditor(editTrigger.dataset.dayOpen); return; }
-      const toggleTrigger = e.target.closest('[data-day-toggle]');
-      if(toggleTrigger){ toggleDayCard(toggleTrigger.dataset.dayToggle); }
+  document.querySelectorAll('.menu-meal-card').forEach(card=>{
+    card.addEventListener('click', async (e)=>{
+      const addSlotBtn = e.target.closest('[data-add-slot]');
+      if(addSlotBtn){ promptNewSlot(addSlotBtn.dataset.addSlot); return; }
+
+      const delSlotBtn = e.target.closest('[data-del-slot]');
+      if(delSlotBtn){ confirmDeleteSlot(delSlotBtn.dataset.meal, delSlotBtn.dataset.delSlot); return; }
+
+      const addOptBtn = e.target.closest('[data-add-opt]');
+      if(addOptBtn){ openMenuOptionPicker(addOptBtn.dataset.meal, addOptBtn.dataset.addOpt); return; }
+
+      const removeOptBtn = e.target.closest('[data-remove-opt]');
+      if(removeOptBtn){
+        const mt = removeOptBtn.dataset.meal, slotId = removeOptBtn.dataset.slot, uid = removeOptBtn.dataset.removeOpt;
+        const slot = state.cardapioUnico[mt].find(s=>s.id===slotId);
+        slot.options = slot.options.filter(o=>o.uid!==uid);
+        await saveState();
+        render();
+        return;
+      }
+
+      const pill = e.target.closest('[data-select-opt]');
+      if(pill){
+        const mt = pill.dataset.meal, slotId = pill.dataset.slot, uid = pill.dataset.selectOpt;
+        const slot = state.cardapioUnico[mt].find(s=>s.id===slotId);
+        const opt = slot.options.find(o=>o.uid===uid);
+        const wasSelected = opt.selected;
+        slot.options.forEach(o=>o.selected=false);
+        opt.selected = !wasSelected;
+        await saveState();
+        render();
+      }
     });
   });
 }
