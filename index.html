@@ -327,16 +327,30 @@
   .inline-row .form-field{flex:1;}
 
   /* ---------- CARDAPIO (semanal, por dia) ---------- */
-  .day-card{cursor:pointer; transition:transform .12s ease, box-shadow .12s ease;}
-  .day-card:active{transform:scale(.985);}
-  .day-card-header{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:2px;}
-  .day-card-title{font-family:var(--font-display); font-weight:700; font-size:16px; letter-spacing:-.01em;}
-  .day-card-total{font-size:11.5px; color:var(--text-muted); font-family:var(--font-mono); margin-top:2px;}
+  .day-card{position:relative; transition:box-shadow .12s ease;}
+  .day-card-header{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+    gap:3px; cursor:pointer; padding:6px 40px 10px; position:relative;
+  }
+  .day-card-header:active{opacity:.85;}
+  .day-card-badge{
+    font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.08em;
+    color:#fff; background:linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    padding:3px 10px; border-radius:99px; margin-bottom:4px;
+  }
+  .day-card-title{font-family:var(--font-display); font-weight:700; font-size:19px; letter-spacing:-.01em;}
+  .day-card-total{font-size:12px; color:var(--text-muted); font-family:var(--font-mono); margin-top:1px;}
+  .day-card-total.is-muted{opacity:.6;}
+  .day-card-chevron{width:18px; height:18px; color:var(--text-dim); margin-top:4px; transition:transform .2s ease;}
+  .day-card.is-expanded .day-card-chevron{transform:rotate(180deg);}
   .day-card-edit-btn{
+    position:absolute; top:16px; right:16px;
     width:34px; height:34px; border-radius:11px; border:1px solid var(--border); background:var(--surface-2);
-    color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+    color:var(--text-dim); display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none; z-index:2;
   }
   .day-card-edit-btn svg{width:15px;height:15px;}
+  .day-card-body{display:none;}
+  .day-card.is-expanded .day-card-body{display:block;}
   .day-meal-block{margin-top:14px;}
   .day-meal-label{
     display:flex; align-items:center; gap:6px; font-size:11px; text-transform:uppercase; letter-spacing:.05em;
@@ -919,6 +933,12 @@ function defaultCardapioSemanal(){
   DAY_META.forEach(d=>{ obj[d.key] = emptyDayMeals(); });
   return obj;
 }
+function getTodayDayKey(){
+  const weekday = new Intl.DateTimeFormat('en-US', {timeZone:'America/Sao_Paulo', weekday:'long'}).format(new Date());
+  const map = {Monday:'segunda', Tuesday:'terca', Wednesday:'quarta', Thursday:'quinta', Friday:'sexta', Saturday:'sabado', Sunday:'domingo'};
+  return map[weekday] || 'segunda';
+}
+let cardapioExpanded = null; // Set com as chaves dos dias abertos na aba Cardápio (inicializada com o dia de hoje)
 
 let currentProfile = 'gabriel';
 let state = null;
@@ -1231,6 +1251,12 @@ function selectFood(food){
   ftCat.textContent = food.category + (food.unit ? ' · medido por unidade' : ' · medido por gramas');
   ftCat.classList.remove('loading');
   document.getElementById('ftIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
+  document.getElementById('ftMacros').innerHTML = `
+    <div class="ft-macro"><div class="fm-val">0</div><div class="fm-label">kcal</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">prot</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
+  `;
   const includeBtn = document.getElementById('includeItemBtn');
   if(includeBtn) includeBtn.disabled = false;
   updateQtyUI(true);
@@ -1373,25 +1399,29 @@ function resetDayEditor(dayKey){
   dayEditor.aiLoading = false;
 }
 function renderCardapio(){
+  if(!cardapioExpanded){ cardapioExpanded = new Set([getTodayDayKey()]); }
+  const todayKey = getTodayDayKey();
   return `
     ${heroHTML('cardapio')}
-    ${DAY_META.map(d=>renderDayCard(d)).join('')}
+    ${DAY_META.map(d=>renderDayCard(d, d.key===todayKey, cardapioExpanded.has(d.key))).join('')}
   `;
 }
-function renderDayCard(d){
+function renderDayCard(d, isToday, isExpanded){
   const meals = state.cardapioSemanal[d.key];
   const hasAny = Object.values(meals).some(arr=>arr.length>0);
   const total = dayTotalKcal(d.key);
   return `
-    <section class="card day-card" data-day-open="${d.key}">
-      <div class="day-card-header">
-        <div>
-          <div class="day-card-title">${d.label}</div>
-          ${hasAny ? `<div class="day-card-total">${Math.round(total)} kcal no dia</div>` : ''}
-        </div>
-        <button class="day-card-edit-btn" data-day-open="${d.key}"><i data-lucide="pencil"></i></button>
+    <section class="card day-card ${isToday?'is-today':''} ${isExpanded?'is-expanded':''}">
+      <button class="day-card-edit-btn" data-day-open="${d.key}"><i data-lucide="pencil"></i></button>
+      <div class="day-card-header" data-day-toggle="${d.key}">
+        ${isToday ? '<div class="day-card-badge">HOJE</div>' : ''}
+        <div class="day-card-title">${d.label}</div>
+        ${hasAny ? `<div class="day-card-total">${Math.round(total)} kcal no dia</div>` : `<div class="day-card-total is-muted">Sem itens ainda</div>`}
+        <i data-lucide="chevron-down" class="day-card-chevron"></i>
       </div>
-      ${hasAny ? Object.keys(MEAL_LABELS).map(mt=>renderDayMealBlock(meals, mt)).join('') : '<p class="empty-hint">Toque para adicionar itens deste dia.</p>'}
+      <div class="day-card-body">
+        ${hasAny ? Object.keys(MEAL_LABELS).map(mt=>renderDayMealBlock(meals, mt)).join('') : `<p class="empty-hint" data-day-open="${d.key}">Toque para adicionar itens deste dia.</p>`}
+      </div>
     </section>
   `;
 }
@@ -1533,6 +1563,12 @@ function selectDeFood(food){
   deCat.textContent = food.category + (food.unit ? ' · medido por unidade' : ' · medido por gramas');
   deCat.classList.remove('loading');
   document.getElementById('deIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
+  document.getElementById('deMacros').innerHTML = `
+    <div class="ft-macro"><div class="fm-val">0</div><div class="fm-label">kcal</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">prot</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
+    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
+  `;
   const includeBtn = document.getElementById('deIncludeBtn');
   if(includeBtn) includeBtn.disabled = false;
   updateDeQtyUI(true);
@@ -1644,15 +1680,21 @@ function wireDayEditor(){
   overlayEl.onclick = (e)=>{ if(e.target===overlayEl) closeDayEditor(); };
 }
 
+function toggleDayCard(key){
+  if(cardapioExpanded.has(key)) cardapioExpanded.delete(key);
+  else cardapioExpanded.add(key);
+  const content = document.getElementById('content');
+  if(content){ content.innerHTML = renderCardapio(); wireCardapio(); icons(); }
+}
 function wireCardapio(){
   // cada visita à aba recria estes elementos (innerHTML novo), então é seguro
   // vincular direto neles sem acumular listeners.
   document.querySelectorAll('.day-card').forEach(card=>{
     card.addEventListener('click', (e)=>{
-      // o botão de lápis também tem data-day-open; closest cobre os dois casos
-      const trigger = e.target.closest('[data-day-open]');
-      if(!trigger) return;
-      openDayEditor(trigger.dataset.dayOpen);
+      const editTrigger = e.target.closest('[data-day-open]');
+      if(editTrigger){ openDayEditor(editTrigger.dataset.dayOpen); return; }
+      const toggleTrigger = e.target.closest('[data-day-toggle]');
+      if(toggleTrigger){ toggleDayCard(toggleTrigger.dataset.dayToggle); }
     });
   });
 }
