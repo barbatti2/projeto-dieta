@@ -636,28 +636,28 @@ const CATEGORY_ICONS = {
 };
 
 /* ============================================================
-   CÁLCULO NUTRICIONAL VIA IA (Google Gemini) — usado exclusivamente
-   para recalcular kcal/proteína/carbo/gordura por 100g sempre que um
-   alimento é selecionado, tanto em "Adicionar" quanto em "Cardápio".
-   Nenhum outro uso de IA existe no app.
+   CÁLCULO NUTRICIONAL VIA IA (Google Gemini) — usado
+   exclusivamente para recalcular kcal/proteína/carbo/gordura por
+   100g sempre que um alimento é selecionado, tanto em "Adicionar"
+   quanto em "Cardápio". Nenhum outro uso de IA existe no app.
 
-   Por que Gemini: a API da Anthropic não aceita chamadas diretas do
-   navegador fora do preview de artifacts do claude.ai (o navegador
-   bloqueia por CORS quando o site está publicado em outro domínio).
-   A API do Gemini aceita chamadas diretas do navegador com uma chave
-   de API, então funciona normalmente no seu site já publicado.
+   ATENÇÃO: colocar a chave da API direto neste arquivo faz com que
+   ela fique visível para qualquer pessoa que veja o código-fonte da
+   página (Ctrl+U ou DevTools). Isso é aceitável só para uso pessoal
+   e de baixo risco; para um app com mais gente acessando, o ideal é
+   um pequeno servidor/proxy guardando a chave.
 
-   Como configurar (gratuito):
-   1) Crie uma chave em https://aistudio.google.com/apikey
-   2) Cole a chave abaixo em GEMINI_API_KEY
+   Como configurar (chave do Google AI Studio / Gemini):
+   1) Gere uma chave gratuita em https://aistudio.google.com/apikey
+   2) Cole a chave abaixo em GEMINI_API_KEY (começa com "AIzaSy")
    Sem a chave preenchida, o app cai automaticamente para a
    estimativa local (sem quebrar o app).
    ============================================================ */
-const GEMINI_API_KEY = "AIzaSyAU9nNsbacyYeF_LETwwrN1uX-fzB-uFJU"; // <-- cole aqui sua chave da API Gemini
+const GEMINI_API_KEY = "AIzaSyAU9nNsbacyYeF_LETwwrN1uX-fzB-uFJU";
 const GEMINI_MODEL = "gemini-2.0-flash";
 
-function geminiConfigProvided(){
-  return !!(GEMINI_API_KEY && GEMINI_API_KEY.trim().length > 0);
+function aiConfigProvided(){
+  return !!(GEMINI_API_KEY && GEMINI_API_KEY.trim().length > 0 && GEMINI_API_KEY.trim() !== "COLE_AQUI_SUA_CHAVE_DO_GEMINI");
 }
 
 const aiNutritionCache = {}; // cache em memória desta sessão: normalize(nome) -> {kcal,protein,carbs,fat}
@@ -681,7 +681,7 @@ async function getAINutrition(foodName){
     }catch(e){ /* não existe no cache ainda, segue pro cálculo */ }
   }
 
-  if(!geminiConfigProvided()){
+  if(!aiConfigProvided()){
     console.warn('[NutriRing] GEMINI_API_KEY não configurada — usando estimativa local para "'+foodName+'"');
     return null;
   }
@@ -690,27 +690,29 @@ async function getAINutrition(foodName){
     const prompt = "Você é uma base de dados nutricional precisa. Para o alimento brasileiro a seguir (considere o modo de preparo se estiver indicado entre parênteses), responda SOMENTE com um objeto JSON válido, sem nenhum texto adicional, sem markdown, sem explicação — apenas o JSON com os valores médios por 100 gramas: {\"kcal\":number,\"protein\":number,\"carbs\":number,\"fat\":number} (protein, carbs e fat em gramas). Alimento: \"" + foodName + "\"";
 
     const response = await fetch(
-      // 1. Removemos o "?key=" do final da URL
-      "https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent",
+      "https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + GEMINI_API_KEY,
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          // 2. ADICIONE ESTA LINHA ABAIXO passando sua chave:
-          "x-goog-api-key": GEMINI_API_KEY 
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { responseMimeType: "application/json", temperature: 0 }
+          contents: [
+            { role: "user", parts: [ { text: prompt } ] }
+          ],
+          generationConfig: {
+            temperature: 0,
+            responseMimeType: "application/json"
+          }
         })
       }
     );
     if(!response.ok){
-      throw new Error('Gemini respondeu com status '+response.status);
+      const errBody = await response.text().catch(()=> '');
+      throw new Error('Gemini respondeu com status '+response.status+' '+errBody);
     }
     const data = await response.json();
-    const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
-    const textBlock = parts.map(p=>p.text||'').join('').trim();
+    const textBlock = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text) || '';
     const cleaned = textBlock.replace(/```json|```/g,'').trim();
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     const parsedRaw = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
