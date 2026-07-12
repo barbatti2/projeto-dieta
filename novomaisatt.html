@@ -636,11 +636,30 @@ const CATEGORY_ICONS = {
 };
 
 /* ============================================================
-   CÁLCULO NUTRICIONAL VIA IA (Claude) — usado exclusivamente
-   para recalcular kcal/proteína/carbo/gordura por 100g sempre
-   que um alimento é selecionado, tanto em "Adicionar" quanto em
-   "Cardápio". Nenhum outro uso de IA existe no app.
+   CÁLCULO NUTRICIONAL VIA IA (Google Gemini) — usado exclusivamente
+   para recalcular kcal/proteína/carbo/gordura por 100g sempre que um
+   alimento é selecionado, tanto em "Adicionar" quanto em "Cardápio".
+   Nenhum outro uso de IA existe no app.
+
+   Por que Gemini: a API da Anthropic não aceita chamadas diretas do
+   navegador fora do preview de artifacts do claude.ai (o navegador
+   bloqueia por CORS quando o site está publicado em outro domínio).
+   A API do Gemini aceita chamadas diretas do navegador com uma chave
+   de API, então funciona normalmente no seu site já publicado.
+
+   Como configurar (gratuito):
+   1) Crie uma chave em https://aistudio.google.com/apikey
+   2) Cole a chave abaixo em GEMINI_API_KEY
+   Sem a chave preenchida, o app cai automaticamente para a
+   estimativa local (sem quebrar o app).
    ============================================================ */
+const GEMINI_API_KEY = "AQ.Ab8RN6JGAlIWedJe93bSq_uNbbaqFxPwAGVV2HFDORQQ4KhbVA"; // <-- cole aqui sua chave da API Gemini
+const GEMINI_MODEL = "gemini-2.0-flash";
+
+function geminiConfigProvided(){
+  return !!(GEMINI_API_KEY && GEMINI_API_KEY.trim().length > 0);
+}
+
 const aiNutritionCache = {}; // cache em memória desta sessão: normalize(nome) -> {kcal,protein,carbs,fat}
 
 async function getAINutrition(foodName){
@@ -662,21 +681,31 @@ async function getAINutrition(foodName){
     }catch(e){ /* não existe no cache ainda, segue pro cálculo */ }
   }
 
+  if(!geminiConfigProvided()){
+    console.warn('[NutriRing] GEMINI_API_KEY não configurada — usando estimativa local para "'+foodName+'"');
+    return null;
+  }
+
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 300,
-        messages: [{
-          role: "user",
-          content: "Você é uma base de dados nutricional precisa. Para o alimento brasileiro a seguir (considere o modo de preparo se estiver indicado entre parênteses), responda SOMENTE com um objeto JSON válido, sem nenhum texto adicional, sem markdown, sem explicação — apenas o JSON com os valores médios por 100 gramas: {\"kcal\":number,\"protein\":number,\"carbs\":number,\"fat\":number} (protein, carbs e fat em gramas). Alimento: \"" + foodName + "\""
-        }]
-      })
-    });
+    const prompt = "Você é uma base de dados nutricional precisa. Para o alimento brasileiro a seguir (considere o modo de preparo se estiver indicado entre parênteses), responda SOMENTE com um objeto JSON válido, sem nenhum texto adicional, sem markdown, sem explicação — apenas o JSON com os valores médios por 100 gramas: {\"kcal\":number,\"protein\":number,\"carbs\":number,\"fat\":number} (protein, carbs e fat em gramas). Alimento: \"" + foodName + "\"";
+
+    const response = await fetch(
+      "https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent?key=" + GEMINI_API_KEY,
+      {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: "application/json", temperature: 0 }
+        })
+      }
+    );
+    if(!response.ok){
+      throw new Error('Gemini respondeu com status '+response.status);
+    }
     const data = await response.json();
-    const textBlock = (data.content || []).map(b=>b.text||'').join('').trim();
+    const parts = (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) || [];
+    const textBlock = parts.map(p=>p.text||'').join('').trim();
     const cleaned = textBlock.replace(/```json|```/g,'').trim();
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
     const parsedRaw = JSON.parse(jsonMatch ? jsonMatch[0] : cleaned);
@@ -687,7 +716,7 @@ async function getAINutrition(foodName){
       fat: Number(parsedRaw.fat)
     };
     if(!isFinite(result.kcal) || !isFinite(result.protein) || !isFinite(result.carbs) || !isFinite(result.fat)){
-      throw new Error('Resposta da IA não trouxe números válidos');
+      throw new Error('Resposta do Gemini não trouxe números válidos');
     }
     aiNutritionCache[key] = result;
     if(hasLocalStorage()){
@@ -695,7 +724,7 @@ async function getAINutrition(foodName){
     }
     return result;
   }catch(e){
-    console.error('Erro ao calcular nutrição com IA para "'+foodName+'"', e);
+    console.error('Erro ao calcular nutrição com Gemini para "'+foodName+'"', e);
     return null;
   }
 }
