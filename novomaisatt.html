@@ -146,12 +146,16 @@
   .ring-caption{margin-top:16px; font-size:13px; color:var(--text-muted); text-align:center;}
 
   .macro-cards{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
-  .macro-card{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 10px; text-align:center; display:flex; flex-direction:column; gap:6px; align-items:center;}
-  .macro-card svg{width:18px;height:18px; color:var(--accent-2);}
-  .macro-card .macro-val{font-family:var(--font-mono); font-size:19px; font-weight:700;}
-  .macro-card .macro-name{font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em;}
-  .macro-bar{width:100%; height:5px; border-radius:99px; background:var(--surface-3); overflow:hidden; margin-top:2px;}
-  .macro-bar-fill{height:100%; width:0%; border-radius:99px; background:linear-gradient(90deg, var(--accent-1), var(--accent-2)); transition:width 1.1s cubic-bezier(.4,0,.2,1);}
+  .macro-card{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 8px 12px; text-align:center; display:flex; flex-direction:column; gap:6px; align-items:center;}
+  .macro-card .macro-name{font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
+  .mini-ring-outer{position:relative; width:76px; height:76px;}
+  .mini-ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--ring-c1, var(--accent-1)), var(--ring-c2, var(--accent-2)) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:--pct-deg 1.2s cubic-bezier(.4,0,.2,1);}
+  .mini-ring-inner{position:absolute; inset:9px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--border);}
+  .mini-ring-inner .mr-val{font-family:var(--font-mono); font-size:14px; font-weight:700; line-height:1;}
+  .mini-ring-inner .mr-unit{font-size:8px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
+  .macro-status{font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:99px;}
+  .macro-status.ok{color:var(--success); background:color-mix(in srgb, var(--success) 16%, transparent);}
+  .macro-status.over{color:var(--danger); background:color-mix(in srgb, var(--danger) 16%, transparent);}
 
   .meal-summary-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin:10px 0;}
 
@@ -299,6 +303,8 @@
   .hist-meal-group{margin-bottom:10px;}
   .hist-meal-title{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:700; margin-bottom:6px; text-align:center;}
   .hist-item{display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; margin-bottom:5px;}
+  .hist-item-clickable{cursor:pointer; transition:background .12s ease;}
+  .hist-item-clickable:active{background:color-mix(in srgb, var(--danger) 10%, var(--surface-2));}
   .hist-item .hi-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .hist-item .hi-sub{flex:none; font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);}
   .hi-delete{flex:none; background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:4px; border-radius:8px; transition:color .15s ease, background .15s ease;}
@@ -323,6 +329,8 @@
   .weight-history-list{display:flex; flex-direction:column; gap:7px; margin-top:12px; max-height:220px; overflow-y:auto;}
   .wh-row{display:flex; justify-content:space-between; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; padding:9px 13px; font-size:13px;}
   .wh-row .wh-val{font-family:var(--font-mono); font-weight:700;}
+  .wh-row-clickable{cursor:pointer; transition:background .12s ease;}
+  .wh-row-clickable:active{background:color-mix(in srgb, var(--danger) 10%, var(--surface-2));}
   .inline-row{display:flex; gap:10px; align-items:flex-end;}
   .inline-row .form-field{flex:1;}
 
@@ -1071,6 +1079,12 @@ function heroHTML(tab){
 /* ============================================================
    TAB: INÍCIO
    ============================================================ */
+function macroStatusHTML(consumed, goal){
+  if(!goal || goal<=0) return '';
+  const over = Math.round(consumed - goal);
+  if(over>0) return `<div class="macro-status over">+${over}g acima da meta</div>`;
+  return `<div class="macro-status ok">Dentro da meta</div>`;
+}
 function renderInicio(){
   const today = todayStr();
   const meals = state.meals.filter(m=>m.date===today);
@@ -1080,11 +1094,15 @@ function renderInicio(){
   const pctDeg = (pct*3.6).toFixed(1)+'deg';
 
   const remProtein = Math.max(0, Math.round(goals.proteina - sum.protein));
-  const remKcal = Math.max(0, Math.round(goals.calorias - sum.kcal));
   const remCarbs = Math.max(0, Math.round(goals.carboidratos - sum.carbs));
+  const goalFat = Math.round(goals.calorias*0.28/9); // meta de gordura derivada (~28% das calorias da meta)
+  const remFat = Math.max(0, Math.round(goalFat - sum.fat));
   const pctProtein = clamp(goals.proteina>0 ? sum.protein/goals.proteina*100:0,0,100);
   const pctCarbs = clamp(goals.carboidratos>0 ? sum.carbs/goals.carboidratos*100:0,0,100);
-  const pctKcal = pct;
+  const pctFat = clamp(goalFat>0 ? sum.fat/goalFat*100:0,0,100);
+  const proteinDeg = (pctProtein*3.6).toFixed(1)+'deg';
+  const carbsDeg = (pctCarbs*3.6).toFixed(1)+'deg';
+  const fatDeg = (pctFat*3.6).toFixed(1)+'deg';
 
   return `
     ${heroHTML('inicio')}
@@ -1103,22 +1121,28 @@ function renderInicio(){
 
     <section class="macro-cards">
       <div class="macro-card">
-        <i data-lucide="beef"></i>
-        <span class="macro-val">${remProtein}g</span>
-        <span class="macro-name">Proteína faltando</span>
-        <div class="macro-bar"><div class="macro-bar-fill" data-fill="${pctProtein}%"></div></div>
+        <div class="mini-ring-outer">
+          <div class="mini-ring-fill" data-ring-deg="${proteinDeg}" style="--pct-deg:0deg; --ring-c1:#FB923C; --ring-c2:#F97316;"></div>
+          <div class="mini-ring-inner"><span class="mr-val">${remProtein}g</span><span class="mr-unit">faltam</span></div>
+        </div>
+        <span class="macro-name">Proteína</span>
+        ${macroStatusHTML(sum.protein, goals.proteina)}
       </div>
       <div class="macro-card">
-        <i data-lucide="flame"></i>
-        <span class="macro-val">${remKcal}</span>
-        <span class="macro-name">Calorias faltando</span>
-        <div class="macro-bar"><div class="macro-bar-fill" data-fill="${pctKcal}%"></div></div>
+        <div class="mini-ring-outer">
+          <div class="mini-ring-fill" data-ring-deg="${carbsDeg}" style="--pct-deg:0deg; --ring-c1:#FBBF24; --ring-c2:#F59E0B;"></div>
+          <div class="mini-ring-inner"><span class="mr-val">${remCarbs}g</span><span class="mr-unit">faltam</span></div>
+        </div>
+        <span class="macro-name">Carboidratos</span>
+        ${macroStatusHTML(sum.carbs, goals.carboidratos)}
       </div>
       <div class="macro-card">
-        <i data-lucide="wheat"></i>
-        <span class="macro-val">${remCarbs}g</span>
-        <span class="macro-name">Carbos faltando</span>
-        <div class="macro-bar"><div class="macro-bar-fill" data-fill="${pctCarbs}%"></div></div>
+        <div class="mini-ring-outer">
+          <div class="mini-ring-fill" data-ring-deg="${fatDeg}" style="--pct-deg:0deg; --ring-c1:#A78BFA; --ring-c2:#8B5CF6;"></div>
+          <div class="mini-ring-inner"><span class="mr-val">${remFat}g</span><span class="mr-unit">faltam</span></div>
+        </div>
+        <span class="macro-name">Gordura</span>
+        ${macroStatusHTML(sum.fat, goalFat)}
       </div>
     </section>
 
@@ -1836,6 +1860,32 @@ document.getElementById('content').addEventListener('click', (e)=>{
 });
 
 /* ============================================================
+   EXCLUIR REGISTRO DE PESO (Pesos e medidas)
+   ============================================================ */
+function confirmDeleteWeight(dateStr, pesoVal){
+  const overlay = document.getElementById('modalOverlay');
+  const box = document.getElementById('modalBox');
+  box.innerHTML = `
+    <h3>Excluir registro de ${fmtDateShort(dateStr)} (${pesoVal}kg)?</h3>
+    <div class="modal-options">
+      <button class="modal-opt-btn remove" data-confirm-delete-weight="1"><i data-lucide="trash-2"></i>Sim, excluir</button>
+    </div>
+    <button class="modal-close" id="modalCloseBtn">Cancelar</button>
+  `;
+  overlay.classList.remove('hidden');
+  icons();
+  box.querySelector('[data-confirm-delete-weight]').addEventListener('click', async ()=>{
+    state.weight.history = state.weight.history.filter(h=>h.date!==dateStr);
+    await saveState();
+    overlay.classList.add('hidden');
+    render();
+    showToast('Registro de peso excluído.');
+  });
+  document.getElementById('modalCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
+}
+
+/* ============================================================
    TAB: HISTÓRICO
    ============================================================ */
 function renderHistorico(){
@@ -1890,7 +1940,7 @@ function renderHistContent(){
       if(mi.length===0) return '';
       return `<div class="hist-meal-group">
         <div class="hist-meal-title">${MEAL_LABELS[mt]}</div>
-        ${mi.map(i=>`<div class="hist-item" data-meal-id="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
+        ${mi.map(i=>`<div class="hist-item hist-item-clickable" data-meal-id="${i.id}" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
       </div>`;
     }).join('');
     return `<div class="hist-day-group">
@@ -1964,7 +2014,7 @@ function renderPesos(){
       </div>
       <div class="weight-history-list">
         ${w.history.length===0 ? '<p class="empty-hint">Nenhum registro ainda.</p>' :
-          w.history.slice().reverse().map(h=>`<div class="wh-row"><span>${fmtDateShort(h.date)}</span><span class="wh-val">${h.peso}kg</span></div>`).join('')}
+          w.history.slice().reverse().map(h=>`<div class="wh-row wh-row-clickable" data-delete-weight="${h.date}" data-weight-val="${h.peso}"><span>${fmtDateShort(h.date)}</span><span class="wh-val">${h.peso}kg</span></div>`).join('')}
       </div>
     </section>
 
@@ -2013,6 +2063,12 @@ function wirePesos(){
     await saveState();
     showToast('Peso registrado!');
     render();
+  });
+
+  document.querySelectorAll('[data-delete-weight]').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      confirmDeleteWeight(row.dataset.deleteWeight, row.dataset.weightVal);
+    });
   });
 
   document.getElementById('saveGoalsBtn').addEventListener('click', async ()=>{
