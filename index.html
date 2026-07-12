@@ -553,7 +553,7 @@ function buildFoodDB(){
   const peixeNomes = []; peixes.forEach(c=>preparoPeixe.forEach(p=>peixeNomes.push(c+' ('+p+')')));
   addGroup(peixeNomes, [90,250],[18,26],[0,2],[1,18],'Peixes e frutos do mar');
 
-  addGroup(['Ovo cozido','Ovo frito','Ovo mexido','Clara de ovo','Leite integral','Leite desnatado','Leite semidesnatado','Iogurte natural','Iogurte grego','Iogurte de frutas','Queijo minas','Queijo muçarela','Queijo prato','Queijo cottage','Requeijão','Manteiga','Cream cheese','Queijo parmesão','Queijo provolone','Queijo brie','Queijo gorgonzola','Queijo coalho','Ricota','Petit suisse','Danone','Bebida láctea','Leite condensado','Creme de leite','Chantilly','Leite em pó'],
+  addGroup(['Ovo cozido','Ovo frito','Ovo mexido','Clara de ovo','Leite integral','Leite desnatado','Leite semidesnatado','Iogurte natural','Iogurte grego','Iogurte de frutas','Queijo minas','Queijo muçarela','Queijo prato','Queijo cottage','Requeijão Catupiry','Requeijão Catupiry Light','Requeijão Vigor','Requeijão Vigor Light','Requeijão Danúbio','Requeijão Danúbio Light','Requeijão Tirolez','Requeijão Tirolez Light','Requeijão Itambé','Requeijão Itambé Light','Requeijão Poços de Caldas','Requeijão Poços de Caldas Light','Manteiga','Cream cheese','Queijo parmesão','Queijo provolone','Queijo brie','Queijo gorgonzola','Queijo coalho','Ricota','Petit suisse','Danone','Bebida láctea','Leite condensado','Creme de leite','Chantilly','Leite em pó'],
     [55,400],[3,26],[0,12],[0,34],'Ovos e laticínios');
 
   const frutas = ['Banana','Maçã','Laranja','Morango','Abacaxi','Uva','Manga','Mamão','Melancia','Melão','Pera','Kiwi','Abacate','Pêssego','Ameixa','Caqui','Goiaba','Maracujá','Limão','Tangerina','Coco','Figo','Framboesa','Mirtilo','Amora','Carambola','Jaca','Graviola','Acerola','Cereja','Pitaya','Lichia','Physalis','Umbu','Cupuaçu','Buriti'];
@@ -569,7 +569,7 @@ function buildFoodDB(){
   addGroup(['Arroz branco cozido','Arroz integral cozido','Feijão carioca cozido','Feijão preto cozido','Lentilha cozida','Grão de bico cozido','Quinoa cozida','Aveia em flocos','Granola','Milho para canjica','Cuscuz','Macarrão cozido','Macarrão integral cozido','Farinha de mandioca','Farofa pronta','Soja cozida','Feijão branco cozido','Feijão fradinho cozido','Lentilha vermelha cozida'],
     [95,390],[2,20],[10,75],[0.5,8],'Grãos e cereais');
 
-  addGroup(['Pão francês','Pão de forma tradicional','Pão integral','Pão de forma integral','Pão sírio','Pão australiano','Torrada tradicional','Torrada integral','Bisnaguinha','Pão de queijo','Tapioca','Panqueca simples'],
+  addGroup(['Pão francês','Pão de forma tradicional','Pão integral','Pão de forma integral','Pão sírio','Pão australiano','Torrada tradicional','Torrada integral','Magic Toast Tradicional','Magic Toast Multigrãos','Magic Toast Integral','Magic Toast Alho','Magic Toast Cebola','Magic Toast Requeijão','Magic Toast Light','Bisnaguinha','Pão de queijo','Tapioca','Panqueca simples'],
     [210,340],[6,12],[35,60],[1,12],'Pães e torradas');
 
   addGroup(['Bolacha água e sal','Bolacha maisena','Bolacha recheada de chocolate','Cream cracker','Biscoito de polvilho','Biscoito rosquinha','Wafer recheado','Bolacha integral','Biscoito amanteigado','Biscoito de aveia'],
@@ -608,7 +608,9 @@ function buildFoodDB(){
     'Banana (in natura)':120, 'Maçã (in natura)':150, 'Laranja (in natura)':130, 'Pera (in natura)':140,
     'Kiwi (in natura)':75, 'Pêssego (in natura)':150, 'Ameixa (in natura)':60, 'Caqui (in natura)':130,
     'Tangerina (in natura)':80, 'Limão (in natura)':60, 'Coco (in natura)':400, 'Abacate (in natura)':200,
-    'Figo (in natura)':50, 'Manga (in natura)':200, 'Mamão (in natura)':400
+    'Figo (in natura)':50, 'Manga (in natura)':200, 'Mamão (in natura)':400,
+    'Pão francês':50, 'Pão de forma tradicional':25, 'Pão integral':25, 'Pão de forma integral':25,
+    'Pão sírio':60, 'Pão australiano':70, 'Bisnaguinha':25, 'Pão de queijo':30
   };
   db.forEach(f=>{ if(UNIT_WEIGHTS[f.name]){ f.unit = true; f.unitWeight = UNIT_WEIGHTS[f.name]; } });
 
