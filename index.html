@@ -367,6 +367,14 @@
   .menu-food-row.checked .mf-check svg{opacity:1;}
   .menu-food-row .mf-remove{background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; padding:2px; flex:none;}
   .menu-food-row .mf-remove svg{width:15px;height:15px;}
+  .menu-food-row-view{
+    display:flex; align-items:center; gap:11px; background:var(--surface-2); border:1.5px solid var(--border);
+    border-radius:14px; padding:10px 12px;
+  }
+  .menu-food-row-view .mfv-dot{width:8px; height:8px; border-radius:50%; flex:none; background:linear-gradient(135deg, var(--accent-1), var(--accent-2));}
+  .menu-food-row-view .mf-info{display:flex; flex-direction:column; min-width:0; flex:1;}
+  .menu-food-row-view .mf-name{font-size:13.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .menu-food-row-view .mf-sub{font-size:11px; color:var(--text-muted); font-family:var(--font-mono);}
   .menu-add-food-btn{
     width:100%; margin-top:4px; background:var(--surface-2); border:1.5px dashed var(--border); color:var(--text-muted);
     font-weight:700; font-size:13px; padding:12px; border-radius:14px; cursor:pointer;
@@ -1006,13 +1014,17 @@ const menuEditor = {
 };
 const profileCache = {};
 
+function defaultCardapioSalvo(){
+  return {cafe_manha:false, almoco:false, cafe_tarde:false, jantar:false};
+}
 function defaultState(){
   return {
     meals: [],
     calendarMarks: {},
     weight: {initial:null, history:[]},
     goals: {calorias:2000, proteina:150, carboidratos:250},
-    cardapioUnico: defaultCardapioUnico()
+    cardapioUnico: defaultCardapioUnico(),
+    cardapioSalvo: defaultCardapioSalvo()
   };
 }
 function ensureStateShape(s){
@@ -1065,6 +1077,16 @@ function ensureStateShape(s){
   if(!s.calendarMarks) s.calendarMarks = {};
   if(!s.weight) s.weight = {initial:null, history:[]};
   if(!s.goals) s.goals = {calorias:2000, proteina:150, carboidratos:250};
+  if(!s.cardapioSalvo){
+    // primeira vez com esse campo: considera "já salvo" qualquer refeição que já tinha
+    // algum alimento marcado em versões anteriores, pra não perder o que a pessoa já tinha escolhido
+    s.cardapioSalvo = defaultCardapioSalvo();
+    Object.keys(MEAL_LABELS).forEach(mt=>{
+      if((s.cardapioUnico[mt]||[]).some(it=>it.checked)) s.cardapioSalvo[mt] = true;
+    });
+  } else {
+    Object.keys(MEAL_LABELS).forEach(mt=>{ if(typeof s.cardapioSalvo[mt]!=='boolean') s.cardapioSalvo[mt]=false; });
+  }
 }
 
 function hasLocalStorage(){
@@ -1493,16 +1515,16 @@ function wireAdicionar(){
 
 /* ============================================================
    TAB: CARDÁPIO — lista de alimentos por refeição (café da manhã,
-   almoço, café da tarde, jantar). Você marca o que quer comer,
-   salva, e o card passa a exibir só a lista final com um botão
-   "Editar" para mudar depois. Isso NÃO registra nada no histórico
-   — é só o planejamento/cardápio da semana.
+   almoço, café da tarde, jantar), igual ao padrão de "Metas iniciais"
+   em Pesos e medidas: você marca os alimentos, toca em Salvar e o
+   card passa a exibir o resumo salvo com um botão "Editar" para
+   reabrir e mudar depois. Isso NÃO registra nada no histórico —
+   é só o planejamento/cardápio da semana.
    ============================================================ */
-const cardapioEditingState = {}; // mealType -> true/false explícito (definido ao tocar em Editar/Salvar)
+const cardapioEditingState = {}; // mealType -> true/false explícito (só nesta sessão, ex: reabriu p/ editar)
 function isCardapioEditing(mealType){
   if(cardapioEditingState[mealType] !== undefined) return cardapioEditingState[mealType];
-  // sem escolha explícita ainda: entra em modo edição se não há nada marcado
-  return state.cardapioUnico[mealType].filter(it=>it.checked).length === 0;
+  return !state.cardapioSalvo[mealType]; // nunca foi salvo ainda => começa em modo edição
 }
 function mealCheckedTotal(mealType){
   const items = state.cardapioUnico[mealType];
@@ -1516,47 +1538,37 @@ function renderCardapio(){
 }
 function renderMenuMealCard(mealType){
   const items = state.cardapioUnico[mealType];
+  const checkedItems = items.filter(it=>it.checked);
   const total = mealCheckedTotal(mealType);
   const editing = isCardapioEditing(mealType);
-  const checkedItems = items.filter(it=>it.checked);
-
-  if(!editing){
-    return `
-      <section class="card menu-meal-card">
-        <div class="menu-meal-header">
-          <div class="menu-meal-icon"><i data-lucide="${MEAL_ICONS[mealType]}"></i></div>
-          <div class="menu-meal-title">${MEAL_LABELS[mealType]}</div>
-          <div class="menu-meal-sub">${checkedItems.length} ${checkedItems.length===1?'alimento selecionado':'alimentos selecionados'}</div>
-        </div>
-
-        ${checkedItems.length===0 ? '<p class="menu-empty-slots">Nada salvo ainda neste cardápio.</p>' :
-          `<div class="menu-food-list">${checkedItems.map(it=>renderMenuFoodRowView(it)).join('')}</div>`}
-
-        <div class="menu-meal-footer">
-          <div class="mf-total">Total: <b>${Math.round(total)} kcal</b></div>
-          <button class="menu-save-btn" data-edit-meal="${mealType}"><i data-lucide="pencil"></i>Editar</button>
-        </div>
-      </section>
-    `;
-  }
 
   return `
     <section class="card menu-meal-card">
       <div class="menu-meal-header">
         <div class="menu-meal-icon"><i data-lucide="${MEAL_ICONS[mealType]}"></i></div>
         <div class="menu-meal-title">${MEAL_LABELS[mealType]}</div>
-        <div class="menu-meal-sub">${items.length} ${items.length===1?'alimento':'alimentos'}</div>
+        <div class="menu-meal-sub">${editing
+          ? items.length+' '+(items.length===1?'alimento':'alimentos')
+          : checkedItems.length+' '+(checkedItems.length===1?'alimento salvo':'alimentos salvos')}</div>
       </div>
 
-      ${items.length===0 ? '<p class="menu-empty-slots">Nenhum alimento ainda. Adicione o primeiro abaixo.</p>' :
-        `<div class="menu-food-list">${items.map(it=>renderMenuFoodRow(mealType, it)).join('')}</div>`}
+      ${editing ? `
+        ${items.length===0 ? '<p class="menu-empty-slots">Nenhum alimento ainda. Adicione o primeiro abaixo.</p>' :
+          `<div class="menu-food-list">${items.map(it=>renderMenuFoodRow(mealType, it)).join('')}</div>`}
 
-      <button class="menu-add-food-btn" data-add-food="${mealType}"><i data-lucide="plus"></i>Adicionar alimento</button>
+        <button class="menu-add-food-btn" data-add-food="${mealType}"><i data-lucide="plus"></i>Adicionar alimento</button>
 
-      <div class="menu-meal-footer">
-        <div class="mf-total">Selecionado: <b>${Math.round(total)} kcal</b></div>
-        <button class="menu-save-btn" data-save-meal="${mealType}"><i data-lucide="check-circle-2"></i>Salvar</button>
-      </div>
+        <div class="menu-meal-footer">
+          <div class="mf-total">Selecionado: <b>${Math.round(total)} kcal</b></div>
+          <button class="menu-save-btn" data-save-meal="${mealType}"><i data-lucide="save"></i>Salvar ${MEAL_LABELS[mealType].toLowerCase()}</button>
+        </div>
+      ` : `
+        ${checkedItems.length===0 ? '<p class="menu-empty-slots">Nada salvo ainda neste cardápio.</p>' :
+          `<div class="menu-food-list">${checkedItems.map(it=>renderMenuFoodRowView(it)).join('')}</div>`}
+
+        <div class="menu-meal-footer"><div class="mf-total">Total: <b>${Math.round(total)} kcal</b></div></div>
+        <button class="btn-outline btn-small full" data-edit-meal="${mealType}"><i data-lucide="pencil"></i>Editar ${MEAL_LABELS[mealType].toLowerCase()}</button>
+      `}
     </section>
   `;
 }
@@ -1574,8 +1586,8 @@ function renderMenuFoodRow(mealType, item){
 }
 function renderMenuFoodRowView(item){
   return `
-    <div class="menu-food-row checked" style="cursor:default;">
-      <span class="mf-check"><i data-lucide="check"></i></span>
+    <div class="menu-food-row-view">
+      <span class="mfv-dot"></span>
       <div class="mf-info">
         <span class="mf-name">${escapeHtml(item.name)}</span>
         <span class="mf-sub">${formatQtyLabel(item)} · ${Math.round(item.kcal)}kcal</span>
@@ -1583,6 +1595,7 @@ function renderMenuFoodRowView(item){
     </div>
   `;
 }
+
 
 /* ---------- bottom sheet: adicionar alimento à lista da refeição ---------- */
 function openMenuOptionPicker(mealType){
@@ -1786,6 +1799,7 @@ function wireCardapio(){
       const saveBtn = e.target.closest('[data-save-meal]');
       if(saveBtn){
         const mt = saveBtn.dataset.saveMeal;
+        state.cardapioSalvo[mt] = true;
         cardapioEditingState[mt] = false;
         await saveState();
         render();
