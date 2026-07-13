@@ -1492,9 +1492,18 @@ function wireAdicionar(){
 }
 
 /* ============================================================
-   TAB: CARDÁPIO — cardápio único, por categoria, com alternativas
-   (ex.: na Proteína do almoço: "Frango grelhado" OU "Patinho moído")
+   TAB: CARDÁPIO — lista de alimentos por refeição (café da manhã,
+   almoço, café da tarde, jantar). Você marca o que quer comer,
+   salva, e o card passa a exibir só a lista final com um botão
+   "Editar" para mudar depois. Isso NÃO registra nada no histórico
+   — é só o planejamento/cardápio da semana.
    ============================================================ */
+const cardapioEditingState = {}; // mealType -> true/false explícito (definido ao tocar em Editar/Salvar)
+function isCardapioEditing(mealType){
+  if(cardapioEditingState[mealType] !== undefined) return cardapioEditingState[mealType];
+  // sem escolha explícita ainda: entra em modo edição se não há nada marcado
+  return state.cardapioUnico[mealType].filter(it=>it.checked).length === 0;
+}
 function mealCheckedTotal(mealType){
   const items = state.cardapioUnico[mealType];
   return items.reduce((sum,it)=> sum + (it.checked ? it.kcal : 0), 0);
@@ -1508,7 +1517,29 @@ function renderCardapio(){
 function renderMenuMealCard(mealType){
   const items = state.cardapioUnico[mealType];
   const total = mealCheckedTotal(mealType);
-  const anyChecked = items.some(it=>it.checked);
+  const editing = isCardapioEditing(mealType);
+  const checkedItems = items.filter(it=>it.checked);
+
+  if(!editing){
+    return `
+      <section class="card menu-meal-card">
+        <div class="menu-meal-header">
+          <div class="menu-meal-icon"><i data-lucide="${MEAL_ICONS[mealType]}"></i></div>
+          <div class="menu-meal-title">${MEAL_LABELS[mealType]}</div>
+          <div class="menu-meal-sub">${checkedItems.length} ${checkedItems.length===1?'alimento selecionado':'alimentos selecionados'}</div>
+        </div>
+
+        ${checkedItems.length===0 ? '<p class="menu-empty-slots">Nada salvo ainda neste cardápio.</p>' :
+          `<div class="menu-food-list">${checkedItems.map(it=>renderMenuFoodRowView(it)).join('')}</div>`}
+
+        <div class="menu-meal-footer">
+          <div class="mf-total">Total: <b>${Math.round(total)} kcal</b></div>
+          <button class="menu-save-btn" data-edit-meal="${mealType}"><i data-lucide="pencil"></i>Editar</button>
+        </div>
+      </section>
+    `;
+  }
+
   return `
     <section class="card menu-meal-card">
       <div class="menu-meal-header">
@@ -1524,7 +1555,7 @@ function renderMenuMealCard(mealType){
 
       <div class="menu-meal-footer">
         <div class="mf-total">Selecionado: <b>${Math.round(total)} kcal</b></div>
-        <button class="menu-save-btn" data-save-meal="${mealType}" ${anyChecked?'':'disabled'}><i data-lucide="check-circle-2"></i>Salvar ${MEAL_LABELS[mealType].toLowerCase()}</button>
+        <button class="menu-save-btn" data-save-meal="${mealType}"><i data-lucide="check-circle-2"></i>Salvar</button>
       </div>
     </section>
   `;
@@ -1541,24 +1572,16 @@ function renderMenuFoodRow(mealType, item){
     </div>
   `;
 }
-
-/* ---------- salvar refeição (registra os itens marcados no diário de hoje) ---------- */
-async function saveCardapioMeal(mealType){
-  const items = state.cardapioUnico[mealType];
-  const checked = items.filter(it=>it.checked);
-  if(checked.length===0){ showToast('Marque pelo menos um alimento'); return; }
-  const today = todayStr();
-  checked.forEach(it=>{
-    state.meals.push({
-      id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
-      date: today, mealType: mealType, name: it.name, grams: it.grams, qty: it.qty, isUnit: it.isUnit,
-      kcal: it.kcal, protein: it.protein, carbs: it.carbs, fat: it.fat
-    });
-    it.checked = false;
-  });
-  await saveState();
-  render();
-  showToast(MEAL_LABELS[mealType]+' salvo(a) com sucesso!');
+function renderMenuFoodRowView(item){
+  return `
+    <div class="menu-food-row checked" style="cursor:default;">
+      <span class="mf-check"><i data-lucide="check"></i></span>
+      <div class="mf-info">
+        <span class="mf-name">${escapeHtml(item.name)}</span>
+        <span class="mf-sub">${formatQtyLabel(item)} · ${Math.round(item.kcal)}kcal</span>
+      </div>
+    </div>
+  `;
 }
 
 /* ---------- bottom sheet: adicionar alimento à lista da refeição ---------- */
@@ -1761,7 +1784,21 @@ function wireCardapio(){
       if(addFoodBtn){ openMenuOptionPicker(addFoodBtn.dataset.addFood); return; }
 
       const saveBtn = e.target.closest('[data-save-meal]');
-      if(saveBtn){ await saveCardapioMeal(saveBtn.dataset.saveMeal); return; }
+      if(saveBtn){
+        const mt = saveBtn.dataset.saveMeal;
+        cardapioEditingState[mt] = false;
+        await saveState();
+        render();
+        showToast(MEAL_LABELS[mt]+' salvo no cardápio!');
+        return;
+      }
+
+      const editBtn = e.target.closest('[data-edit-meal]');
+      if(editBtn){
+        cardapioEditingState[editBtn.dataset.editMeal] = true;
+        render();
+        return;
+      }
 
       const removeBtn = e.target.closest('[data-remove-food]');
       if(removeBtn){
