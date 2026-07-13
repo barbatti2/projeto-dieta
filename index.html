@@ -7,7 +7,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%2314B8A6'/%3E%3Ctext x='12' y='17' font-size='14' text-anchor='middle' fill='white'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 <style>
   @property --pct-deg{
@@ -34,7 +34,7 @@
     --radius-sm:10px;
     --font-display:'Sora',sans-serif;
     --font-body:'Inter',sans-serif;
-    --font-mono:'JetBrains Mono',monospace;
+    --font-mono:'Space Grotesk',sans-serif;
     --shadow-card: 0 10px 28px -16px rgba(30,40,90,.18);
   }
   [data-profile="raissa"]{
@@ -1269,9 +1269,13 @@ function renderInicio(){
     </section>
   `;
 }
+function isBeverageFood(food){
+  return !!food && food.category === 'Bebidas';
+}
 function formatQtyLabel(item){
-  if(item.isUnit) return item.qty+(item.qty===1?' unidade':' unidades')+' (~'+Math.round(item.grams)+'g)';
-  return Math.round(item.grams)+'g';
+  const unit = isBeverageFood(item) ? 'ml' : 'g';
+  if(item.isUnit) return item.qty+(item.qty===1?' unidade':' unidades')+' (~'+Math.round(item.grams)+unit+')';
+  return Math.round(item.grams)+unit;
 }
 
 /* ============================================================
@@ -1348,11 +1352,11 @@ function updateQtyUI(rebuildPresets){
   const qtySub = document.getElementById('qtySub');
   const quickQty = document.getElementById('quickQty');
   qtyDisplay.childNodes[0].nodeValue = addFoodState.qty;
-  qtySub.textContent = addFoodState.isUnit ? (addFoodState.qty===1?'unidade':'unidades') : 'gramas';
+  qtySub.textContent = addFoodState.isUnit ? (addFoodState.qty===1?'unidade':'unidades') : (isBeverageFood(food) ? 'ml' : 'gramas');
 
   if(rebuildPresets){
     const presets = addFoodState.isUnit ? [1,2,3,4] : [50,100,150,200];
-    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${addFoodState.isUnit?' un':'g'}</button>`).join('');
+    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${addFoodState.isUnit?' un':(isBeverageFood(food)?'ml':'g')}</button>`).join('');
   }
   quickQty.querySelectorAll('.quick-btn').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.qty)===addFoodState.qty));
 
@@ -1379,7 +1383,7 @@ function selectFood(food){
   ticket.classList.add('show');
   document.getElementById('ftName').textContent = food.name;
   const ftCat = document.getElementById('ftCat');
-  ftCat.textContent = food.category + (food.unit ? ' · medido por unidade' : ' · medido por gramas');
+  ftCat.textContent = food.category + (food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas'));
   ftCat.classList.remove('loading');
   document.getElementById('ftIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
   document.getElementById('ftMacros').innerHTML = `
@@ -1475,7 +1479,7 @@ function wireAdicionar(){
     const factor = gramsEquiv/100;
     addFoodState.itemsToSave.push({
       uid: Date.now()+'_'+Math.random().toString(36).slice(2,7),
-      name:f.name, grams:gramsEquiv, qty:addFoodState.qty, isUnit:addFoodState.isUnit, mealType:addFoodState.mealType,
+      name:f.name, category:f.category, grams:gramsEquiv, qty:addFoodState.qty, isUnit:addFoodState.isUnit, mealType:addFoodState.mealType,
       kcal:macros.kcal*factor, protein:macros.protein*factor, carbs:macros.carbs*factor, fat:macros.fat*factor
     });
     showToast('Item incluído: '+f.name);
@@ -1501,7 +1505,7 @@ function wireAdicionar(){
     addFoodState.itemsToSave.forEach(it=>{
       state.meals.push({
         id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
-        date: today, mealType: it.mealType, name: it.name, grams: it.grams, qty: it.qty, isUnit: it.isUnit,
+        date: today, mealType: it.mealType, name: it.name, category: it.category, grams: it.grams, qty: it.qty, isUnit: it.isUnit,
         kcal: it.kcal, protein: it.protein, carbs: it.carbs, fat: it.fat
       });
     });
@@ -1659,11 +1663,11 @@ function updateMeQtyUI(rebuildPresets){
   const qtySub = document.getElementById('deQtySub');
   const quickQty = document.getElementById('deQuickQty');
   qtyDisplay.childNodes[0].nodeValue = menuEditor.qty;
-  qtySub.textContent = menuEditor.isUnit ? (menuEditor.qty===1?'unidade':'unidades') : 'gramas';
+  qtySub.textContent = menuEditor.isUnit ? (menuEditor.qty===1?'unidade':'unidades') : (isBeverageFood(food) ? 'ml' : 'gramas');
 
   if(rebuildPresets){
     const presets = menuEditor.isUnit ? [1,2,3,4] : [50,100,150,200];
-    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${menuEditor.isUnit?' un':'g'}</button>`).join('');
+    quickQty.innerHTML = presets.map(p=>`<button class="quick-btn" data-qty="${p}">${p}${menuEditor.isUnit?' un':(isBeverageFood(food)?'ml':'g')}</button>`).join('');
   }
   quickQty.querySelectorAll('.quick-btn').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.qty)===menuEditor.qty));
 
@@ -1690,7 +1694,7 @@ function selectMeFood(food){
   ticket.classList.add('show');
   document.getElementById('deName').textContent = food.name;
   const deCat = document.getElementById('deCat');
-  deCat.textContent = food.category + (food.unit ? ' · medido por unidade' : ' · medido por gramas');
+  deCat.textContent = food.category + (food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas'));
   deCat.classList.remove('loading');
   document.getElementById('deIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
   document.getElementById('deMacros').innerHTML = `
