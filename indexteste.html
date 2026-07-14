@@ -64,7 +64,7 @@
     backdrop-filter:blur(10px);
     border-bottom:1px solid transparent;
   }
-  .header-top{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:nowrap;}
+  .header-top{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:nowrap;}
   .header-left{display:flex; align-items:center; gap:10px; flex-wrap:nowrap; min-width:0;}
   .brand-mini{display:flex; align-items:center; gap:8px; flex:none;}
   .brand-mark{
@@ -103,8 +103,25 @@
   }
   .ps-pill.dragging{transition:none; cursor:grabbing;}
 
+  /* ---------- HOME DAY NAVIGATION (own row, above the tab icons, shown on every tab) ---------- */
+  .day-nav-row{display:flex; align-items:center; justify-content:center; gap:10px; padding:12px 14px 4px 14px;}
+  .day-nav-row.hidden{display:none;}
+  .day-nav-btn{
+    width:32px; height:32px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+  }
+  .day-nav-btn svg{width:15px;height:15px;}
+  .day-nav-btn:disabled{opacity:.35; cursor:not-allowed;}
+  .day-nav-btn:active{transform:scale(.93);}
+  .day-nav-label{
+    display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:7px 14px; font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--text); cursor:pointer;
+    min-width:118px; justify-content:center; white-space:nowrap;
+  }
+  .day-nav-label svg{width:13px;height:13px; color:var(--accent-2); flex:none;}
+
   /* ---------- TAB NAV (icon-only, compact) ---------- */
-  .tab-nav{display:flex; justify-content:center; gap:8px; padding:10px 14px 4px 14px; flex-wrap:wrap;}
+  .tab-nav{display:flex; justify-content:center; gap:8px; padding:8px 14px 4px 14px; flex-wrap:wrap;}
   .tab-btn{
     flex:none; width:42px; height:42px; border-radius:14px; border:1px solid var(--border); background:var(--surface);
     color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;
@@ -114,18 +131,19 @@
 
   main#content{padding:10px 16px 30px 16px; display:flex; flex-direction:column; gap:16px;}
 
-  /* ---------- PAGE HERO (centered header per tab) ---------- */
+  /* ---------- PAGE HERO (compact header per tab, icon inline with title) ---------- */
   .page-hero{
-    text-align:center; padding:24px 20px 20px 20px; border-radius:var(--radius-lg);
+    text-align:center; padding:16px 20px 14px 20px; border-radius:var(--radius-lg);
     background:linear-gradient(135deg, color-mix(in srgb, var(--accent-1) 10%, white), color-mix(in srgb, var(--accent-2) 10%, white));
     border:1px solid var(--border);
   }
-  .hero-icon{
-    width:50px; height:50px; border-radius:16px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; box-shadow:0 10px 22px -9px var(--accent-2);
+  .hero-title-row{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:4px;}
+  .hero-icon-inline{
+    width:34px; height:34px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; box-shadow:0 6px 14px -6px var(--accent-2);
   }
-  .hero-icon svg{width:24px;height:24px;}
-  .page-hero h1{font-family:var(--font-display); font-size:21px; margin:0 0 4px 0; letter-spacing:-.01em;}
+  .hero-icon-inline svg{width:17px;height:17px;}
+  .page-hero h1{font-family:var(--font-display); font-size:19px; margin:0; letter-spacing:-.01em;}
   .page-hero p{margin:0; font-size:13px; color:var(--text-muted);}
 
   /* ---------- CARDS ---------- */
@@ -275,23 +293,6 @@
   .counter-card{background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:12px; text-align:center;}
   .counter-card .cc-num{font-family:var(--font-mono); font-size:22px; font-weight:700;}
   .counter-card .cc-label{font-size:10px; color:var(--text-muted); margin-top:3px;}
-
-  /* ---------- HOME DAY NAVIGATION (header) ---------- */
-  .day-nav-row{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:12px;}
-  .day-nav-row.hidden{display:none;}
-  .day-nav-btn{
-    width:32px; height:32px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text);
-    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
-  }
-  .day-nav-btn svg{width:15px;height:15px;}
-  .day-nav-btn:disabled{opacity:.35; cursor:not-allowed;}
-  .day-nav-btn:active{transform:scale(.93);}
-  .day-nav-label{
-    display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:12px;
-    padding:7px 14px; font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--text); cursor:pointer;
-    min-width:118px; justify-content:center; white-space:nowrap;
-  }
-  .day-nav-label svg{width:13px;height:13px; color:var(--accent-2); flex:none;}
 
   /* ---------- MODAL ---------- */
   .modal-overlay{position:fixed; inset:0; background:rgba(20,25,45,.45); backdrop-filter:blur(4px); z-index:100; display:flex; align-items:flex-end; justify-content:center;}
@@ -533,8 +534,9 @@
         </div>
       </div>
     </div>
-    <div class="day-nav-row hidden" id="dayNavRow"></div>
   </header>
+
+  <div class="day-nav-row" id="dayNavRow"></div>
 
   <nav class="tab-nav" id="tabNav">
     <button class="tab-btn active" data-tab="inicio" title="Início"><i data-lucide="home"></i></button>
@@ -1195,14 +1197,19 @@ function render(){
 function heroHTML(tab){
   const m = TAB_META[tab];
   return `<section class="page-hero">
-    <div class="hero-icon"><i data-lucide="${m.icon}"></i></div>
-    <h1>${m.title} · ${PROFILE_NAMES[currentProfile]}</h1>
+    <div class="hero-title-row">
+      <div class="hero-icon-inline"><i data-lucide="${m.icon}"></i></div>
+      <h1>${m.title} · ${PROFILE_NAMES[currentProfile]}</h1>
+    </div>
     <p>${m.subtitle}</p>
   </section>`;
 }
 
 /* ============================================================
-   HOME DAY NAVIGATION (header row + mini calendar picker)
+   DAY NAVIGATION (own row above the tab icons; header + mini calendar picker)
+   Visible on every tab. Selecting a day here shifts the whole app's view
+   (Início, Adicionar, Histórico) to that date. This is in-memory only —
+   refreshing the page always resets it back to today.
    ============================================================ */
 function homeDateLabel(dateStr){
   const today = todayStr();
@@ -1213,12 +1220,6 @@ function homeDateLabel(dateStr){
 function updateHeaderDayNav(){
   const row = document.getElementById('dayNavRow');
   if(!row) return;
-  if(currentTab !== 'inicio'){
-    row.classList.add('hidden');
-    row.innerHTML = '';
-    return;
-  }
-  row.classList.remove('hidden');
   const isToday = homeViewDate === todayStr();
   row.innerHTML = `
     <button class="day-nav-btn" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
@@ -1617,7 +1618,7 @@ function wireAdicionar(){
 
   document.getElementById('saveMealBtn').addEventListener('click', async ()=>{
     if(addFoodState.itemsToSave.length===0){ showToast('Inclua pelo menos um item'); return; }
-    const today = todayStr();
+    const today = homeViewDate;
     addFoodState.itemsToSave.forEach(it=>{
       state.meals.push({
         id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
@@ -2183,7 +2184,7 @@ function renderHistorico(){
   `;
 }
 function renderHistContent(){
-  const today = todayStr();
+  const today = homeViewDate;
   if(historicoFilter==='ano'){
     const months = {};
     state.meals.forEach(m=>{
