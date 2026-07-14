@@ -64,7 +64,7 @@
     backdrop-filter:blur(10px);
     border-bottom:1px solid transparent;
   }
-  .header-top{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:nowrap;}
+  .header-top{display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:nowrap;}
   .header-left{display:flex; align-items:center; gap:10px; flex-wrap:nowrap; min-width:0;}
   .brand-mini{display:flex; align-items:center; gap:8px; flex:none;}
   .brand-mark{
@@ -103,8 +103,25 @@
   }
   .ps-pill.dragging{transition:none; cursor:grabbing;}
 
+  /* ---------- HOME DAY NAVIGATION (own row, above the tab icons, shown on every tab) ---------- */
+  .day-nav-row{display:flex; align-items:center; justify-content:center; gap:10px; padding:12px 14px 4px 14px;}
+  .day-nav-row.hidden{display:none;}
+  .day-nav-btn{
+    width:32px; height:32px; border-radius:10px; border:1px solid var(--border); background:var(--surface); color:var(--text);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
+  }
+  .day-nav-btn svg{width:15px;height:15px;}
+  .day-nav-btn:disabled{opacity:.35; cursor:not-allowed;}
+  .day-nav-btn:active{transform:scale(.93);}
+  .day-nav-label{
+    display:flex; align-items:center; gap:6px; background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:7px 14px; font-family:var(--font-display); font-weight:700; font-size:13px; color:var(--text); cursor:pointer;
+    min-width:118px; justify-content:center; white-space:nowrap;
+  }
+  .day-nav-label svg{width:13px;height:13px; color:var(--accent-2); flex:none;}
+
   /* ---------- TAB NAV (icon-only, compact) ---------- */
-  .tab-nav{display:flex; justify-content:center; gap:8px; padding:10px 14px 4px 14px; flex-wrap:wrap;}
+  .tab-nav{display:flex; justify-content:center; gap:8px; padding:8px 14px 4px 14px; flex-wrap:wrap;}
   .tab-btn{
     flex:none; width:42px; height:42px; border-radius:14px; border:1px solid var(--border); background:var(--surface);
     color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s ease;
@@ -114,18 +131,19 @@
 
   main#content{padding:10px 16px 30px 16px; display:flex; flex-direction:column; gap:16px;}
 
-  /* ---------- PAGE HERO (centered header per tab) ---------- */
+  /* ---------- PAGE HERO (compact header per tab, icon inline with title) ---------- */
   .page-hero{
-    text-align:center; padding:24px 20px 20px 20px; border-radius:var(--radius-lg);
+    text-align:center; padding:16px 20px 14px 20px; border-radius:var(--radius-lg);
     background:linear-gradient(135deg, color-mix(in srgb, var(--accent-1) 10%, white), color-mix(in srgb, var(--accent-2) 10%, white));
     border:1px solid var(--border);
   }
-  .hero-icon{
-    width:50px; height:50px; border-radius:16px; margin:0 auto 12px auto; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; box-shadow:0 10px 22px -9px var(--accent-2);
+  .hero-title-row{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:4px;}
+  .hero-icon-inline{
+    width:34px; height:34px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; box-shadow:0 6px 14px -6px var(--accent-2);
   }
-  .hero-icon svg{width:24px;height:24px;}
-  .page-hero h1{font-family:var(--font-display); font-size:21px; margin:0 0 4px 0; letter-spacing:-.01em;}
+  .hero-icon-inline svg{width:17px;height:17px;}
+  .page-hero h1{font-family:var(--font-display); font-size:19px; margin:0; letter-spacing:-.01em;}
   .page-hero p{margin:0; font-size:13px; color:var(--text-muted);}
 
   /* ---------- CARDS ---------- */
@@ -266,8 +284,8 @@
   .cal-day.today{border-color:var(--accent-2); animation:pulseToday 1.6s ease-in-out infinite;}
   @keyframes pulseToday{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb, var(--accent-2) 45%, transparent);} 50%{box-shadow:0 0 0 6px color-mix(in srgb, var(--accent-2) 0%, transparent);}}
   .mark-dieta_treino{background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff; font-weight:700;}
-  .mark-dieta{background:color-mix(in srgb, var(--accent-1) 25%, var(--surface-2));}
-  .mark-treino{background:color-mix(in srgb, var(--warning) 30%, var(--surface-2));}
+  .mark-dieta{background:linear-gradient(135deg, color-mix(in srgb, var(--accent-1) 75%, white), color-mix(in srgb, var(--accent-1) 40%, white)); color:var(--text); font-weight:700;}
+  .mark-treino{background:linear-gradient(135deg, color-mix(in srgb, var(--accent-2) 75%, white), color-mix(in srgb, var(--accent-2) 40%, white)); color:var(--text); font-weight:700;}
   .cal-legend{display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin-top:16px;}
   .legend-item{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-muted);}
   .legend-dot{width:10px; height:10px; border-radius:50%; flex:none;}
@@ -304,7 +322,7 @@
   .hist-meal-title{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:700; margin-bottom:6px; text-align:center;}
   .hist-item{display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; margin-bottom:5px;}
   .hist-item-clickable{cursor:pointer; transition:background .12s ease;}
-  .hist-item-clickable:active{background:color-mix(in srgb, var(--danger) 10%, var(--surface-2));}
+  .hist-item-clickable:active{background:color-mix(in srgb, var(--accent-2) 10%, var(--surface-2));}
   .hist-item .hi-name{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
   .hist-item .hi-sub{flex:none; font-family:var(--font-mono); font-size:11.5px; color:var(--text-muted);}
   .hi-delete{flex:none; background:none; border:none; color:var(--text-dim); cursor:pointer; display:flex; align-items:center; justify-content:center; padding:4px; border-radius:8px; transition:color .15s ease, background .15s ease;}
@@ -515,11 +533,10 @@
           <span class="ps-label" data-target="raissa">Raissa</span>
         </div>
       </div>
-      <div class="header-actions">
-        <div class="sync-status" id="syncStatus" title="Status de sincronização"><i data-lucide="cloud-off" id="syncIcon"></i></div>
-      </div>
     </div>
   </header>
+
+  <div class="day-nav-row" id="dayNavRow"></div>
 
   <nav class="tab-nav" id="tabNav">
     <button class="tab-btn active" data-tab="inicio" title="Início"><i data-lucide="home"></i></button>
@@ -1007,6 +1024,8 @@ let state = null;
 let currentTab = 'inicio';
 let calendarViewDate = new Date();
 let historicoFilter = 'dia';
+let homeViewDate = todayStr();
+let homeCalendarViewDate = new Date();
 const addFoodState = {qty:100, isUnit:false, mealType:'cafe_manha', selected:null, itemsToSave:[], aiMacros:null, aiLoading:false};
 // menuEditor: estado da tela (bottom sheet) de edição de uma refeição do cardápio único
 const menuEditor = {
@@ -1164,6 +1183,7 @@ function render(){
   ensureStateShape(state);
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===currentTab));
   if(window.__profileSliderSet) window.__profileSliderSet(currentProfile, false);
+  updateHeaderDayNav();
 
   const content = document.getElementById('content');
   if(currentTab==='inicio'){ content.innerHTML = renderInicio(); triggerFillAnimations(); }
@@ -1177,10 +1197,106 @@ function render(){
 function heroHTML(tab){
   const m = TAB_META[tab];
   return `<section class="page-hero">
-    <div class="hero-icon"><i data-lucide="${m.icon}"></i></div>
-    <h1>${m.title} · ${PROFILE_NAMES[currentProfile]}</h1>
+    <div class="hero-title-row">
+      <div class="hero-icon-inline"><i data-lucide="${m.icon}"></i></div>
+      <h1>${m.title} · ${PROFILE_NAMES[currentProfile]}</h1>
+    </div>
     <p>${m.subtitle}</p>
   </section>`;
+}
+
+/* ============================================================
+   DAY NAVIGATION (own row above the tab icons; header + mini calendar picker)
+   Visible on every tab. Selecting a day here shifts the whole app's view
+   (Início, Adicionar, Histórico) to that date. This is in-memory only —
+   refreshing the page always resets it back to today.
+   ============================================================ */
+function homeDateLabel(dateStr){
+  const today = todayStr();
+  if(dateStr===today) return 'Hoje';
+  if(dateStr===addDays(today,-1)) return 'Ontem';
+  return fmtDateShort(dateStr);
+}
+function updateHeaderDayNav(){
+  const row = document.getElementById('dayNavRow');
+  if(!row) return;
+  const isToday = homeViewDate === todayStr();
+  row.innerHTML = `
+    <button class="day-nav-btn" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
+    <button class="day-nav-label" id="homeDateBtn"><i data-lucide="calendar-days"></i>${homeDateLabel(homeViewDate)}</button>
+    <button class="day-nav-btn" id="homeNextDay" ${isToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
+  `;
+  icons();
+  document.getElementById('homePrevDay').addEventListener('click', ()=>{
+    homeViewDate = addDays(homeViewDate,-1);
+    render();
+  });
+  document.getElementById('homeNextDay').addEventListener('click', ()=>{
+    if(homeViewDate < todayStr()){
+      homeViewDate = addDays(homeViewDate,1);
+      render();
+    }
+  });
+  document.getElementById('homeDateBtn').addEventListener('click', openHomeCalendarModal);
+}
+function openHomeCalendarModal(){
+  const d = new Date(homeViewDate+'T12:00:00Z');
+  homeCalendarViewDate = new Date(d.getUTCFullYear(), d.getUTCMonth(), 1);
+  renderHomeCalendarModal();
+  document.getElementById('modalOverlay').classList.remove('hidden');
+}
+function renderHomeCalendarModal(){
+  const box = document.getElementById('modalBox');
+  const year = homeCalendarViewDate.getFullYear();
+  const month = homeCalendarViewDate.getMonth();
+  const monthLabel = new Intl.DateTimeFormat('pt-BR', {month:'long', year:'numeric'}).format(homeCalendarViewDate);
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const today = todayStr();
+
+  let cells = '';
+  for(let i=0;i<firstDay;i++) cells += '<div class="cal-day empty"></div>';
+  for(let d=1; d<=daysInMonth; d++){
+    const dateStr = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    if(dateStr > today){
+      cells += `<div class="cal-day empty" style="opacity:.3;">${d}</div>`;
+      continue;
+    }
+    const isToday = dateStr===today;
+    const isSelected = dateStr===homeViewDate;
+    cells += `<div class="cal-day ${isToday?'today':''} ${isSelected?'mark-dieta_treino':''}" data-pick-date="${dateStr}">${d}</div>`;
+  }
+
+  box.innerHTML = `
+    <h3>Selecionar dia</h3>
+    <div class="cal-header">
+      <button class="cal-nav-btn" id="homeCalPrev"><i data-lucide="chevron-left"></i></button>
+      <span class="cal-month-label">${monthLabel}</span>
+      <button class="cal-nav-btn" id="homeCalNext"><i data-lucide="chevron-right"></i></button>
+    </div>
+    <div class="cal-weekdays"><span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span></div>
+    <div class="cal-grid" id="homeCalGrid">${cells}</div>
+    <button class="modal-close" id="homeCalCloseBtn">Fechar</button>
+  `;
+  icons();
+  document.getElementById('homeCalPrev').addEventListener('click', ()=>{
+    homeCalendarViewDate = new Date(year, month-1, 1);
+    renderHomeCalendarModal();
+  });
+  document.getElementById('homeCalNext').addEventListener('click', ()=>{
+    homeCalendarViewDate = new Date(year, month+1, 1);
+    renderHomeCalendarModal();
+  });
+  document.getElementById('homeCalGrid').addEventListener('click', (e)=>{
+    const cell = e.target.closest('[data-pick-date]');
+    if(!cell) return;
+    homeViewDate = cell.dataset.pickDate;
+    document.getElementById('modalOverlay').classList.add('hidden');
+    render();
+  });
+  document.getElementById('homeCalCloseBtn').addEventListener('click', ()=>document.getElementById('modalOverlay').classList.add('hidden'));
+  const overlayEl = document.getElementById('modalOverlay');
+  overlayEl.onclick = (e)=>{ if(e.target===overlayEl) overlayEl.classList.add('hidden'); };
 }
 
 /* ============================================================
@@ -1188,12 +1304,13 @@ function heroHTML(tab){
    ============================================================ */
 function macroStatusHTML(consumed, goal){
   if(!goal || goal<=0) return '';
-  const over = Math.round(consumed - goal);
-  if(over>0) return `<div class="macro-status over">+${over}g acima da meta</div>`;
-  return `<div class="macro-status ok">Dentro da meta</div>`;
+  const diff = Math.round(goal - consumed);
+  if(diff < 0) return `<div class="macro-status over">${diff}g</div>`;
+  return `<div class="macro-status ok">+${diff}g</div>`;
 }
 function renderInicio(){
-  const today = todayStr();
+  const today = homeViewDate;
+  const isToday = today === todayStr();
   const meals = state.meals.filter(m=>m.date===today);
   const sum = meals.reduce((a,m)=>({kcal:a.kcal+m.kcal, protein:a.protein+m.protein, carbs:a.carbs+m.carbs, fat:a.fat+m.fat}), {kcal:0,protein:0,carbs:0,fat:0});
   const goals = state.goals;
@@ -1220,10 +1337,10 @@ function renderInicio(){
         <div class="ring-inner">
           <div class="kcal-num">${Math.round(sum.kcal)}</div>
           <div class="kcal-goal">de ${goals.calorias} kcal</div>
-          <div class="kcal-label">consumidas hoje</div>
+          <div class="kcal-label">${isToday ? 'consumidas hoje' : 'consumidas nesse dia'}</div>
         </div>
       </div>
-      <p class="ring-caption">${meals.length} ${meals.length===1?'item registrado':'itens registrados'} hoje</p>
+      <p class="ring-caption">${meals.length} ${meals.length===1?'item registrado':'itens registrados'} ${isToday ? 'hoje' : 'nesse dia'}</p>
     </section>
 
     <section class="macro-cards">
@@ -1254,8 +1371,8 @@ function renderInicio(){
     </section>
 
     <section class="card">
-      <h2><i data-lucide="clipboard-list"></i>Refeições de hoje</h2>
-      ${meals.length===0 ? '<p class="empty-hint">Nenhum alimento registrado ainda. Vá até "Adicionar" para começar.</p>' :
+      <h2><i data-lucide="clipboard-list"></i>${isToday ? 'Refeições de hoje' : 'Refeições do dia'}</h2>
+      ${meals.length===0 ? '<p class="empty-hint">Nenhum alimento registrado ainda'+(isToday?'. Vá até "Adicionar" para começar.':' nesse dia.')+'</p>' :
         Object.keys(MEAL_LABELS).map(mt=>{
           const items = meals.filter(m=>m.mealType===mt);
           if(items.length===0) return '';
@@ -1308,6 +1425,7 @@ function renderAdicionar(){
           <button id="qtyPlus" class="qty-btn"><i data-lucide="plus"></i></button>
         </div>
         <div class="quick-qty" id="quickQty"></div>
+        <button id="includeItemBtn" class="btn-gradient full" style="margin-top:14px;"><i data-lucide="plus"></i>Incluir item</button>
       </div>
     </section>
 
@@ -1316,7 +1434,6 @@ function renderAdicionar(){
       <div class="meal-type-grid" id="mealTypeGrid">
         ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===addFoodState.mealType?' active':''}" data-meal="${mt}"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</button>`).join('')}
       </div>
-      <button id="includeItemBtn" class="btn-gradient full"><i data-lucide="circle-plus"></i>Incluir item</button>
     </section>
 
     <section class="card">
@@ -1501,7 +1618,7 @@ function wireAdicionar(){
 
   document.getElementById('saveMealBtn').addEventListener('click', async ()=>{
     if(addFoodState.itemsToSave.length===0){ showToast('Inclua pelo menos um item'); return; }
-    const today = todayStr();
+    const today = homeViewDate;
     addFoodState.itemsToSave.forEach(it=>{
       state.meals.push({
         id: Date.now()+'_'+Math.random().toString(36).slice(2,7),
@@ -1641,7 +1758,7 @@ function openMenuOptionPicker(mealType){
       <div class="quick-qty" id="deQuickQty"></div>
     </div>
 
-    <button id="deIncludeBtn" class="btn-gradient full" style="margin-top:12px;"><i data-lucide="circle-plus"></i>Incluir alimento</button>
+    <button id="deIncludeBtn" class="btn-gradient full" style="margin-top:12px;"><i data-lucide="plus"></i>Incluir alimento</button>
     <button class="modal-close" id="deDoneBtn">Concluído</button>
   `;
   overlay.classList.remove('hidden');
@@ -1881,7 +1998,7 @@ function renderCalendario(){
       <div class="cal-legend">
         <div class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,var(--accent-1),var(--accent-2))"></span>Dieta + Treino</div>
         <div class="legend-item"><span class="legend-dot" style="background:var(--accent-1)"></span>Só Dieta</div>
-        <div class="legend-item"><span class="legend-dot" style="background:var(--warning)"></span>Só Treino</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--accent-2)"></span>Só Treino</div>
       </div>
     </section>
     <section class="cal-counters">
@@ -1969,10 +2086,57 @@ function confirmDeleteMeal(mealId, mealName){
   document.getElementById('modalCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
   overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
 }
+function openEditMealModal(mealId){
+  const meal = state.meals.find(m=>m.id===mealId);
+  if(!meal) return;
+  const overlay = document.getElementById('modalOverlay');
+  const box = document.getElementById('modalBox');
+  let chosenMealType = meal.mealType;
+  box.innerHTML = `
+    <h3>Editar "${escapeHtml(meal.name)}"</h3>
+    <div class="modal-field">
+      <label>Refeição</label>
+      <div class="meal-type-grid" id="editMealTypeGrid">
+        ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===meal.mealType?' active':''}" data-meal="${mt}"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</button>`).join('')}
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Data</label>
+      <input type="date" id="editMealDate" class="name-input" value="${meal.date}" max="${todayStr()}">
+    </div>
+    <button class="btn-gradient full" id="saveEditMealBtn"><i data-lucide="save"></i>Salvar alterações</button>
+    <button class="modal-close" id="editMealCloseBtn">Cancelar</button>
+  `;
+  overlay.classList.remove('hidden');
+  icons();
+  document.getElementById('editMealTypeGrid').addEventListener('click', (e)=>{
+    const btn = e.target.closest('.meal-type-btn');
+    if(!btn) return;
+    chosenMealType = btn.dataset.meal;
+    document.querySelectorAll('#editMealTypeGrid .meal-type-btn').forEach(b=>b.classList.toggle('active', b.dataset.meal===chosenMealType));
+  });
+  document.getElementById('saveEditMealBtn').addEventListener('click', async ()=>{
+    const newDate = document.getElementById('editMealDate').value || meal.date;
+    meal.mealType = chosenMealType;
+    meal.date = newDate;
+    await saveState();
+    overlay.classList.add('hidden');
+    render();
+    showToast('Alimento atualizado!');
+  });
+  document.getElementById('editMealCloseBtn').addEventListener('click', ()=>overlay.classList.add('hidden'));
+  overlay.onclick = (e)=>{ if(e.target===overlay) overlay.classList.add('hidden'); };
+}
 document.getElementById('content').addEventListener('click', (e)=>{
   const btn = e.target.closest('[data-delete-meal]');
   if(!btn) return;
   confirmDeleteMeal(btn.dataset.deleteMeal, btn.dataset.mealName || 'este alimento');
+});
+document.getElementById('content').addEventListener('click', (e)=>{
+  if(e.target.closest('[data-delete-meal]')) return;
+  const row = e.target.closest('[data-edit-meal]');
+  if(!row) return;
+  openEditMealModal(row.dataset.editMeal);
 });
 
 /* ============================================================
@@ -2014,12 +2178,13 @@ function renderHistorico(){
         <button class="seg-btn${historicoFilter==='mes'?' active':''}" data-filter="mes">Mês</button>
         <button class="seg-btn${historicoFilter==='ano'?' active':''}" data-filter="ano">Ano</button>
       </div>
+      <p class="empty-hint" style="padding:0 0 10px 0;">Toque em um alimento para editar a refeição ou a data. Use a lixeira para excluir.</p>
       <div id="histContent">${renderHistContent()}</div>
     </section>
   `;
 }
 function renderHistContent(){
-  const today = todayStr();
+  const today = homeViewDate;
   if(historicoFilter==='ano'){
     const months = {};
     state.meals.forEach(m=>{
@@ -2056,7 +2221,7 @@ function renderHistContent(){
       if(mi.length===0) return '';
       return `<div class="hist-meal-group">
         <div class="hist-meal-title">${MEAL_LABELS[mt]}</div>
-        ${mi.map(i=>`<div class="hist-item hist-item-clickable" data-meal-id="${i.id}" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
+        ${mi.map(i=>`<div class="hist-item hist-item-clickable" data-edit-meal="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
       </div>`;
     }).join('');
     return `<div class="hist-day-group">
@@ -2410,9 +2575,6 @@ document.getElementById('tabNav').addEventListener('click', (e)=>{
   if(!btn) return;
   currentTab = btn.dataset.tab;
   render();
-});
-document.getElementById('syncStatus').addEventListener('click', ()=>{
-  showToast(window.__firestoreReady ? 'Conectado ao Firestore — tudo é sincronizado automaticamente.' : 'Firestore ainda não configurado.');
 });
 
 /* ============================================================
