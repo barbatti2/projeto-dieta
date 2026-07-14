@@ -1304,9 +1304,9 @@ function renderHomeCalendarModal(){
    ============================================================ */
 function macroStatusHTML(consumed, goal){
   if(!goal || goal<=0) return '';
-  const over = Math.round(consumed - goal);
-  if(over>0) return `<div class="macro-status over">+${over}g acima da meta</div>`;
-  return `<div class="macro-status ok">Dentro da meta</div>`;
+  const diff = Math.round(goal - consumed);
+  if(diff < 0) return `<div class="macro-status over">${diff}g</div>`;
+  return `<div class="macro-status ok">+${diff}g</div>`;
 }
 function renderInicio(){
   const today = homeViewDate;
@@ -1425,6 +1425,7 @@ function renderAdicionar(){
           <button id="qtyPlus" class="qty-btn"><i data-lucide="plus"></i></button>
         </div>
         <div class="quick-qty" id="quickQty"></div>
+        <button id="includeItemBtn" class="btn-gradient full" style="margin-top:14px;"><i data-lucide="plus"></i>Incluir item</button>
       </div>
     </section>
 
@@ -1433,7 +1434,6 @@ function renderAdicionar(){
       <div class="meal-type-grid" id="mealTypeGrid">
         ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===addFoodState.mealType?' active':''}" data-meal="${mt}"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</button>`).join('')}
       </div>
-      <button id="includeItemBtn" class="btn-gradient full"><i data-lucide="plus"></i>Incluir item</button>
     </section>
 
     <section class="card">
