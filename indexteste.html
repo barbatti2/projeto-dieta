@@ -903,7 +903,7 @@ const CATEGORY_ICONS = {
    Sem a chave preenchida, o app cai automaticamente para a
    estimativa local (sem quebrar o app).
    ============================================================ */
-const GEMINI_API_KEY = "AQ.Ab8RN6JUihBHqGJZhylj3nEZrAuubISar5VNBk0MRJCrgsGtEQ";
+const GEMINI_API_KEY = "COLE_AQUI_SUA_CHAVE_DO_GEMINI";
 const GEMINI_MODEL = "gemini-2.5-flash-lite";
 
 function aiConfigProvided(){
@@ -1487,31 +1487,61 @@ function updateQtyUI(rebuildPresets){
   ftMacros.children[2].firstElementChild.textContent = (Math.round(macros.carbs*factor*10)/10)+'g';
   ftMacros.children[3].firstElementChild.textContent = (Math.round(macros.fat*factor*10)/10)+'g';
 }
-function selectFood(food){
+async function selectFood(food){
   addFoodState.selected = food;
   addFoodState.isUnit = !!food.unit;
   addFoodState.qty = food.unit ? 1 : 100;
-  addFoodState.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
-  addFoodState.aiLoading = false;
+  addFoodState.aiMacros = null;
+  addFoodState.aiLoading = aiConfigProvided();
 
   const ticket = document.getElementById('foodTicket');
   if(!ticket) return;
   ticket.classList.add('show');
   document.getElementById('ftName').textContent = food.name;
+  const unitTxt = food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas');
   const ftCat = document.getElementById('ftCat');
-  ftCat.textContent = food.category + (food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas'));
-  ftCat.classList.remove('loading');
+  if(addFoodState.aiLoading){
+    ftCat.innerHTML = '<span class="mini-spinner"></span> Calculando com IA...';
+    ftCat.classList.add('loading');
+  } else {
+    ftCat.textContent = food.category + unitTxt;
+    ftCat.classList.remove('loading');
+  }
   document.getElementById('ftIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
   document.getElementById('ftMacros').innerHTML = `
-    <div class="ft-macro"><div class="fm-val">0</div><div class="fm-label">kcal</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">prot</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">kcal</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">prot</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">carb</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">gord</div></div>
   `;
   const includeBtn = document.getElementById('includeItemBtn');
-  if(includeBtn) includeBtn.disabled = false;
+
+  if(!addFoodState.aiLoading){
+    // sem IA configurada: usa direto os valores fixos da base local
+    addFoodState.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
+    if(includeBtn) includeBtn.disabled = false;
+    updateQtyUI(true);
+    icons();
+    return;
+  }
+
+  if(includeBtn) includeBtn.disabled = true;
   updateQtyUI(true);
   icons();
+
+  const result = await getAINutrition(food.name);
+  if(addFoodState.selected !== food) return; // usuário já trocou de alimento enquanto a IA calculava
+
+  addFoodState.aiMacros = result || {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
+  addFoodState.aiLoading = false;
+  const ftCat2 = document.getElementById('ftCat');
+  if(ftCat2){
+    ftCat2.textContent = food.category + unitTxt + (result ? '' : ' · estimativa local (IA indisponível)');
+    ftCat2.classList.remove('loading');
+  }
+  const includeBtn2 = document.getElementById('includeItemBtn');
+  if(includeBtn2) includeBtn2.disabled = false;
+  updateQtyUI(false);
 }
 function clearFoodSelection(){
   addFoodState.selected = null;
@@ -1798,29 +1828,60 @@ function updateMeQtyUI(rebuildPresets){
   ftMacros.children[2].firstElementChild.textContent = (Math.round(macros.carbs*factor*10)/10)+'g';
   ftMacros.children[3].firstElementChild.textContent = (Math.round(macros.fat*factor*10)/10)+'g';
 }
-function selectMeFood(food){
+async function selectMeFood(food){
   menuEditor.selected = food;
   menuEditor.isUnit = !!food.unit;
   menuEditor.qty = food.unit ? 1 : 100;
-  menuEditor.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
-  menuEditor.aiLoading = false;
+  menuEditor.aiMacros = null;
+  menuEditor.aiLoading = aiConfigProvided();
 
   const ticket = document.getElementById('deTicket');
   if(!ticket) return;
   ticket.classList.add('show');
   document.getElementById('deName').textContent = food.name;
+  const unitTxt = food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas');
   const deCat = document.getElementById('deCat');
-  deCat.textContent = food.category + (food.unit ? ' · medido por unidade' : (isBeverageFood(food) ? ' · medido por ml' : ' · medido por gramas'));
-  deCat.classList.remove('loading');
+  if(menuEditor.aiLoading){
+    deCat.innerHTML = '<span class="mini-spinner"></span> Calculando com IA...';
+    deCat.classList.add('loading');
+  } else {
+    deCat.textContent = food.category + unitTxt;
+    deCat.classList.remove('loading');
+  }
   document.getElementById('deIcon').innerHTML = `<i data-lucide="${CATEGORY_ICONS[food.category] || 'utensils'}"></i>`;
   document.getElementById('deMacros').innerHTML = `
-    <div class="ft-macro"><div class="fm-val">0</div><div class="fm-label">kcal</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">prot</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">carb</div></div>
-    <div class="ft-macro"><div class="fm-val">0g</div><div class="fm-label">gord</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">kcal</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">prot</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">carb</div></div>
+    <div class="ft-macro"><div class="fm-val">–</div><div class="fm-label">gord</div></div>
   `;
+  const deIncludeBtn = document.getElementById('deIncludeBtn');
+
+  if(!menuEditor.aiLoading){
+    menuEditor.aiMacros = {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
+    if(deIncludeBtn) deIncludeBtn.disabled = false;
+    updateMeQtyUI(true);
+    icons();
+    return;
+  }
+
+  if(deIncludeBtn) deIncludeBtn.disabled = true;
   updateMeQtyUI(true);
   icons();
+
+  const result = await getAINutrition(food.name);
+  if(menuEditor.selected !== food) return; // usuário já trocou de alimento enquanto a IA calculava
+
+  menuEditor.aiMacros = result || {kcal:food.kcal, protein:food.protein, carbs:food.carbs, fat:food.fat};
+  menuEditor.aiLoading = false;
+  const deCat2 = document.getElementById('deCat');
+  if(deCat2){
+    deCat2.textContent = food.category + unitTxt + (result ? '' : ' · estimativa local (IA indisponível)');
+    deCat2.classList.remove('loading');
+  }
+  const deIncludeBtn2 = document.getElementById('deIncludeBtn');
+  if(deIncludeBtn2) deIncludeBtn2.disabled = false;
+  updateMeQtyUI(false);
 }
 function clearMeFoodSelection(){
   menuEditor.selected = null;
@@ -1890,6 +1951,7 @@ function wireMenuOptionPicker(){
 
   document.getElementById('deIncludeBtn').addEventListener('click', async ()=>{
     if(!menuEditor.selected){ showToast('Selecione um alimento primeiro'); return; }
+    if(menuEditor.aiLoading){ showToast('Aguarde o cálculo de calorias...'); return; }
     const f = menuEditor.selected;
     const macros = menuEditor.aiMacros || {kcal:f.kcal, protein:f.protein, carbs:f.carbs, fat:f.fat};
     const gramsEquiv = menuEditor.isUnit ? menuEditor.qty*f.unitWeight : menuEditor.qty;
