@@ -103,27 +103,38 @@
   }
   .ps-pill.dragging{transition:none; cursor:grabbing;}
 
-  /* ---------- HOME DAY NAVIGATION (own row, sits right above the tab icons, shown on every tab) ---------- */
+  /* ---------- DAY STRIP (carousel-style date switcher, sits above the tab icons, shown on every tab) ---------- */
   .day-nav-row{display:flex; align-items:center; justify-content:center; padding:8px 14px 4px 14px;}
   .day-nav-row.hidden{display:none;}
-  .date-switcher{
-    display:flex; align-items:center; gap:2px; background:var(--surface); border:1px solid var(--border);
-    border-radius:999px; padding:4px; box-shadow:0 6px 14px -9px rgba(30,40,90,.25);
+  .date-strip{
+    position:relative; display:flex; align-items:center; gap:2px; width:100%;
+    background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:6px;
+    box-shadow:0 8px 20px -14px rgba(30,40,90,.25);
   }
-  .day-nav-btn{
-    width:26px; height:26px; border-radius:50%; border:none; background:transparent; color:var(--text-muted);
+  .ds-arrow{
+    width:26px; height:26px; border-radius:50%; border:none; background:transparent; color:var(--text-dim);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
   }
-  .day-nav-btn svg{width:13px;height:13px;}
-  .day-nav-btn:disabled{opacity:.3; cursor:not-allowed;}
-  .day-nav-btn:not(:disabled):active{transform:scale(.9); background:var(--surface-2);}
-  .day-nav-label{
-    display:flex; align-items:center; gap:5px; background:transparent; border:none; border-radius:999px;
-    padding:5px 12px; font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--text); cursor:pointer;
-    min-width:0; justify-content:center; white-space:nowrap;
+  .ds-arrow svg{width:14px;height:14px;}
+  .ds-arrow:disabled{opacity:.3; cursor:not-allowed;}
+  .ds-arrow:not(:disabled):active{transform:scale(.9); background:var(--surface-2);}
+  .ds-track{
+    display:flex; flex:1; align-items:center; justify-content:space-between; gap:2px;
+    touch-action:pan-y; user-select:none; cursor:grab;
   }
-  .day-nav-label:active{background:var(--surface-2);}
-  .day-nav-label svg{width:12px;height:12px; color:var(--accent-2); flex:none;}
+  .ds-cell{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    padding:7px 2px; border:none; background:transparent; border-radius:16px; cursor:pointer; color:var(--text-muted);
+    transition:background .18s ease, box-shadow .18s ease;
+  }
+  .ds-cell .ds-weekday{font-size:10px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--text-dim);}
+  .ds-cell .ds-num{font-family:var(--font-mono); font-weight:700; font-size:16px; color:var(--text);}
+  .ds-cell.selected{background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); box-shadow:0 8px 18px -8px var(--accent-2);}
+  .ds-cell.selected .ds-tag{display:flex; align-items:center; gap:3px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:rgba(255,255,255,.85);}
+  .ds-cell.selected .ds-tag svg{width:10px;height:10px;}
+  .ds-cell.selected .ds-num{color:#fff; font-size:17px;}
+  .ds-cell.disabled{opacity:.35; pointer-events:none;}
+  .ds-cell:not(.selected):not(.disabled):active{background:var(--surface-2);}
 
   /* ---------- TAB NAV (icon-only, compact) ---------- */
   .tab-nav{display:flex; justify-content:center; gap:8px; padding:4px 14px 4px 14px; flex-wrap:wrap;}
@@ -1220,15 +1231,46 @@ function homeDateLabel(dateStr){
   if(dateStr===addDays(today,-1)) return 'Ontem';
   return fmtDateShort(dateStr);
 }
+function weekdayAbbr(dateStr){
+  return new Intl.DateTimeFormat('pt-BR', {weekday:'short', timeZone:'UTC'}).format(new Date(dateStr+'T12:00:00Z')).replace('.','').toUpperCase();
+}
+function computeStripDates(){
+  const today = todayStr();
+  let dates = [-2,-1,0,1,2].map(off=>addDays(homeViewDate, off));
+  // never show dates beyond today — shift the whole window back if needed
+  while(dates[dates.length-1] > today){
+    dates = dates.map(d=>addDays(d,-1));
+  }
+  return dates;
+}
 function updateHeaderDayNav(){
   const row = document.getElementById('dayNavRow');
   if(!row) return;
-  const isToday = homeViewDate === todayStr();
+  const today = todayStr();
+  const isAtToday = homeViewDate === today;
+  const dates = computeStripDates();
+
+  const cellsHTML = dates.map(d=>{
+    const selected = d===homeViewDate;
+    const future = d > today;
+    const num = parseInt(d.slice(8,10),10);
+    if(selected){
+      return `<button class="ds-cell selected" data-date="${d}">
+        <span class="ds-tag"><i data-lucide="calendar-days"></i>${homeDateLabel(d)}</span>
+        <span class="ds-num">${weekdayAbbr(d)} ${num}</span>
+      </button>`;
+    }
+    return `<button class="ds-cell${future?' disabled':''}" data-date="${d}">
+      <span class="ds-weekday">${weekdayAbbr(d)}</span>
+      <span class="ds-num">${num}</span>
+    </button>`;
+  }).join('');
+
   row.innerHTML = `
-    <div class="date-switcher">
-      <button class="day-nav-btn" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
-      <button class="day-nav-label" id="homeDateBtn"><i data-lucide="calendar-days"></i>${homeDateLabel(homeViewDate)}</button>
-      <button class="day-nav-btn" id="homeNextDay" ${isToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
+    <div class="date-strip">
+      <button class="ds-arrow" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
+      <div class="ds-track" id="dsTrack">${cellsHTML}</div>
+      <button class="ds-arrow" id="homeNextDay" ${isAtToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
     </div>
   `;
   icons();
@@ -1242,7 +1284,56 @@ function updateHeaderDayNav(){
       render();
     }
   });
-  document.getElementById('homeDateBtn').addEventListener('click', openHomeCalendarModal);
+}
+/* drag/swipe across the day strip to switch days — same sliding gesture as the
+   profile switcher. Wired once (delegated on document) since #dayNavRow's inner
+   HTML gets rebuilt on every render(). */
+function setupDateStripDrag(){
+  if(window.__dateStripWired) return;
+  window.__dateStripWired = true;
+  let dragging = false, moved = false, startX = 0;
+  function px(e){ return e.touches ? e.touches[0].clientX : e.clientX; }
+  function liveTrack(){ return document.getElementById('dsTrack'); }
+  function onDown(e){
+    if(!e.target.closest('#dsTrack')) return;
+    dragging = true; moved = false; startX = px(e);
+  }
+  function onMove(e){
+    if(!dragging) return;
+    const track = liveTrack();
+    if(!track) return;
+    const dx = px(e) - startX;
+    if(Math.abs(dx) > 5) moved = true;
+    track.style.transform = `translateX(${clamp(dx,-50,50)}px)`;
+  }
+  function onUp(e){
+    if(!dragging) return;
+    dragging = false;
+    const track = liveTrack();
+    const endX = e.changedTouches ? e.changedTouches[0].clientX : (typeof e.clientX==='number' ? e.clientX : startX);
+    const dx = endX - startX;
+    if(track) track.style.transform = '';
+    if(moved && Math.abs(dx) > 36){
+      if(dx < 0){ if(homeViewDate < todayStr()){ homeViewDate = addDays(homeViewDate,1); render(); } }
+      else { homeViewDate = addDays(homeViewDate,-1); render(); }
+    }
+  }
+  document.addEventListener('mousedown', onDown);
+  document.addEventListener('touchstart', onDown, {passive:true});
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive:true});
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+
+  document.addEventListener('click', (e)=>{
+    const tag = e.target.closest('.ds-tag');
+    if(tag){ openHomeCalendarModal(); return; }
+    const cell = e.target.closest('.ds-cell');
+    if(!cell || moved) return;
+    if(cell.classList.contains('disabled')) return;
+    homeViewDate = cell.dataset.date;
+    render();
+  });
 }
 function openHomeCalendarModal(){
   const d = new Date(homeViewDate+'T12:00:00Z');
@@ -2537,6 +2628,21 @@ function setupProfileSlider(){
 // Para trocar a senha, gere um novo hash SHA-256 (ex: tools.keycdn.com) e cole aqui.
 const APP_PASSWORD_HASH = "fe47d3f52122243998056618c7146e35ece42d79d1e3a0bbbdc66d5ca2b17cb3";
 
+// Sessão de login: depois de entrar com a senha uma vez, fica logado por 24h
+// (guardado no localStorage do navegador). Passado esse prazo, pede a senha de novo.
+const AUTH_SESSION_KEY = 'dietapro_auth_until';
+const AUTH_SESSION_MS = 24 * 60 * 60 * 1000; // 24 horas
+
+function hasValidSession(){
+  try{
+    const until = parseInt(localStorage.getItem(AUTH_SESSION_KEY), 10);
+    return !isNaN(until) && Date.now() < until;
+  }catch(e){ return false; }
+}
+function startSession(){
+  try{ localStorage.setItem(AUTH_SESSION_KEY, String(Date.now() + AUTH_SESSION_MS)); }catch(e){}
+}
+
 async function sha256Hex(text){
   const encoded = new TextEncoder().encode(text);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
@@ -2553,6 +2659,7 @@ function wireLogin(){
   async function tryLogin(){
     const hash = await sha256Hex(input.value);
     if(hash === APP_PASSWORD_HASH){
+      startSession();
       document.getElementById('loginScreen').style.display = 'none';
       startApp();
     } else {
@@ -2592,6 +2699,7 @@ async function startApp(){
   document.getElementById('loadingScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   setupProfileSlider();
+  setupDateStripDrag();
   icons();
   if(firebaseConfigProvided() && !window.__firestoreReady){
     showToast('Não conectou ao Firestore — os dados ficam salvos só nesta sessão. Veja o console (F12) para o motivo.');
@@ -2600,6 +2708,10 @@ async function startApp(){
 
 wireLogin();
 icons();
+if(hasValidSession()){
+  document.getElementById('loginScreen').style.display = 'none';
+  startApp();
+}
 </script>
 </body>
 </html>
