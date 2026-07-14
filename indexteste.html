@@ -104,18 +104,22 @@
   .ps-pill.dragging{transition:none; cursor:grabbing;}
 
   /* ---------- HOME DAY NAVIGATION (own row, sits right above the tab icons, shown on every tab) ---------- */
-  .day-nav-row{display:flex; align-items:center; justify-content:center; gap:4px; padding:6px 14px 0 14px;}
+  .day-nav-row{display:flex; align-items:center; justify-content:center; padding:8px 14px 4px 14px;}
   .day-nav-row.hidden{display:none;}
+  .date-switcher{
+    display:flex; align-items:center; gap:2px; background:var(--surface); border:1px solid var(--border);
+    border-radius:999px; padding:4px; box-shadow:0 6px 14px -9px rgba(30,40,90,.25);
+  }
   .day-nav-btn{
-    width:24px; height:24px; border-radius:8px; border:none; background:transparent; color:var(--text-dim);
+    width:26px; height:26px; border-radius:50%; border:none; background:transparent; color:var(--text-muted);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
   }
   .day-nav-btn svg{width:13px;height:13px;}
   .day-nav-btn:disabled{opacity:.3; cursor:not-allowed;}
   .day-nav-btn:not(:disabled):active{transform:scale(.9); background:var(--surface-2);}
   .day-nav-label{
-    display:flex; align-items:center; gap:5px; background:transparent; border:none; border-radius:9px;
-    padding:3px 10px; font-family:var(--font-display); font-weight:700; font-size:12px; color:var(--text-muted); cursor:pointer;
+    display:flex; align-items:center; gap:5px; background:transparent; border:none; border-radius:999px;
+    padding:5px 12px; font-family:var(--font-display); font-weight:700; font-size:12.5px; color:var(--text); cursor:pointer;
     min-width:0; justify-content:center; white-space:nowrap;
   }
   .day-nav-label:active{background:var(--surface-2);}
@@ -1221,9 +1225,11 @@ function updateHeaderDayNav(){
   if(!row) return;
   const isToday = homeViewDate === todayStr();
   row.innerHTML = `
-    <button class="day-nav-btn" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
-    <button class="day-nav-label" id="homeDateBtn"><i data-lucide="calendar-days"></i>${homeDateLabel(homeViewDate)}</button>
-    <button class="day-nav-btn" id="homeNextDay" ${isToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
+    <div class="date-switcher">
+      <button class="day-nav-btn" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
+      <button class="day-nav-label" id="homeDateBtn"><i data-lucide="calendar-days"></i>${homeDateLabel(homeViewDate)}</button>
+      <button class="day-nav-btn" id="homeNextDay" ${isToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
+    </div>
   `;
   icons();
   document.getElementById('homePrevDay').addEventListener('click', ()=>{
