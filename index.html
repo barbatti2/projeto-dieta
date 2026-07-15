@@ -180,7 +180,7 @@
   .ring-glow{position:absolute; inset:14px; border-radius:50%; background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); filter:blur(34px); opacity:.32;}
   .ring-svg{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); filter:drop-shadow(0 6px 10px rgba(30,40,90,.12));}
   .ring-track{fill:none; stroke:var(--surface-3); stroke-width:15;}
-  .ring-progress{fill:none; stroke:url(#gradRingMain); stroke-width:15; stroke-linecap:round; stroke-dasharray:585.4; stroke-dashoffset:585.4; transition:stroke-dashoffset 1.3s cubic-bezier(.35,0,.15,1);}
+  .ring-progress{fill:none; stroke:url(#gradRingMain); stroke-width:15; stroke-linecap:round; stroke-dasharray:585.4; stroke-dashoffset:585.4; transition:stroke-dashoffset 1s cubic-bezier(.16,1,.3,1);}
   .ring-outer.over-goal .ring-progress{stroke:url(#gradRingDanger);}
   .ring-outer.over-goal .ring-glow{background:linear-gradient(135deg, var(--danger), #F97316);}
   .ring-outer.over-goal .kcal-num{color:var(--danger);}
@@ -200,7 +200,7 @@
   .mini-ring-outer{position:relative; width:76px; height:76px;}
   .mini-ring-svg{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg);}
   .mini-ring-track{fill:none; stroke:var(--surface-3); stroke-width:7;}
-  .mini-ring-progress{fill:none; stroke-width:7; stroke-linecap:round; stroke-dasharray:194.8; stroke-dashoffset:194.8; transition:stroke-dashoffset 1.3s cubic-bezier(.35,0,.15,1);}
+  .mini-ring-progress{fill:none; stroke-width:7; stroke-linecap:round; stroke-dasharray:194.8; stroke-dashoffset:194.8; transition:stroke-dashoffset .9s cubic-bezier(.16,1,.3,1);}
   .mini-ring-inner{position:absolute; inset:11px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}
   .mini-ring-inner .mr-val{font-family:var(--font-mono); font-size:14px; font-weight:700; line-height:1;}
   .mini-ring-inner .mr-unit{font-size:8px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
@@ -1206,10 +1206,23 @@ async function saveState(){
 
 /* ---------- fill animations (progress bars / SVG rings) ---------- */
 function triggerFillAnimations(){
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.querySelectorAll('[data-fill]').forEach(el=>{ el.style.width = el.dataset.fill; });
-    document.querySelectorAll('[data-ring-offset]').forEach(el=>{ el.style.strokeDashoffset = el.dataset.ringOffset; });
-  }));
+  document.querySelectorAll('[data-fill]').forEach(el=>{
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.width = el.dataset.fill; }));
+  });
+  document.querySelectorAll('[data-ring-offset]').forEach(el=>{
+    const fullCirc = el.classList.contains('ring-progress') ? '585.4' : '194.8';
+    const target = el.dataset.ringOffset;
+    // force the "empty" state to commit first (no transition), then force a reflow,
+    // then animate to the target — this guarantees the browser actually plays the
+    // transition instead of silently skipping it when both values land in the same frame.
+    el.style.transition = 'none';
+    el.style.strokeDashoffset = fullCirc;
+    void el.getBoundingClientRect();
+    el.style.transition = '';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      el.style.strokeDashoffset = target;
+    }));
+  });
 }
 
 /* ---------- render dispatcher ---------- */
