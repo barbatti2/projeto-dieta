@@ -120,7 +120,6 @@
   .ds-arrow:not(:disabled):active{transform:scale(.9); background:var(--surface-2);}
   .ds-track{
     display:flex; flex:1; align-items:center; justify-content:space-between; gap:1px;
-    touch-action:pan-y; user-select:none; cursor:grab;
   }
   .ds-cell{
     flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
@@ -1285,51 +1284,16 @@ function updateHeaderDayNav(){
     }
   });
 }
-/* drag/swipe across the day strip to switch days — same sliding gesture as the
-   profile switcher. Wired once (delegated on document) since #dayNavRow's inner
-   HTML gets rebuilt on every render(). */
+/* tap-to-select on the day strip. Wired once (delegated on document) since
+   #dayNavRow's inner HTML gets rebuilt on every render(). */
 function setupDateStripDrag(){
   if(window.__dateStripWired) return;
   window.__dateStripWired = true;
-  let dragging = false, moved = false, startX = 0;
-  function px(e){ return e.touches ? e.touches[0].clientX : e.clientX; }
-  function liveTrack(){ return document.getElementById('dsTrack'); }
-  function onDown(e){
-    if(!e.target.closest('#dsTrack')) return;
-    dragging = true; moved = false; startX = px(e);
-  }
-  function onMove(e){
-    if(!dragging) return;
-    const track = liveTrack();
-    if(!track) return;
-    const dx = px(e) - startX;
-    if(Math.abs(dx) > 5) moved = true;
-    track.style.transform = `translateX(${clamp(dx,-50,50)}px)`;
-  }
-  function onUp(e){
-    if(!dragging) return;
-    dragging = false;
-    const track = liveTrack();
-    const endX = e.changedTouches ? e.changedTouches[0].clientX : (typeof e.clientX==='number' ? e.clientX : startX);
-    const dx = endX - startX;
-    if(track) track.style.transform = '';
-    if(moved && Math.abs(dx) > 36){
-      if(dx < 0){ if(homeViewDate < todayStr()){ homeViewDate = addDays(homeViewDate,1); render(); } }
-      else { homeViewDate = addDays(homeViewDate,-1); render(); }
-    }
-  }
-  document.addEventListener('mousedown', onDown);
-  document.addEventListener('touchstart', onDown, {passive:true});
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, {passive:true});
-  document.addEventListener('mouseup', onUp);
-  document.addEventListener('touchend', onUp);
-
   document.addEventListener('click', (e)=>{
     const tag = e.target.closest('.ds-tag');
     if(tag){ openHomeCalendarModal(); return; }
     const cell = e.target.closest('.ds-cell');
-    if(!cell || moved) return;
+    if(!cell) return;
     if(cell.classList.contains('disabled')) return;
     homeViewDate = cell.dataset.date;
     render();
