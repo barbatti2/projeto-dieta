@@ -177,15 +177,19 @@
   /* ---------- HOME RING ---------- */
   .ring-section{display:flex; flex-direction:column; align-items:center; padding:26px 18px;}
   .ring-outer{position:relative; width:220px; height:220px;}
-  .ring-glow{position:absolute; inset:8px; border-radius:50%; background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); filter:blur(30px); opacity:.28;}
-  .ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:--pct-deg 1.2s cubic-bezier(.4,0,.2,1);}
+  .ring-glow{position:absolute; inset:14px; border-radius:50%; background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); filter:blur(34px); opacity:.32;}
+  .ring-svg{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); filter:drop-shadow(0 6px 10px rgba(30,40,90,.12));}
+  .ring-track{fill:none; stroke:var(--surface-3); stroke-width:15;}
+  .ring-progress{fill:none; stroke:url(#gradRingMain); stroke-width:15; stroke-linecap:round; stroke-dasharray:585.4; stroke-dashoffset:585.4; transition:stroke-dashoffset 1.3s cubic-bezier(.35,0,.15,1);}
+  .ring-outer.over-goal .ring-progress{stroke:url(#gradRingDanger);}
   .ring-outer.over-goal .ring-glow{background:linear-gradient(135deg, var(--danger), #F97316);}
-  .ring-outer.over-goal .ring-fill{background: conic-gradient(from 0deg, var(--danger), #F97316 var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg);}
   .ring-outer.over-goal .kcal-num{color:var(--danger);}
+  .grad-stop-a{stop-color:var(--accent-1);}
+  .grad-stop-b{stop-color:var(--accent-2);}
   .ring-alert{display:flex; align-items:center; justify-content:center; gap:7px; margin-top:12px; background:color-mix(in srgb, var(--danger) 12%, transparent); color:var(--danger); font-weight:700; font-size:12.5px; padding:9px 16px; border-radius:12px;}
   .ring-alert svg{width:15px;height:15px; flex:none;}
-  .ring-inner{position:absolute; inset:16px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border:1px solid var(--border);}
-  .ring-inner .kcal-num{font-family:var(--font-mono); font-size:30px; font-weight:700; line-height:1;}
+  .ring-inner{position:absolute; inset:24px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.6), 0 2px 10px -6px rgba(30,40,90,.15);}
+  .ring-inner .kcal-num{font-family:var(--font-mono); font-size:30px; font-weight:700; line-height:1; transition:color .4s ease;}
   .ring-inner .kcal-goal{font-family:var(--font-mono); font-size:12.5px; color:var(--text-muted); margin-top:4px;}
   .ring-inner .kcal-label{font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.06em; margin-top:6px;}
   .ring-caption{margin-top:16px; font-size:13px; color:var(--text-muted); text-align:center;}
@@ -194,8 +198,10 @@
   .macro-card{background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-md); padding:14px 8px 12px; text-align:center; display:flex; flex-direction:column; gap:6px; align-items:center;}
   .macro-card .macro-name{font-size:10.5px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em; margin-top:2px;}
   .mini-ring-outer{position:relative; width:76px; height:76px;}
-  .mini-ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--ring-c1, var(--accent-1)), var(--ring-c2, var(--accent-2)) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:--pct-deg 1.2s cubic-bezier(.4,0,.2,1);}
-  .mini-ring-inner{position:absolute; inset:9px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; border:1px solid var(--border);}
+  .mini-ring-svg{position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg);}
+  .mini-ring-track{fill:none; stroke:var(--surface-3); stroke-width:7;}
+  .mini-ring-progress{fill:none; stroke-width:7; stroke-linecap:round; stroke-dasharray:194.8; stroke-dashoffset:194.8; transition:stroke-dashoffset 1.3s cubic-bezier(.35,0,.15,1);}
+  .mini-ring-inner{position:absolute; inset:11px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}
   .mini-ring-inner .mr-val{font-family:var(--font-mono); font-size:14px; font-weight:700; line-height:1;}
   .mini-ring-inner .mr-unit{font-size:8px; color:var(--text-dim); text-transform:uppercase; letter-spacing:.03em; margin-top:2px;}
   .macro-status{font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:99px;}
@@ -1198,11 +1204,11 @@ async function saveState(){
   }
 }
 
-/* ---------- fill animations (progress bars / ring) ---------- */
+/* ---------- fill animations (progress bars / SVG rings) ---------- */
 function triggerFillAnimations(){
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     document.querySelectorAll('[data-fill]').forEach(el=>{ el.style.width = el.dataset.fill; });
-    document.querySelectorAll('[data-ring-deg]').forEach(el=>{ el.style.setProperty('--pct-deg', el.dataset.ringDeg); });
+    document.querySelectorAll('[data-ring-offset]').forEach(el=>{ el.style.strokeDashoffset = el.dataset.ringOffset; });
   }));
 }
 
@@ -1384,7 +1390,8 @@ function renderInicio(){
   const sum = meals.reduce((a,m)=>({kcal:a.kcal+m.kcal, protein:a.protein+m.protein, carbs:a.carbs+m.carbs, fat:a.fat+m.fat}), {kcal:0,protein:0,carbs:0,fat:0});
   const goals = state.goals;
   const pct = clamp(goals.calorias>0 ? (sum.kcal/goals.calorias*100) : 0, 0, 100);
-  const pctDeg = (pct*3.6).toFixed(1)+'deg';
+  const RING_MAIN_CIRC = 585.4; // 2 * PI * r(93)
+  const mainOffset = (RING_MAIN_CIRC * (1 - pct/100)).toFixed(1);
 
   const remProtein = Math.max(0, Math.round(goals.proteina - sum.protein));
   const remCarbs = Math.max(0, Math.round(goals.carboidratos - sum.carbs));
@@ -1393,9 +1400,10 @@ function renderInicio(){
   const pctProtein = clamp(goals.proteina>0 ? sum.protein/goals.proteina*100:0,0,100);
   const pctCarbs = clamp(goals.carboidratos>0 ? sum.carbs/goals.carboidratos*100:0,0,100);
   const pctFat = clamp(goalFat>0 ? sum.fat/goalFat*100:0,0,100);
-  const proteinDeg = (pctProtein*3.6).toFixed(1)+'deg';
-  const carbsDeg = (pctCarbs*3.6).toFixed(1)+'deg';
-  const fatDeg = (pctFat*3.6).toFixed(1)+'deg';
+  const RING_MINI_CIRC = 194.8; // 2 * PI * r(31)
+  const proteinOffset = (RING_MINI_CIRC * (1 - pctProtein/100)).toFixed(1);
+  const carbsOffset = (RING_MINI_CIRC * (1 - pctCarbs/100)).toFixed(1);
+  const fatOffset = (RING_MINI_CIRC * (1 - pctFat/100)).toFixed(1);
 
   const isOverGoal = goals.calorias>0 && sum.kcal > goals.calorias;
   const overAmount = Math.round(sum.kcal - goals.calorias);
@@ -1405,7 +1413,20 @@ function renderInicio(){
     <section class="card ring-section">
       <div class="ring-outer${isOverGoal?' over-goal':''}">
         <div class="ring-glow"></div>
-        <div class="ring-fill" data-ring-deg="${pctDeg}" style="--pct-deg:0deg"></div>
+        <svg class="ring-svg" viewBox="0 0 220 220">
+          <defs>
+            <linearGradient id="gradRingMain" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" class="grad-stop-a"/>
+              <stop offset="100%" class="grad-stop-b"/>
+            </linearGradient>
+            <linearGradient id="gradRingDanger" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#EF4444"/>
+              <stop offset="100%" stop-color="#F97316"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="110" cy="110" r="93"/>
+          <circle class="ring-progress" cx="110" cy="110" r="93" data-ring-offset="${mainOffset}"/>
+        </svg>
         <div class="ring-inner">
           <div class="kcal-num">${Math.round(sum.kcal)}</div>
           <div class="kcal-goal">de ${goals.calorias} kcal</div>
@@ -1419,7 +1440,11 @@ function renderInicio(){
     <section class="macro-cards">
       <div class="macro-card">
         <div class="mini-ring-outer">
-          <div class="mini-ring-fill" data-ring-deg="${proteinDeg}" style="--pct-deg:0deg; --ring-c1:#FB923C; --ring-c2:#F97316;"></div>
+          <svg class="mini-ring-svg" viewBox="0 0 76 76">
+            <defs><linearGradient id="gradRingProtein" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FB923C"/><stop offset="100%" stop-color="#F97316"/></linearGradient></defs>
+            <circle class="mini-ring-track" cx="38" cy="38" r="31"/>
+            <circle class="mini-ring-progress" cx="38" cy="38" r="31" stroke="url(#gradRingProtein)" data-ring-offset="${proteinOffset}"/>
+          </svg>
           <div class="mini-ring-inner"><span class="mr-val">${remProtein}g</span><span class="mr-unit">faltam</span></div>
         </div>
         <span class="macro-name">Proteína</span>
@@ -1427,7 +1452,11 @@ function renderInicio(){
       </div>
       <div class="macro-card">
         <div class="mini-ring-outer">
-          <div class="mini-ring-fill" data-ring-deg="${carbsDeg}" style="--pct-deg:0deg; --ring-c1:#FBBF24; --ring-c2:#F59E0B;"></div>
+          <svg class="mini-ring-svg" viewBox="0 0 76 76">
+            <defs><linearGradient id="gradRingCarbs" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FBBF24"/><stop offset="100%" stop-color="#F59E0B"/></linearGradient></defs>
+            <circle class="mini-ring-track" cx="38" cy="38" r="31"/>
+            <circle class="mini-ring-progress" cx="38" cy="38" r="31" stroke="url(#gradRingCarbs)" data-ring-offset="${carbsOffset}"/>
+          </svg>
           <div class="mini-ring-inner"><span class="mr-val">${remCarbs}g</span><span class="mr-unit">faltam</span></div>
         </div>
         <span class="macro-name">Carboidratos</span>
@@ -1435,7 +1464,11 @@ function renderInicio(){
       </div>
       <div class="macro-card">
         <div class="mini-ring-outer">
-          <div class="mini-ring-fill" data-ring-deg="${fatDeg}" style="--pct-deg:0deg; --ring-c1:#A78BFA; --ring-c2:#8B5CF6;"></div>
+          <svg class="mini-ring-svg" viewBox="0 0 76 76">
+            <defs><linearGradient id="gradRingFat" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#A78BFA"/><stop offset="100%" stop-color="#8B5CF6"/></linearGradient></defs>
+            <circle class="mini-ring-track" cx="38" cy="38" r="31"/>
+            <circle class="mini-ring-progress" cx="38" cy="38" r="31" stroke="url(#gradRingFat)" data-ring-offset="${fatOffset}"/>
+          </svg>
           <div class="mini-ring-inner"><span class="mr-val">${remFat}g</span><span class="mr-unit">faltam</span></div>
         </div>
         <span class="macro-name">Gordura</span>
