@@ -103,37 +103,37 @@
   }
   .ps-pill.dragging{transition:none; cursor:grabbing;}
 
-  /* ---------- DAY STRIP (carousel-style date switcher, sits above the tab icons, shown on every tab) ---------- */
-  .day-nav-row{display:flex; align-items:center; justify-content:center; padding:6px 14px 2px 14px;}
+  /* ---------- DAY STRIP (minimalist date switcher, sits above the tab icons, shown on every tab) ---------- */
+  .day-nav-row{display:flex; align-items:center; justify-content:center; padding:4px 14px 2px 14px;}
   .day-nav-row.hidden{display:none;}
-  .date-strip{
-    position:relative; display:flex; align-items:center; gap:1px; width:100%; max-width:340px;
-    background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:3px;
-    box-shadow:0 6px 14px -11px rgba(30,40,90,.25);
-  }
+  .date-strip{position:relative; display:flex; align-items:center; gap:2px; width:100%; max-width:280px;}
   .ds-arrow{
-    width:20px; height:20px; border-radius:50%; border:none; background:transparent; color:var(--text-dim);
+    width:18px; height:18px; border-radius:50%; border:none; background:transparent; color:var(--text-dim);
     display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
   }
-  .ds-arrow svg{width:12px;height:12px;}
+  .ds-arrow svg{width:11px;height:11px;}
   .ds-arrow:disabled{opacity:.3; cursor:not-allowed;}
-  .ds-arrow:not(:disabled):active{transform:scale(.9); background:var(--surface-2);}
-  .ds-track{
-    display:flex; flex:1; align-items:center; justify-content:space-between; gap:1px;
+  .ds-arrow:not(:disabled):active{opacity:.6;}
+  .ds-cal-btn{
+    width:18px; height:18px; border-radius:50%; border:none; background:transparent; color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex:none;
   }
+  .ds-cal-btn svg{width:11px;height:11px;}
+  .ds-cal-btn:active{opacity:.6;}
+  .ds-track{display:flex; flex:1; align-items:center; justify-content:space-between;}
   .ds-cell{
-    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px;
-    padding:4px 1px; border:none; background:transparent; border-radius:10px; cursor:pointer; color:var(--text-muted);
-    transition:background .18s ease, box-shadow .18s ease;
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px;
+    padding:2px 0; border:none; background:transparent; cursor:pointer; color:var(--text-muted);
   }
-  .ds-cell .ds-weekday{font-size:8.5px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--text-dim);}
-  .ds-cell .ds-num{font-family:var(--font-mono); font-weight:700; font-size:13px; color:var(--text);}
-  .ds-cell.selected{background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); box-shadow:0 6px 12px -7px var(--accent-2);}
-  .ds-cell.selected .ds-tag{display:flex; align-items:center; gap:2px; font-size:7.5px; font-weight:700; text-transform:uppercase; letter-spacing:.02em; color:rgba(255,255,255,.85);}
-  .ds-cell.selected .ds-tag svg{width:8px;height:8px;}
-  .ds-cell.selected .ds-num{color:#fff; font-size:13.5px;}
-  .ds-cell.disabled{opacity:.35; pointer-events:none;}
-  .ds-cell:not(.selected):not(.disabled):active{background:var(--surface-2);}
+  .ds-cell .ds-weekday{font-size:8px; font-weight:700; letter-spacing:.02em; text-transform:uppercase; color:var(--text-dim);}
+  .ds-cell .ds-num{
+    width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:12px; color:var(--text); transition:background .15s ease, color .15s ease;
+  }
+  .ds-cell.is-today:not(.selected) .ds-num{color:var(--accent-2); font-weight:800;}
+  .ds-cell.selected .ds-num{background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); color:#fff;}
+  .ds-cell.disabled{opacity:.3; pointer-events:none;}
+  .ds-cell:not(.selected):not(.disabled):active .ds-num{background:var(--surface-2);}
 
   /* ---------- TAB NAV (icon-only, compact) ---------- */
   .tab-nav{display:flex; justify-content:center; gap:8px; padding:4px 14px 4px 14px; flex-wrap:wrap;}
@@ -167,11 +167,29 @@
   .card h2 svg{width:16px;height:16px; color:var(--accent-2);}
   .field-label{display:block; font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:8px; text-transform:uppercase; letter-spacing:.05em; text-align:center;}
 
+  /* ---------- COLLAPSIBLE CARD (e.g. meals list on Início) ---------- */
+  .collapsible-header{
+    width:100%; display:flex; align-items:center; gap:8px; background:none; border:none; padding:0; margin:0;
+    cursor:pointer; font-family:var(--font-display); font-size:15px; font-weight:700; color:var(--text); text-align:left;
+  }
+  .collapsible-title{display:flex; align-items:center; gap:7px; flex:1; min-width:0;}
+  .collapsible-title svg{width:16px;height:16px; color:var(--accent-2); flex:none;}
+  .collapsible-meta{font-size:12px; color:var(--text-muted); font-weight:600; flex:none;}
+  .collapsible-chevron{width:16px;height:16px; color:var(--text-dim); flex:none; transition:transform .2s ease;}
+  .collapsible-chevron.open{transform:rotate(180deg);}
+  .collapsible-body{display:none; margin-top:14px;}
+  .collapsible-body.open{display:block;}
+
   /* ---------- HOME RING ---------- */
   .ring-section{display:flex; flex-direction:column; align-items:center; padding:26px 18px;}
   .ring-outer{position:relative; width:220px; height:220px;}
   .ring-glow{position:absolute; inset:8px; border-radius:50%; background:linear-gradient(135deg, var(--accent-1), var(--accent-2)); filter:blur(30px); opacity:.28;}
   .ring-fill{position:absolute; inset:0; border-radius:50%; background: conic-gradient(from 0deg, var(--accent-1), var(--accent-2) var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg); transition:--pct-deg 1.2s cubic-bezier(.4,0,.2,1);}
+  .ring-outer.over-goal .ring-glow{background:linear-gradient(135deg, var(--danger), #F97316);}
+  .ring-outer.over-goal .ring-fill{background: conic-gradient(from 0deg, var(--danger), #F97316 var(--pct-deg, 0deg), var(--surface-3) var(--pct-deg, 0deg) 360deg);}
+  .ring-outer.over-goal .kcal-num{color:var(--danger);}
+  .ring-alert{display:flex; align-items:center; justify-content:center; gap:7px; margin-top:12px; background:color-mix(in srgb, var(--danger) 12%, transparent); color:var(--danger); font-weight:700; font-size:12.5px; padding:9px 16px; border-radius:12px;}
+  .ring-alert svg{width:15px;height:15px; flex:none;}
   .ring-inner{position:absolute; inset:16px; border-radius:50%; background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; border:1px solid var(--border);}
   .ring-inner .kcal-num{font-family:var(--font-mono); font-size:30px; font-weight:700; line-height:1;}
   .ring-inner .kcal-goal{font-family:var(--font-mono); font-size:12.5px; color:var(--text-muted); margin-top:4px;}
@@ -555,7 +573,7 @@
 
   <nav class="tab-nav" id="tabNav">
     <button class="tab-btn active" data-tab="inicio" title="Início"><i data-lucide="home"></i></button>
-    <button class="tab-btn" data-tab="adicionar" title="Adicionar alimento"><i data-lucide="utensils"></i></button>
+    <button class="tab-btn" data-tab="adicionar" title="Adicionar alimento"><i data-lucide="plus"></i></button>
     <button class="tab-btn" data-tab="cardapio" title="Cardápio"><i data-lucide="book-open"></i></button>
     <button class="tab-btn" data-tab="calendario" title="Calendário"><i data-lucide="calendar-days"></i></button>
     <button class="tab-btn" data-tab="historico" title="Histórico"><i data-lucide="history"></i></button>
@@ -1017,7 +1035,7 @@ const MARK_INFO = {
 };
 const TAB_META = {
   inicio: {title:'Início', subtitle:'Resumo de hoje', icon:'home'},
-  adicionar: {title:'Adicionar alimento', subtitle:'Monte sua refeição', icon:'utensils'},
+  adicionar: {title:'Adicionar alimento', subtitle:'Monte sua refeição', icon:'plus'},
   cardapio: {title:'Cardápio', subtitle:'Seu cardápio, com opções por categoria', icon:'book-open'},
   calendario: {title:'Calendário', subtitle:'Planeje seus dias', icon:'calendar-days'},
   historico: {title:'Histórico', subtitle:'Tudo que você registrou', icon:'history'},
@@ -1040,6 +1058,7 @@ let currentTab = 'inicio';
 let calendarViewDate = new Date();
 let historicoFilter = 'dia';
 let homeViewDate = todayStr();
+let homeMealsExpanded = false;
 let homeCalendarViewDate = new Date();
 const addFoodState = {qty:100, isUnit:false, mealType:'cafe_manha', selected:null, itemsToSave:[], aiMacros:null, aiLoading:false};
 // menuEditor: estado da tela (bottom sheet) de edição de uma refeição do cardápio único
@@ -1201,7 +1220,7 @@ function render(){
   updateHeaderDayNav();
 
   const content = document.getElementById('content');
-  if(currentTab==='inicio'){ content.innerHTML = renderInicio(); triggerFillAnimations(); }
+  if(currentTab==='inicio'){ content.innerHTML = renderInicio(); wireInicio(); triggerFillAnimations(); }
   else if(currentTab==='adicionar'){ content.innerHTML = renderAdicionar(); wireAdicionar(); }
   else if(currentTab==='cardapio'){ content.innerHTML = renderCardapio(); wireCardapio(); }
   else if(currentTab==='calendario'){ content.innerHTML = renderCalendario(); wireCalendario(); }
@@ -1253,15 +1272,11 @@ function updateHeaderDayNav(){
 
   const cellsHTML = dates.map(d=>{
     const selected = d===homeViewDate;
+    const isToday = d===today;
     const future = d > today;
     const num = parseInt(d.slice(8,10),10);
-    if(selected){
-      return `<button class="ds-cell selected" data-date="${d}">
-        <span class="ds-tag"><i data-lucide="calendar-days"></i>${homeDateLabel(d)}</span>
-        <span class="ds-num">${weekdayAbbr(d)} ${num}</span>
-      </button>`;
-    }
-    return `<button class="ds-cell${future?' disabled':''}" data-date="${d}">
+    const cls = ['ds-cell', selected?'selected':'', isToday?'is-today':'', future?'disabled':''].filter(Boolean).join(' ');
+    return `<button class="${cls}" data-date="${d}">
       <span class="ds-weekday">${weekdayAbbr(d)}</span>
       <span class="ds-num">${num}</span>
     </button>`;
@@ -1272,6 +1287,7 @@ function updateHeaderDayNav(){
       <button class="ds-arrow" id="homePrevDay"><i data-lucide="chevron-left"></i></button>
       <div class="ds-track" id="dsTrack">${cellsHTML}</div>
       <button class="ds-arrow" id="homeNextDay" ${isAtToday?'disabled':''}><i data-lucide="chevron-right"></i></button>
+      <button class="ds-cal-btn" id="homeCalBtn" title="Escolher data"><i data-lucide="calendar-days"></i></button>
     </div>
   `;
   icons();
@@ -1285,6 +1301,7 @@ function updateHeaderDayNav(){
       render();
     }
   });
+  document.getElementById('homeCalBtn').addEventListener('click', openHomeCalendarModal);
 }
 /* tap-to-select on the day strip. Wired once (delegated on document) since
    #dayNavRow's inner HTML gets rebuilt on every render(). */
@@ -1292,8 +1309,6 @@ function setupDateStripDrag(){
   if(window.__dateStripWired) return;
   window.__dateStripWired = true;
   document.addEventListener('click', (e)=>{
-    const tag = e.target.closest('.ds-tag');
-    if(tag){ openHomeCalendarModal(); return; }
     const cell = e.target.closest('.ds-cell');
     if(!cell) return;
     if(cell.classList.contains('disabled')) return;
@@ -1390,10 +1405,13 @@ function renderInicio(){
   const carbsDeg = (pctCarbs*3.6).toFixed(1)+'deg';
   const fatDeg = (pctFat*3.6).toFixed(1)+'deg';
 
+  const isOverGoal = goals.calorias>0 && sum.kcal > goals.calorias;
+  const overAmount = Math.round(sum.kcal - goals.calorias);
+
   return `
     ${heroHTML('inicio')}
     <section class="card ring-section">
-      <div class="ring-outer">
+      <div class="ring-outer${isOverGoal?' over-goal':''}">
         <div class="ring-glow"></div>
         <div class="ring-fill" data-ring-deg="${pctDeg}" style="--pct-deg:0deg"></div>
         <div class="ring-inner">
@@ -1403,6 +1421,7 @@ function renderInicio(){
         </div>
       </div>
       <p class="ring-caption">${meals.length} ${meals.length===1?'item registrado':'itens registrados'} ${isToday ? 'hoje' : 'nesse dia'}</p>
+      ${isOverGoal ? `<div class="ring-alert"><i data-lucide="alert-triangle"></i>${overAmount} kcal acima da meta ${isToday?'de hoje':'desse dia'}</div>` : ''}
     </section>
 
     <section class="macro-cards">
@@ -1433,20 +1452,34 @@ function renderInicio(){
     </section>
 
     <section class="card">
-      <h2><i data-lucide="clipboard-list"></i>${isToday ? 'Refeições de hoje' : 'Refeições do dia'}</h2>
-      ${meals.length===0 ? '<p class="empty-hint">Nenhum alimento registrado ainda'+(isToday?'. Vá até "Adicionar" para começar.':' nesse dia.')+'</p>' :
-        Object.keys(MEAL_LABELS).map(mt=>{
-          const items = meals.filter(m=>m.mealType===mt);
-          if(items.length===0) return '';
-          const tot = items.reduce((a,i)=>a+i.kcal,0);
-          return `<div class="hist-meal-group">
-            <div class="hist-meal-title">${MEAL_LABELS[mt]} · ${Math.round(tot)} kcal</div>
-            ${items.map(i=>`<div class="hist-item" data-meal-id="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
-          </div>`;
-        }).join('')
-      }
+      <button class="collapsible-header" id="mealsToggleBtn" type="button">
+        <span class="collapsible-title"><i data-lucide="clipboard-list"></i>${isToday ? 'Refeições de hoje' : 'Refeições do dia'}</span>
+        <span class="collapsible-meta">${meals.length} ${meals.length===1?'item':'itens'}</span>
+        <i data-lucide="chevron-down" class="collapsible-chevron${homeMealsExpanded?' open':''}"></i>
+      </button>
+      <div class="collapsible-body${homeMealsExpanded?' open':''}">
+        ${meals.length===0 ? '<p class="empty-hint">Nenhum alimento registrado ainda'+(isToday?'. Vá até "Adicionar" para começar.':' nesse dia.')+'</p>' :
+          Object.keys(MEAL_LABELS).map(mt=>{
+            const items = meals.filter(m=>m.mealType===mt);
+            if(items.length===0) return '';
+            const tot = items.reduce((a,i)=>a+i.kcal,0);
+            return `<div class="hist-meal-group">
+              <div class="hist-meal-title">${MEAL_LABELS[mt]} · ${Math.round(tot)} kcal</div>
+              ${items.map(i=>`<div class="hist-item" data-meal-id="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
+            </div>`;
+          }).join('')
+        }
+      </div>
     </section>
   `;
+}
+function wireInicio(){
+  const btn = document.getElementById('mealsToggleBtn');
+  if(!btn) return;
+  btn.addEventListener('click', ()=>{
+    homeMealsExpanded = !homeMealsExpanded;
+    render();
+  });
 }
 function isBeverageFood(food){
   return !!food && food.category === 'Bebidas';
