@@ -335,6 +335,8 @@
   .hist-date-title{font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:8px; color:var(--text); text-align:center;}
   .hist-meal-group{margin-bottom:10px;}
   .hist-meal-title{font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); font-weight:700; margin-bottom:6px; text-align:center;}
+  .hist-meal-total{font-size:11.5px; color:var(--text-muted); text-align:right; padding:2px 4px 0 4px;}
+  .hist-meal-total b{font-family:var(--font-mono); color:var(--text); font-weight:700;}
   .hist-item{display:flex; align-items:center; gap:8px; font-size:13px; padding:8px 12px; background:var(--surface-2); border:1px solid var(--border); border-radius:10px; margin-bottom:5px;}
   .hist-item-clickable{cursor:pointer; transition:background .12s ease;}
   .hist-item-clickable:active{background:color-mix(in srgb, var(--accent-2) 10%, var(--surface-2));}
@@ -2279,9 +2281,11 @@ function renderHistContent(){
     const groups = Object.keys(MEAL_LABELS).map(mt=>{
       const mi = items.filter(i=>i.mealType===mt);
       if(mi.length===0) return '';
+      const mealTotal = mi.reduce((a,i)=>a+i.kcal,0);
       return `<div class="hist-meal-group">
         <div class="hist-meal-title">${MEAL_LABELS[mt]}</div>
         ${mi.map(i=>`<div class="hist-item hist-item-clickable" data-edit-meal="${i.id}"><span class="hi-name">${i.name}</span><span class="hi-sub">${formatQtyLabel(i)} · ${Math.round(i.kcal)}kcal</span><button class="hi-delete" data-delete-meal="${i.id}" data-meal-name="${i.name.replace(/"/g,'&quot;')}"><i data-lucide="trash-2"></i></button></div>`).join('')}
+        <div class="hist-meal-total">Total ${MEAL_LABELS[mt].toLowerCase()}: <b>${Math.round(mealTotal)} kcal</b></div>
       </div>`;
     }).join('');
     return `<div class="hist-day-group">
