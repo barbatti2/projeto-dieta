@@ -643,11 +643,11 @@ function buildFoodDB(){
     'Patinho':[196,32,0,7.0], 'Alcatra':[218,31,0,9.5], 'Contrafil\u00e9':[233,30,0,12.0], 'Picanha':[289,27,0,20.0],
     'Maminha':[206,31,0,8.5], 'Cox\u00e3o mole':[194,32,0,6.8], 'Cox\u00e3o duro':[201,31,0,7.8], 'Fraldinha':[252,28,0,15.5],
     'Ac\u00e9m':[231,29,0,13.0], 'M\u00fasculo':[201,32,0,7.0], 'Costela':[330,26,0,25.0], 'Cupim':[348,25,0,27.5],
-    'Lagarto':[183,33,0,5.0], 'Fil\u00e9 mignon':[215,32,0,9.0]
+    'Lagarto':[183,33,0,5.0], 'Fil\u00e9 mignon':[215,32,0,9.0], 'Carne mo\u00edda':[212,26,0,11.5], 'Carne mo\u00edda magra':[172,28,0,6.0]
   };
   const PREP_MEAT = {
     'grelhado':[1.0,1.0,0,1.0], 'cozido':[0.93,0.97,0,0.85], 'assado':[1.05,1.0,0,1.05],
-    'na chapa':[1.0,1.0,0,1.0], 'cru':[0.78,0.85,0,0.95], 'ensopado':[1.0,0.95,2.5,1.15]
+    'na chapa':[1.0,1.0,0,1.0], 'cru':[0.78,0.85,0,0.95], 'ensopado':[1.0,0.95,2.5,1.15], 'refogado':[1.02,0.98,1.5,1.1]
   };
   Object.keys(BEEF_BASE).forEach(cut=>{
     const b = BEEF_BASE[cut];
@@ -657,10 +657,23 @@ function buildFoodDB(){
     });
   });
 
+  /* ---- Carne su\u00edna (mesmo sistema de preparo da carne bovina) ---- */
+  const PORK_BASE = {
+    'Lombo':[210,27,0,11.0], 'Pernil':[221,26,0,13.0], 'Costela su\u00edna':[280,22,0,21.0], 'Bisteca':[231,24,0,15.0],
+    'Paleta':[224,25,0,13.0], 'Fil\u00e9 su\u00edno':[196,28,0,9.0], 'Carne mo\u00edda su\u00edna':[230,24,0,15.0], 'Panceta':[397,17,0,37.0]
+  };
+  Object.keys(PORK_BASE).forEach(cut=>{
+    const b = PORK_BASE[cut];
+    Object.keys(PREP_MEAT).forEach(prep=>{
+      const m = PREP_MEAT[prep];
+      push('Carne su\u00edna - '+cut+' ('+prep+')', 'Carnes', b[0]*m[0], b[1]*m[1], b[2]+m[2], b[3]*m[3]);
+    });
+  });
+
   /* ---- Frango ---- */
   const CHICKEN_BASE = {
     'Peito':[165,31,0,3.6], 'Coxa':[209,26,0,10.9], 'Sobrecoxa':[216,25,0,12.0], 'Asa':[203,27,0,10.0],
-    'Fil\u00e9':[165,31,0,3.6], 'Moela':[172,27,0,6.0], 'Cora\u00e7\u00e3o':[200,26,0,10.0]
+    'Fil\u00e9':[165,31,0,3.6], 'Moela':[172,27,0,6.0], 'Cora\u00e7\u00e3o':[200,26,0,10.0], 'Frango mo\u00eddo':[143,20,0,6.5]
   };
   const PREP_CHICKEN = {
     'grelhado':[1.0,1.0,0,1.0], 'cozido':[0.95,0.97,0,0.85], 'assado':[1.05,1.0,0,1.1],
@@ -763,7 +776,9 @@ function buildFoodDB(){
     ['Torrada tradicional',407,10,77,5],['Torrada integral',390,12,70,6],
     ['Magic Toast Tradicional',415,10,75,8],['Magic Toast Multigr\u00e3os',410,11,70,9],['Magic Toast Integral',400,11,68,8],
     ['Magic Toast Alho',420,9,73,10],['Magic Toast Cebola',418,9,73,10],['Magic Toast Requeij\u00e3o',430,9,72,12],
-    ['Magic Toast Light',380,11,68,6],['Bisnaguinha',300,8,55,5],['P\u00e3o de queijo',350,7,32,20],
+    ['Magic Toast Light',380,11,68,6],['Magic Toast Proven\u00e7al',415,10,73,9],['Magic Toast Queijo',425,11,70,11],
+    ['Magic Toast Pizza',418,10,72,10],['Magic Toast Or\u00e9gano',412,10,73,8],['Magic Toast Doce de Leite',440,8,78,9],
+    ['Magic Toast Canela',435,8,77,8],['Bisnaguinha',300,8,55,5],['P\u00e3o de queijo',350,7,32,20],
     ['Tapioca',190,0.5,46,0.2],['Panqueca simples',220,7,28,8]
   ].forEach(r=>push(r[0],'P\u00e3es e torradas',r[1],r[2],r[3],r[4]));
 
