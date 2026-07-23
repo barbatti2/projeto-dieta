@@ -1,2546 +1,1041 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#10182f">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FinControl">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="format-detection" content="telephone=no">
-  <link id="appManifest" rel="manifest" href='data:application/manifest+json,{"name":"FinControl","short_name":"FinControl","description":"Gestao simples das contas do mes","start_url":".","scope":".","display":"standalone","background_color":"%23f6f7f9","theme_color":"%2310182f","orientation":"portrait"}'>
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='42' fill='%2310182f'/%3E%3Cpath d='M48 56h78a14 14 0 0 1 14 14v52a14 14 0 0 1-14 14H48a14 14 0 0 1-14-14V58a14 14 0 0 1 14-14h67' fill='none' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M108 83h38v29h-38a14 14 0 1 1 0-29Z' fill='none' stroke='white' stroke-width='10' stroke-linejoin='round'/%3E%3Ccircle cx='119' cy='97.5' r='4.5' fill='white'/%3E%3C/svg%3E">
-  <title>FinControl - Contas do mes</title>
-  <script>
-    // O manifesto é gerado no próprio HTML para manter a entrega em arquivo único.
-    const pwaIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="112" fill="#10182f"/><path d="M137 157h222a42 42 0 0 1 42 42v157a37 37 0 0 1-37 37H137a37 37 0 0 1-37-37V162a37 37 0 0 1 37-37h194" fill="none" stroke="white" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/><path d="M310 235h107v83H310a42 42 0 1 1 0-83Z" fill="none" stroke="white" stroke-width="30" stroke-linejoin="round"/><circle cx="344" cy="276.5" r="11" fill="white"/></svg>`;
-    const pwaIconUrl = `data:image/svg+xml,${encodeURIComponent(pwaIcon)}`;
-    const pwaManifest = {
-      name: "FinControl",
-      short_name: "FinControl",
-      description: "Gestão simples das contas do mês",
-      start_url: location.pathname,
-      scope: location.pathname.replace(/[^/]+$/, ""),
-      display: "standalone",
-      background_color: "#f7f8fa",
-      theme_color: "#10182f",
-      orientation: "portrait",
-      icons: [
-        { src: pwaIconUrl, sizes: "192x192", type: "image/svg+xml", purpose: "any" },
-        { src: pwaIconUrl, sizes: "512x512", type: "image/svg+xml", purpose: "maskable" }
-      ]
-    };
-    document.getElementById("appManifest").href = URL.createObjectURL(new Blob([JSON.stringify(pwaManifest)], { type: "application/manifest+json" }));
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style>
-    :root {
-      --navy: #10182f;
-      --navy-soft: #1a243d;
-      --ink: #101114;
-      --muted: #777a80;
-      --line: #e1e2e5;
-      --surface: #ffffff;
-      --canvas: #f7f8fa;
-      --paid: #16bd91;
-      --paid-soft: #d7f8eb;
-      --pending: #ffbd24;
-      --pending-soft: #fff2c8;
-      --overdue: #ff3f68;
-      --overdue-soft: #ffe0e7;
-      --danger: #f24449;
-      --shadow: 0 8px 20px rgba(15, 23, 42, 0.08), 0 2px 5px rgba(15, 23, 42, 0.06);
-      color-scheme: light;
-      font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
-    }
-
-    html {
-      min-height: 100%;
-      background: var(--canvas);
-      scroll-behavior: smooth;
-    }
-
-    body {
-      min-width: 320px;
-      min-height: 100vh;
-      margin: 0;
-      overflow-x: hidden;
-      background:
-        radial-gradient(circle at 50% -25%, rgba(32, 54, 95, 0.08), transparent 36rem),
-        var(--canvas);
-      color: var(--ink);
-      overscroll-behavior-y: contain;
-    }
-
-    body.modal-open {
-      overflow: hidden;
-    }
-
-    button,
-    input,
-    textarea,
-    select {
-      font: inherit;
-    }
-
-    button {
-      border: 0;
-      cursor: pointer;
-    }
-
-    button:focus-visible,
-    input:focus-visible,
-    textarea:focus-visible,
-    select:focus-visible {
-      outline: 3px solid rgba(38, 99, 235, 0.24);
-      outline-offset: 2px;
-    }
-
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .icon {
-      width: 1.5rem;
-      height: 1.5rem;
-      display: inline-block;
-      flex: 0 0 auto;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 1.9;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .topbar {
-      position: sticky;
-      z-index: 30;
-      top: 0;
-      min-height: 104px;
-      padding-top: env(safe-area-inset-top);
-      background: linear-gradient(110deg, #1b263e 0%, var(--navy) 75%);
-      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
-    }
-
-    .topbar-inner {
-      width: min(100%, 1120px);
-      min-height: 104px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      color: white;
-    }
-
-    .brand-mark {
-      width: 58px;
-      height: 58px;
-      display: grid;
-      place-items: center;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: inset 0 1px rgba(255, 255, 255, 0.08);
-    }
-
-    .brand-mark .icon {
-      width: 33px;
-      height: 33px;
-    }
-
-    .brand-name {
-      margin: 0;
-      font-size: clamp(1.55rem, 4vw, 2.05rem);
-      font-weight: 600;
-      letter-spacing: -0.035em;
-    }
-
-    .nav-tabs {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-
-    .nav-tab {
-      width: 62px;
-      height: 54px;
-      display: grid;
-      place-items: center;
-      border-radius: 999px;
-      background: transparent;
-      color: rgba(255, 255, 255, 0.7);
-      transition: transform 180ms ease, color 180ms ease, background 180ms ease;
-    }
-
-    .nav-tab .icon {
-      width: 28px;
-      height: 28px;
-    }
-
-    .nav-tab:hover {
-      color: white;
-      transform: translateY(-1px);
-    }
-
-    .nav-tab.active {
-      background: white;
-      color: var(--navy);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
-    }
-
-    .app-shell {
-      width: min(100%, 1120px);
-      margin: 0 auto;
-      padding: 66px 24px 80px;
-    }
-
-    .page-enter {
-      animation: pageIn 360ms cubic-bezier(.2, .8, .2, 1) both;
-    }
-
-    @keyframes pageIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .month-control {
-      min-height: 110px;
-      display: grid;
-      grid-template-columns: 90px 1fr 90px;
-      align-items: center;
-      overflow: hidden;
-      border-radius: 30px;
-      color: white;
-      background: linear-gradient(105deg, #1d283f 0%, #111a32 58%, #0d1429 100%);
-      box-shadow: 0 10px 23px rgba(15, 23, 42, 0.16);
-    }
-
-    .month-arrow,
-    .month-open {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: transparent;
-      color: inherit;
-    }
-
-    .month-arrow {
-      transition: background 180ms ease;
-    }
-
-    .month-arrow:hover {
-      background: rgba(255, 255, 255, 0.06);
-    }
-
-    .month-arrow .icon {
-      width: 32px;
-      height: 32px;
-    }
-
-    .month-open {
-      gap: 22px;
-      font-size: clamp(1.65rem, 4vw, 2.15rem);
-      font-weight: 650;
-      letter-spacing: -0.03em;
-    }
-
-    .month-open .icon {
-      width: 34px;
-      height: 34px;
-      color: #dce3f0;
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 34px;
-      margin-top: 46px;
-    }
-
-    .summary-panel {
-      position: relative;
-      min-height: 158px;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      overflow: hidden;
-      padding: 30px 38px;
-      border-radius: 30px;
-      color: white;
-      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
-      isolation: isolate;
-      transition: transform 220ms ease, box-shadow 220ms ease;
-    }
-
-    .summary-panel::after {
-      content: "";
-      position: absolute;
-      z-index: -1;
-      top: -80%;
-      left: -35%;
-      width: 36%;
-      height: 250%;
-      transform: rotate(20deg);
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.16), transparent);
-      animation: sheen 6s ease-in-out infinite;
-    }
-
-    .summary-panel:nth-child(2)::after {
-      animation-delay: 1.1s;
-    }
-
-    @keyframes sheen {
-      0%, 68% { left: -45%; }
-      100% { left: 125%; }
-    }
-
-    .summary-panel:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 15px 28px rgba(15, 23, 42, 0.15);
-    }
-
-    .summary-panel.unpaid {
-      background: linear-gradient(125deg, #f83269 0%, #ff622d 100%);
-    }
-
-    .summary-panel.paid {
-      background: linear-gradient(125deg, #10bd8f 0%, #20b9a6 100%);
-    }
-
-    .summary-icon {
-      width: 86px;
-      height: 86px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    .summary-icon .icon {
-      width: 48px;
-      height: 48px;
-      stroke-width: 1.7;
-    }
-
-    .summary-label {
-      margin: 0 0 3px;
-      color: rgba(255, 255, 255, 0.82);
-      font-size: 1.35rem;
-      font-weight: 450;
-    }
-
-    .summary-value {
-      margin: 0;
-      font-size: clamp(1.8rem, 4vw, 2.45rem);
-      line-height: 1.1;
-      font-weight: 750;
-      letter-spacing: -0.035em;
-      white-space: nowrap;
-    }
-
-    .primary-wide {
-      width: 100%;
-      min-height: 72px;
-      margin-top: 46px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      border-radius: 16px;
-      background: var(--navy);
-      color: white;
-      font-size: 1.75rem;
-      font-weight: 520;
-      box-shadow: 0 7px 14px rgba(15, 23, 42, 0.16);
-      transition: transform 180ms ease, background 180ms ease;
-    }
-
-    .primary-wide:hover {
-      transform: translateY(-2px);
-      background: #18223c;
-    }
-
-    .primary-wide:active {
-      transform: translateY(0) scale(0.995);
-    }
-
-    .primary-wide .icon {
-      width: 31px;
-      height: 31px;
-    }
-
-    .accounts-list {
-      display: grid;
-      gap: 30px;
-      margin-top: 50px;
-    }
-
-    .account-card {
-      --status-color: var(--pending);
-      position: relative;
-      overflow: hidden;
-      min-height: 225px;
-      padding: 34px 38px 27px 48px;
-      border: 2px solid var(--line);
-      border-radius: 31px;
-      background: var(--surface);
-      box-shadow: var(--shadow);
-      animation: cardIn 430ms cubic-bezier(.2, .8, .2, 1) both;
-    }
-
-    .account-card::before {
-      content: "";
-      position: absolute;
-      inset: -2px auto -2px -2px;
-      width: 13px;
-      border-radius: 31px 0 0 31px;
-      background: var(--status-color);
-    }
-
-    .account-card.status-paid { --status-color: var(--paid); }
-    .account-card.status-overdue { --status-color: var(--overdue); }
-
-    @keyframes cardIn {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .account-top,
-    .account-middle {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      align-items: start;
-      gap: 22px;
-    }
-
-    .account-middle {
-      align-items: end;
-      margin-top: 30px;
-    }
-
-    .account-identity {
-      min-width: 0;
-      display: flex;
-      align-items: flex-start;
-      gap: 24px;
-    }
-
-    .status-symbol {
-      color: var(--status-color);
-      margin-top: 2px;
-    }
-
-    .status-symbol .icon {
-      width: 36px;
-      height: 36px;
-      stroke-width: 1.8;
-    }
-
-    .account-name {
-      margin: 0;
-      overflow: hidden;
-      color: #0c0d0f;
-      font-size: 1.75rem;
-      line-height: 1.16;
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .account-due {
-      margin: 5px 0 0;
-      color: var(--muted);
-      font-size: 1.35rem;
-      line-height: 1.25;
-    }
-
-    .account-controls {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .status-badge {
-      min-height: 45px;
-      display: inline-flex;
-      align-items: center;
-      padding: 6px 19px;
-      border-radius: 999px;
-      background: var(--pending-soft);
-      color: #ae591c;
-      font-size: 1.2rem;
-      font-weight: 580;
-      white-space: nowrap;
-    }
-
-    .status-overdue .status-badge {
-      background: var(--overdue-soft);
-      color: #bd2448;
-    }
-
-    .status-paid .status-badge {
-      background: var(--paid-soft);
-      color: #11785e;
-    }
-
-    .icon-btn {
-      width: 45px;
-      height: 45px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: transparent;
-      color: #101114;
-      transition: background 180ms ease, color 180ms ease, transform 180ms ease;
-    }
-
-    .icon-btn:hover {
-      transform: translateY(-1px);
-      background: #f1f2f4;
-    }
-
-    .icon-btn.delete {
-      color: #7c7d80;
-    }
-
-    .icon-btn.delete:hover {
-      color: var(--danger);
-      background: #fff0f1;
-    }
-
-    .icon-btn .icon {
-      width: 30px;
-      height: 30px;
-    }
-
-    .account-value {
-      margin: 0;
-      color: #08090b;
-      font-size: clamp(2rem, 5vw, 2.55rem);
-      line-height: 1;
-      font-weight: 750;
-      letter-spacing: -0.035em;
-    }
-
-    .account-value.no-value {
-      color: var(--muted);
-      font-size: 1.35rem;
-      font-weight: 520;
-      letter-spacing: 0;
-    }
-
-    .pay-btn {
-      min-width: 176px;
-      min-height: 66px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      border-radius: 16px;
-      background: var(--navy);
-      color: white;
-      font-size: 1.45rem;
-      font-weight: 620;
-      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.18);
-      transition: transform 180ms ease, background 180ms ease;
-    }
-
-    .pay-btn:hover {
-      transform: translateY(-2px);
-      background: #1b2744;
-    }
-
-    .pay-btn .icon {
-      width: 31px;
-      height: 31px;
-    }
-
-    .undo-btn {
-      min-height: 54px;
-      display: inline-flex;
-      align-items: center;
-      gap: 13px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      background: transparent;
-      color: #77787c;
-      font-size: 1.35rem;
-      font-weight: 500;
-    }
-
-    .undo-btn:hover {
-      background: #f3f4f5;
-      color: var(--navy);
-    }
-
-    .undo-btn .icon {
-      width: 30px;
-      height: 30px;
-    }
-
-    .account-note {
-      margin: 30px 0 0;
-      padding: 22px 0 0;
-      display: flex;
-      align-items: center;
-      gap: 13px;
-      overflow: hidden;
-      border-top: 2px solid #e7e7e7;
-      color: var(--muted);
-      font-size: 1.2rem;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .account-note .icon {
-      width: 25px;
-      height: 25px;
-    }
-
-    .empty-state {
-      margin-top: 52px;
-      padding: 50px 16px;
-      border-top: 1px solid var(--line);
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .empty-state .icon {
-      width: 52px;
-      height: 52px;
-      margin-bottom: 15px;
-      color: #a1a5ad;
-    }
-
-    .empty-state h3 {
-      margin: 0;
-      color: var(--ink);
-      font-size: 1.35rem;
-    }
-
-    .empty-state p {
-      margin: 8px auto 22px;
-      max-width: 440px;
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-
-    .empty-action,
-    .compact-primary {
-      min-height: 52px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 0 22px;
-      border-radius: 13px;
-      background: var(--navy);
-      color: white;
-      font-size: 1rem;
-      font-weight: 620;
-      box-shadow: 0 5px 12px rgba(15, 23, 42, 0.15);
-    }
-
-    .manage-heading {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 32px;
-    }
-
-    .manage-heading h2 {
-      margin: 0;
-      font-size: clamp(2rem, 5vw, 2.55rem);
-      line-height: 1.1;
-      font-weight: 750;
-      letter-spacing: -0.045em;
-    }
-
-    .manage-heading p {
-      max-width: 600px;
-      margin: 14px 0 0;
-      color: var(--muted);
-      font-size: 1.45rem;
-      line-height: 1.45;
-    }
-
-    .new-template-btn {
-      min-width: 182px;
-      min-height: 64px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 13px;
-      border-radius: 15px;
-      background: var(--navy);
-      color: white;
-      font-size: 1.35rem;
-      box-shadow: 0 6px 13px rgba(15, 23, 42, 0.17);
-    }
-
-    .new-template-btn .icon {
-      width: 29px;
-      height: 29px;
-    }
-
-    .template-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 34px;
-      margin-top: 58px;
-    }
-
-    .stat-block {
-      min-height: 158px;
-      padding: 38px 48px;
-      border: 2px solid var(--line);
-      border-radius: 31px;
-      background: rgba(255, 255, 255, 0.7);
-    }
-
-    .stat-label {
-      margin: 0 0 8px;
-      color: var(--muted);
-      font-size: 1.25rem;
-    }
-
-    .stat-value {
-      margin: 0;
-      color: var(--navy);
-      font-size: 2rem;
-      font-weight: 750;
-      letter-spacing: -0.03em;
-    }
-
-    .templates-list {
-      display: grid;
-      gap: 28px;
-      margin-top: 58px;
-    }
-
-    .manage-settings-link {
-      min-height: 52px;
-      margin: 40px auto 0;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border-radius: 13px;
-      background: transparent;
-      color: #666a72;
-      font-weight: 620;
-      transition: color 180ms ease, background 180ms ease;
-    }
-
-    .manage-settings-link:hover {
-      background: #eceef2;
-      color: var(--navy);
-    }
-
-    .template-row {
-      min-height: 142px;
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto auto;
-      align-items: center;
-      gap: 35px;
-      padding: 27px 38px;
-      border: 2px solid var(--line);
-      border-radius: 28px;
-      background: white;
-      box-shadow: var(--shadow);
-      animation: cardIn 430ms cubic-bezier(.2, .8, .2, 1) both;
-    }
-
-    .template-info {
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-    }
-
-    .template-icon {
-      width: 82px;
-      height: 82px;
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      border-radius: 23px;
-      background: #e8e9ec;
-      color: var(--navy);
-    }
-
-    .template-icon .icon {
-      width: 41px;
-      height: 41px;
-    }
-
-    .template-name {
-      margin: 0;
-      overflow: hidden;
-      font-size: 1.75rem;
-      font-weight: 720;
-      letter-spacing: -0.025em;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .template-meta {
-      margin: 7px 0 0;
-      overflow: hidden;
-      color: var(--muted);
-      font-size: 1.25rem;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .template-value {
-      min-width: 210px;
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 750;
-      letter-spacing: -0.03em;
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .template-value.no-value {
-      color: var(--muted);
-      font-size: 1rem;
-      font-weight: 560;
-      letter-spacing: 0;
-    }
-
-    .template-actions {
-      display: flex;
-      gap: 17px;
-    }
-
-    .modal-layer[hidden] {
-      display: none;
-    }
-
-    .modal-layer {
-      position: fixed;
-      z-index: 100;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      padding: 28px;
-      background: rgba(8, 13, 27, 0.52);
-      backdrop-filter: blur(8px);
-      opacity: 0;
-      transition: opacity 180ms ease;
-    }
-
-    .modal-layer.active {
-      opacity: 1;
-    }
-
-    .modal-panel {
-      position: relative;
-      width: min(100%, 720px);
-      max-height: min(90vh, 900px);
-      overflow-y: auto;
-      padding: 38px 48px 42px;
-      border-radius: 28px;
-      background: white;
-      box-shadow: 0 28px 65px rgba(3, 8, 20, 0.26);
-      transform: translateY(18px) scale(0.985);
-      transition: transform 220ms cubic-bezier(.2, .8, .2, 1);
-    }
-
-    .modal-layer.active .modal-panel {
-      transform: translateY(0) scale(1);
-    }
-
-    .modal-panel.modal-small {
-      width: min(100%, 620px);
-    }
-
-    .modal-close {
-      position: absolute;
-      top: 22px;
-      right: 24px;
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      border-radius: 12px;
-      background: transparent;
-      color: #53555a;
-    }
-
-    .modal-close:hover {
-      background: #f1f2f4;
-      color: #111;
-    }
-
-    .modal-close .icon {
-      width: 29px;
-      height: 29px;
-    }
-
-    .modal-title {
-      margin: 0 44px 34px;
-      font-size: 2rem;
-      line-height: 1.2;
-      font-weight: 720;
-      letter-spacing: -0.035em;
-      text-align: center;
-    }
-
-    .modal-copy {
-      margin: -12px auto 34px;
-      color: var(--muted);
-      font-size: 1.2rem;
-      line-height: 1.55;
-      text-align: center;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 26px 24px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label,
-    .field-label {
-      display: block;
-      margin: 0 0 10px;
-      color: #111216;
-      font-size: 1.12rem;
-      font-weight: 620;
-    }
-
-    .field input,
-    .field textarea,
-    .field select {
-      width: 100%;
-      min-height: 62px;
-      padding: 14px 18px;
-      border: 2px solid var(--line);
-      border-radius: 14px;
-      background: white;
-      color: var(--ink);
-      font-size: 1.15rem;
-      box-shadow: 0 3px 7px rgba(15, 23, 42, 0.05);
-      transition: border 180ms ease, box-shadow 180ms ease;
-    }
-
-    .field input:focus,
-    .field textarea:focus,
-    .field select:focus {
-      border-color: #7b8bb1;
-      outline: none;
-      box-shadow: 0 0 0 4px rgba(61, 82, 130, 0.12);
-    }
-
-    .field input::placeholder,
-    .field textarea::placeholder {
-      color: #86888d;
-      opacity: 1;
-    }
-
-    .field textarea {
-      min-height: 120px;
-      resize: vertical;
-    }
-
-    .form-hint {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 0.84rem;
-      line-height: 1.4;
-    }
-
-    .modal-actions {
-      display: grid;
-      gap: 12px;
-      margin-top: 38px;
-    }
-
-    .modal-primary,
-    .modal-danger,
-    .modal-secondary,
-    .modal-plain {
-      width: 100%;
-      min-height: 62px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      font-size: 1.25rem;
-      font-weight: 650;
-      transition: transform 180ms ease, filter 180ms ease, background 180ms ease;
-    }
-
-    .modal-primary {
-      background: var(--navy);
-      color: white;
-      box-shadow: 0 6px 12px rgba(15, 23, 42, 0.15);
-    }
-
-    .modal-danger {
-      background: var(--danger);
-      color: white;
-      box-shadow: 0 6px 12px rgba(242, 68, 73, 0.18);
-    }
-
-    .modal-secondary {
-      border: 2px solid var(--line);
-      background: white;
-      color: var(--ink);
-      box-shadow: 0 3px 7px rgba(15, 23, 42, 0.05);
-    }
-
-    .modal-plain {
-      min-height: 48px;
-      background: transparent;
-      color: var(--ink);
-    }
-
-    .modal-primary:hover,
-    .modal-danger:hover,
-    .modal-secondary:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.03);
-    }
-
-    .check-option {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin: -6px 0 3px;
-      padding: 15px 17px;
-      border: 1px solid var(--line);
-      border-radius: 13px;
-      color: #4f5157;
-      font-size: 0.98rem;
-      cursor: pointer;
-    }
-
-    .check-option input {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--navy);
-    }
-
-    .month-picker-grid {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 18px;
-    }
-
-    .settings-list {
-      display: grid;
-      gap: 20px;
-    }
-
-    .setting-row {
-      display: grid;
-      grid-template-columns: auto minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 16px;
-      padding: 18px 0;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .setting-row:last-child {
-      border-bottom: 0;
-    }
-
-    .setting-icon {
-      width: 46px;
-      height: 46px;
-      display: grid;
-      place-items: center;
-      border-radius: 13px;
-      background: #eef0f4;
-      color: var(--navy);
-    }
-
-    .setting-title {
-      margin: 0;
-      font-weight: 680;
-    }
-
-    .setting-copy {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 0.87rem;
-      line-height: 1.4;
-    }
-
-    .setting-status {
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: #eef0f4;
-      color: #5e626a;
-      font-size: 0.78rem;
-      font-weight: 650;
-      white-space: nowrap;
-    }
-
-    .setting-status.online {
-      background: var(--paid-soft);
-      color: #11785e;
-    }
-
-    .setting-status.error {
-      background: var(--overdue-soft);
-      color: #b92345;
-    }
-
-    .toast-region {
-      position: fixed;
-      z-index: 150;
-      right: 22px;
-      bottom: calc(22px + env(safe-area-inset-bottom));
-      display: grid;
-      gap: 10px;
-      pointer-events: none;
-    }
-
-    .toast {
-      width: min(380px, calc(100vw - 32px));
-      padding: 15px 18px;
-      border-radius: 14px;
-      background: #111a31;
-      color: white;
-      box-shadow: 0 14px 30px rgba(4, 9, 20, 0.25);
-      font-size: 0.95rem;
-      line-height: 1.4;
-      animation: toastIn 240ms ease both;
-    }
-
-    .toast.success {
-      background: #087b62;
-    }
-
-    .toast.error {
-      background: #b92d42;
-    }
-
-    .toast.leaving {
-      animation: toastOut 180ms ease both;
-    }
-
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes toastOut {
-      to { opacity: 0; transform: translateY(8px); }
-    }
-
-    @media (max-width: 800px) {
-      .app-shell {
-        padding-top: 42px;
-      }
-
-      .summary-grid,
-      .template-stats {
-        gap: 18px;
-      }
-
-      .summary-panel {
-        min-height: 140px;
-        gap: 18px;
-        padding: 24px;
-      }
-
-      .summary-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 20px;
-      }
-
-      .summary-icon .icon {
-        width: 39px;
-        height: 39px;
-      }
-
-      .account-card {
-        padding-right: 28px;
-      }
-
-      .account-controls {
-        gap: 8px;
-      }
-
-      .status-badge {
-        padding-inline: 14px;
-      }
-
-      .template-row {
-        gap: 18px;
-        padding-inline: 26px;
-      }
-
-      .template-value {
-        min-width: auto;
-        font-size: 1.65rem;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .topbar,
-      .topbar-inner {
-        min-height: 82px;
-      }
-
-      .topbar-inner {
-        padding: 0 16px;
-      }
-
-      .brand {
-        gap: 11px;
-      }
-
-      .brand-mark {
-        width: 46px;
-        height: 46px;
-        border-radius: 13px;
-      }
-
-      .brand-mark .icon {
-        width: 27px;
-        height: 27px;
-      }
-
-      .nav-tabs {
-        gap: 4px;
-      }
-
-      .nav-tab {
-        width: 48px;
-        height: 44px;
-      }
-
-      .nav-tab .icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .app-shell {
-        padding: 28px 16px 60px;
-      }
-
-      .month-control {
-        min-height: 80px;
-        grid-template-columns: 55px 1fr 55px;
-        border-radius: 23px;
-      }
-
-      .month-open {
-        gap: 10px;
-        font-size: 1.35rem;
-      }
-
-      .month-open .icon,
-      .month-arrow .icon {
-        width: 26px;
-        height: 26px;
-      }
-
-      .summary-grid {
-        gap: 12px;
-        margin-top: 25px;
-      }
-
-      .summary-panel {
-        min-height: 105px;
-        gap: 12px;
-        padding: 16px;
-        border-radius: 21px;
-      }
-
-      .summary-icon {
-        width: 50px;
-        height: 50px;
-        border-radius: 15px;
-      }
-
-      .summary-icon .icon {
-        width: 30px;
-        height: 30px;
-      }
-
-      .summary-label {
-        font-size: 0.9rem;
-      }
-
-      .summary-value {
-        font-size: clamp(1.08rem, 5.4vw, 1.45rem);
-      }
-
-      .primary-wide {
-        min-height: 58px;
-        margin-top: 24px;
-        border-radius: 14px;
-        font-size: 1.2rem;
-      }
-
-      .primary-wide .icon {
-        width: 25px;
-        height: 25px;
-      }
-
-      .accounts-list {
-        gap: 20px;
-        margin-top: 30px;
-      }
-
-      .account-card {
-        min-height: 190px;
-        padding: 24px 18px 21px 28px;
-        border-radius: 23px;
-      }
-
-      .account-card::before {
-        width: 9px;
-        border-radius: 23px 0 0 23px;
-      }
-
-      .account-top {
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 8px;
-      }
-
-      .account-identity {
-        gap: 12px;
-      }
-
-      .status-symbol .icon {
-        width: 27px;
-        height: 27px;
-      }
-
-      .account-name {
-        font-size: 1.25rem;
-      }
-
-      .account-due {
-        margin-top: 3px;
-        font-size: 0.95rem;
-      }
-
-      .account-controls {
-        display: grid;
-        grid-template-columns: repeat(2, 37px);
-        gap: 2px;
-      }
-
-      .status-badge {
-        grid-column: 1 / -1;
-        grid-row: 1;
-        min-height: 34px;
-        justify-self: end;
-        padding: 4px 11px;
-        font-size: 0.85rem;
-      }
-
-      .icon-btn {
-        width: 37px;
-        height: 37px;
-      }
-
-      .icon-btn .icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .account-middle {
-        margin-top: 23px;
-        gap: 10px;
-      }
-
-      .account-value {
-        font-size: clamp(1.45rem, 7vw, 1.85rem);
-      }
-
-      .account-value.no-value {
-        max-width: 130px;
-        font-size: 0.9rem;
-      }
-
-      .pay-btn {
-        min-width: 117px;
-        min-height: 51px;
-        gap: 8px;
-        border-radius: 13px;
-        font-size: 1rem;
-      }
-
-      .pay-btn .icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .undo-btn {
-        padding: 6px;
-        gap: 7px;
-        font-size: 0.95rem;
-      }
-
-      .undo-btn .icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .account-note {
-        margin-top: 22px;
-        padding-top: 16px;
-        font-size: 0.9rem;
-      }
-
-      .manage-heading {
-        gap: 14px;
-      }
-
-      .manage-heading h2 {
-        font-size: 1.8rem;
-      }
-
-      .manage-heading p {
-        margin-top: 8px;
-        font-size: 1rem;
-      }
-
-      .new-template-btn {
-        min-width: 104px;
-        min-height: 49px;
-        gap: 7px;
-        padding: 0 14px;
-        font-size: 1rem;
-      }
-
-      .new-template-btn .icon {
-        width: 23px;
-        height: 23px;
-      }
-
-      .template-stats {
-        gap: 12px;
-        margin-top: 35px;
-      }
-
-      .stat-block {
-        min-height: 112px;
-        padding: 24px 20px;
-        border-radius: 22px;
-      }
-
-      .stat-label {
-        font-size: 0.92rem;
-      }
-
-      .stat-value {
-        font-size: 1.45rem;
-      }
-
-      .templates-list {
-        gap: 18px;
-        margin-top: 34px;
-      }
-
-      .template-row {
-        min-height: 116px;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 10px;
-        padding: 20px 17px;
-        border-radius: 22px;
-      }
-
-      .template-info {
-        gap: 14px;
-      }
-
-      .template-icon {
-        width: 57px;
-        height: 57px;
-        border-radius: 17px;
-      }
-
-      .template-icon .icon {
-        width: 30px;
-        height: 30px;
-      }
-
-      .template-name {
-        font-size: 1.18rem;
-      }
-
-      .template-meta {
-        max-width: 180px;
-        font-size: 0.9rem;
-      }
-
-      .template-value {
-        grid-column: 1;
-        padding-left: 71px;
-        font-size: 1.3rem;
-        text-align: left;
-      }
-
-      .template-actions {
-        grid-column: 2;
-        grid-row: 1 / span 2;
-        align-self: center;
-        gap: 0;
-      }
-
-      .modal-layer {
-        place-items: end center;
-        padding: 0;
-      }
-
-      .modal-panel,
-      .modal-panel.modal-small {
-        width: 100%;
-        max-height: 94vh;
-        padding: 33px 20px calc(28px + env(safe-area-inset-bottom));
-        border-radius: 26px 26px 0 0;
-        transform: translateY(100%);
-      }
-
-      .modal-title {
-        margin: 0 38px 29px;
-        font-size: 1.55rem;
-      }
-
-      .modal-copy {
-        font-size: 1rem;
-      }
-
-      .modal-close {
-        top: 16px;
-        right: 14px;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
-
-      .field.full {
-        grid-column: auto;
-      }
-
-      .field input,
-      .field textarea,
-      .field select {
-        min-height: 57px;
-      }
-
-      .field textarea {
-        min-height: 105px;
-      }
-
-      .month-picker-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .modal-actions {
-        margin-top: 28px;
-      }
-
-      .setting-row {
-        grid-template-columns: auto minmax(0, 1fr);
-      }
-
-      .setting-status,
-      .setting-row .compact-primary {
-        grid-column: 2;
-        justify-self: start;
-      }
-
-      .toast-region {
-        right: 16px;
-        bottom: calc(16px + env(safe-area-inset-bottom));
-      }
-    }
-
-    @media (max-width: 390px) {
-      .brand-name {
-        font-size: 1.35rem;
-      }
-
-      .summary-panel {
-        padding: 13px;
-      }
-
-      .summary-icon {
-        width: 42px;
-        height: 42px;
-      }
-
-      .summary-icon .icon {
-        width: 25px;
-        height: 25px;
-      }
-
-      .account-card {
-        padding-left: 24px;
-      }
-
-      .status-symbol {
-        display: none;
-      }
-
-      .pay-btn {
-        min-width: 108px;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="FinControl">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f1729">
+<title>FinControl</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"FinControl","short_name":"FinControl","start_url":".","display":"standalone","background_color":"%230f1729","theme_color":"%230f1729"}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0f1729;
+    --navy-soft:#1b2740;
+    --bg:#f2f4f8;
+    --card:#ffffff;
+    --red:#e5484d;
+    --red-soft:#fce8e8;
+    --amber:#e8a23d;
+    --amber-soft:#fbf0dd;
+    --green:#1fb977;
+    --green-soft:#dcf5e9;
+    --text:#101828;
+    --muted:#8991a1;
+    --border:#eceff3;
+    --gap:12px;
+    --radius:14px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{ scrollbar-gutter: stable; }
+  html,body{ touch-action: manipulation; overscroll-behavior-y: contain; }
+  body{
+    margin:0;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    padding-bottom:32px;
+    -webkit-font-smoothing:antialiased;
+  }
+  input, textarea, select, button{ font-family:inherit; touch-action: manipulation; }
+  input[type="text"], input[type="number"], input[type="month"], input[type="date"], textarea{ font-size:16px; }
+
+  /* ---------- Header ---------- */
+  header.topbar{
+    background:var(--navy);
+    color:#fff;
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    position:sticky; top:0; z-index:30;
+  }
+  header.topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:18px; letter-spacing:-.2px; }
+  header.topbar .brand .icon-box{
+    width:34px;height:34px;border-radius:9px;background:var(--navy-soft);
+    display:flex;align-items:center;justify-content:center;
+  }
+  header.topbar .actions{ display:flex; gap:8px; }
+  .icon-btn{
+    width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--navy-soft); color:#fff; transition:.15s;
+  }
+  .icon-btn.active{ background:#fff; color:var(--navy); }
+  .icon-btn:active{ transform:scale(.92); }
+
+  /* ---------- Tabs ---------- */
+  .tabbar{
+    position:sticky; top:66px; z-index:29;
+    background:var(--bg);
+    display:flex; gap:6px; padding:10px 16px 8px;
+    max-width:560px; margin:0 auto; width:100%;
+  }
+  .tab-btn{
+    flex:1; border:none; background:#e7eaf0; color:var(--muted); font-weight:700; font-size:14px;
+    padding:11px 10px; border-radius:11px; cursor:pointer; transition:.15s;
+  }
+  .tab-btn.active{ background:var(--navy); color:#fff; }
+
+  main{ max-width:560px; margin:0 auto; padding:6px 16px 0; min-height:60vh; }
+
+  /* ---------- Month nav ---------- */
+  .month-nav{
+    background:var(--navy); color:#fff; border-radius:var(--radius);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:13px 14px; margin:10px 0 var(--gap);
+  }
+  .month-nav button{
+    background:none;border:none;color:#fff;font-size:20px;cursor:pointer;
+    width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+    opacity:.85;
+  }
+  .month-nav button:active{ opacity:1; }
+  .month-nav .label{
+    font-weight:700; font-size:16.5px; display:flex; align-items:center; gap:8px;
+    cursor:pointer; padding:5px 10px; border-radius:9px; position:relative;
+  }
+  .month-nav input[type="month"]{
+    position:absolute; inset:0; opacity:0; width:100%; height:100%; border:none; cursor:pointer;
+  }
+
+  /* ---------- Summary ---------- */
+  .summary-row{ display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); margin-bottom:var(--gap); }
+  .summary-card{
+    border-radius:var(--radius); padding:14px; color:#fff; display:flex; align-items:center; gap:11px;
+  }
+  .summary-card.pay{ background:linear-gradient(135deg,#f0555c,#f2984c); }
+  .summary-card.paid{ background:linear-gradient(135deg,#2fce9f,#1fb977); }
+  .summary-card .icon{
+    width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.26);
+    display:flex;align-items:center;justify-content:center; flex-shrink:0;
+  }
+  .summary-card .lab{ font-size:12.5px; opacity:.95; line-height:1.2; }
+  .summary-card .val{ font-size:19px; font-weight:800; line-height:1.3; }
+
+  .btn-new{
+    width:100%; background:var(--navy); color:#fff; border:none; border-radius:var(--radius);
+    padding:14px; font-size:15px; font-weight:700; display:flex; align-items:center;
+    justify-content:center; gap:8px; cursor:pointer; margin-bottom:var(--gap);
+  }
+  .btn-new:active{ opacity:.85; }
+
+  /* ---------- Bill card ---------- */
+  #billsList{ display:flex; flex-direction:column; gap:var(--gap); }
+  .bill-card{
+    background:var(--card); border-radius:var(--radius); padding:14px 15px;
+    position:relative;
+    border:1px solid var(--border);
+    border-left:4px solid var(--muted);
+  }
+  .bill-card.late{ border-left-color:var(--red); }
+  .bill-card.pending{ border-left-color:var(--amber); }
+  .bill-card.paid{ border-left-color:var(--green); }
+
+  .bill-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
+  .bill-name-row{ display:flex; align-items:flex-start; gap:8px; min-width:0; }
+  .bill-name-row svg{ flex-shrink:0; margin-top:1px; }
+  .bill-name{ font-weight:700; font-size:15.5px; line-height:1.3; }
+  .bill-due{ color:var(--muted); font-size:13px; margin-top:1px; }
+  .bill-actions{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+  .pill{ font-size:12px; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; }
+  .pill.late{ background:var(--red-soft); color:#c0342f; }
+  .pill.pending{ background:var(--amber-soft); color:#9c6707; }
+  .pill.paid{ background:var(--green-soft); color:#158a5c; }
+  .icon-action{ background:none; border:none; cursor:pointer; color:#a3aab8; padding:2px; display:flex; }
+  .icon-action:active{ opacity:.55; }
+
+  .bill-bottom{ display:flex; align-items:center; justify-content:space-between; margin-top:10px; }
+  .bill-value{ font-size:21px; font-weight:800; letter-spacing:-.3px; }
+  .bill-note{ display:flex; align-items:flex-start; gap:6px; color:var(--muted); font-size:13px; margin-top:9px; padding-top:9px; border-top:1px solid var(--border); }
+  .bill-note svg{ flex-shrink:0; margin-top:1px; }
+
+  .btn-pagar{
+    background:var(--navy); color:#fff; border:none; border-radius:10px; padding:9px 16px;
+    font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:7px; cursor:pointer;
+  }
+  .btn-pagar:active{ opacity:.85; }
+  .btn-undo{
+    background:none; border:none; color:var(--muted); font-weight:600; font-size:13.5px;
+    display:flex; align-items:center; gap:6px; cursor:pointer;
+  }
+
+  .empty-state{ text-align:center; color:var(--muted); padding:56px 20px; font-size:14.5px; }
+  .empty-state .icon{ font-size:34px; margin-bottom:10px; }
+
+  /* ---------- Recurring view ---------- */
+  .rec-header{ padding:8px 0 4px; }
+  .rec-header h1{ font-size:21px; margin:6px 0 3px; letter-spacing:-.3px; }
+  .rec-header p{ color:var(--muted); margin:0 0 var(--gap); font-size:13.5px; line-height:1.4; }
+  .rec-header-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .btn-small{
+    background:var(--navy); color:#fff; border:none; border-radius:11px; padding:10px 15px;
+    font-weight:700; font-size:13.5px; display:flex; align-items:center; gap:7px; cursor:pointer; white-space:nowrap;
+    margin-top:6px;
+  }
+  .stats-row{ display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); margin-bottom:var(--gap); }
+  .stat-card{ border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff; }
+  .stat-card .lab{ color:var(--muted); font-size:13px; margin-bottom:6px; }
+  .stat-card .val{ font-size:20px; font-weight:800; letter-spacing:-.3px; }
+
+  #recurringList{ display:flex; flex-direction:column; gap:var(--gap); }
+  .rec-card{
+    background:#fff; border:1px solid var(--border); border-radius:var(--radius); padding:13px 14px;
+    display:flex; align-items:center; gap:12px;
+  }
+  .rec-card .cal-icon{
+    width:42px;height:42px;border-radius:11px;background:#eef0f4;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .rec-card .info{ flex:1; min-width:0; }
+  .rec-card .info .name{ font-weight:700; font-size:15px; }
+  .rec-card .info .sub{ color:var(--muted); font-size:12.5px; margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rec-card .value{ font-weight:800; font-size:15.5px; white-space:nowrap; }
+  .rec-card .rec-actions{ display:flex; gap:8px; margin-left:4px; flex-shrink:0; }
+
+  .info-banner{
+    display:flex; gap:10px; align-items:flex-start; background:#eef2ff; border:1px solid #dce3fb;
+    border-radius:12px; padding:12px 13px; margin-bottom:var(--gap); color:#3a4a8a; font-size:13px; line-height:1.4;
+  }
+  .info-banner svg{ flex-shrink:0; margin-top:1px; }
+
+  /* ---------- Modals ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(15,23,41,.5); display:none;
+    align-items:flex-end; justify-content:center; z-index:100;
+  }
+  .overlay.show{ display:flex; }
+  .modal{
+    background:#fff; width:100%; max-width:560px; border-radius:20px 20px 0 0;
+    padding:22px 20px 26px; animation:slideUp .18s ease;
+    max-height:88vh; overflow-y:auto;
+  }
+  @media (min-width:600px){
+    .overlay{ align-items:center; }
+    .modal{ border-radius:20px; }
+  }
+  @keyframes slideUp{ from{ transform:translateY(24px); opacity:0;} to{ transform:translateY(0); opacity:1;} }
+  .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .modal-head h2{ font-size:19px; margin:0; letter-spacing:-.3px; }
+  .modal-close{ background:none;border:none;cursor:pointer;color:#333; padding:4px; }
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-weight:600; font-size:13.5px; margin-bottom:6px; color:#333; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+  .field input, .field textarea{
+    width:100%; border:1px solid #e2e5eb; border-radius:11px; padding:12px 13px;
+    font-size:15.5px; color:var(--text); background:#fbfbfd;
+  }
+  .field textarea{ resize:vertical; min-height:64px; }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--navy); outline-offset:1px; }
+  .btn-primary{
+    width:100%; background:var(--navy); color:#fff; border:none; border-radius:13px;
+    padding:15px; font-size:15.5px; font-weight:700; cursor:pointer; margin-top:2px;
+  }
+  .btn-primary:active{ opacity:.85; }
+  .btn-danger{ background:var(--red); }
+  .btn-cancel{
+    width:100%; background:none; border:none; color:var(--text); font-size:15px;
+    padding:13px; cursor:pointer; font-weight:600;
+  }
+  .confirm-modal{ text-align:center; }
+  .confirm-modal .badge-icon{
+    width:58px;height:58px;border-radius:50%;background:var(--green-soft);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 14px; color:var(--green);
+  }
+  .confirm-modal h2{ margin:0 0 6px; font-size:19px; }
+  .confirm-modal p{ color:var(--muted); margin:0 0 20px; font-size:14.5px; line-height:1.4; }
+  .confirm-modal p b{ color:var(--text); }
+
+  .toast{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    background:var(--navy); color:#fff; padding:11px 18px; border-radius:11px;
+    font-size:14px; font-weight:600; z-index:200; opacity:0; pointer-events:none;
+    transition:opacity .25s, transform .25s; box-shadow:0 6px 20px rgba(0,0,0,.2);
+    max-width:88vw; text-align:center;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(-6px); }
+
+  .hidden{ display:none !important; }
+</style>
 </head>
 <body>
-  <svg class="sr-only" aria-hidden="true" focusable="false">
-    <symbol id="i-wallet" viewBox="0 0 24 24">
-      <path d="M4 5.5h13.5A2.5 2.5 0 0 1 20 8v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12"/>
-      <path d="M16 10h6v5h-6a2.5 2.5 0 0 1 0-5Z"/><path d="M17 12.5h.01"/>
-    </symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.04A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 10 3.01V3h4v.01a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l.06-.06L19.8 7l-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.96 10H21v4h-.04A1.7 1.7 0 0 0 19.4 15Z"/>
-    </symbol>
-    <symbol id="i-calendar" viewBox="0 0 24 24">
-      <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>
-    </symbol>
-    <symbol id="i-calendar-days" viewBox="0 0 24 24">
-      <rect x="3" y="4.5" width="18" height="17" rx="2"/><path d="M16 2.5v4M8 2.5v4M3 9.5h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>
-    </symbol>
-    <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
-    <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
-    <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.3 2.3 4.8-5"/></symbol>
-    <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.2 2.7 17.4A1.8 1.8 0 0 0 4.3 20h15.4a1.8 1.8 0 0 0 1.6-2.6L13.7 4.2a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></symbol>
-    <symbol id="i-edit" viewBox="0 0 24 24"><path d="M13.5 6.5 17.5 10.5M4 20l3.8-.8L19.2 7.8a2.1 2.1 0 0 0-3-3L4.8 16.2 4 20Z"/></symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V4h6v2M19 6l-1 15H6L5 6M10 10v7M14 10v7"/></symbol>
-    <symbol id="i-undo" viewBox="0 0 24 24"><path d="m9 7-5 5 5 5"/><path d="M4 12h10a6 6 0 0 1 6 6"/></symbol>
-    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v5h5"/></symbol>
-    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></symbol>
-    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M17.5 19H7a5 5 0 0 1-.7-9.95A7 7 0 0 1 19.8 11 4 4 0 0 1 17.5 19Z"/></symbol>
-    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
-  </svg>
 
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand" aria-label="FinControl">
-        <div class="brand-mark"><svg class="icon"><use href="#i-wallet"></use></svg></div>
-        <h1 class="brand-name">FinControl</h1>
-      </div>
-      <nav class="nav-tabs" aria-label="Navegação principal">
-        <button class="nav-tab active" type="button" data-nav="month" aria-label="Contas do mês" aria-current="page">
-          <svg class="icon"><use href="#i-wallet"></use></svg>
-        </button>
-        <button class="nav-tab" type="button" data-nav="manage" aria-label="Cadastro e gerenciamento de contas">
-          <svg class="icon"><use href="#i-settings"></use></svg>
-        </button>
-      </nav>
-    </div>
-  </header>
-
-  <main id="app" class="app-shell" aria-live="polite"></main>
-
-  <div id="modalLayer" class="modal-layer" hidden aria-hidden="true">
-    <section id="modalPanel" class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle"></section>
+<header class="topbar">
+  <div class="brand">
+    <span class="icon-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="14" rx="2"/><path d="M2 10h20"/><circle cx="17" cy="15" r="1.5" fill="currentColor" stroke="none"/></svg>
+    </span>
+    FinControl
   </div>
+  <div class="actions">
+    <button class="icon-btn" id="btnSettings" title="Configurações">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+  </div>
+</header>
 
-  <div id="toastRegion" class="toast-region" aria-live="assertive" aria-atomic="true"></div>
+<div class="tabbar">
+  <button class="tab-btn active" id="tabMonth">Contas do mês</button>
+  <button class="tab-btn" id="tabRecurring">Recorrentes</button>
+</div>
 
-  <script type="module">
-    // FIREBASE: preencha este bloco para ativar a sincronização com o Firestore.
-    const firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      projectId: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
-    };
-    const FIREBASE_DOCUMENT_ID = "troque-por-um-id-privado";
+<main>
 
-    const STORAGE_KEY = "fincontrol-state-v1";
-    const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-    const app = document.getElementById("app");
-    const modalLayer = document.getElementById("modalLayer");
-    const modalPanel = document.getElementById("modalPanel");
-    const toastRegion = document.getElementById("toastRegion");
+  <!-- ===== VIEW: Contas do mês ===== -->
+  <section id="viewMonth">
+    <div class="month-nav">
+      <button id="prevMonth" aria-label="Mês anterior">‹</button>
+      <div class="label" id="monthLabelWrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <span id="monthLabel">Julho/2026</span>
+        <input type="month" id="monthPicker">
+      </div>
+      <button id="nextMonth" aria-label="Próximo mês">›</button>
+    </div>
 
-    let activePage = "month";
-    let cloudStatus = "local";
-    let cloudDocument = null;
-    let cloudWriteTimer = null;
-    let installPrompt = null;
-    let lastFocusedElement = null;
+    <div class="summary-row">
+      <div class="summary-card pay">
+        <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span>
+        <div><div class="lab">A pagar</div><div class="val" id="totalToPay">R$ 0,00</div></div>
+      </div>
+      <div class="summary-card paid">
+        <span class="icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+        <div><div class="lab">Pago</div><div class="val" id="totalPaid">R$ 0,00</div></div>
+      </div>
+    </div>
 
-    function localToday() {
-      const now = new Date();
-      return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    <button class="btn-new" id="btnNewBill">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Nova conta
+    </button>
+
+    <div id="billsList"></div>
+  </section>
+
+  <!-- ===== VIEW: Contas recorrentes ===== -->
+  <section id="viewRecurring" class="hidden">
+    <div class="rec-header">
+      <div class="rec-header-row">
+        <div>
+          <h1>Contas recorrentes</h1>
+          <p>Cadastre aqui suas contas fixas mensais. Elas passam a aparecer<br>automaticamente todo mês, a partir do mês atual.</p>
+        </div>
+      </div>
+      <button class="btn-small" id="btnNewRecurring">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        Nova conta recorrente
+      </button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="lab">Contas cadastradas</div><div class="val" id="recCount">0</div></div>
+      <div class="stat-card"><div class="lab">Total estimado</div><div class="val" id="recTotal">R$ 0,00</div></div>
+    </div>
+    <div id="recurringList"></div>
+  </section>
+
+</main>
+
+<!-- Modal: Nova/editar conta do mês -->
+<div class="overlay" id="modalBill">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalBillTitle">Nova conta</h2>
+      <button class="modal-close" data-close="modalBill">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label>Nome da conta</label>
+      <input type="text" id="billName" placeholder="Ex: Conta de luz">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor (opcional)</label>
+        <input type="text" id="billValue" inputmode="numeric" placeholder="R$ 0,00">
+      </div>
+      <div class="field">
+        <label>Vencimento</label>
+        <input type="date" id="billDue">
+      </div>
+    </div>
+    <div class="field">
+      <label>Observação</label>
+      <textarea id="billNote" placeholder="Opcional"></textarea>
+    </div>
+    <button class="btn-primary" id="billSubmit">Adicionar</button>
+    <button class="btn-cancel" data-close="modalBill">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: Nova/editar conta recorrente -->
+<div class="overlay" id="modalRecurring">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 id="modalRecTitle">Nova conta recorrente</h2>
+      <button class="modal-close" data-close="modalRecurring">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="info-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+      <span>Essa conta passa a aparecer automaticamente todo mês, a partir do mês atual.</span>
+    </div>
+    <div class="field">
+      <label>Nome</label>
+      <input type="text" id="recName" placeholder="Ex: Conta de água">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Valor padrão (opcional)</label>
+        <input type="text" id="recValue" inputmode="numeric" placeholder="R$ 0,00">
+      </div>
+      <div class="field">
+        <label>Dia de vencimento</label>
+        <input type="text" id="recDay" inputmode="numeric" maxlength="2" placeholder="Ex: 10">
+      </div>
+    </div>
+    <div class="field">
+      <label>Observação</label>
+      <textarea id="recNote" placeholder="Opcional"></textarea>
+    </div>
+    <button class="btn-primary" id="recSubmit">Adicionar</button>
+    <button class="btn-cancel" data-close="modalRecurring">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: confirmar pagamento -->
+<div class="overlay" id="modalPay">
+  <div class="modal confirm-modal">
+    <div class="badge-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><circle cx="12" cy="15" r="3"/><path d="M12 14v1.5l1 .5"/></svg>
+    </div>
+    <h2>Marcar como pago?</h2>
+    <p>Confirmar o pagamento de <b id="payBillName"></b>?</p>
+    <button class="btn-primary" id="payConfirm">Confirmar pagamento</button>
+    <button class="btn-cancel" data-close="modalPay">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: excluir -->
+<div class="overlay" id="modalDelete">
+  <div class="modal confirm-modal">
+    <h2>Excluir conta</h2>
+    <p>Deseja realmente excluir "<b id="deleteName"></b>"? Esta ação não pode ser desfeita.</p>
+    <button class="btn-primary btn-danger" id="deleteConfirm">Excluir</button>
+    <button class="btn-cancel" data-close="modalDelete">Cancelar</button>
+  </div>
+</div>
+
+<!-- Modal: configurações -->
+<div class="overlay" id="modalSettings">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Configurações</h2>
+      <button class="modal-close" data-close="modalSettings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="field">
+      <label>Notificações de vencimento</label>
+      <p style="color:var(--muted); font-size:13.5px; margin:0 0 12px;">Avisos automáticos 3 dias e 1 dia antes do vencimento de cada conta.</p>
+      <button class="btn-primary" id="btnEnableNotif">Ativar notificações</button>
+      <div id="notifStatus" style="text-align:center; font-size:13px; color:var(--muted); margin-top:10px;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================================================================
+   CONFIGURAÇÃO DO FIREBASE (opcional)
+   --------------------------------------------------------------------------
+   Este app usa armazenamento local (window.storage) por padrão.
+   Para conectar ao Firestore no futuro:
+   1) Adicione os SDKs do Firebase (App + Firestore) via <script type="module">
+   2) Preencha o objeto abaixo com as credenciais do seu projeto
+   3) Substitua as funções loadState()/saveState() para ler/escrever no
+      Firestore (ex: coleção "users/{uid}/fincontrol") em vez do window.storage
+   ========================================================================== */
+const firebaseConfig = {
+  apiKey: "SUA_API_KEY",
+  authDomain: "SEU_PROJETO.firebaseapp.com",
+  projectId: "SEU_PROJETO",
+  storageBucket: "SEU_PROJETO.appspot.com",
+  messagingSenderId: "SEU_SENDER_ID",
+  appId: "SEU_APP_ID"
+};
+// (Integração real do Firebase fica pendente até as chaves serem informadas.)
+
+
+/* ==========================================================================
+   ESTADO / DADOS
+   ========================================================================== */
+const STORAGE_KEY = 'fincontrol-data-v2';
+
+function pad2(n){ return String(n).padStart(2,'0'); }
+function monthKey(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}`; }
+function todayISO(){ const t=new Date(); t.setHours(0,0,0,0); return t; }
+function currentMonthKey(){ return monthKey(new Date()); }
+
+function seedData(){
+  return {
+    currentMonth: '2026-07',
+    recurring: [
+      { id:'r1', name:'Cartão', value:5000, day:15, note:'', startMonth:'2026-07' },
+      { id:'r2', name:'Conta de Água', value:8550, day:10, note:'Companhia de saneamento', startMonth:'2026-07' },
+      { id:'r3', name:'Conta de Luz', value:15000, day:15, note:'', startMonth:'2026-07' },
+      { id:'r4', name:'Internet', value:9990, day:20, note:'', startMonth:'2026-07' }
+    ],
+    bills: {
+      '2026-07': [
+        { id:'b1', templateId:'r2', name:'Conta de Água', value:8550, due:'2026-07-10', note:'Companhia de saneamento', paid:false },
+        { id:'b2', templateId:'r1', name:'Cartão', value:5000, due:'2026-07-15', note:'', paid:false },
+        { id:'b3', templateId:'r3', name:'Conta de Luz', value:15000, due:'2026-07-15', note:'', paid:false },
+        { id:'b4', templateId:null, name:'Luz', value:20000, due:'2026-07-23', note:'', paid:false },
+        { id:'b5', templateId:null, name:'Teste2', value:5100, due:'2026-07-23', note:'', paid:false },
+        { id:'b6', templateId:'r4', name:'Internet', value:12000, due:'2026-07-24', note:'', paid:true }
+      ]
     }
+  };
+}
 
-    function monthKeyFromDate(date) {
-      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-    }
+let state = null;
 
-    function currentMonthKey() {
-      return monthKeyFromDate(localToday());
-    }
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){ state = JSON.parse(res.value); return; }
+    throw new Error('sem dados salvos');
+  }catch(e){
+    state = seedData();
+    await saveState();
+  }
+}
 
-    function parseMonthKey(key) {
-      const [year, month] = key.split("-").map(Number);
-      return { year, month };
-    }
+async function saveState(){
+  try{
+    const res = await window.storage.set(STORAGE_KEY, JSON.stringify(state), false);
+    if(!res){ console.error('Falha ao salvar dados'); }
+  }catch(e){ console.error('Erro ao salvar dados:', e); }
+}
 
-    function shiftMonth(key, amount) {
-      const { year, month } = parseMonthKey(key);
-      const date = new Date(year, month - 1 + amount, 1);
-      return monthKeyFromDate(date);
-    }
+function uid(){ return 'id_' + Math.random().toString(36).slice(2,10); }
 
-    function daysInMonth(key) {
-      const { year, month } = parseMonthKey(key);
-      return new Date(year, month, 0).getDate();
-    }
-
-    function dateForMonth(key, day) {
-      return `${key}-${String(Math.min(Math.max(Number(day) || 1, 1), daysInMonth(key))).padStart(2, "0")}`;
-    }
-
-    function parseLocalDate(dateString) {
-      const [year, month, day] = dateString.split("-").map(Number);
-      return new Date(year, month - 1, day);
-    }
-
-    function uid(prefix = "id") {
-      if (crypto.randomUUID) return `${prefix}-${crypto.randomUUID()}`;
-      return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    }
-
-    function seedState() {
-      const selectedMonth = currentMonthKey();
-      const templates = [
-        { id: "rec-water", name: "Conta de Água", value: 8550, dueDay: 10, note: "Companhia de saneamento" },
-        { id: "rec-card", name: "Cartão", value: 5000, dueDay: 15, note: "" },
-        { id: "rec-light", name: "Conta de Luz", value: 15000, dueDay: 23, note: "" },
-        { id: "rec-internet", name: "Internet", value: 12000, dueDay: 24, note: "Plano residencial" }
-      ];
-      const accounts = templates.map((item, index) => ({
-        id: `seed-${item.id}`,
-        recurringId: item.id,
-        name: item.name,
-        value: item.value,
-        dueDate: dateForMonth(selectedMonth, item.dueDay),
-        note: item.note,
-        paid: index === 3,
-        createdAt: Date.now() + index
-      }));
-      return {
-        version: 1,
-        selectedMonth,
-        accounts,
-        templates,
-        notificationSent: {}
-      };
-    }
-
-    function normalizeState(candidate) {
-      const fallback = seedState();
-      if (!candidate || typeof candidate !== "object") return fallback;
-      return {
-        version: 1,
-        selectedMonth: /^\d{4}-\d{2}$/.test(candidate.selectedMonth || "") ? candidate.selectedMonth : fallback.selectedMonth,
-        accounts: Array.isArray(candidate.accounts) ? candidate.accounts : fallback.accounts,
-        templates: Array.isArray(candidate.templates) ? candidate.templates : fallback.templates,
-        notificationSent: candidate.notificationSent && typeof candidate.notificationSent === "object" ? candidate.notificationSent : {}
-      };
-    }
-
-    function loadState() {
-      try {
-        return normalizeState(JSON.parse(localStorage.getItem(STORAGE_KEY)));
-      } catch (error) {
-        console.warn("Não foi possível ler os dados locais.", error);
-        return seedState();
-      }
-    }
-
-    let state = loadState();
-
-    function persist(options = {}) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      if (!options.localOnly) scheduleCloudWrite();
-    }
-
-    function scheduleCloudWrite() {
-      if (!cloudDocument) return;
-      clearTimeout(cloudWriteTimer);
-      cloudWriteTimer = setTimeout(async () => {
-        try {
-          const { setDoc, serverTimestamp } = cloudDocument.methods;
-          await setDoc(cloudDocument.ref, { payload: state, updatedAt: serverTimestamp() }, { merge: true });
-          cloudStatus = "connected";
-        } catch (error) {
-          cloudStatus = "error";
-          console.error("Falha ao sincronizar com o Firestore.", error);
-        }
-      }, 700);
-    }
-
-    async function initializeFirestore() {
-      const isConfigured = firebaseConfig.apiKey && firebaseConfig.projectId && !FIREBASE_DOCUMENT_ID.startsWith("troque-");
-      if (!isConfigured) return;
-      cloudStatus = "connecting";
-      try {
-        const [{ initializeApp }, firestore] = await Promise.all([
-          import("https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js"),
-          import("https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js")
-        ]);
-        const firebaseApp = initializeApp(firebaseConfig);
-        const db = firestore.getFirestore(firebaseApp);
-        const ref = firestore.doc(db, "fincontrol", FIREBASE_DOCUMENT_ID);
-        cloudDocument = { ref, methods: firestore };
-        const snapshot = await firestore.getDoc(ref);
-        if (snapshot.exists() && snapshot.data().payload) {
-          state = normalizeState(snapshot.data().payload);
-          persist({ localOnly: true });
-          render();
-        } else {
-          await firestore.setDoc(ref, { payload: state, updatedAt: firestore.serverTimestamp() });
-        }
-        cloudStatus = "connected";
-      } catch (error) {
-        cloudStatus = "error";
-        console.error("Firebase não pôde ser inicializado.", error);
-      }
-    }
-
-    function icon(name, className = "") {
-      return `<svg class="icon ${className}" aria-hidden="true"><use href="#i-${name}"></use></svg>`;
-    }
-
-    function escapeHTML(value = "") {
-      return String(value).replace(/[&<>'"]/g, character => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
-      })[character]);
-    }
-
-    function formatMoney(cents) {
-      if (cents === null || cents === undefined || cents === "") return null;
-      return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(Number(cents) / 100);
-    }
-
-    function formatDue(dateString) {
-      const date = parseLocalDate(dateString);
-      return `${String(date.getDate()).padStart(2, "0")}/${String(date.getMonth() + 1).padStart(2, "0")}`;
-    }
-
-    function monthTitle(key) {
-      const { year, month } = parseMonthKey(key);
-      return `${monthNames[month - 1]}/${year}`;
-    }
-
-    function statusFor(account) {
-      if (account.paid) return "paid";
-      return parseLocalDate(account.dueDate) < localToday() ? "overdue" : "pending";
-    }
-
-    function statusLabel(status) {
-      return { paid: "Pago", overdue: "Atrasada", pending: "Pendente" }[status];
-    }
-
-    function statusIcon(status) {
-      return { paid: "check-circle", overdue: "alert", pending: "clock" }[status];
-    }
-
-    function monthAccounts() {
-      return state.accounts
-        .filter(account => account.dueDate && account.dueDate.startsWith(state.selectedMonth))
-        .sort((a, b) => a.dueDate.localeCompare(b.dueDate) || Number(a.paid) - Number(b.paid) || a.name.localeCompare(b.name));
-    }
-
-    function calculateTotals(accounts) {
-      return accounts.reduce((totals, account) => {
-        const value = Number(account.value) || 0;
-        if (account.paid) totals.paid += value;
-        else totals.unpaid += value;
-        return totals;
-      }, { paid: 0, unpaid: 0 });
-    }
-
-    function updateNavigation() {
-      document.querySelectorAll("[data-nav]").forEach(button => {
-        const active = button.dataset.nav === activePage;
-        button.classList.toggle("active", active);
-        if (active) button.setAttribute("aria-current", "page");
-        else button.removeAttribute("aria-current");
+/* ==========================================================================
+   GERAÇÃO AUTOMÁTICA DAS CONTAS RECORRENTES NO MÊS
+   -------------------------------------------------------------------------
+   Toda vez que um mês é aberto, garantimos que cada conta recorrente
+   (cujo startMonth seja <= o mês visitado) tenha uma instância criada
+   naquele mês, usando o valor/dia/observação vigentes no modelo.
+   ========================================================================== */
+function ensureMonthGenerated(monthKey){
+  if(!state.bills[monthKey]) state.bills[monthKey] = [];
+  const list = state.bills[monthKey];
+  state.recurring.forEach(rec=>{
+    if(rec.startMonth > monthKey) return; // ainda não começou nesse mês
+    const exists = list.some(b => b.templateId === rec.id);
+    if(!exists){
+      const day = pad2(Math.min(rec.day, 28));
+      list.push({
+        id:uid(), templateId:rec.id, name:rec.name, value:rec.value,
+        due:`${monthKey}-${day}`, note:rec.note, paid:false
       });
     }
+  });
+}
 
-    function accountCard(account, index) {
-      const status = statusFor(account);
-      const note = account.note ? `
-        <p class="account-note">${icon("file")}<span>${escapeHTML(account.note)}</span></p>` : "";
-      const value = formatMoney(account.value);
-      const action = account.paid
-        ? `<button class="undo-btn" type="button" data-action="undo-payment" data-id="${account.id}">${icon("undo")} Desfazer</button>`
-        : `<button class="pay-btn" type="button" data-action="pay" data-id="${account.id}">${icon("check-circle")} Pagar</button>`;
+/* ==========================================================================
+   FORMATAÇÃO
+   ========================================================================== */
+function formatCentsToBRL(cents){
+  const v = (cents||0)/100;
+  return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+}
+function formatDateBR(iso){
+  if(!iso) return '';
+  const [y,m,d] = iso.split('-');
+  return `${d}/${m}`;
+}
+function formatMonthLabel(key){
+  const [y,m] = key.split('-').map(Number);
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  return `${meses[m-1]}/${y}`;
+}
 
-      return `
-        <article class="account-card status-${status}" style="animation-delay:${Math.min(index * 55, 330)}ms">
-          <div class="account-top">
-            <div class="account-identity">
-              <span class="status-symbol">${icon(statusIcon(status))}</span>
-              <div>
-                <h3 class="account-name" title="${escapeHTML(account.name)}">${escapeHTML(account.name)}</h3>
-                <p class="account-due">Vence em ${formatDue(account.dueDate)}</p>
-              </div>
-            </div>
-            <div class="account-controls">
-              <span class="status-badge">${statusLabel(status)}</span>
-              <button class="icon-btn" type="button" data-action="edit-account" data-id="${account.id}" aria-label="Editar ${escapeHTML(account.name)}">${icon("edit")}</button>
-              <button class="icon-btn delete" type="button" data-action="delete-account" data-id="${account.id}" aria-label="Excluir ${escapeHTML(account.name)}">${icon("trash")}</button>
-            </div>
+function attachCurrencyMask(input){
+  input.addEventListener('input', () => {
+    let digits = input.value.replace(/\D/g,'');
+    if(digits === ''){ input.value=''; input.dataset.cents='0'; return; }
+    digits = digits.replace(/^0+(?=\d)/,'');
+    const cents = parseInt(digits || '0', 10);
+    input.dataset.cents = String(cents);
+    input.value = formatCentsToBRL(cents);
+  });
+}
+function setCurrencyValue(input, cents){
+  if(cents === null || cents === undefined || cents === ''){
+    input.value = ''; input.dataset.cents = '0'; return;
+  }
+  input.dataset.cents = String(cents);
+  input.value = formatCentsToBRL(cents);
+}
+function getCurrencyCents(input){
+  return parseInt(input.dataset.cents || '0', 10) || 0;
+}
+
+/* ==========================================================================
+   STATUS DA CONTA
+   ========================================================================== */
+function billStatus(bill){
+  if(bill.paid) return 'paid';
+  const due = new Date(bill.due + 'T00:00:00');
+  return due < todayISO() ? 'late' : 'pending';
+}
+
+/* ==========================================================================
+   RENDER — CONTAS DO MÊS
+   ========================================================================== */
+function renderMonth(){
+  document.getElementById('monthLabel').textContent = formatMonthLabel(state.currentMonth);
+  document.getElementById('monthPicker').value = state.currentMonth;
+
+  const list = state.bills[state.currentMonth] || [];
+  const sorted = [...list].sort((a,b)=> a.due.localeCompare(b.due));
+
+  let toPay = 0, paidSum = 0;
+  list.forEach(b => { if(b.paid) paidSum += b.value; else toPay += b.value; });
+  document.getElementById('totalToPay').textContent = formatCentsToBRL(toPay);
+  document.getElementById('totalPaid').textContent = formatCentsToBRL(paidSum);
+
+  const container = document.getElementById('billsList');
+  container.innerHTML = '';
+
+  if(sorted.length === 0){
+    container.innerHTML = `<div class="empty-state"><div class="icon">🗒️</div>Nenhuma conta neste mês.<br>Toque em "Nova conta" para adicionar.</div>`;
+    return;
+  }
+
+  sorted.forEach(bill => {
+    const status = billStatus(bill);
+    const card = document.createElement('div');
+    card.className = `bill-card ${status}`;
+
+    const pillLabel = status === 'late' ? 'Atrasada' : status === 'pending' ? 'Pendente' : 'Pago';
+    const statusIcon = status === 'paid'
+      ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>`
+      : status === 'late'
+      ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`
+      : `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`;
+
+    card.innerHTML = `
+      <div class="bill-top">
+        <div class="bill-name-row">
+          ${statusIcon}
+          <div>
+            <div class="bill-name">${escapeHtml(bill.name)}</div>
+            <div class="bill-due">Vence em ${formatDateBR(bill.due)}</div>
           </div>
-          <div class="account-middle">
-            <p class="account-value ${value ? "" : "no-value"}">${value || "Valor não definido"}</p>
-            ${action}
-          </div>
-          ${note}
-        </article>`;
+        </div>
+        <div class="bill-actions">
+          <span class="pill ${status}">${pillLabel}</span>
+          <button class="icon-action" data-edit-bill="${bill.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+          </button>
+          <button class="icon-action" data-del-bill="${bill.id}">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6h16z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="bill-bottom">
+        <div class="bill-value">${bill.value ? formatCentsToBRL(bill.value) : '—'}</div>
+        ${status === 'paid'
+          ? `<button class="btn-undo" data-undo="${bill.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 1015-6.7L3 13"/></svg>Desfazer</button>`
+          : `<button class="btn-pagar" data-pay="${bill.id}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>Pagar</button>`}
+      </div>
+      ${bill.note ? `<div class="bill-note"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>${escapeHtml(bill.note)}</div>` : ''}
+    `;
+    container.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str || '';
+  return div.innerHTML;
+}
+
+/* ==========================================================================
+   RENDER — CONTAS RECORRENTES
+   ========================================================================== */
+function renderRecurring(){
+  const list = state.recurring;
+  document.getElementById('recCount').textContent = list.length;
+  const total = list.reduce((s,r)=> s + (r.value||0), 0);
+  document.getElementById('recTotal').textContent = formatCentsToBRL(total);
+
+  const container = document.getElementById('recurringList');
+  container.innerHTML = '';
+
+  if(list.length === 0){
+    container.innerHTML = `<div class="empty-state"><div class="icon">📋</div>Nenhuma conta recorrente cadastrada.</div>`;
+    return;
+  }
+
+  list.forEach(rec => {
+    const card = document.createElement('div');
+    card.className = 'rec-card';
+    card.innerHTML = `
+      <div class="cal-icon">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      </div>
+      <div class="info">
+        <div class="name">${escapeHtml(rec.name)}</div>
+        <div class="sub">Vence dia ${rec.day}${rec.note ? ' · ' + escapeHtml(rec.note) : ''}</div>
+      </div>
+      <div class="value">${rec.value ? formatCentsToBRL(rec.value) : '—'}</div>
+      <div class="rec-actions">
+        <button class="icon-action" data-edit-rec="${rec.id}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+        </button>
+        <button class="icon-action" data-del-rec="${rec.id}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0l-1 14a2 2 0 01-2 2H7a2 2 0 01-2-2L4 6h16z"/></svg>
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ==========================================================================
+   MODAIS — controle genérico
+   ========================================================================== */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('[data-close]').forEach(btn=>{
+  btn.addEventListener('click', ()=> closeModal(btn.dataset.close));
+});
+document.querySelectorAll('.overlay').forEach(ov=>{
+  ov.addEventListener('click', (e)=>{ if(e.target === ov) closeModal(ov.id); });
+});
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+/* ==========================================================================
+   NAVEGAÇÃO DE MÊS
+   ========================================================================== */
+function goToMonth(key){
+  state.currentMonth = key;
+  ensureMonthGenerated(key);
+  renderMonth();
+  saveState();
+}
+function shiftMonth(delta){
+  const [y,m] = state.currentMonth.split('-').map(Number);
+  const d = new Date(y, m-1+delta, 1);
+  goToMonth(monthKey(d));
+}
+document.getElementById('prevMonth').addEventListener('click', ()=> shiftMonth(-1));
+document.getElementById('nextMonth').addEventListener('click', ()=> shiftMonth(1));
+document.getElementById('monthPicker').addEventListener('change', (e)=> goToMonth(e.target.value));
+document.getElementById('monthLabelWrap').addEventListener('click', ()=>{
+  const picker = document.getElementById('monthPicker');
+  if(picker.showPicker){ try{ picker.showPicker(); }catch(e){} }
+});
+
+/* ==========================================================================
+   TROCA DE ABA
+   ========================================================================== */
+function setTab(tab){
+  document.getElementById('viewMonth').classList.toggle('hidden', tab !== 'month');
+  document.getElementById('viewRecurring').classList.toggle('hidden', tab !== 'recurring');
+  document.getElementById('tabMonth').classList.toggle('active', tab === 'month');
+  document.getElementById('tabRecurring').classList.toggle('active', tab === 'recurring');
+}
+document.getElementById('tabMonth').addEventListener('click', ()=> setTab('month'));
+document.getElementById('tabRecurring').addEventListener('click', ()=> setTab('recurring'));
+
+/* ==========================================================================
+   FORM — NOVA / EDITAR CONTA DO MÊS
+   ========================================================================== */
+const billNameEl = document.getElementById('billName');
+const billValueEl = document.getElementById('billValue');
+const billDueEl = document.getElementById('billDue');
+const billNoteEl = document.getElementById('billNote');
+attachCurrencyMask(billValueEl);
+let editingBillId = null;
+
+document.getElementById('btnNewBill').addEventListener('click', ()=>{
+  editingBillId = null;
+  document.getElementById('modalBillTitle').textContent = 'Nova conta';
+  document.getElementById('billSubmit').textContent = 'Adicionar';
+  billNameEl.value = '';
+  setCurrencyValue(billValueEl, null);
+  billDueEl.value = `${state.currentMonth}-10`;
+  billNoteEl.value = '';
+  openModal('modalBill');
+});
+
+function openEditBill(id){
+  const bill = (state.bills[state.currentMonth]||[]).find(b=>b.id===id);
+  if(!bill) return;
+  editingBillId = id;
+  document.getElementById('modalBillTitle').textContent = 'Editar conta';
+  document.getElementById('billSubmit').textContent = 'Salvar';
+  billNameEl.value = bill.name;
+  setCurrencyValue(billValueEl, bill.value);
+  billDueEl.value = bill.due;
+  billNoteEl.value = bill.note || '';
+  openModal('modalBill');
+}
+
+document.getElementById('billSubmit').addEventListener('click', ()=>{
+  const name = billNameEl.value.trim();
+  if(!name){ showToast('Informe um nome para a conta'); return; }
+  if(!billDueEl.value){ showToast('Informe a data de vencimento'); return; }
+  const value = getCurrencyCents(billValueEl);
+  const due = billDueEl.value;
+  const dueMonth = due.slice(0,7);
+  if(!state.bills[dueMonth]) state.bills[dueMonth] = [];
+
+  if(editingBillId){
+    const arr = state.bills[state.currentMonth];
+    const idx = arr.findIndex(b=>b.id===editingBillId);
+    if(idx>-1){
+      const bill = arr[idx];
+      bill.name=name; bill.value=value; bill.due=due; bill.note=billNoteEl.value.trim();
+      if(dueMonth !== state.currentMonth){
+        arr.splice(idx,1);
+        state.bills[dueMonth].push(bill);
+      }
     }
+  }else{
+    state.bills[dueMonth].push({ id:uid(), templateId:null, name, value, due, note:billNoteEl.value.trim(), paid:false });
+  }
+  saveState();
+  renderMonth();
+  closeModal('modalBill');
+  showToast('Conta salva com sucesso');
+});
 
-    function renderMonthPage() {
-      const accounts = monthAccounts();
-      const totals = calculateTotals(accounts);
-      const content = accounts.length
-        ? `<div class="accounts-list">${accounts.map(accountCard).join("")}</div>`
-        : `<section class="empty-state">
-            ${icon("calendar-days")}
-            <h3>Nenhuma conta neste mês</h3>
-            <p>Adicione uma conta avulsa ou gere o mês usando seus modelos recorrentes.</p>
-            <button class="empty-action" type="button" data-action="generate-templates">${icon("plus")} Gerar contas recorrentes</button>
-          </section>`;
+/* ==========================================================================
+   FORM — NOVA / EDITAR CONTA RECORRENTE
+   ========================================================================== */
+const recNameEl = document.getElementById('recName');
+const recValueEl = document.getElementById('recValue');
+const recDayEl = document.getElementById('recDay');
+const recNoteEl = document.getElementById('recNote');
+attachCurrencyMask(recValueEl);
+let editingRecId = null;
 
-      app.innerHTML = `
-        <section class="page-enter" aria-labelledby="monthHeading">
-          <div class="month-control">
-            <button class="month-arrow" type="button" data-action="previous-month" aria-label="Mês anterior">${icon("chevron-left")}</button>
-            <button class="month-open" type="button" data-action="open-month-picker" aria-label="Escolher mês e ano">
-              ${icon("calendar")} <span id="monthHeading">${monthTitle(state.selectedMonth)}</span>
-            </button>
-            <button class="month-arrow" type="button" data-action="next-month" aria-label="Próximo mês">${icon("chevron-right")}</button>
-          </div>
+document.getElementById('btnNewRecurring').addEventListener('click', ()=>{
+  editingRecId = null;
+  document.getElementById('modalRecTitle').textContent = 'Nova conta recorrente';
+  document.getElementById('recSubmit').textContent = 'Adicionar';
+  recNameEl.value=''; setCurrencyValue(recValueEl,null); recDayEl.value=''; recNoteEl.value='';
+  openModal('modalRecurring');
+});
 
-          <div class="summary-grid" aria-label="Resumo do mês">
-            <div class="summary-panel unpaid">
-              <div class="summary-icon">${icon("clock")}</div>
-              <div><p class="summary-label">A pagar</p><p class="summary-value">${formatMoney(totals.unpaid)}</p></div>
-            </div>
-            <div class="summary-panel paid">
-              <div class="summary-icon">${icon("check-circle")}</div>
-              <div><p class="summary-label">Pago</p><p class="summary-value">${formatMoney(totals.paid)}</p></div>
-            </div>
-          </div>
+function openEditRec(id){
+  const rec = state.recurring.find(r=>r.id===id);
+  if(!rec) return;
+  editingRecId = id;
+  document.getElementById('modalRecTitle').textContent = 'Editar conta recorrente';
+  document.getElementById('recSubmit').textContent = 'Salvar';
+  recNameEl.value = rec.name;
+  setCurrencyValue(recValueEl, rec.value);
+  recDayEl.value = rec.day;
+  recNoteEl.value = rec.note || '';
+  openModal('modalRecurring');
+}
 
-          <button class="primary-wide" type="button" data-action="new-account">${icon("plus")} Nova conta</button>
-          ${content}
-        </section>`;
+recDayEl.addEventListener('input', ()=>{
+  let v = recDayEl.value.replace(/\D/g,'');
+  if(v !== ''){
+    let n = parseInt(v,10);
+    if(n > 31) n = 31;
+    v = String(n);
+  }
+  recDayEl.value = v;
+});
+
+document.getElementById('recSubmit').addEventListener('click', ()=>{
+  const name = recNameEl.value.trim();
+  const day = parseInt(recDayEl.value,10);
+  if(!name){ showToast('Informe um nome para a conta'); return; }
+  if(!day || day<1 || day>31){ showToast('Informe um dia de vencimento válido'); return; }
+  const value = getCurrencyCents(recValueEl);
+  const note = recNoteEl.value.trim();
+
+  if(editingRecId){
+    const rec = state.recurring.find(r=>r.id===editingRecId);
+    if(rec){
+      rec.name=name; rec.value=value; rec.day=day; rec.note=note;
+      // atualiza a instância ainda não paga do mês atual, se existir, para refletir a edição
+      const bill = (state.bills[state.currentMonth]||[]).find(b=>b.templateId===rec.id && !b.paid);
+      if(bill){ bill.name=name; bill.value=value; bill.note=note; bill.due = `${state.currentMonth}-${pad2(Math.min(day,28))}`; }
     }
+  }else{
+    const rec = { id:uid(), name, value, day, note, startMonth: state.currentMonth };
+    state.recurring.push(rec);
+    ensureMonthGenerated(state.currentMonth);
+  }
+  saveState();
+  renderRecurring();
+  renderMonth();
+  closeModal('modalRecurring');
+  showToast('Conta recorrente salva');
+});
 
-    function templateRow(template, index) {
-      const meta = `Vence dia ${template.dueDay}${template.note ? ` · ${escapeHTML(template.note)}` : ""}`;
-      const value = formatMoney(template.value);
-      return `
-        <article class="template-row" style="animation-delay:${Math.min(index * 55, 330)}ms">
-          <div class="template-info">
-            <div class="template-icon">${icon("calendar-days")}</div>
-            <div>
-              <h3 class="template-name" title="${escapeHTML(template.name)}">${escapeHTML(template.name)}</h3>
-              <p class="template-meta" title="${meta}">${meta}</p>
-            </div>
-          </div>
-          <p class="template-value ${value ? "" : "no-value"}">${value || "Sem valor padrão"}</p>
-          <div class="template-actions">
-            <button class="icon-btn" type="button" data-action="edit-template" data-id="${template.id}" aria-label="Editar ${escapeHTML(template.name)}">${icon("edit")}</button>
-            <button class="icon-btn delete" type="button" data-action="delete-template" data-id="${template.id}" aria-label="Excluir ${escapeHTML(template.name)}">${icon("trash")}</button>
-          </div>
-        </article>`;
-    }
+/* ==========================================================================
+   PAGAR / DESFAZER
+   ========================================================================== */
+let payingBillId = null;
+function openPayModal(id){
+  const bill = (state.bills[state.currentMonth]||[]).find(b=>b.id===id);
+  if(!bill) return;
+  payingBillId = id;
+  document.getElementById('payBillName').textContent = bill.name;
+  openModal('modalPay');
+}
+document.getElementById('payConfirm').addEventListener('click', ()=>{
+  const bill = (state.bills[state.currentMonth]||[]).find(b=>b.id===payingBillId);
+  if(!bill) return;
+  bill.paid = true;
+  saveState();
+  renderMonth();
+  closeModal('modalPay');
+  showToast('Conta marcada como paga');
+});
 
-    function renderManagePage() {
-      const total = state.templates.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
-      const list = state.templates.length
-        ? `<div class="templates-list">${state.templates.slice().sort((a, b) => a.dueDay - b.dueDay).map(templateRow).join("")}</div>`
-        : `<section class="empty-state">${icon("calendar-days")}<h3>Nenhuma conta recorrente</h3><p>Cadastre seus modelos fixos para agilizar a criação das contas mensais.</p></section>`;
+function undoPay(id){
+  const bill = (state.bills[state.currentMonth]||[]).find(b=>b.id===id);
+  if(!bill) return;
+  bill.paid = false;
+  saveState();
+  renderMonth();
+  showToast('Pagamento desfeito');
+}
 
-      app.innerHTML = `
-        <section class="page-enter" aria-labelledby="manageHeading">
-          <div class="manage-heading">
-            <div>
-              <h2 id="manageHeading">Contas recorrentes</h2>
-              <p>Modelos fixos usados para gerar as contas do mês.</p>
-            </div>
-            <button class="new-template-btn" type="button" data-action="new-template">${icon("plus")} Nova</button>
-          </div>
+/* ==========================================================================
+   EXCLUIR (contas do mês e recorrentes)
+   ========================================================================== */
+let deleteTarget = null; // { type:'bill'|'rec', id }
+function openDeleteModal(type, id, name){
+  deleteTarget = { type, id };
+  document.getElementById('deleteName').textContent = name;
+  openModal('modalDelete');
+}
+document.getElementById('deleteConfirm').addEventListener('click', ()=>{
+  if(!deleteTarget) return;
+  if(deleteTarget.type === 'bill'){
+    const arr = state.bills[state.currentMonth];
+    const idx = arr.findIndex(b=>b.id===deleteTarget.id);
+    if(idx>-1) arr.splice(idx,1);
+    renderMonth();
+  }else{
+    const idx = state.recurring.findIndex(r=>r.id===deleteTarget.id);
+    if(idx>-1) state.recurring.splice(idx,1);
+    renderRecurring();
+  }
+  saveState();
+  closeModal('modalDelete');
+  showToast('Excluído com sucesso');
+  deleteTarget = null;
+});
 
-          <div class="template-stats" aria-label="Resumo das contas recorrentes">
-            <div class="stat-block"><p class="stat-label">Contas cadastradas</p><p class="stat-value">${state.templates.length}</p></div>
-            <div class="stat-block"><p class="stat-label">Total estimado</p><p class="stat-value">${formatMoney(total)}</p></div>
-          </div>
-          ${list}
-          <button class="manage-settings-link" type="button" data-action="open-settings">${icon("bell")} Alertas e sincronização</button>
-        </section>`;
-    }
+/* ==========================================================================
+   DELEGAÇÃO DE CLIQUES (listas)
+   ========================================================================== */
+document.getElementById('billsList').addEventListener('click', (e)=>{
+  const pay = e.target.closest('[data-pay]');
+  const undo = e.target.closest('[data-undo]');
+  const edit = e.target.closest('[data-edit-bill]');
+  const del = e.target.closest('[data-del-bill]');
+  if(pay) openPayModal(pay.dataset.pay);
+  else if(undo) undoPay(undo.dataset.undo);
+  else if(edit) openEditBill(edit.dataset.editBill);
+  else if(del){
+    const bill = (state.bills[state.currentMonth]||[]).find(b=>b.id===del.dataset.delBill);
+    if(bill) openDeleteModal('bill', bill.id, bill.name);
+  }
+});
 
-    function render() {
-      updateNavigation();
-      if (activePage === "manage") renderManagePage();
-      else renderMonthPage();
-    }
+document.getElementById('recurringList').addEventListener('click', (e)=>{
+  const edit = e.target.closest('[data-edit-rec]');
+  const del = e.target.closest('[data-del-rec]');
+  if(edit) openEditRec(edit.dataset.editRec);
+  else if(del){
+    const rec = state.recurring.find(r=>r.id===del.dataset.delRec);
+    if(rec) openDeleteModal('rec', rec.id, rec.name);
+  }
+});
 
-    function openModal(content, options = {}) {
-      lastFocusedElement = document.activeElement;
-      modalPanel.className = `modal-panel${options.small ? " modal-small" : ""}`;
-      modalPanel.innerHTML = content;
-      modalLayer.hidden = false;
-      modalLayer.setAttribute("aria-hidden", "false");
-      document.body.classList.add("modal-open");
-      requestAnimationFrame(() => {
-        modalLayer.classList.add("active");
-        const autofocus = modalPanel.querySelector("[autofocus]");
-        (autofocus || modalPanel.querySelector("button, input, select, textarea"))?.focus({ preventScroll: true });
-      });
-    }
+/* ==========================================================================
+   NOTIFICAÇÕES DE VENCIMENTO (3 dias e 1 dia antes)
+   ========================================================================== */
+function refreshNotifStatus(){
+  const el = document.getElementById('notifStatus');
+  if(!('Notification' in window)){ el.textContent = 'Notificações não suportadas neste navegador.'; return; }
+  const map = { granted:'Notificações ativadas ✅', denied:'Notificações bloqueadas pelo navegador', default:'Notificações ainda não ativadas' };
+  el.textContent = map[Notification.permission];
+}
 
-    function closeModal() {
-      modalLayer.classList.remove("active");
-      modalLayer.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("modal-open");
-      setTimeout(() => {
-        modalLayer.hidden = true;
-        modalPanel.innerHTML = "";
-        lastFocusedElement?.focus?.({ preventScroll: true });
-      }, 190);
-    }
+document.getElementById('btnSettings').addEventListener('click', ()=>{
+  refreshNotifStatus();
+  openModal('modalSettings');
+});
 
-    function closeButton() {
-      return `<button class="modal-close" type="button" data-action="close-modal" aria-label="Fechar">${icon("x")}</button>`;
-    }
+document.getElementById('btnEnableNotif').addEventListener('click', async ()=>{
+  if(!('Notification' in window)){ showToast('Este navegador não suporta notificações'); return; }
+  try{
+    const perm = await Notification.requestPermission();
+    refreshNotifStatus();
+    if(perm === 'granted'){ checkDueNotifications(); showToast('Notificações ativadas'); }
+  }catch(e){ console.error(e); }
+});
 
-    function currencyFieldValue(value) {
-      return value === null || value === undefined ? "" : formatMoney(value);
-    }
-
-    function openAccountForm(account = null) {
-      const editing = Boolean(account);
-      const initialDate = account?.dueDate || dateForMonth(state.selectedMonth, Math.min(localToday().getDate(), 28));
-      openModal(`
-        ${closeButton()}
-        <h2 class="modal-title" id="modalTitle">${editing ? "Editar conta" : "Nova conta"}</h2>
-        <form id="accountForm" data-edit-id="${account?.id || ""}">
-          <div class="form-grid">
-            <div class="field full">
-              <label for="accountName">Nome da conta</label>
-              <input id="accountName" name="name" type="text" maxlength="80" placeholder="Ex: Conta de Luz" value="${escapeHTML(account?.name || "")}" required autofocus autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="accountValue">Valor (opcional)</label>
-              <input id="accountValue" name="value" type="text" inputmode="numeric" placeholder="R$ 0,00" value="${currencyFieldValue(account?.value)}" data-currency data-cents="${account?.value ?? ""}" autocomplete="off">
-              <p class="form-hint">Deixe vazio para usar como lembrete.</p>
-            </div>
-            <div class="field">
-              <label for="accountDue">Vencimento</label>
-              <input id="accountDue" name="dueDate" type="date" value="${initialDate}" required>
-            </div>
-            <div class="field full">
-              <label for="accountNote">Observação</label>
-              <textarea id="accountNote" name="note" maxlength="180" placeholder="Opcional">${escapeHTML(account?.note || "")}</textarea>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="modal-primary" type="submit">${editing ? "Salvar alterações" : "Adicionar"}</button>
-            <button class="modal-plain" type="button" data-action="close-modal">Cancelar</button>
-          </div>
-        </form>`);
-    }
-
-    function openTemplateForm(template = null) {
-      const editing = Boolean(template);
-      openModal(`
-        ${closeButton()}
-        <h2 class="modal-title" id="modalTitle">${editing ? "Editar conta recorrente" : "Nova conta recorrente"}</h2>
-        <form id="templateForm" data-edit-id="${template?.id || ""}">
-          <div class="form-grid">
-            <div class="field full">
-              <label for="templateName">Nome</label>
-              <input id="templateName" name="name" type="text" maxlength="80" placeholder="Ex: Conta de água" value="${escapeHTML(template?.name || "")}" required autofocus autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="templateValue">Valor padrão (opcional)</label>
-              <input id="templateValue" name="value" type="text" inputmode="numeric" placeholder="R$ 0,00" value="${currencyFieldValue(template?.value)}" data-currency data-cents="${template?.value ?? ""}" autocomplete="off">
-            </div>
-            <div class="field">
-              <label for="templateDay">Dia de vencimento</label>
-              <input id="templateDay" name="dueDay" type="number" min="1" max="31" inputmode="numeric" placeholder="Ex: 10" value="${template?.dueDay || ""}" required>
-            </div>
-            <div class="field full">
-              <label for="templateNote">Observação</label>
-              <textarea id="templateNote" name="note" maxlength="180" placeholder="Opcional">${escapeHTML(template?.note || "")}</textarea>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="modal-primary" type="submit">${editing ? "Salvar alterações" : "Adicionar"}</button>
-            <button class="modal-plain" type="button" data-action="close-modal">Cancelar</button>
-          </div>
-        </form>`);
-    }
-
-    function openDeleteModal(kind, id) {
-      const collection = kind === "account" ? state.accounts : state.templates;
-      const item = collection.find(entry => entry.id === id);
-      if (!item) return;
-      openModal(`
-        <h2 class="modal-title" id="modalTitle">Excluir conta</h2>
-        <p class="modal-copy">Deseja realmente excluir "${escapeHTML(item.name)}"? Esta ação não pode ser desfeita.</p>
-        <div class="modal-actions">
-          <button class="modal-danger" type="button" data-action="confirm-delete" data-kind="${kind}" data-id="${id}">Excluir</button>
-          <button class="modal-secondary" type="button" data-action="close-modal">Cancelar</button>
-        </div>`, { small: true });
-    }
-
-    function openPaymentModal(account) {
-      const valueOption = account.value !== null && account.value !== undefined
-        ? `<label class="check-option"><input type="checkbox" id="repeatValue" checked> Repetir o valor atual de ${formatMoney(account.value)}</label>` : "";
-      openModal(`
-        ${closeButton()}
-        <h2 class="modal-title" id="modalTitle">Conta paga</h2>
-        <p class="modal-copy">Deseja agendar esta conta automaticamente para o próximo mês?</p>
-        ${valueOption}
-        <div class="modal-actions">
-          <button class="modal-primary" type="button" data-action="schedule-next" data-id="${account.id}">Agendar próximo mês</button>
-          <button class="modal-secondary" type="button" data-action="close-modal">Agora não</button>
-        </div>`, { small: true });
-    }
-
-    function openMonthPicker() {
-      const { year, month } = parseMonthKey(state.selectedMonth);
-      const years = Array.from({ length: 21 }, (_, index) => year - 10 + index);
-      openModal(`
-        ${closeButton()}
-        <h2 class="modal-title" id="modalTitle">Selecionar período</h2>
-        <form id="monthPickerForm">
-          <div class="month-picker-grid">
-            <div class="field">
-              <label for="pickerMonth">Mês</label>
-              <select id="pickerMonth" name="month" autofocus>${monthNames.map((name, index) => `<option value="${index + 1}" ${index + 1 === month ? "selected" : ""}>${name}</option>`).join("")}</select>
-            </div>
-            <div class="field">
-              <label for="pickerYear">Ano</label>
-              <select id="pickerYear" name="year">${years.map(item => `<option value="${item}" ${item === year ? "selected" : ""}>${item}</option>`).join("")}</select>
-            </div>
-          </div>
-          <div class="modal-actions">
-            <button class="modal-primary" type="submit">Exibir contas</button>
-            <button class="modal-plain" type="button" data-action="close-modal">Cancelar</button>
-          </div>
-        </form>`, { small: true });
-    }
-
-    function notificationStatus() {
-      if (!("Notification" in window)) return { text: "Indisponível", className: "error" };
-      if (Notification.permission === "granted") return { text: "Ativado", className: "online" };
-      if (Notification.permission === "denied") return { text: "Bloqueado", className: "error" };
-      return { text: "Desativado", className: "" };
-    }
-
-    function firestoreStatus() {
-      const map = {
-        local: { text: "Modo local", className: "" },
-        connecting: { text: "Conectando", className: "" },
-        connected: { text: "Sincronizado", className: "online" },
-        error: { text: "Falha na conexão", className: "error" }
-      };
-      return map[cloudStatus];
-    }
-
-    function openSettings() {
-      const notifications = notificationStatus();
-      const firestore = firestoreStatus();
-      const installRow = installPrompt ? `
-        <div class="setting-row">
-          <div class="setting-icon">${icon("download")}</div>
-          <div><p class="setting-title">Instalar aplicativo</p><p class="setting-copy">Adicione o FinControl à tela inicial.</p></div>
-          <button class="compact-primary" type="button" data-action="install-app">Instalar</button>
-        </div>` : "";
-      openModal(`
-        ${closeButton()}
-        <h2 class="modal-title" id="modalTitle">Configurações</h2>
-        <div class="settings-list">
-          <div class="setting-row">
-            <div class="setting-icon">${icon("bell")}</div>
-            <div><p class="setting-title">Alertas de vencimento</p><p class="setting-copy">Avisos 3 dias e 1 dia antes, verificados quando o app está aberto ou é retomado.</p></div>
-            ${("Notification" in window) && Notification.permission === "default" ? `<button class="compact-primary" type="button" data-action="enable-notifications">Ativar</button>` : `<span class="setting-status ${notifications.className}">${notifications.text}</span>`}
-          </div>
-          <div class="setting-row">
-            <div class="setting-icon">${icon("cloud")}</div>
-            <div><p class="setting-title">Sincronização Firestore</p><p class="setting-copy">Preencha o bloco firebaseConfig no início do script para conectar a nuvem.</p></div>
-            <span class="setting-status ${firestore.className}">${firestore.text}</span>
-          </div>
-          ${installRow}
-        </div>`, { small: true });
-    }
-
-    function showToast(message, type = "") {
-      const toast = document.createElement("div");
-      toast.className = `toast ${type}`;
-      toast.textContent = message;
-      toastRegion.appendChild(toast);
-      setTimeout(() => {
-        toast.classList.add("leaving");
-        setTimeout(() => toast.remove(), 190);
-      }, 3200);
-    }
-
-    function generateTemplatesForMonth() {
-      let created = 0;
-      state.templates.forEach(template => {
-        const alreadyExists = state.accounts.some(account =>
-          account.recurringId === template.id && account.dueDate.startsWith(state.selectedMonth)
-        );
-        if (alreadyExists) return;
-        state.accounts.push({
-          id: uid("account"),
-          recurringId: template.id,
-          name: template.name,
-          value: template.value ?? null,
-          dueDate: dateForMonth(state.selectedMonth, template.dueDay),
-          note: template.note || "",
-          paid: false,
-          createdAt: Date.now() + created
+function checkDueNotifications(){
+  if(!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = todayISO();
+  Object.values(state.bills).flat().forEach(bill=>{
+    if(bill.paid) return;
+    const due = new Date(bill.due + 'T00:00:00');
+    const diffDays = Math.round((due - today) / 86400000);
+    if(diffDays === 3 || diffDays === 1){
+      try{
+        new Notification('FinControl', {
+          body: `${bill.name} vence em ${diffDays} dia${diffDays>1?'s':''} — ${formatCentsToBRL(bill.value)}`
         });
-        created += 1;
-      });
-      if (!created) {
-        showToast("Todas as contas recorrentes já existem neste mês.");
-        return;
-      }
-      persist();
-      render();
-      showToast(`${created} ${created === 1 ? "conta criada" : "contas criadas"} para ${monthTitle(state.selectedMonth)}.`, "success");
+      }catch(e){ console.error(e); }
     }
+  });
+}
 
-    function submitAccountForm(form) {
-      const data = new FormData(form);
-      const editId = form.dataset.editId;
-      const currency = form.querySelector("[data-currency]");
-      const accountData = {
-        name: String(data.get("name")).trim(),
-        value: currency.dataset.cents === "" ? null : Number(currency.dataset.cents),
-        dueDate: String(data.get("dueDate")),
-        note: String(data.get("note")).trim()
-      };
-      if (!accountData.name || !accountData.dueDate) return;
-
-      if (editId) {
-        const index = state.accounts.findIndex(item => item.id === editId);
-        if (index >= 0) state.accounts[index] = { ...state.accounts[index], ...accountData };
-        showToast("Conta atualizada.", "success");
-      } else {
-        state.accounts.push({ ...accountData, id: uid("account"), recurringId: null, paid: false, createdAt: Date.now() });
-        state.selectedMonth = accountData.dueDate.slice(0, 7);
-        showToast("Conta adicionada.", "success");
-      }
-      persist();
-      closeModal();
-      render();
-    }
-
-    function submitTemplateForm(form) {
-      const data = new FormData(form);
-      const editId = form.dataset.editId;
-      const currency = form.querySelector("[data-currency]");
-      const dueDay = Math.min(Math.max(Number(data.get("dueDay")), 1), 31);
-      const templateData = {
-        name: String(data.get("name")).trim(),
-        value: currency.dataset.cents === "" ? null : Number(currency.dataset.cents),
-        dueDay,
-        note: String(data.get("note")).trim()
-      };
-      if (!templateData.name || !dueDay) return;
-
-      if (editId) {
-        const index = state.templates.findIndex(item => item.id === editId);
-        if (index >= 0) state.templates[index] = { ...state.templates[index], ...templateData };
-        showToast("Conta recorrente atualizada.", "success");
-      } else {
-        const template = { ...templateData, id: uid("recurring") };
-        state.templates.push(template);
-        const existsInMonth = state.accounts.some(account => account.recurringId === template.id && account.dueDate.startsWith(state.selectedMonth));
-        if (!existsInMonth) {
-          state.accounts.push({
-            id: uid("account"),
-            recurringId: template.id,
-            name: template.name,
-            value: template.value,
-            dueDate: dateForMonth(state.selectedMonth, template.dueDay),
-            note: template.note,
-            paid: false,
-            createdAt: Date.now()
-          });
-        }
-        showToast("Conta recorrente adicionada ao mês atual.", "success");
-      }
-      persist();
-      closeModal();
-      render();
-    }
-
-    function confirmDelete(kind, id) {
-      if (kind === "account") state.accounts = state.accounts.filter(item => item.id !== id);
-      else state.templates = state.templates.filter(item => item.id !== id);
-      persist();
-      closeModal();
-      render();
-      showToast("Conta excluída.");
-    }
-
-    function payAccount(id) {
-      const account = state.accounts.find(item => item.id === id);
-      if (!account) return;
-      account.paid = true;
-      account.paidAt = Date.now();
-      persist();
-      render();
-      openPaymentModal(account);
-    }
-
-    function undoPayment(id) {
-      const account = state.accounts.find(item => item.id === id);
-      if (!account) return;
-      account.paid = false;
-      delete account.paidAt;
-      persist();
-      render();
-      showToast("Pagamento desfeito.");
-    }
-
-    function scheduleNextMonth(id) {
-      const source = state.accounts.find(item => item.id === id);
-      if (!source) return;
-      const nextMonth = shiftMonth(source.dueDate.slice(0, 7), 1);
-      const dueDay = parseLocalDate(source.dueDate).getDate();
-      const duplicate = state.accounts.some(item =>
-        item.dueDate.startsWith(nextMonth) &&
-        ((source.recurringId && item.recurringId === source.recurringId) || (!source.recurringId && item.name.toLowerCase() === source.name.toLowerCase()))
-      );
-      if (duplicate) {
-        closeModal();
-        showToast("Esta conta já está agendada para o próximo mês.");
-        return;
-      }
-      const repeatValue = document.getElementById("repeatValue");
-      state.accounts.push({
-        id: uid("account"),
-        recurringId: source.recurringId || null,
-        sourceId: source.id,
-        name: source.name,
-        value: repeatValue && !repeatValue.checked ? null : source.value,
-        dueDate: dateForMonth(nextMonth, dueDay),
-        note: source.note || "",
-        paid: false,
-        createdAt: Date.now()
-      });
-      persist();
-      closeModal();
-      showToast(`Conta agendada para ${monthTitle(nextMonth)}.`, "success");
-    }
-
-    async function enableNotifications() {
-      if (!("Notification" in window)) {
-        showToast("Este navegador não oferece suporte a notificações.", "error");
-        return;
-      }
-      try {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          showToast("Alertas de vencimento ativados.", "success");
-          checkDueNotifications();
-        } else {
-          showToast("Permissão de notificações não concedida.");
-        }
-        closeModal();
-      } catch (error) {
-        showToast("Não foi possível ativar as notificações.", "error");
-      }
-    }
-
-    function checkDueNotifications() {
-      if (!("Notification" in window) || Notification.permission !== "granted") return;
-      const today = localToday();
-      let changed = false;
-      state.accounts.filter(account => !account.paid).forEach(account => {
-        const due = parseLocalDate(account.dueDate);
-        const days = Math.round((due - today) / 86400000);
-        if (days !== 3 && days !== 1) return;
-        const notificationKey = `${account.id}-${account.dueDate}-${days}`;
-        if (state.notificationSent[notificationKey]) return;
-        const title = days === 1 ? "Conta vence amanhã" : "Conta vence em 3 dias";
-        const value = formatMoney(account.value);
-        new Notification(title, {
-          body: `${account.name} vence em ${formatDue(account.dueDate)}${value ? ` no valor de ${value}` : ""}.`,
-          icon: document.querySelector('link[rel="apple-touch-icon"]')?.href,
-          tag: notificationKey
-        });
-        state.notificationSent[notificationKey] = Date.now();
-        changed = true;
-      });
-      if (changed) persist();
-    }
-
-    function handleCurrencyInput(input) {
-      const digits = input.value.replace(/\D/g, "");
-      if (!digits) {
-        input.value = "";
-        input.dataset.cents = "";
-        return;
-      }
-      const cents = Math.min(Number(digits), 99999999999);
-      input.dataset.cents = String(cents);
-      input.value = formatMoney(cents);
-    }
-
-    document.addEventListener("click", event => {
-      const nav = event.target.closest("[data-nav]");
-      if (nav) {
-        activePage = nav.dataset.nav;
-        render();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        return;
-      }
-
-      const button = event.target.closest("[data-action]");
-      if (!button) return;
-      const { action, id, kind } = button.dataset;
-      if (action === "previous-month" || action === "next-month") {
-        state.selectedMonth = shiftMonth(state.selectedMonth, action === "next-month" ? 1 : -1);
-        persist();
-        render();
-      } else if (action === "open-month-picker") openMonthPicker();
-      else if (action === "new-account") openAccountForm();
-      else if (action === "edit-account") openAccountForm(state.accounts.find(item => item.id === id));
-      else if (action === "delete-account") openDeleteModal("account", id);
-      else if (action === "new-template") openTemplateForm();
-      else if (action === "edit-template") openTemplateForm(state.templates.find(item => item.id === id));
-      else if (action === "delete-template") openDeleteModal("template", id);
-      else if (action === "confirm-delete") confirmDelete(kind, id);
-      else if (action === "pay") payAccount(id);
-      else if (action === "undo-payment") undoPayment(id);
-      else if (action === "schedule-next") scheduleNextMonth(id);
-      else if (action === "generate-templates") generateTemplatesForMonth();
-      else if (action === "open-settings") openSettings();
-      else if (action === "close-modal") closeModal();
-      else if (action === "enable-notifications") enableNotifications();
-      else if (action === "install-app" && installPrompt) {
-        installPrompt.prompt();
-        installPrompt.userChoice.finally(() => { installPrompt = null; closeModal(); });
-      }
-    });
-
-    document.addEventListener("submit", event => {
-      event.preventDefault();
-      if (event.target.id === "accountForm") submitAccountForm(event.target);
-      else if (event.target.id === "templateForm") submitTemplateForm(event.target);
-      else if (event.target.id === "monthPickerForm") {
-        const data = new FormData(event.target);
-        state.selectedMonth = `${data.get("year")}-${String(data.get("month")).padStart(2, "0")}`;
-        persist();
-        closeModal();
-        activePage = "month";
-        render();
-      }
-    });
-
-    document.addEventListener("input", event => {
-      if (event.target.matches("[data-currency]")) handleCurrencyInput(event.target);
-    });
-
-    document.addEventListener("focusin", event => {
-      if (event.target.matches("[data-currency]") && event.target.value) {
-        requestAnimationFrame(() => event.target.select());
-      }
-    });
-
-    modalLayer.addEventListener("click", event => {
-      if (event.target === modalLayer) closeModal();
-    });
-
-    document.addEventListener("keydown", event => {
-      if (event.key === "Escape" && !modalLayer.hidden) closeModal();
-      if (event.key === "Tab" && !modalLayer.hidden) {
-        const focusable = [...modalPanel.querySelectorAll("button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])")];
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-      }
-    });
-
-    window.addEventListener("beforeinstallprompt", event => {
-      event.preventDefault();
-      installPrompt = event;
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") checkDueNotifications();
-    });
-
-    render();
-    initializeFirestore();
+/* ==========================================================================
+   INICIALIZAÇÃO
+   ========================================================================== */
+async function init(){
+  await loadState();
+  ensureMonthGenerated(state.currentMonth);
+  renderMonth();
+  renderRecurring();
+  if('Notification' in window && Notification.permission === 'granted'){
     checkDueNotifications();
-    setInterval(checkDueNotifications, 30 * 60 * 1000);
-  </script>
+  }
+}
+init();
+</script>
 </body>
 </html>
