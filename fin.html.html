@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>FinControl Premium - Organize Suas Contas</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDKs (Compat v10) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics-compat.js"></script>
+
+    <style>
+        /* CSS RESET & VARIABLES */
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: rgba(22, 31, 48, 0.7);
+            --bg-card-hover: rgba(30, 41, 64, 0.8);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --border-highlight: rgba(99, 102, 241, 0.3);
+            
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-light: rgba(99, 102, 241, 0.15);
+            
+            --success: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.12);
+            --success-border: rgba(16, 185, 129, 0.3);
+            
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.12);
+            
+            --danger: #ef4444;
+            --danger-bg: rgba(239, 68, 68, 0.12);
+            --danger-border: rgba(239, 68, 68, 0.3);
+            
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-dim: #6b7280;
+            
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+            
+            --shadow-glow: 0 10px 25px -5px rgba(99, 102, 241, 0.25);
+            --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            
+            --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            font-family: var(--font);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input, button, select, textarea {
+            user-select: auto;
+            -webkit-user-select: auto;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 16px;
+        }
+
+        /* HEADER */
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 4px 20px 4px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #fff;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sync-badge {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .sync-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--success);
+            box-shadow: 0 0 8px var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* MONTH SELECTOR */
+        .month-picker-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .month-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .month-btn:active {
+            transform: scale(0.92);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .current-month-display {
+            text-align: center;
+        }
+
+        .month-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            text-transform: capitalize;
+        }
+
+        .year-name {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* SUMMARY CARDS */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: transform 0.2s ease;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .summary-card.pending::before {
+            background: var(--warning);
+        }
+
+        .summary-card.paid::before {
+            background: var(--success);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .summary-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+        }
+
+        .summary-card.pending .summary-icon {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .summary-card.paid .summary-icon {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .summary-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+
+        /* TAB NAVIGATION (MAIN) */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease forwards;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* SECTION HEADER */
+        .section-title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-count {
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        /* BILL CARDS LIST */
+        .bills-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .bill-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .bill-card.status-paid {
+            border-left: 3px solid var(--success);
+            background: rgba(16, 31, 28, 0.5);
+        }
+
+        .bill-card.status-unpaid {
+            border-left: 3px solid var(--warning);
+        }
+
+        .bill-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .bill-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .bill-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recurrent-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .single-tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            background: rgba(156, 163, 175, 0.15);
+            color: var(--text-muted);
+            border: 1px solid rgba(156, 163, 175, 0.2);
+            font-weight: 600;
+        }
+
+        .bill-category {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .bill-amount-box {
+            text-align: right;
+        }
+
+        .bill-amount {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .bill-amount.zero-amount {
+            color: var(--text-dim);
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-pill {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+        }
+
+        .status-pill.paid {
+            background: var(--success-bg);
+            color: var(--success);
+        }
+
+        .status-pill.unpaid {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        /* CARD ACTION BUTTONS */
+        .bill-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-action:active {
+            transform: scale(0.95);
+        }
+
+        .btn-pay {
+            background: var(--success);
+            color: #000;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-undo {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            flex: 0 0 38px;
+            padding: 8px 0;
+        }
+
+        .btn-edit-val {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            flex: 0 0 38px;
+            padding: 8px 0;
+        }
+
+        /* FORM CONTROLS (ABA CONTAS) */
+        .form-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        /* RECURRENT TOGGLE BUTTON */
+        .recurrent-toggle-box {
+            background: rgba(99, 102, 241, 0.08);
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .recurrent-toggle-box:hover {
+            background: rgba(99, 102, 241, 0.12);
+        }
+
+        .recurrent-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-right: 10px;
+        }
+
+        .recurrent-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .recurrent-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        /* Switch Toggle UI */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 26px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary), #4f46e5);
+            color: #fff;
+            padding: 14px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* BOTTOM NAVBAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: rgba(11, 15, 25, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            padding: 10px 24px calc(10px + env(safe-area-inset-bottom));
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 4px 16px;
+            border-radius: 12px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+            color: var(--primary);
+        }
+
+        /* MODAL CONFIRMATION DIALOG */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: #161f30;
+            border: 1px solid var(--border-highlight);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 380px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+            transform: scale(0.9);
+            transition: transform 0.2s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            margin: 0 auto 16px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .modal-icon.pay {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid var(--success-border);
+        }
+
+        .modal-icon.undo {
+            background: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .modal-icon.delete {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border: 1px solid var(--danger-border);
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .modal-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .modal-amount-input-box {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-modal {
+            flex: 1;
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+        }
+
+        .btn-modal-confirm-pay {
+            background: var(--success);
+            color: #000;
+        }
+
+        .btn-modal-confirm-undo {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .btn-modal-confirm-delete {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px dashed var(--border-color);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+        }
+
+        .empty-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .empty-sub {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- APP HEADER -->
+        <header class="app-header">
+            <div class="brand-logo">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-wallet"></i>
+                </div>
+                <div>
+                    <h1 class="brand-title">FinControl</h1>
+                </div>
+            </div>
+            <div class="sync-badge" id="syncBadge">
+                <span class="sync-dot"></span>
+                <span id="syncText">Firestore On</span>
+            </div>
+        </header>
+
+        <!-- MONTH SELECTOR (Used on Home view) -->
+        <div class="month-picker-container" id="monthPicker">
+            <button class="month-btn" id="prevMonthBtn" onclick="changeMonth(-1)">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <div class="current-month-display">
+                <div class="month-name" id="monthNameDisplay">Julho</div>
+                <div class="year-name" id="yearDisplay">2026</div>
+            </div>
+            <button class="month-btn" id="nextMonthBtn" onclick="changeMonth(1)">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <!-- TAB 1: INÍCIO (HOME DASHBOARD) -->
+        <div id="tabHome" class="tab-content active">
+            <!-- SUMMARY CARDS -->
+            <div class="summary-grid">
+                <div class="summary-card pending">
+                    <div class="summary-header">
+                        <div class="summary-icon">
+                            <i class="fa-solid fa-clock"></i>
+                        </div>
+                        <span class="summary-title">A Pagar</span>
+                    </div>
+                    <div class="summary-value" id="totalPendingDisplay">R$ 0,00</div>
+                </div>
+
+                <div class="summary-card paid">
+                    <div class="summary-header">
+                        <div class="summary-icon">
+                            <i class="fa-solid fa-circle-check"></i>
+                        </div>
+                        <span class="summary-title">Pagas</span>
+                    </div>
+                    <div class="summary-value" id="totalPaidDisplay">R$ 0,00</div>
+                </div>
+            </div>
+
+            <!-- CONTAS DO MÊS -->
+            <div class="section-title-bar">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Contas do Mês
+                </h2>
+                <span class="badge-count" id="monthBillsCount">0</span>
+            </div>
+
+            <div class="bills-list" id="homeBillsList">
+                <!-- Dynamic insertion -->
+            </div>
+        </div>
+
+        <!-- TAB 2: CONTAS (CADASTRO & GERENCIAMENTO) -->
+        <div id="tabBills" class="tab-content">
+            <div class="form-card">
+                <div class="section-title-bar" style="margin-bottom: 16px;">
+                    <h2 class="section-title">
+                        <i class="fa-solid fa-circle-plus" style="color: var(--primary);"></i> Nova Conta
+                    </h2>
+                </div>
+
+                <form id="addBillForm" onsubmit="handleAddBill(event)">
+                    <div class="form-group">
+                        <label class="form-label">Nome da Conta / Despesa</label>
+                        <input type="text" id="billTitleInput" class="form-input" placeholder="Ex: Conta de Luz, Jantar, Internet..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Valor do Pagamento</label>
+                        <input type="text" id="billAmountInput" class="form-input" placeholder="R$ 0,00" oninput="formatCurrencyInput(this)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Mês de Início / Referência</label>
+                        <input type="month" id="billMonthInput" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Categoria</label>
+                        <select id="billCategoryInput" class="form-input">
+                            <option value="Moradia">🏠 Moradia (Luz, Água, Net)</option>
+                            <option value="Alimentação">🍔 Alimentação / Jantar</option>
+                            <option value="Serviços">💳 Serviços & Assinaturas</option>
+                            <option value="Transporte">🚗 Transporte</option>
+                            <option value="Lazer">🎉 Lazer & Outros</option>
+                        </select>
+                    </div>
+
+                    <!-- RECURRENT TOGGLE -->
+                    <div class="recurrent-toggle-box" onclick="toggleRecurrentCheckbox()">
+                        <div class="recurrent-text">
+                            <span class="recurrent-title">
+                                <i class="fa-solid fa-arrows-rotate" style="color: #818cf8;"></i> Conta Recorrente
+                            </span>
+                            <span class="recurrent-subtitle">
+                                Aparece em TODOS os meses subsequentes (Ex: Água, Luz). Se cadastrada com valor R$ 0,00, você define o valor a cada mês.
+                            </span>
+                        </div>
+                        <label class="switch" onclick="event.stopPropagation();">
+                            <input type="checkbox" id="recurrentCheckbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-plus"></i> Cadastrar Conta
+                    </button>
+                </form>
+            </div>
+
+            <!-- TODAS AS CONTAS CADASTRAIS -->
+            <div class="section-title-bar">
+                <h2 class="section-title">
+                    <i class="fa-solid fa-folder-open" style="color: var(--primary);"></i> Contas Cadastradas
+                </h2>
+                <span class="badge-count" id="totalRegisteredCount">0</span>
+            </div>
+
+            <div class="bills-list" id="registeredBillsList">
+                <!-- Dynamic insertion -->
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAVBAR -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="navHome" onclick="switchTab('home')">
+            <i class="fa-solid fa-house"></i>
+            <span>Início</span>
+        </button>
+        <button class="nav-item" id="navBills" onclick="switchTab('bills')">
+            <i class="fa-solid fa-receipt"></i>
+            <span>Contas</span>
+        </button>
+    </nav>
+
+    <!-- MODAL CONFIRMATION DIALOG -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">
+                <i class="fa-solid fa-question"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Confirmação</h3>
+            <p class="modal-desc" id="modalDesc">Tem certeza que deseja realizar esta ação?</p>
+            
+            <div class="modal-amount-input-box" id="modalAmountBox" style="display: none;">
+                <label class="form-label">Informe o valor para este mês:</label>
+                <input type="text" id="modalAmountInput" class="form-input" placeholder="R$ 0,00" oninput="formatCurrencyInput(this)">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-modal" id="modalConfirmBtn" onclick="executeModalAction()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC & FIRESTORE INTEGRATION -->
+    <script>
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAHZEjirkb5ililKMim-2CDJ3lvyt87FE",
+            authDomain: "fincontrol-app-bb06f.firebaseapp.com",
+            projectId: "fincontrol-app-bb06f",
+            storageBucket: "fincontrol-app-bb06f.firebasestorage.app",
+            messagingSenderId: "690750174567",
+            appId: "1:690750174567:web:1e45e728f7785279cc2bc2",
+            measurementId: "G-3PN1QCHM07"
+        };
+
+        let db = null;
+        let isFirebaseConnected = false;
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            isFirebaseConnected = true;
+        } catch (e) {
+            console.warn("Firebase running in offline mode or error:", e);
+        }
+
+        // --- APP STATE ---
+        const currentDate = new Date();
+        let selectedYear = currentDate.getFullYear();
+        let selectedMonth = currentDate.getMonth() + 1; // 1 to 12
+
+        let bills = []; // Local array state
+        let pendingModalAction = null;
+
+        const MONTH_NAMES = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set current month in form
+            const yyyy = currentDate.getFullYear();
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            document.getElementById('billMonthInput').value = `${yyyy}-${mm}`;
+
+            updateMonthHeader();
+            loadBills();
+
+            // Prevent double tap zoom globally
+            document.addEventListener('touchstart', function (event) {
+                if (event.touches.length > 1) {
+                    event.preventDefault();
+                }
+            }, { passive: false });
+        });
+
+        // --- CURRENCY MASK FUNCTION ---
+        function formatCurrencyInput(input) {
+            let value = input.value.replace(/\D/g, '');
+            if (!value) {
+                input.value = '';
+                return;
+            }
+            let numericValue = (parseInt(value, 10) / 100).toFixed(2);
+            input.value = formatBRL(numericValue);
+        }
+
+        function formatBRL(val) {
+            const num = parseFloat(val) || 0;
+            return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function parseCurrencyToNumber(str) {
+            if (!str) return 0;
+            if (typeof str === 'number') return str;
+            let clean = str.replace(/[^\d,]/g, '').replace(',', '.');
+            return parseFloat(clean) || 0;
+        }
+
+        // --- MONTH NAVIGATION ---
+        function changeMonth(delta) {
+            selectedMonth += delta;
+            if (selectedMonth > 12) {
+                selectedMonth = 1;
+                selectedYear++;
+            } else if (selectedMonth < 1) {
+                selectedMonth = 12;
+                selectedYear--;
+            }
+            updateMonthHeader();
+            renderHomeView();
+        }
+
+        function updateMonthHeader() {
+            document.getElementById('monthNameDisplay').textContent = MONTH_NAMES[selectedMonth - 1];
+            document.getElementById('yearDisplay').textContent = selectedYear;
+        }
+
+        function getSelectedMonthKey() {
+            const mm = String(selectedMonth).padStart(2, '0');
+            return `${selectedYear}-${mm}`;
+        }
+
+        // --- TAB SWITCHING ---
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            if (tab === 'home') {
+                document.getElementById('tabHome').classList.add('active');
+                document.getElementById('navHome').classList.add('active');
+                document.getElementById('monthPicker').style.display = 'flex';
+                renderHomeView();
+            } else {
+                document.getElementById('tabBills').classList.add('active');
+                document.getElementById('navBills').classList.add('active');
+                document.getElementById('monthPicker').style.display = 'none';
+                renderBillsManagementView();
+            }
+        }
+
+        function toggleRecurrentCheckbox() {
+            const cb = document.getElementById('recurrentCheckbox');
+            cb.checked = !cb.checked;
+        }
+
+        // --- DATA PERSISTENCE (LOCALSTORAGE & FIRESTORE) ---
+        function loadBills() {
+            const localData = localStorage.getItem('fincontrol_bills');
+            if (localData) {
+                bills = JSON.parse(localData);
+            } else {
+                // Initial demo data
+                bills = [
+                    {
+                        id: 'demo-1',
+                        title: 'Conta de Luz (CPFL)',
+                        baseAmount: 0,
+                        isRecurrent: true,
+                        startMonth: '2026-01',
+                        category: 'Moradia',
+                        paidMonths: {},
+                        monthlyAmounts: { '2026-07': 145.80 }
+                    },
+                    {
+                        id: 'demo-2',
+                        title: 'Internet Fibra',
+                        baseAmount: 119.90,
+                        isRecurrent: true,
+                        startMonth: '2026-01',
+                        category: 'Moradia',
+                        paidMonths: { '2026-07': true },
+                        monthlyAmounts: { '2026-07': 119.90 }
+                    },
+                    {
+                        id: 'demo-3',
+                        title: 'Jantar Especial',
+                        baseAmount: 180.00,
+                        isRecurrent: false,
+                        startMonth: '2026-07',
+                        category: 'Alimentação',
+                        isPaid: false
+                    }
+                ];
+                saveBillsLocally();
+            }
+
+            // Sync with Firestore if available
+            if (isFirebaseConnected && db) {
+                db.collection('bills').onSnapshot(snapshot => {
+                    if (snapshot && !snapshot.empty) {
+                        const firebaseBills = [];
+                        snapshot.forEach(doc => {
+                            firebaseBills.push({ id: doc.id, ...doc.data() });
+                        });
+                        bills = firebaseBills;
+                        saveBillsLocally(false); // don't re-trigger firestore write
+                        renderCurrentView();
+                    }
+                }, err => {
+                    console.log("Firestore sync active locally:", err);
+                });
+            }
+
+            renderCurrentView();
+        }
+
+        function saveBillsLocally(syncToFirestore = true) {
+            localStorage.setItem('fincontrol_bills', JSON.stringify(bills));
+            if (syncToFirestore && isFirebaseConnected && db) {
+                // Save each bill to firestore
+                bills.forEach(bill => {
+                    db.collection('bills').doc(bill.id).set(bill, { merge: true });
+                });
+            }
+        }
+
+        function syncSingleBillToFirestore(bill) {
+            if (isFirebaseConnected && db) {
+                db.collection('bills').doc(bill.id).set(bill, { merge: true });
+            }
+        }
+
+        function deleteBillFromFirestore(billId) {
+            if (isFirebaseConnected && db) {
+                db.collection('bills').doc(billId).delete().catch(e => console.error(e));
+            }
+        }
+
+        function renderCurrentView() {
+            if (document.getElementById('tabHome').classList.contains('active')) {
+                renderHomeView();
+            } else {
+                renderBillsManagementView();
+            }
+        }
+
+        // --- HANDLE ADD NEW BILL ---
+        function handleAddBill(e) {
+            e.preventDefault();
+            const title = document.getElementById('billTitleInput').value.trim();
+            const rawAmountStr = document.getElementById('billAmountInput').value;
+            const amount = parseCurrencyToNumber(rawAmountStr);
+            const startMonth = document.getElementById('billMonthInput').value; // YYYY-MM
+            const category = document.getElementById('billCategoryInput').value;
+            const isRecurrent = document.getElementById('recurrentCheckbox').checked;
+
+            if (!title || !startMonth) return;
+
+            const newBill = {
+                id: 'bill_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5),
+                title,
+                baseAmount: amount, // Recurrent bills can start with 0
+                isRecurrent,
+                startMonth,
+                category,
+                createdAt: new Date().toISOString()
+            };
+
+            if (isRecurrent) {
+                newBill.paidMonths = {};
+                newBill.monthlyAmounts = {};
+                if (amount > 0) {
+                    newBill.monthlyAmounts[startMonth] = amount;
+                }
+            } else {
+                newBill.isPaid = false;
+            }
+
+            bills.push(newBill);
+            saveBillsLocally(true);
+
+            // Reset form
+            document.getElementById('addBillForm').reset();
+            const yyyy = currentDate.getFullYear();
+            const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
+            document.getElementById('billMonthInput').value = `${yyyy}-${mm}`;
+
+            alert('Conta cadastrada com sucesso!');
+            switchTab('home');
+        }
+
+        // --- RENDER HOME VIEW (CURRENT MONTH) ---
+        function renderHomeView() {
+            const monthKey = getSelectedMonthKey();
+            const container = document.getElementById('homeBillsList');
+            container.innerHTML = '';
+
+            // Filter bills applicable for selected month
+            const activeBills = bills.filter(bill => {
+                if (bill.isRecurrent) {
+                    // Recurrent bill appears if selected month >= bill start month
+                    return monthKey >= bill.startMonth;
+                } else {
+                    // Single bill appears ONLY in its start month
+                    return bill.startMonth === monthKey;
+                }
+            });
+
+            document.getElementById('monthBillsCount').textContent = activeBills.length;
+
+            let totalPending = 0;
+            let totalPaid = 0;
+
+            if (activeBills.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-calendar-check empty-icon"></i>
+                        <div class="empty-title">Nenhuma conta para este mês</div>
+                        <div class="empty-sub">Cadastre novas contas na aba "Contas" abaixo.</div>
+                    </div>
+                `;
+                document.getElementById('totalPendingDisplay').textContent = 'R$ 0,00';
+                document.getElementById('totalPaidDisplay').textContent = 'R$ 0,00';
+                return;
+            }
+
+            activeBills.forEach(bill => {
+                let isPaid = false;
+                let currentAmount = 0;
+
+                if (bill.isRecurrent) {
+                    isPaid = !!(bill.paidMonths && bill.paidMonths[monthKey]);
+                    currentAmount = (bill.monthlyAmounts && bill.monthlyAmounts[monthKey] !== undefined)
+                        ? bill.monthlyAmounts[monthKey]
+                        : (bill.baseAmount || 0);
+                } else {
+                    isPaid = !!bill.isPaid;
+                    currentAmount = bill.baseAmount || 0;
+                }
+
+                if (isPaid) {
+                    totalPaid += currentAmount;
+                } else {
+                    totalPending += currentAmount;
+                }
+
+                // Create Card
+                const card = document.createElement('div');
+                card.className = `bill-card ${isPaid ? 'status-paid' : 'status-unpaid'}`;
+
+                const amountText = currentAmount > 0 
+                    ? formatBRL(currentAmount) 
+                    : '<span class="zero-amount">R$ 0,00 (A definir)</span>';
+
+                card.innerHTML = `
+                    <div class="bill-top-row">
+                        <div class="bill-info">
+                            <div class="bill-title">
+                                ${escapeHtml(bill.title)}
+                                ${bill.isRecurrent 
+                                    ? '<span class="recurrent-tag"><i class="fa-solid fa-arrows-rotate"></i> Recorrente</span>' 
+                                    : '<span class="single-tag">Mês Atual</span>'}
+                            </div>
+                            <div class="bill-category">
+                                <i class="fa-solid fa-tag"></i> ${escapeHtml(bill.category || 'Geral')}
+                            </div>
+                        </div>
+                        <div class="bill-amount-box">
+                            <div class="bill-amount">${amountText}</div>
+                            <span class="status-pill ${isPaid ? 'paid' : 'unpaid'}">
+                                ${isPaid ? '<i class="fa-solid fa-check"></i> Pago' : '<i class="fa-solid fa-clock"></i> A Pagar'}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="bill-actions">
+                        ${!isPaid ? `
+                            <button class="btn-action btn-pay" onclick="openPayModal('${bill.id}', '${monthKey}')">
+                                <i class="fa-solid fa-check"></i> Pagar
+                            </button>
+                        ` : `
+                            <button class="btn-action btn-undo" onclick="openUndoModal('${bill.id}', '${monthKey}')">
+                                <i class="fa-solid fa-rotate-left"></i> Desfazer
+                            </button>
+                        `}
+                        <button class="btn-action btn-edit-val" title="Ajustar Valor" onclick="openEditValueModal('${bill.id}', '${monthKey}')">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="btn-action btn-delete" title="Excluir" onclick="openDeleteModal('${bill.id}', '${monthKey}')">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            document.getElementById('totalPendingDisplay').textContent = formatBRL(totalPending);
+            document.getElementById('totalPaidDisplay').textContent = formatBRL(totalPaid);
+        }
+
+        // --- RENDER BILLS MANAGEMENT VIEW (ABA CONTAS) ---
+        function renderBillsManagementView() {
+            const container = document.getElementById('registeredBillsList');
+            container.innerHTML = '';
+
+            document.getElementById('totalRegisteredCount').textContent = bills.length;
+
+            if (bills.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-folder-open empty-icon"></i>
+                        <div class="empty-title">Nenhuma conta cadastrada</div>
+                        <div class="empty-sub">Preencha o formulário acima para cadastrar.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            bills.forEach(bill => {
+                const card = document.createElement('div');
+                card.className = 'bill-card';
+
+                const amountText = bill.baseAmount > 0 
+                    ? formatBRL(bill.baseAmount) 
+                    : '<span class="zero-amount">R$ 0,00 (Variável)</span>';
+
+                card.innerHTML = `
+                    <div class="bill-top-row">
+                        <div class="bill-info">
+                            <div class="bill-title">
+                                ${escapeHtml(bill.title)}
+                                ${bill.isRecurrent 
+                                    ? '<span class="recurrent-tag"><i class="fa-solid fa-arrows-rotate"></i> Recorrente</span>' 
+                                    : '<span class="single-tag">Mês Único</span>'}
+                            </div>
+                            <div class="bill-category">
+                                <i class="fa-solid fa-calendar-day"></i> Início: ${bill.startMonth} | Categoria: ${escapeHtml(bill.category || 'Geral')}
+                            </div>
+                        </div>
+                        <div class="bill-amount-box">
+                            <div class="bill-amount">${amountText}</div>
+                        </div>
+                    </div>
+
+                    <div class="bill-actions">
+                        <button class="btn-action btn-delete" style="flex:1;" onclick="openDeleteModal('${bill.id}', null)">
+                            <i class="fa-solid fa-trash-can"></i> Excluir Conta
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // --- MODALS & ACTIONS ---
+        function openPayModal(billId, monthKey) {
+            const bill = bills.find(b => b.id === billId);
+            if (!bill) return;
+
+            const modalOverlay = document.getElementById('modalOverlay');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const amountBox = document.getElementById('modalAmountBox');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            icon.className = 'modal-icon pay';
+            icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            title.textContent = 'Confirmar Pagamento';
+
+            let currentVal = bill.isRecurrent 
+                ? (bill.monthlyAmounts && bill.monthlyAmounts[monthKey] !== undefined ? bill.monthlyAmounts[monthKey] : bill.baseAmount)
+                : bill.baseAmount;
+
+            desc.textContent = `Deseja marcar a conta "${bill.title}" como PAGA em ${MONTH_NAMES[parseInt(monthKey.split('-')[1])-1]} de ${monthKey.split('-')[0]}?`;
+            
+            amountBox.style.display = 'block';
+            document.getElementById('modalAmountInput').value = formatBRL(currentVal);
+
+            confirmBtn.className = 'btn-modal btn-modal-confirm-pay';
+            confirmBtn.textContent = 'Marcar como Pago';
+
+            pendingModalAction = () => {
+                const updatedVal = parseCurrencyToNumber(document.getElementById('modalAmountInput').value);
+                if (bill.isRecurrent) {
+                    if (!bill.paidMonths) bill.paidMonths = {};
+                    if (!bill.monthlyAmounts) bill.monthlyAmounts = {};
+                    bill.paidMonths[monthKey] = true;
+                    bill.monthlyAmounts[monthKey] = updatedVal;
+                } else {
+                    bill.isPaid = true;
+                    bill.baseAmount = updatedVal;
+                }
+                saveBillsLocally(true);
+                renderHomeView();
+                closeModal();
+            };
+
+            modalOverlay.classList.add('active');
+        }
+
+        function openUndoModal(billId, monthKey) {
+            const bill = bills.find(b => b.id === billId);
+            if (!bill) return;
+
+            const modalOverlay = document.getElementById('modalOverlay');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const amountBox = document.getElementById('modalAmountBox');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            icon.className = 'modal-icon undo';
+            icon.innerHTML = '<i class="fa-solid fa-rotate-left"></i>';
+            title.textContent = 'Desfazer Pagamento';
+            desc.textContent = `Deseja retornar a conta "${bill.title}" para o status A PAGAR neste mês?`;
+
+            amountBox.style.display = 'none';
+
+            confirmBtn.className = 'btn-modal btn-modal-confirm-undo';
+            confirmBtn.textContent = 'Desfazer Pagamento';
+
+            pendingModalAction = () => {
+                if (bill.isRecurrent) {
+                    if (bill.paidMonths) bill.paidMonths[monthKey] = false;
+                } else {
+                    bill.isPaid = false;
+                }
+                saveBillsLocally(true);
+                renderHomeView();
+                closeModal();
+            };
+
+            modalOverlay.classList.add('active');
+        }
+
+        function openEditValueModal(billId, monthKey) {
+            const bill = bills.find(b => b.id === billId);
+            if (!bill) return;
+
+            const modalOverlay = document.getElementById('modalOverlay');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const amountBox = document.getElementById('modalAmountBox');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            icon.className = 'modal-icon undo';
+            icon.innerHTML = '<i class="fa-solid fa-pen"></i>';
+            title.textContent = 'Ajustar Valor do Mês';
+
+            let currentVal = bill.isRecurrent 
+                ? (bill.monthlyAmounts && bill.monthlyAmounts[monthKey] !== undefined ? bill.monthlyAmounts[monthKey] : bill.baseAmount)
+                : bill.baseAmount;
+
+            desc.textContent = `Informe o valor exato da conta "${bill.title}" para ${MONTH_NAMES[parseInt(monthKey.split('-')[1])-1]}:`;
+
+            amountBox.style.display = 'block';
+            document.getElementById('modalAmountInput').value = formatBRL(currentVal);
+
+            confirmBtn.className = 'btn-modal btn-modal-confirm-pay';
+            confirmBtn.textContent = 'Salvar Valor';
+
+            pendingModalAction = () => {
+                const updatedVal = parseCurrencyToNumber(document.getElementById('modalAmountInput').value);
+                if (bill.isRecurrent) {
+                    if (!bill.monthlyAmounts) bill.monthlyAmounts = {};
+                    bill.monthlyAmounts[monthKey] = updatedVal;
+                } else {
+                    bill.baseAmount = updatedVal;
+                }
+                saveBillsLocally(true);
+                renderHomeView();
+                closeModal();
+            };
+
+            modalOverlay.classList.add('active');
+        }
+
+        function openDeleteModal(billId, monthKey) {
+            const bill = bills.find(b => b.id === billId);
+            if (!bill) return;
+
+            const modalOverlay = document.getElementById('modalOverlay');
+            const icon = document.getElementById('modalIcon');
+            const title = document.getElementById('modalTitle');
+            const desc = document.getElementById('modalDesc');
+            const amountBox = document.getElementById('modalAmountBox');
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+
+            icon.className = 'modal-icon delete';
+            icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+            title.textContent = 'Excluir Conta';
+
+            amountBox.style.display = 'none';
+
+            if (bill.isRecurrent) {
+                desc.textContent = `ATENÇÃO: "${bill.title}" é uma conta RECORRENTE! Ao excluir, ela será removida de TODOS os meses e anos futuros. Deseja continuar?`;
+            } else {
+                desc.textContent = `Tem certeza que deseja excluir permanentemente a conta "${bill.title}"?`;
+            }
+
+            confirmBtn.className = 'btn-modal btn-modal-confirm-delete';
+            confirmBtn.textContent = 'Excluir Permanentemente';
+
+            pendingModalAction = () => {
+                bills = bills.filter(b => b.id !== billId);
+                deleteBillFromFirestore(billId);
+                saveBillsLocally(true);
+                renderCurrentView();
+                closeModal();
+            };
+
+            modalOverlay.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+            pendingModalAction = null;
+        }
+
+        function executeModalAction() {
+            if (pendingModalAction) {
+                pendingModalAction();
+            }
+        }
+
+        // UTILS
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
