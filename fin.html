@@ -7,17 +7,17 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="FinControl">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f1729">
+<meta name="theme-color" content="#4C6EF5">
 <title>FinControl</title>
-<link rel="manifest" href='data:application/manifest+json,{"name":"FinControl","short_name":"FinControl","start_url":".","display":"standalone","background_color":"%230f1729","theme_color":"%230f1729"}'>
+<link rel="manifest" href='data:application/manifest+json,{"name":"FinControl","short_name":"FinControl","start_url":".","display":"standalone","background_color":"%234C6EF5","theme_color":"%234C6EF5"}'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0f1729;
-    --navy-soft:#1b2740;
-    --bg:#f2f4f8;
+    --navy:#4C6EF5;
+    --navy-soft:#7B93F8;
+    --bg:#f4f6fb;
     --card:#ffffff;
     --red:#e5484d;
     --red-soft:#fce8e8;
@@ -448,7 +448,7 @@
     </div>
     <div class="field">
       <label>Notificações de vencimento</label>
-      <p style="color:var(--muted); font-size:13.5px; margin:0 0 12px;">Avisos automáticos 3 dias e 1 dia antes do vencimento de cada conta.</p>
+      <p style="color:var(--muted); font-size:13.5px; margin:0 0 12px; line-height:1.5;">Avisos do tipo "sua conta vence em 1 dia", enviados 3 dias e 1 dia antes do vencimento. Funcionam mesmo com o app minimizado/em segundo plano, mas exigem que o navegador continue aberto no aparelho — com o app totalmente fechado, isso exigiria um servidor de notificações (ex: Firebase), que ainda não está configurado.</p>
       <button class="btn-primary" id="btnEnableNotif">Ativar notificações</button>
       <div id="notifStatus" style="text-align:center; font-size:13px; color:var(--muted); margin-top:10px;"></div>
     </div>
@@ -554,6 +554,37 @@ function ensureMonthGenerated(monthKey){
       });
     }
   });
+}
+
+/* ==========================================================================
+   SERVICE WORKER — necessário para notificações mais confiáveis
+   -------------------------------------------------------------------------
+   Notificações via ServiceWorkerRegistration.showNotification() continuam
+   aparecendo mesmo com o app minimizado/em segundo plano (enquanto o
+   navegador estiver aberto). Para receber avisos com o app 100% fechado
+   (sem o navegador aberto), seria necessário um servidor de push
+   (ex: Firebase Cloud Messaging), o que exige o Firebase configurado acima.
+   ========================================================================== */
+let swRegistration = null;
+async function registerServiceWorker(){
+  if(!('serviceWorker' in navigator)) return null;
+  try{
+    const swCode = `
+      self.addEventListener('install', () => self.skipWaiting());
+      self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+      self.addEventListener('notificationclick', (event) => {
+        event.notification.close();
+        event.waitUntil(self.clients.matchAll({ type:'window' }).then(list=>{
+          if(list.length>0) return list[0].focus();
+          return self.clients.openWindow('./');
+        }));
+      });
+    `;
+    const blob = new Blob([swCode], { type:'application/javascript' });
+    const swUrl = URL.createObjectURL(blob);
+    swRegistration = await navigator.serviceWorker.register(swUrl);
+    return swRegistration;
+  }catch(e){ console.error('Erro ao registrar service worker:', e); return null; }
 }
 
 /* ==========================================================================
@@ -1007,25 +1038,39 @@ document.getElementById('btnEnableNotif').addEventListener('click', async ()=>{
   try{
     const perm = await Notification.requestPermission();
     refreshNotifStatus();
-    if(perm === 'granted'){ checkDueNotifications(); showToast('Notificações ativadas'); }
+    if(perm === 'granted'){
+      if(!swRegistration) await registerServiceWorker();
+      checkDueNotifications();
+      showToast('Notificações ativadas');
+    }
   }catch(e){ console.error(e); }
 });
 
-function checkDueNotifications(){
+async function checkDueNotifications(){
   if(!('Notification' in window) || Notification.permission !== 'granted') return;
   const today = todayISO();
+  const toNotify = [];
   Object.values(state.bills).flat().forEach(bill=>{
     if(bill.paid) return;
     const due = new Date(bill.due + 'T00:00:00');
     const diffDays = Math.round((due - today) / 86400000);
     if(diffDays === 3 || diffDays === 1){
-      try{
-        new Notification('FinControl', {
-          body: `${bill.name} vence em ${diffDays} dia${diffDays>1?'s':''} — ${formatCentsToBRL(bill.value)}`
-        });
-      }catch(e){ console.error(e); }
+      toNotify.push({
+        title: 'FinControl',
+        body: `Sua conta "${bill.name}" vence em ${diffDays} dia${diffDays>1?'s':''} (${formatCentsToBRL(bill.value)})`,
+        tag: 'fincontrol-due-' + bill.id
+      });
     }
   });
+  for(const n of toNotify){
+    try{
+      if(swRegistration){
+        await swRegistration.showNotification(n.title, { body:n.body, tag:n.tag });
+      }else{
+        new Notification(n.title, { body:n.body, tag:n.tag });
+      }
+    }catch(e){ console.error(e); }
+  }
 }
 
 /* ==========================================================================
@@ -1045,7 +1090,13 @@ async function init(){
   renderMonth();
   renderRecurring();
   if('Notification' in window && Notification.permission === 'granted'){
+    await registerServiceWorker();
     checkDueNotifications();
+    // Reverifica periodicamente enquanto o app estiver aberto (em 1º ou 2º plano)
+    setInterval(checkDueNotifications, 60 * 60 * 1000);
+    document.addEventListener('visibilitychange', ()=>{
+      if(document.visibilityState === 'visible') checkDueNotifications();
+    });
   }
 }
 init();
