@@ -145,18 +145,18 @@
     border-top:1px solid var(--border);
   }
   .tab-btn{
-    flex:none; width:46px; height:46px; border:none; background:transparent; outline:none;
+    flex:none; width:46px; height:46px; padding:0; margin:0; border:none; background:transparent; outline:none;
     color:var(--text-muted); display:flex; align-items:center; justify-content:center; cursor:pointer; transition:color .2s ease;
+    font:inherit;
   }
   .tab-btn:focus-visible{outline:none;}
-  .tab-btn svg{width:24px;height:24px;}
+  .tab-btn svg{width:24px;height:24px; flex:none;}
   .tab-btn.active{color:var(--accent-2);}
   .tab-btn.fab-btn{
-    width:50px; height:50px; border-radius:50%; color:#fff;
+    border-radius:50%; color:#fff;
     background:linear-gradient(135deg, var(--accent-1), var(--accent-2));
     box-shadow:0 8px 16px -6px var(--accent-2);
   }
-  .tab-btn.fab-btn svg{width:25px;height:25px;}
   .tab-btn.fab-btn:active{transform:scale(.92);}
   .tab-btn.fab-btn.active{color:#fff;}
 
