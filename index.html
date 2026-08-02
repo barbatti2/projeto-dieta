@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>DietaPro — Diário Alimentar</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%234A5D4E'/%3E%3Ctext x='12' y='17' font-size='13' text-anchor='middle' fill='%23F7F5F0' font-family='serif'%3EDP%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-profile="gabriel">
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-card" id="loginCard">
+    <div class="login-mark"><i data-lucide="leaf"></i></div>
+    <h1>DietaPro</h1>
+    <p>Acesso exclusivo · Gabriel &amp; Raissa</p>
+    <div class="login-field">
+      <i data-lucide="lock"></i>
+      <input type="password" id="loginPasswordInput" placeholder="Senha de acesso" autocomplete="current-password">
+      <button class="login-eye" id="toggleEyeBtn" type="button"><i data-lucide="eye"></i></button>
+    </div>
+    <button class="login-submit" id="loginSubmitBtn" type="button">Entrar <i data-lucide="arrow-right"></i></button>
+    <p class="login-error hidden" id="loginError">Senha incorreta. Tente novamente.</p>
+  </div>
+</div>
+
+<div id="loadingScreen" class="loading-screen" style="display:none;">
+  <div class="loading-mark"><i data-lucide="leaf"></i></div>
+  <p>Carregando seu diário...</p>
+</div>
+
+<div id="app" style="display:none;">
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-mini">
+        <div class="brand-mark"><i data-lucide="leaf"></i></div>
+        <span class="brand-name">DietaPro</span>
+      </div>
+      <div class="header-actions">
+        <div class="profile-slider" id="profileSlider">
+          <div class="ps-pill" id="psPill"></div>
+          <span class="ps-label active-label" data-target="gabriel">Gabriel</span>
+          <span class="ps-label" data-target="raissa">Raissa</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="day-nav-row" id="dayNavRow"></div>
+
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="inicio" title="Início"><i data-lucide="home"></i></button>
+    <button class="tab-btn" data-tab="historico" title="Histórico"><i data-lucide="history"></i></button>
+    <button class="tab-btn fab-btn" data-tab="adicionar" title="Adicionar alimento"><i data-lucide="plus"></i></button>
+    <button class="tab-btn" data-tab="cardapio" title="Cardápio"><i data-lucide="book-open"></i></button>
+    <button class="tab-btn" data-tab="pesos" title="Perfil"><i data-lucide="user-round"></i></button>
+  </nav>
+
+  <main id="content"></main>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="modalOverlay" class="modal-overlay hidden"><div id="modalBox" class="modal-box"></div></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
