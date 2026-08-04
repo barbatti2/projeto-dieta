@@ -141,7 +141,7 @@ export function openEditMealModal(mealId){
     <div class="modal-field">
       <label>Refeição</label>
       <div class="meal-type-grid" id="editMealTypeGrid">
-        ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===meal.mealType?' active':''}" data-meal="${mt}"><i data-lucide="${MEAL_ICONS[mt]}"></i>${MEAL_LABELS[mt]}</button>`).join('')}
+        ${Object.keys(MEAL_LABELS).map(mt=>`<button class="meal-type-btn${mt===meal.mealType?' active':''}" data-meal="${mt}"><span class="mtb-circle"><i data-lucide="${MEAL_ICONS[mt]}"></i></span><span class="mtb-label">${MEAL_LABELS[mt]}</span></button>`).join('')}
       </div>
     </div>
     <div class="modal-field">
