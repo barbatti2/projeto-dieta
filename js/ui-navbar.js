@@ -7,14 +7,15 @@ const DEPTH = 30;     // profundidade do afundamento
 const LEAD_IN = 16;   // trecho reto antes da curva começar a afundar
 
 let currentX = 0;
-let targetX = 0;
+let targetX = 0;    // posição real do item ativo (sem limite) — usada pela bolha
+let notchTargetX = 0; // posição do recorte na barra (com limite, pra não cortar os cantos)
 let w = 0, h = 0;
 let rafStarted = false;
 
-function clampX(){
+function clampNotch(x){
   const minX = R + NOTCH_R + LEAD_IN;
   const maxX = w - R - NOTCH_R - LEAD_IN;
-  return Math.min(Math.max(targetX, minX), maxX);
+  return Math.min(Math.max(x, minX), maxX);
 }
 
 function buildPath(notchX){
@@ -55,14 +56,14 @@ function moveTo(el){
   const navRect = wrap.getBoundingClientRect();
   const itemRect = el.getBoundingClientRect();
   targetX = itemRect.left - navRect.left + itemRect.width/2;
-  const centerX = clampX();
-  bubble.style.left = (centerX - bubble.offsetWidth/2) + 'px';
+  notchTargetX = clampNotch(targetX);
+  bubble.style.left = (targetX - bubble.offsetWidth/2) + 'px';
 }
 
 function animate(){
   const path = document.getElementById('navPath');
   if(path){
-    currentX += (clampX() - currentX) * 0.18;
+    currentX += (notchTargetX - currentX) * 0.18;
     path.setAttribute('d', buildPath(currentX));
   }
   requestAnimationFrame(animate);
@@ -77,7 +78,7 @@ export function updateNavBar(activeTab){
 export function initNavBar(activeTab){
   resize();
   updateNavBar(activeTab);
-  currentX = targetX; // sem animar na primeira carga
+  currentX = notchTargetX; // sem animar na primeira carga
   if(!rafStarted){ rafStarted = true; requestAnimationFrame(animate); }
   window.addEventListener('resize', ()=>{
     resize();
