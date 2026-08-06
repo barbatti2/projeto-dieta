@@ -2,9 +2,9 @@
    seguindo a cor do perfil ativo (var(--accent)). */
 
 const R = 24;         // raio dos cantos da barra
-const NOTCH_R = 30;   // raio do "buraco" ao redor da bolha
+const NOTCH_R = 26;   // raio do "buraco" ao redor da bolha
 const DEPTH = 30;     // profundidade do afundamento
-const LEAD_IN = 16;   // trecho reto antes da curva começar a afundar
+const LEAD_IN = 12;   // trecho reto antes da curva começar a afundar
 
 let currentX = 0;
 let targetX = 0;    // posição real do item ativo (sem limite) — usada pela bolha
