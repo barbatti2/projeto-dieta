@@ -58,6 +58,19 @@ function moveTo(el){
   targetX = itemRect.left - navRect.left + itemRect.width/2;
   notchTargetX = clampNotch(targetX);
   bubble.style.left = (targetX - bubble.offsetWidth/2) + 'px';
+
+  // alinha o ícone com precisão no centro real da bolha, medindo a posição
+  // renderizada de verdade (funciona igual em qualquer aparelho/fonte).
+  document.querySelectorAll('.nav-item .icon').forEach(ic=>{ ic.style.transform = ''; });
+  const icon = el.querySelector('.icon');
+  if(icon){
+    const bubbleRect = bubble.getBoundingClientRect();
+    const iconRect = icon.getBoundingClientRect();
+    const bubbleCenterY = bubbleRect.top + bubbleRect.height/2;
+    const iconCenterY = iconRect.top + iconRect.height/2;
+    const deltaY = bubbleCenterY - iconCenterY;
+    icon.style.transform = `translateY(${deltaY}px) scale(1.05)`;
+  }
 }
 
 function animate(){
