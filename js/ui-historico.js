@@ -2,7 +2,7 @@ import { CATEGORY_ICONS } from './food-db.js';
 import { MEAL_LABELS, histExpandedDays, store } from './state.js';
 import { heroHTML } from './ui-core.js';
 import { formatQtyLabel } from './ui-inicio.js';
-import { addDays, icons } from './utils.js';
+import { addDays, fmtDateShort, icons, todayStr } from './utils.js';
 
 const histMealExpanded = {}; // "data|mealType" -> true/false (só nesta sessão)
 
@@ -10,6 +10,7 @@ const histMealExpanded = {}; // "data|mealType" -> true/false (só nesta sessão
 export function renderHistorico(){
   return `
     ${heroHTML('historico')}
+    ${renderWeekSummaryHTML()}
     <section class="card">
       <div class="filter-segment" id="histFilter">
         <button class="seg-btn${store.historicoFilter==='dia'?' active':''}" data-filter="dia">Dia</button>
@@ -20,6 +21,68 @@ export function renderHistorico(){
       <p class="empty-hint" style="padding:0 0 10px 0;">Toque em um alimento para editar a refeição ou a data. Use a lixeira para excluir.</p>
       <div id="histMonthNav">${store.historicoFilter==='mes' ? renderMonthNavHTML() : ''}</div>
       <div id="histContent">${renderHistContent()}</div>
+    </section>
+  `;
+}
+function renderWeekSummaryHTML(){
+  const today = todayStr();
+  const start = addDays(today, -6);
+  const meals = store.state.meals.filter(m=>m.date>=start && m.date<=today);
+  const goalKcal = store.state.goals.calorias;
+  const goalProtein = store.state.goals.proteina;
+  const goalCarbs = store.state.goals.carboidratos;
+
+  const byDay = {};
+  meals.forEach(m=>{
+    if(!byDay[m.date]) byDay[m.date] = {kcal:0, protein:0, carbs:0, fat:0};
+    byDay[m.date].kcal += m.kcal; byDay[m.date].protein += m.protein; byDay[m.date].carbs += m.carbs; byDay[m.date].fat += m.fat;
+  });
+  const daysLogged = Object.keys(byDay);
+
+  if(daysLogged.length===0){
+    return `<section class="card">
+      <h2><i data-lucide="sparkles"></i>Resumo dos últimos 7 dias</h2>
+      <p class="empty-hint">Sem registros nos últimos 7 dias ainda.</p>
+    </section>`;
+  }
+
+  const n = daysLogged.length;
+  const totals = daysLogged.reduce((a,d)=>({kcal:a.kcal+byDay[d].kcal, protein:a.protein+byDay[d].protein, carbs:a.carbs+byDay[d].carbs}), {kcal:0,protein:0,carbs:0});
+  const avgKcal = totals.kcal/n;
+  const avgProtein = totals.protein/n;
+  const avgCarbs = totals.carbs/n;
+  const daysWithin = daysLogged.filter(d=>byDay[d].kcal<=goalKcal).length;
+  const daysOver = n - daysWithin;
+
+  let bestDay = daysLogged[0], worstDay = daysLogged[0];
+  daysLogged.forEach(d=>{
+    if(Math.abs(byDay[d].kcal-goalKcal) < Math.abs(byDay[bestDay].kcal-goalKcal)) bestDay = d;
+    if(byDay[d].kcal-goalKcal > byDay[worstDay].kcal-goalKcal) worstDay = d;
+  });
+
+  const insights = [];
+  insights.push(daysOver===0
+    ? `Você ficou dentro da meta de calorias em todos os ${n} dias registrados — ótimo controle.`
+    : `Você ficou dentro da meta em ${daysWithin} de ${n} dias registrados, e acima em ${daysOver}.`);
+  const proteinPct = goalProtein>0 ? (avgProtein/goalProtein*100) : 0;
+  if(proteinPct < 85) insights.push(`A média de proteína ficou ${Math.round(100-proteinPct)}% abaixo da meta — vale reforçar essa parte.`);
+  else if(proteinPct >= 100) insights.push(`Meta de proteína batida em média — consistente ao longo da semana.`);
+  if(byDay[worstDay].kcal > goalKcal){
+    insights.push(`O dia com mais calorias acima da meta foi ${fmtDateShort(worstDay)} (${Math.round(byDay[worstDay].kcal)} kcal).`);
+  }
+
+  return `
+    <section class="card">
+      <h2><i data-lucide="sparkles"></i>Resumo dos últimos 7 dias</h2>
+      <div class="goal-summary">
+        <div class="goal-chip"><div class="gc-val">${Math.round(avgKcal)}</div><div class="gc-label">Média kcal/dia</div></div>
+        <div class="goal-chip"><div class="gc-val">${Math.round(avgProtein)}g</div><div class="gc-label">Média proteína</div></div>
+        <div class="goal-chip"><div class="gc-val">${Math.round(avgCarbs)}g</div><div class="gc-label">Média carbo</div></div>
+        <div class="goal-chip"><div class="gc-val">${daysWithin}/${n}</div><div class="gc-label">Dias na meta</div></div>
+      </div>
+      <div class="week-insights">
+        ${insights.map(t=>`<p class="week-insight-line"><i data-lucide="circle-dot"></i>${t}</p>`).join('')}
+      </div>
     </section>
   `;
 }
