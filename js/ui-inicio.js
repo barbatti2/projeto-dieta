@@ -1,11 +1,13 @@
 import { CATEGORY_ICONS } from './food-db.js';
-import { MEAL_LABELS, store } from './state.js';
-import { clamp, todayStr } from './utils.js';
+import { MEAL_LABELS, saveState, store } from './state.js';
+import { render } from './ui-core.js';
+import { clamp, showToast, todayStr } from './utils.js';
 
 /* Aba Início: resumo do dia (calorias e macros) e lista de refeições. */
 export function renderInicio(){
   const today = store.homeViewDate;
   const isToday = today === todayStr();
+  const isIncomplete = !!store.state.incompleteDays[today];
   const meals = store.state.meals.filter(m=>m.date===today);
   const sum = meals.reduce((a,m)=>({kcal:a.kcal+m.kcal, protein:a.protein+m.protein, carbs:a.carbs+m.carbs, fat:a.fat+m.fat}), {kcal:0,protein:0,carbs:0,fat:0});
   const goals = store.state.goals;
@@ -63,6 +65,9 @@ export function renderInicio(){
         ? `<div class="today-alert"><i data-lucide="alert-triangle"></i>${overAmount} kcal acima da meta</div>`
         : ''}
       <p class="today-caption">${meals.length} ${meals.length===1?'item registrado':'itens registrados'} ${isToday ? 'hoje' : 'nesse dia'} · ${remaining} kcal restantes</p>
+      ${isIncomplete
+        ? `<button class="incomplete-badge" id="toggleIncompleteBtn" data-date="${today}"><i data-lucide="alert-triangle"></i>Registro incompleto — não entra na média<i data-lucide="x" class="ib-x"></i></button>`
+        : `<button class="incomplete-link" id="toggleIncompleteBtn" data-date="${today}">Não consegui registrar tudo nesse dia</button>`}
     </section>
 
     <section class="card">
@@ -88,6 +93,17 @@ export function renderInicio(){
   `;
 }
 export function wireInicio(){
+  const incompleteBtn = document.getElementById('toggleIncompleteBtn');
+  if(incompleteBtn){
+    incompleteBtn.addEventListener('click', async ()=>{
+      const date = incompleteBtn.dataset.date;
+      if(store.state.incompleteDays[date]) delete store.state.incompleteDays[date];
+      else store.state.incompleteDays[date] = true;
+      await saveState();
+      showToast(store.state.incompleteDays[date] ? 'Dia marcado como registro incompleto.' : 'Marcação removida.');
+      render();
+    });
+  }
   const btn = document.getElementById('mealsToggleBtn');
   if(!btn) return;
   btn.addEventListener('click', ()=>{

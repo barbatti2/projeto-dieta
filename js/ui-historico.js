@@ -1,8 +1,8 @@
 import { CATEGORY_ICONS } from './food-db.js';
-import { MEAL_LABELS, histExpandedDays, store } from './state.js';
+import { MEAL_LABELS, histExpandedDays, saveState, store } from './state.js';
 import { heroHTML } from './ui-core.js';
 import { formatQtyLabel } from './ui-inicio.js';
-import { addDays, fmtDateShort, icons, todayStr } from './utils.js';
+import { addDays, fmtDateShort, icons, showToast, todayStr } from './utils.js';
 
 const histMealExpanded = {}; // "data|mealType" -> true/false (só nesta sessão)
 
@@ -37,7 +37,8 @@ function renderWeekSummaryHTML(){
     if(!byDay[m.date]) byDay[m.date] = {kcal:0, protein:0, carbs:0, fat:0};
     byDay[m.date].kcal += m.kcal; byDay[m.date].protein += m.protein; byDay[m.date].carbs += m.carbs; byDay[m.date].fat += m.fat;
   });
-  const daysLogged = Object.keys(byDay);
+  const incompleteCount = Object.keys(byDay).filter(d=>store.state.incompleteDays[d]).length;
+  const daysLogged = Object.keys(byDay).filter(d=>!store.state.incompleteDays[d]);
 
   if(daysLogged.length===0){
     return `<section class="card">
@@ -61,14 +62,37 @@ function renderWeekSummaryHTML(){
   });
 
   const insights = [];
-  insights.push(daysOver===0
-    ? `Você ficou dentro da meta de calorias em todos os ${n} dias registrados — ótimo controle.`
-    : `Você ficou dentro da meta em ${daysWithin} de ${n} dias registrados, e acima em ${daysOver}.`);
+  insights.push({
+    icon: daysOver===0 ? 'check-circle-2' : 'alert-triangle',
+    text: daysOver===0
+      ? `Dentro da meta de calorias em todos os ${n} dias considerados — ótimo controle.`
+      : `Dentro da meta em ${daysWithin} de ${n} dias considerados, acima em ${daysOver}.`
+  });
   const proteinPct = goalProtein>0 ? (avgProtein/goalProtein*100) : 0;
-  if(proteinPct < 85) insights.push(`A média de proteína ficou ${Math.round(100-proteinPct)}% abaixo da meta — vale reforçar essa parte.`);
-  else if(proteinPct >= 100) insights.push(`Meta de proteína batida em média — consistente ao longo da semana.`);
-  if(byDay[worstDay].kcal > goalKcal){
-    insights.push(`O dia com mais calorias acima da meta foi ${fmtDateShort(worstDay)} (${Math.round(byDay[worstDay].kcal)} kcal).`);
+  if(proteinPct < 85) insights.push({icon:'trending-down', text:`Proteína ${Math.round(100-proteinPct)}% abaixo da meta em média — vale reforçar.`});
+  else if(proteinPct >= 100) insights.push({icon:'trending-up', text:`Meta de proteína batida em média — consistente na semana.`});
+  if(byDay[worstDay] && byDay[worstDay].kcal > goalKcal){
+    insights.push({icon:'flame', text:`Pico em ${fmtDateShort(worstDay)}: ${Math.round(byDay[worstDay].kcal)} kcal.`});
+  }
+  if(incompleteCount>0){
+    insights.push({icon:'circle-slash', text:`${incompleteCount} dia${incompleteCount===1?'':'s'} com registro incompleto não ${incompleteCount===1?'foi incluído':'foram incluídos'} na média.`});
+  }
+
+  // mini-gráfico dos 7 dias (sem registro ou incompletos aparecem em cinza)
+  const maxKcal = Math.max(goalKcal, ...daysLogged.map(d=>byDay[d].kcal), 1);
+  let barsHTML = '';
+  for(let i=6;i>=0;i--){
+    const d = addDays(today, -i);
+    const incomplete = !!store.state.incompleteDays[d];
+    const has = !!byDay[d] && !incomplete;
+    const kcal = has ? byDay[d].kcal : 0;
+    const pct = Math.max(4, Math.min(100, (kcal/maxKcal)*100));
+    const over = has && kcal > goalKcal;
+    const wd = new Intl.DateTimeFormat('pt-BR', {weekday:'narrow', timeZone:'UTC'}).format(new Date(d+'T12:00:00Z'));
+    barsHTML += `<div class="week-bar-col">
+      <div class="week-bar-track"><div class="week-bar-fill${incomplete?' incomplete':!has?' empty':over?' over':''}" style="height:${has?pct:incomplete?60:8}%;"></div></div>
+      <span class="week-bar-label${d===today?' is-today':''}">${wd}</span>
+    </div>`;
   }
 
   return `
@@ -80,8 +104,9 @@ function renderWeekSummaryHTML(){
         <div class="goal-chip"><div class="gc-val">${Math.round(avgCarbs)}g</div><div class="gc-label">Média carbo</div></div>
         <div class="goal-chip"><div class="gc-val">${daysWithin}/${n}</div><div class="gc-label">Dias na meta</div></div>
       </div>
+      <div class="week-chart">${barsHTML}</div>
       <div class="week-insights">
-        ${insights.map(t=>`<p class="week-insight-line"><i data-lucide="circle-dot"></i>${t}</p>`).join('')}
+        ${insights.map(i=>`<p class="week-insight-line"><i data-lucide="${i.icon}"></i>${i.text}</p>`).join('')}
       </div>
     </section>
   `;
@@ -157,6 +182,7 @@ export function renderHistContent(){
     const today2 = store.homeViewDate;
     const dayWord = dt===today2 ? 'Hoje' : (dt===addDays(today2,-1) ? 'Ontem' : new Intl.DateTimeFormat('pt-BR',{weekday:'long', timeZone:'UTC'}).format(d).replace(/^\w/,c=>c.toUpperCase()));
     const dayTitle = `${dayWord}, ${dayNum} ${monthLabel}`;
+    const dayIncomplete = !!store.state.incompleteDays[dt];
     const status = dayStatusClass(total, store.state.goals.calorias);
     const statusLabel = status==='ok' ? 'DENTRO DA META' : 'ACIMA DA META';
     const expanded = !!histExpandedDays[dt];
@@ -164,7 +190,9 @@ export function renderHistContent(){
       <button class="hist-day-header" data-toggle-day="${dt}">
         <div class="hist-day-main">
           <div class="hist-day-titlerow">
-            <span class="hist-status-pill ${status}">${statusLabel}</span>
+            ${dayIncomplete
+              ? `<span class="hist-status-pill incomplete"><i data-lucide="alert-triangle"></i>REGISTRO INCOMPLETO</span>`
+              : `<span class="hist-status-pill ${status}">${statusLabel}</span>`}
             <span class="hist-day-title">${dayTitle}</span>
           </div>
           <div class="hist-day-metarow">
@@ -177,6 +205,9 @@ export function renderHistContent(){
       <div class="hist-day-body${expanded?' open':''}">
         <div class="hist-detail-label">Detalhes</div>
         ${groups}
+        <button class="incomplete-toggle-small" data-toggle-incomplete="${dt}">
+          <i data-lucide="${dayIncomplete?'x':'alert-triangle'}"></i>${dayIncomplete?'Desmarcar como incompleto':'Marcar como registro incompleto'}
+        </button>
       </div>
     </div>`;
   }).join('');
@@ -231,6 +262,19 @@ export function wireHistorico(){
       histMealExpanded[key] = !histMealExpanded[key];
       document.getElementById('histContent').innerHTML = renderHistContent();
       icons();
+      return;
+    }
+    const incBtn = e.target.closest('[data-toggle-incomplete]');
+    if(incBtn){
+      const dt = incBtn.dataset.toggleIncomplete;
+      if(store.state.incompleteDays[dt]) delete store.state.incompleteDays[dt];
+      else store.state.incompleteDays[dt] = true;
+      saveState().then(()=>{
+        showToast(store.state.incompleteDays[dt] ? 'Dia marcado como registro incompleto.' : 'Marcação removida.');
+        document.getElementById('histContent').innerHTML = renderHistContent();
+        document.getElementById('histMonthNav').innerHTML = store.historicoFilter==='mes' ? renderMonthNavHTML() : '';
+        icons();
+      });
     }
   });
 }

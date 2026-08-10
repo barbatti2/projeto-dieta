@@ -61,7 +61,8 @@ export function defaultState(){
     weight: {initial:null, history:[]},
     goals: {calorias:2000, proteina:150, carboidratos:250},
     cardapioUnico: defaultCardapioUnico(),
-    cardapioSalvo: defaultCardapioSalvo()
+    cardapioSalvo: defaultCardapioSalvo(),
+    incompleteDays: {}
   };
 }
 export function ensureStateShape(s){
@@ -114,6 +115,7 @@ export function ensureStateShape(s){
   if(!s.calendarMarks) s.calendarMarks = {};
   if(!s.weight) s.weight = {initial:null, history:[]};
   if(!s.goals) s.goals = {calorias:2000, proteina:150, carboidratos:250};
+  if(!s.incompleteDays) s.incompleteDays = {};
   if(!s.cardapioSalvo){
     // primeira vez com esse campo: considera "já salvo" qualquer refeição que já tinha
     // algum alimento marcado em versões anteriores, pra não perder o que a pessoa já tinha escolhido
