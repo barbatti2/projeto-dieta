@@ -196,6 +196,7 @@ export function wireAdicionar(){
 
   document.getElementById('includeItemBtn').addEventListener('click', ()=>{
     if(!addFoodState.selected){ showToast('Selecione um alimento primeiro'); return; }
+    if(!addFoodState.mealType){ showToast('Escolha a refeição primeiro'); return; }
     const f = addFoodState.selected;
     const macros = addFoodState.macros || {kcal:f.kcal, protein:f.protein, carbs:f.carbs, fat:f.fat};
     const gramsEquiv = addFoodState.isUnit ? addFoodState.qty*f.unitWeight : addFoodState.qty;
@@ -233,9 +234,11 @@ export function wireAdicionar(){
       });
     });
     addFoodState.itemsToSave = [];
+    addFoodState.mealType = null;
     await saveState();
     document.getElementById('itemsList').innerHTML = renderItemsListHTML();
     document.getElementById('queueTotalKcal').textContent = '0 kcal';
+    document.querySelectorAll('.meal-type-btn').forEach(b=>b.classList.remove('active'));
     showToast('Refeição salva com sucesso!');
   });
 }
