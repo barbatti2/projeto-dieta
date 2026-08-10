@@ -44,7 +44,7 @@ export function defaultCardapioUnico(){
 }
 
 export const histExpandedDays = {};
-export const addFoodState = {qty:100, isUnit:false, mealType:'cafe_manha', selected:null, itemsToSave:[], macros:null, activeCategory:'Todos'};
+export const addFoodState = {qty:100, isUnit:false, mealType:null, selected:null, itemsToSave:[], macros:null, activeCategory:'Todos'};
 // menuEditor: estado da tela (bottom sheet) de edição de uma refeição do cardápio único
 export const menuEditor = {
   mealType:null, slotId:null, selected:null, isUnit:false, qty:100, macros:null
