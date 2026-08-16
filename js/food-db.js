@@ -24,16 +24,16 @@ export function buildFoodDB(){
     });
   });
 
-  /* ---- Carne su\u00edna (mesmo sistema de preparo da carne bovina) ---- */
+  /* ---- Carne de porco (mesmo sistema de preparo da carne bovina) ---- */
   const PORK_BASE = {
-    'Lombo':[210,27,0,11.0], 'Pernil':[221,26,0,13.0], 'Costela su\u00edna':[280,22,0,21.0], 'Bisteca':[231,24,0,15.0],
-    'Paleta':[224,25,0,13.0], 'Fil\u00e9 su\u00edno':[196,28,0,9.0], 'Carne mo\u00edda su\u00edna':[230,24,0,15.0], 'Panceta':[397,17,0,37.0]
+    'Lombo':[210,27,0,11.0], 'Pernil':[221,26,0,13.0], 'Costela de porco':[280,22,0,21.0], 'Bisteca':[231,24,0,15.0],
+    'Paleta':[224,25,0,13.0], 'Filé de porco':[196,28,0,9.0], 'Filé mignon suíno':[147,27,0,3.8], 'Carne de porco moída':[230,24,0,15.0], 'Panceta':[397,17,0,37.0]
   };
   Object.keys(PORK_BASE).forEach(cut=>{
     const b = PORK_BASE[cut];
     Object.keys(PREP_MEAT).forEach(prep=>{
       const m = PREP_MEAT[prep];
-      push('Carne su\u00edna - '+cut+' ('+prep+')', 'Carnes', b[0]*m[0], b[1]*m[1], b[2]+m[2], b[3]*m[3]);
+      push('Carne de porco - '+cut+' ('+prep+')', 'Carnes', b[0]*m[0], b[1]*m[1], b[2]+m[2], b[3]*m[3]);
     });
   });
 
